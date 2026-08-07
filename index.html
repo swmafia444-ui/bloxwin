@@ -157,7 +157,22 @@
             font-size: 14px;
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 8px;
+        }
+
+        /* Pet Image Styling */
+        .pet-img {
+            width: 40px;
+            height: 40px;
+            object-fit: contain;
+            display: block;
+            margin: 0 auto 4px auto;
+        }
+
+        .pet-badge .pet-img {
+            width: 28px;
+            height: 28px;
+            margin: 0;
         }
 
         .join-btn {
@@ -515,12 +530,13 @@
         let globalMatches = [];
         let chatHistory = JSON.parse(localStorage.getItem('app_chat_history') || '[]');
 
+        // Pet görselleri PNG/JPG bağlantıları ile güncellendi
         const defaultStarterPets = [
-            { id: 1, name: 'Shadow Dragon', icon: '🐉' },
-            { id: 2, name: 'Bat Dragon', icon: '🦇' },
-            { id: 3, name: 'Frost Dragon', icon: '❄️' },
-            { id: 4, name: 'Giraffe', icon: '🦒' },
-            { id: 5, name: 'Owl', icon: '🦉' }
+            { id: 1, name: 'Shadow Dragon', icon: 'https://vignette.wikia.nocookie.net/adoptme/images/a/a2/Shadow_Dragon.png' },
+            { id: 2, name: 'Bat Dragon', icon: 'https://vignette.wikia.nocookie.net/adoptme/images/e/e0/Bat_Dragon.png' },
+            { id: 3, name: 'Frost Dragon', icon: 'https://vignette.wikia.nocookie.net/adoptme/images/a/a4/Frost_Dragon.png' },
+            { id: 4, name: 'Giraffe', icon: 'https://vignette.wikia.nocookie.net/adoptme/images/3/36/Giraffe.png' },
+            { id: 5, name: 'Owl', icon: 'https://vignette.wikia.nocookie.net/adoptme/images/a/a1/Owl.png' }
         ];
 
         let selectedPetForMatch = null;
@@ -532,7 +548,7 @@
         document.querySelectorAll('.modal-overlay').forEach(overlay => {
             overlay.addEventListener('click', function(e) {
                 if (e.target === this) {
-                    if (this.id === 'flip-modal' && isFlipping) return; // Yazı tura atılırken kapatmayı engelle
+                    if (this.id === 'flip-modal' && isFlipping) return;
                     closeModal(this.id);
                 }
             });
@@ -671,7 +687,7 @@
         function saveAndRenderChat(username, text, time) {
             const newMsg = { username, text, time };
             chatHistory.push(newMsg);
-            if (chatHistory.length > 50) chatHistory.shift(); // Son 50 mesajı tut
+            if (chatHistory.length > 50) chatHistory.shift();
             localStorage.setItem('app_chat_history', JSON.stringify(chatHistory));
             appendChatMessageDOM(username, text, time);
         }
@@ -719,7 +735,7 @@
                     <div class="match-user">
                         <span>👤 ${match.host}</span>
                         <div class="pet-badge">
-                            <span>${match.petIcon}</span>
+                            <img class="pet-img" src="${match.petIcon}" alt="${match.petName}">
                             <span>${match.petName}</span>
                         </div>
                     </div>
@@ -741,7 +757,7 @@
             inv.forEach(pet => {
                 const item = document.createElement('div');
                 item.className = 'modal-item';
-                item.innerHTML = `<div style="font-size: 28px;">${pet.icon}</div><div>${pet.name}</div>`;
+                item.innerHTML = `<img class="pet-img" src="${pet.icon}" alt="${pet.name}"><div>${pet.name}</div>`;
                 item.onclick = () => {
                     selectedPetForMatch = pet;
                     document.querySelectorAll('#modal-inventory .modal-item').forEach(e => e.classList.remove('selected'));
@@ -808,7 +824,7 @@
             inv.forEach(pet => {
                 const item = document.createElement('div');
                 item.className = 'modal-item';
-                item.innerHTML = `<div style="font-size: 28px;">${pet.icon}</div><div>${pet.name}</div>`;
+                item.innerHTML = `<img class="pet-img" src="${pet.icon}" alt="${pet.name}"><div>${pet.name}</div>`;
                 item.onclick = () => {
                     selectedPetForJoin = pet;
                     document.querySelectorAll('#join-modal-inventory .modal-item').forEach(e => e.classList.remove('selected'));
@@ -901,7 +917,7 @@
             inv.forEach(pet => {
                 const item = document.createElement('div');
                 item.className = 'modal-item';
-                item.innerHTML = `<div style="font-size: 28px;">${pet.icon}</div><div>${pet.name}</div>`;
+                item.innerHTML = `<img class="pet-img" src="${pet.icon}" alt="${pet.name}"><div>${pet.name}</div>`;
                 grid.appendChild(item);
             });
             document.getElementById('inventory-modal').style.display = 'flex';
