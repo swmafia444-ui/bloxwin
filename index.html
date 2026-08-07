@@ -530,13 +530,13 @@
         let globalMatches = [];
         let chatHistory = JSON.parse(localStorage.getItem('app_chat_history') || '[]');
 
-        // Pet görselleri PNG/JPG bağlantıları ile güncellendi
+        // Pet görselleri güncellendi (elvebredd.com)
         const defaultStarterPets = [
-            { id: 1, name: 'Shadow Dragon', icon: 'https://vignette.wikia.nocookie.net/adoptme/images/a/a2/Shadow_Dragon.png' },
-            { id: 2, name: 'Bat Dragon', icon: 'https://vignette.wikia.nocookie.net/adoptme/images/e/e0/Bat_Dragon.png' },
-            { id: 3, name: 'Frost Dragon', icon: 'https://vignette.wikia.nocookie.net/adoptme/images/a/a4/Frost_Dragon.png' },
-            { id: 4, name: 'Giraffe', icon: 'https://vignette.wikia.nocookie.net/adoptme/images/3/36/Giraffe.png' },
-            { id: 5, name: 'Owl', icon: 'https://vignette.wikia.nocookie.net/adoptme/images/a/a1/Owl.png' }
+            { id: 1, name: 'Shadow Dragon', icon: 'https://elvebredd.com/images/pets/Shadow%20Dragon.png?dpl=20260802-214403' },
+            { id: 2, name: 'Bat Dragon', icon: 'https://elvebredd.com/images/pets/Bat%20Dragon.png?dpl=20260802-214403' },
+            { id: 3, name: 'Frost Dragon', icon: 'https://elvebredd.com/images/pets/Frost%20Dragon.png?dpl=20260802-214403' },
+            { id: 4, name: 'Giraffe', icon: 'https://elvebredd.com/images/pets/Giraffe.png?dpl=20260802-214403' },
+            { id: 5, name: 'Owl', icon: 'https://elvebredd.com/images/pets/Owl.png?dpl=20260802-214403' }
         ];
 
         let selectedPetForMatch = null;
