@@ -1,0 +1,924 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Adopt Me! Multi-Browser Coinflip</title>
+    <!-- PubNub SDK for Real-Time Cross-Browser Sync -->
+    <script src="https://cdn.pubnub.com/sdk/javascript/pubnub.7.2.2.min.js"></script>
+    <style>
+        :root {
+            --primary: #ff4757;
+            --secondary: #2ed573;
+            --bg-dark: #0f172a;
+            --card-bg: #1e293b;
+            --accent: #ffa502;
+            --text-light: #f8fafc;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-light);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        header {
+            width: 100%;
+            max-width: 1100px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--card-bg);
+            padding: 15px 25px;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            margin-bottom: 25px;
+            border: 1px solid #334155;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .user-info-bar {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .user-badge {
+            background: #0f172a;
+            border: 1px solid var(--accent);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-weight: bold;
+            color: var(--accent);
+            font-size: 14px;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .action-btn {
+            background: linear-gradient(135deg, var(--secondary), #10b981);
+            color: white;
+            border: none;
+            padding: 10px 18px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 14px;
+            transition: transform 0.1s, opacity 0.2s;
+        }
+
+        .action-btn.secondary-btn {
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+        }
+
+        .action-btn.danger-btn {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+        }
+
+        .action-btn:hover { opacity: 0.95; }
+        .action-btn:active { transform: scale(0.98); }
+
+        /* Main Layout */
+        .main-layout {
+            width: 100%;
+            max-width: 1100px;
+            display: grid;
+            grid-template-columns: 1fr 320px;
+            gap: 20px;
+        }
+
+        @media (max-width: 850px) {
+            .main-layout { grid-template-columns: 1fr; }
+        }
+
+        .section-title {
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Matches Grid */
+        .matches-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .match-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid #334155;
+        }
+
+        .match-user {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: bold;
+        }
+
+        .pet-badge {
+            background: #0f172a;
+            border: 1px solid var(--accent);
+            padding: 6px 12px;
+            border-radius: 20px;
+            color: var(--accent);
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .join-btn {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .cancel-match-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        /* Chat Sidebar */
+        .chat-card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            border: 1px solid #334155;
+            display: flex;
+            flex-direction: column;
+            height: 520px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+        }
+
+        .chat-header {
+            padding: 15px 20px;
+            border-bottom: 1px solid #334155;
+            font-weight: bold;
+            color: #94a3b8;
+            text-transform: uppercase;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 15px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .chat-msg {
+            background: #0f172a;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 13px;
+            word-break: break-word;
+            border: 1px solid #1e293b;
+        }
+
+        .chat-msg .username {
+            font-weight: bold;
+            color: var(--accent);
+            margin-right: 6px;
+        }
+
+        .chat-msg .time {
+            font-size: 10px;
+            color: #64748b;
+            float: right;
+            margin-top: 2px;
+        }
+
+        .chat-input-area {
+            padding: 12px;
+            border-top: 1px solid #334155;
+            display: flex;
+            gap: 8px;
+        }
+
+        .chat-input {
+            flex: 1;
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            padding: 8px 12px;
+            color: white;
+            outline: none;
+            font-size: 13px;
+        }
+
+        .chat-send-btn {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        /* Modal Overlay */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            backdrop-filter: blur(4px);
+        }
+
+        .modal {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 25px;
+            width: 100%;
+            max-width: 440px;
+            border: 1px solid #334155;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            position: relative;
+        }
+
+        .modal h2 { margin-bottom: 15px; font-size: 20px; }
+
+        .modal-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+            max-height: 280px;
+            overflow-y: auto;
+        }
+
+        .modal-item {
+            background: #0f172a;
+            border: 2px solid #334155;
+            border-radius: 8px;
+            padding: 12px;
+            text-align: center;
+            cursor: pointer;
+        }
+
+        .modal-item.selected {
+            border-color: var(--accent);
+            background: rgba(255, 165, 2, 0.15);
+        }
+
+        .modal-actions { display: flex; gap: 10px; }
+
+        .post-btn {
+            flex: 1;
+            background: var(--secondary);
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .cancel-btn {
+            flex: 1;
+            background: #475569;
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; font-size: 13px; margin-bottom: 6px; color: #94a3b8; }
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            color: white;
+            outline: none;
+        }
+
+        /* 3D Coin Rotation */
+        .coin-modal { text-align: center; }
+
+        .coin-wrapper {
+            perspective: 1200px;
+            margin: 30px auto;
+            width: 140px;
+            height: 140px;
+        }
+
+        .coin {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+            border-radius: 50%;
+        }
+
+        .coin .side {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+            box-shadow: 0 0 20px rgba(0,0,0,0.6);
+            background-size: cover;
+            background-position: center;
+            border: 4px solid #f1c40f;
+            background-color: #0f172a;
+        }
+
+        .coin .heads {
+            background-image: url('https://bloxluck.com/img/dog.png');
+            transform: rotateY(0deg);
+        }
+
+        .coin .tails {
+            background-image: url('https://bloxluck.com/img/gem.png');
+            transform: rotateY(180deg);
+        }
+
+        #game-status {
+            font-size: 16px;
+            font-weight: bold;
+            margin-top: 15px;
+            min-height: 24px;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #2ed573;
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo">
+            <span>🐉</span> Coinflip Multi-Browser
+        </div>
+        <div id="user-header-area"></div>
+    </header>
+
+    <div class="main-layout">
+        <div>
+            <div class="section-title">Canlı Maçlar (Tüm Tarayıcılar)</div>
+            <div class="matches-grid" id="matches-list"></div>
+        </div>
+
+        <div class="chat-card">
+            <div class="chat-header">
+                <span>💬 Canlı Sohbet</span>
+                <span title="Canlı Ağ Bağlantısı"><i class="status-dot"></i> Canlı</span>
+            </div>
+            <div class="chat-messages" id="chat-messages"></div>
+            <div class="chat-input-area">
+                <input type="text" class="chat-input" id="chat-input" placeholder="Mesaj yazın..." onkeydown="if(event.key==='Enter') sendMessage()">
+                <button class="chat-send-btn" onclick="sendMessage()">Gönder</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Login Modal -->
+    <div class="modal-overlay" id="login-modal">
+        <div class="modal">
+            <h2>Giriş Yap / Kayıt Ol</h2>
+            <div class="form-group">
+                <label>Kullanıcı Adı</label>
+                <input type="text" id="login-username" placeholder="Kullanıcı adınızı girin">
+            </div>
+            <div class="form-group">
+                <label>Şifre</label>
+                <input type="password" id="login-password" placeholder="Şifrenizi girin">
+            </div>
+            <div class="modal-actions">
+                <button class="post-btn" onclick="handleLogin()">Giriş Yap / Kayıt Ol</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Inventory Modal -->
+    <div class="modal-overlay" id="inventory-modal">
+        <div class="modal">
+            <h2>Envanteriniz</h2>
+            <div class="modal-grid" id="inventory-grid"></div>
+            <button class="cancel-btn" style="width: 100%;" onclick="closeModal('inventory-modal')">Kapat</button>
+        </div>
+    </div>
+
+    <!-- Create Match Modal -->
+    <div class="modal-overlay" id="create-modal">
+        <div class="modal">
+            <h2>Bahse Koyulacak Eşya Seçin</h2>
+            <div class="modal-grid" id="modal-inventory"></div>
+            <div class="modal-actions">
+                <button class="post-btn" onclick="postMatch()">Maçı Aç</button>
+                <button class="cancel-btn" onclick="closeModal('create-modal')">İptal</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Join Match Modal -->
+    <div class="modal-overlay" id="join-select-modal">
+        <div class="modal">
+            <h2>Maça Katılmak İçin Eşya Seçin</h2>
+            <div class="modal-grid" id="join-modal-inventory"></div>
+            <div class="modal-actions">
+                <button class="post-btn" onclick="confirmJoinMatch()">Maça Gir</button>
+                <button class="cancel-btn" onclick="closeModal('join-select-modal')">İptal</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Coin Flip Animation Modal -->
+    <div class="modal-overlay" id="flip-modal">
+        <div class="modal coin-modal">
+            <h2 id="match-versus">Maç Başlıyor...</h2>
+            <div class="coin-wrapper">
+                <div class="coin" id="coin">
+                    <div class="side heads"></div>
+                    <div class="side tails"></div>
+                </div>
+            </div>
+            <div id="game-status">Yazı tura atılıyor...</div>
+            <button class="cancel-btn" id="close-game-btn" style="display: none; margin-top: 15px; width: 100%;" onclick="closeModal('flip-modal')">Kapat</button>
+        </div>
+    </div>
+
+    <script>
+        const pubnub = new PubNub({
+            publishKey: "demo",
+            subscribeKey: "demo",
+            userId: "user_" + Math.random().toString(36).substring(7)
+        });
+
+        const CHANNEL = "adoptme_coinflip_live_v3";
+        pubnub.subscribe({ channels: [CHANNEL] });
+
+        let currentUser = localStorage.getItem('app_current_user') || null;
+        let globalMatches = [];
+        let chatHistory = JSON.parse(localStorage.getItem('app_chat_history') || '[]');
+
+        const defaultStarterPets = [
+            { id: 1, name: 'Shadow Dragon', icon: '🐉' },
+            { id: 2, name: 'Bat Dragon', icon: '🦇' },
+            { id: 3, name: 'Frost Dragon', icon: '❄️' },
+            { id: 4, name: 'Giraffe', icon: '🦒' },
+            { id: 5, name: 'Owl', icon: '🦉' }
+        ];
+
+        let selectedPetForMatch = null;
+        let selectedPetForJoin = null;
+        let matchToJoin = null;
+        let isFlipping = false;
+
+        // --- Dışarı Tıklayınca Modalları Kapatma Mantığı ---
+        document.querySelectorAll('.modal-overlay').forEach(overlay => {
+            overlay.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    if (this.id === 'flip-modal' && isFlipping) return; // Yazı tura atılırken kapatmayı engelle
+                    closeModal(this.id);
+                }
+            });
+        });
+
+        function getUserInventory(username) {
+            const data = localStorage.getItem(`app_inv_${username}`);
+            if (!data) {
+                localStorage.setItem(`app_inv_${username}`, JSON.stringify(defaultStarterPets));
+                return [...defaultStarterPets];
+            }
+            return JSON.parse(data);
+        }
+
+        function setUserInventory(username, inv) {
+            localStorage.setItem(`app_inv_${username}`, JSON.stringify(inv));
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        function renderHeader() {
+            const container = document.getElementById('user-header-area');
+            if (currentUser) {
+                container.innerHTML = `
+                    <div class="user-info-bar">
+                        <span class="user-badge">👤 ${currentUser}</span>
+                        <div class="header-actions">
+                            <button class="action-btn secondary-btn" onclick="openInventoryModal()">🎒 Envanter</button>
+                            <button class="action-btn" onclick="openCreateModal()">+ Maç Kur</button>
+                            <button class="action-btn danger-btn" onclick="handleLogout()">Çıkış</button>
+                        </div>
+                    </div>
+                `;
+            } else {
+                container.innerHTML = `
+                    <button class="action-btn" onclick="document.getElementById('login-modal').style.display='flex'">Giriş Yap / Kayıt Ol</button>
+                `;
+            }
+        }
+
+        // --- Şifreli Giriş & Kayıt Mantığı ---
+        function handleLogin() {
+            const userInp = document.getElementById('login-username').value.trim();
+            const passInp = document.getElementById('login-password').value.trim();
+
+            if (!userInp || !passInp) return alert('Lütfen kullanıcı adı ve şifrenizi girin!');
+
+            const registeredUsers = JSON.parse(localStorage.getItem('app_registered_users') || '{}');
+
+            if (registeredUsers[userInp]) {
+                if (registeredUsers[userInp] !== passInp) {
+                    return alert('Hatalı şifre! Lütfen şifrenizi kontrol edin.');
+                }
+            } else {
+                registeredUsers[userInp] = passInp;
+                localStorage.setItem('app_registered_users', JSON.stringify(registeredUsers));
+                alert('Yeni hesabınız başarıyla oluşturuldu!');
+            }
+
+            currentUser = userInp;
+            localStorage.setItem('app_current_user', currentUser);
+            getUserInventory(currentUser);
+            closeModal('login-modal');
+            renderHeader();
+            renderMatches();
+
+            pubnub.publish({ channel: CHANNEL, message: { type: 'REQUEST_SYNC' } });
+        }
+
+        function handleLogout() {
+            currentUser = null;
+            localStorage.removeItem('app_current_user');
+            renderHeader();
+            renderMatches();
+        }
+
+        // Network Listener
+        pubnub.addListener({
+            message: function(event) {
+                const msg = event.message;
+
+                if (msg.type === 'CHAT') {
+                    saveAndRenderChat(msg.username, msg.text, msg.time);
+                }
+
+                if (msg.type === 'MATCH_CREATED') {
+                    if (!globalMatches.some(m => m.id === msg.match.id)) {
+                        globalMatches.unshift(msg.match);
+                        renderMatches();
+                    }
+                }
+
+                if (msg.type === 'MATCH_CANCELED') {
+                    globalMatches = globalMatches.filter(m => m.id !== msg.matchId);
+                    renderMatches();
+                }
+
+                if (msg.type === 'GAME_START') {
+                    globalMatches = globalMatches.filter(m => m.id !== msg.matchId);
+                    renderMatches();
+
+                    if (currentUser === msg.host || currentUser === msg.joiner) {
+                        executeCoinFlip(msg);
+                    }
+                }
+
+                if (msg.type === 'REQUEST_SYNC' && globalMatches.length > 0) {
+                    pubnub.publish({
+                        channel: CHANNEL,
+                        message: { type: 'SYNC_MATCHES', matches: globalMatches }
+                    });
+                }
+
+                if (msg.type === 'SYNC_MATCHES') {
+                    msg.matches.forEach(m => {
+                        if (!globalMatches.some(existing => existing.id === m.id)) {
+                            globalMatches.push(m);
+                        }
+                    });
+                    renderMatches();
+                }
+            }
+        });
+
+        // --- Chat Geçmişini Saklama Mantığı ---
+        function renderChatHistory() {
+            const container = document.getElementById('chat-messages');
+            container.innerHTML = '';
+            chatHistory.forEach(msg => {
+                appendChatMessageDOM(msg.username, msg.text, msg.time);
+            });
+        }
+
+        function saveAndRenderChat(username, text, time) {
+            const newMsg = { username, text, time };
+            chatHistory.push(newMsg);
+            if (chatHistory.length > 50) chatHistory.shift(); // Son 50 mesajı tut
+            localStorage.setItem('app_chat_history', JSON.stringify(chatHistory));
+            appendChatMessageDOM(username, text, time);
+        }
+
+        function sendMessage() {
+            if (!currentUser) return document.getElementById('login-modal').style.display = 'flex';
+            const input = document.getElementById('chat-input');
+            const text = input.value.trim();
+            if (!text) return;
+
+            const now = new Date();
+            const timeStr = now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
+
+            pubnub.publish({
+                channel: CHANNEL,
+                message: { type: 'CHAT', username: currentUser, text: text, time: timeStr }
+            });
+
+            input.value = '';
+        }
+
+        function appendChatMessageDOM(username, text, time) {
+            const messagesContainer = document.getElementById('chat-messages');
+            const msgDiv = document.createElement('div');
+            msgDiv.className = 'chat-msg';
+            msgDiv.innerHTML = `<span class="username">${escapeHTML(username)}:</span>${escapeHTML(text)} <span class="time">${time}</span>`;
+            messagesContainer.appendChild(msgDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        function renderMatches() {
+            const container = document.getElementById('matches-list');
+            container.innerHTML = '';
+
+            if (globalMatches.length === 0) {
+                container.innerHTML = '<div style="color: #64748b; padding: 20px; text-align: center;">Aktif maç bulunmuyor. Herhangi bir tarayıcıdan maç kurabilirsin!</div>';
+                return;
+            }
+
+            globalMatches.forEach(match => {
+                const isMyMatch = currentUser && match.host === currentUser;
+                const card = document.createElement('div');
+                card.className = 'match-card';
+                card.innerHTML = `
+                    <div class="match-user">
+                        <span>👤 ${match.host}</span>
+                        <div class="pet-badge">
+                            <span>${match.petIcon}</span>
+                            <span>${match.petName}</span>
+                        </div>
+                    </div>
+                    ${isMyMatch 
+                        ? `<button class="cancel-match-btn" onclick="cancelMyMatch(${match.id})">İptal Et</button>` 
+                        : `<button class="join-btn" onclick="openJoinSelectModal(${match.id})">Maça Katıl</button>`}
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function openCreateModal() {
+            if (!currentUser) return document.getElementById('login-modal').style.display = 'flex';
+            const inv = getUserInventory(currentUser);
+            const grid = document.getElementById('modal-inventory');
+            grid.innerHTML = '';
+            selectedPetForMatch = null;
+
+            inv.forEach(pet => {
+                const item = document.createElement('div');
+                item.className = 'modal-item';
+                item.innerHTML = `<div style="font-size: 28px;">${pet.icon}</div><div>${pet.name}</div>`;
+                item.onclick = () => {
+                    selectedPetForMatch = pet;
+                    document.querySelectorAll('#modal-inventory .modal-item').forEach(e => e.classList.remove('selected'));
+                    item.classList.add('selected');
+                };
+                grid.appendChild(item);
+            });
+            document.getElementById('create-modal').style.display = 'flex';
+        }
+
+        function postMatch() {
+            if (!selectedPetForMatch) return alert('Bir eşya seçin!');
+
+            let inv = getUserInventory(currentUser);
+            const petIdx = inv.findIndex(p => p.id === selectedPetForMatch.id);
+            const wageredPet = inv.splice(petIdx, 1)[0];
+            setUserInventory(currentUser, inv);
+
+            const newMatch = {
+                id: Date.now(),
+                host: currentUser,
+                petName: wageredPet.name,
+                petIcon: wageredPet.icon,
+                petObject: wageredPet
+            };
+
+            globalMatches.unshift(newMatch);
+            renderMatches();
+
+            pubnub.publish({
+                channel: CHANNEL,
+                message: { type: 'MATCH_CREATED', match: newMatch }
+            });
+
+            closeModal('create-modal');
+        }
+
+        function cancelMyMatch(matchId) {
+            const matchIdx = globalMatches.findIndex(m => m.id === matchId);
+            if (matchIdx !== -1) {
+                const canceled = globalMatches.splice(matchIdx, 1)[0];
+                let inv = getUserInventory(currentUser);
+                inv.push(canceled.petObject);
+                setUserInventory(currentUser, inv);
+                renderMatches();
+
+                pubnub.publish({
+                    channel: CHANNEL,
+                    message: { type: 'MATCH_CANCELED', matchId: matchId }
+                });
+            }
+        }
+
+        function openJoinSelectModal(matchId) {
+            if (!currentUser) return document.getElementById('login-modal').style.display = 'flex';
+            matchToJoin = globalMatches.find(m => m.id === matchId);
+            if (!matchToJoin) return;
+
+            const inv = getUserInventory(currentUser);
+            const grid = document.getElementById('join-modal-inventory');
+            grid.innerHTML = '';
+            selectedPetForJoin = null;
+
+            inv.forEach(pet => {
+                const item = document.createElement('div');
+                item.className = 'modal-item';
+                item.innerHTML = `<div style="font-size: 28px;">${pet.icon}</div><div>${pet.name}</div>`;
+                item.onclick = () => {
+                    selectedPetForJoin = pet;
+                    document.querySelectorAll('#join-modal-inventory .modal-item').forEach(e => e.classList.remove('selected'));
+                    item.classList.add('selected');
+                };
+                grid.appendChild(item);
+            });
+            document.getElementById('join-select-modal').style.display = 'flex';
+        }
+
+        function confirmJoinMatch() {
+            if (!selectedPetForJoin) return alert('Eşya seçin!');
+
+            let inv = getUserInventory(currentUser);
+            const petIdx = inv.findIndex(p => p.id === selectedPetForJoin.id);
+            const joinerWageredPet = inv.splice(petIdx, 1)[0];
+            setUserInventory(currentUser, inv);
+
+            const hostWins = Math.random() < 0.5;
+
+            closeModal('join-select-modal');
+
+            pubnub.publish({
+                channel: CHANNEL,
+                message: {
+                    type: 'GAME_START',
+                    matchId: matchToJoin.id,
+                    host: matchToJoin.host,
+                    hostPet: matchToJoin.petObject,
+                    joiner: currentUser,
+                    joinerPet: joinerWageredPet,
+                    hostWins: hostWins
+                }
+            });
+        }
+
+        function executeCoinFlip(gameData) {
+            const flipModal = document.getElementById('flip-modal');
+            const statusEl = document.getElementById('game-status');
+            const closeBtn = document.getElementById('close-game-btn');
+            const coin = document.getElementById('coin');
+
+            document.getElementById('match-versus').textContent = `${gameData.host} vs ${gameData.joiner}`;
+            statusEl.style.color = '#f8fafc';
+            statusEl.textContent = 'Yazı tura atılıyor...';
+            closeBtn.style.display = 'none';
+            flipModal.style.display = 'flex';
+
+            isFlipping = true;
+
+            coin.style.animation = 'none';
+            coin.offsetHeight;
+
+            const durationSec = gameData.hostWins ? 2.1 : 2.3;
+            const keyframeName = `flip_${Date.now()}`;
+            const endDegree = (10 * 360) + (gameData.hostWins ? 0 : 180);
+
+            const styleSheet = document.createElement('style');
+            styleSheet.innerHTML = `@keyframes ${keyframeName} { 0% { transform: rotateY(0deg); } 100% { transform: rotateY(${endDegree}deg); } }`;
+            document.head.appendChild(styleSheet);
+            coin.style.animation = `${keyframeName} ${durationSec}s cubic-bezier(0.15, 0.85, 0.35, 1) forwards`;
+
+            setTimeout(() => {
+                isFlipping = false;
+
+                const winner = gameData.hostWins ? gameData.host : gameData.joiner;
+
+                if (currentUser === winner) {
+                    statusEl.style.color = '#2ed573';
+                    statusEl.textContent = `TEBRİKLER KAZANDIN! Odadaki tüm eşyaları aldın!`;
+                    let inv = getUserInventory(currentUser);
+                    inv.push(gameData.hostPet);
+                    inv.push(gameData.joinerPet);
+                    setUserInventory(currentUser, inv);
+                } else {
+                    statusEl.style.color = '#ff4757';
+                    statusEl.textContent = `KAYBETTİN! Eşyan ${winner} kullanıcısına gitti.`;
+                }
+
+                closeBtn.style.display = 'block';
+                document.head.removeChild(styleSheet);
+            }, durationSec * 1000);
+        }
+
+        function openInventoryModal() {
+            if (!currentUser) return;
+            const inv = getUserInventory(currentUser);
+            const grid = document.getElementById('inventory-grid');
+            grid.innerHTML = '';
+            inv.forEach(pet => {
+                const item = document.createElement('div');
+                item.className = 'modal-item';
+                item.innerHTML = `<div style="font-size: 28px;">${pet.icon}</div><div>${pet.name}</div>`;
+                grid.appendChild(item);
+            });
+            document.getElementById('inventory-modal').style.display = 'flex';
+        }
+
+        function escapeHTML(str) {
+            return str.replace(/[&<>'"]/g, tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag));
+        }
+
+        // Başlangıç Yüklemeleri
+        renderHeader();
+        renderMatches();
+        renderChatHistory();
+
+        setTimeout(() => {
+            pubnub.publish({ channel: CHANNEL, message: { type: 'REQUEST_SYNC' } });
+        }, 1000);
+    </script>
+</body>
+</html>
