@@ -1,75 +1,123 @@
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Adopt Me! Multi-Browser Coinflip</title>
-    <!-- PubNub SDK for Real-Time Cross-Browser Sync -->
-    <script src="https://cdn.pubnub.com/sdk/javascript/pubnub.7.2.2.min.js"></script>
+    <title>BloxWin Coinflip</title>
+    <script src="https://cdn.pubnub.com/sdk/javascript/pubnub.7.2.2.min.js">
+    </script>
     <style>
         :root {
-            --primary: #ff4757;
-            --secondary: #2ed573;
-            --bg-dark: #0f172a;
-            --card-bg: #1e293b;
-            --accent: #ffa502;
-            --text-light: #f8fafc;
+            --primary: #ff6b6b;
+            --secondary: #51cf66;
+            --bg-dark: #0b1120;
+            --card-bg: #1a2332;
+            --accent: #fcc419;
+            --text-light: #f1f3f5;
+            --border-color: #2d3b4f;
+            --header-height: 70px;
+            --chat-width: 370px;
+            --radius: 14px;
         }
 
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
         }
 
         body {
             background-color: var(--bg-dark);
             color: var(--text-light);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
             min-height: 100vh;
-            padding: 20px;
+            padding-top: var(--header-height);
+            padding-right: var(--chat-width);
+            transition: padding 0.2s;
         }
 
+        /* Fixed Header */
         header {
-            width: 100%;
-            max-width: 1100px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: var(--chat-width);
+            height: var(--header-height);
+            background: var(--card-bg);
+            padding: 0 28px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: var(--card-bg);
-            padding: 15px 25px;
-            border-radius: 16px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
-            margin-bottom: 25px;
-            border: 1px solid #334155;
+            border-bottom: 1px solid var(--border-color);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            z-index: 100;
+            backdrop-filter: blur(6px);
+        }
+
+        /* --- Toast Notification --- */
+        .toast-container {
+            position: fixed;
+            top: calc(var(--header-height) + 12px);
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 999;
+            width: auto;
+            max-width: 90%;
+            pointer-events: none;
+        }
+
+        .toast {
+            background: #ff6b6b;
+            color: #0b1120;
+            padding: 10px 28px;
+            border-radius: 30px;
+            font-weight: 700;
+            font-size: 15px;
+            box-shadow: 0 6px 25px rgba(255, 107, 107, 0.35);
+            display: inline-block;
+            opacity: 0;
+            transform: translateY(-20px);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            pointer-events: auto;
+            border: 1px solid rgba(255, 107, 107, 0.3);
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0);
         }
 
         .logo {
-            font-size: 24px;
-            font-weight: 800;
-            color: var(--accent);
-            text-transform: uppercase;
-            letter-spacing: 1px;
             display: flex;
             align-items: center;
             gap: 10px;
+        }
+        .logo-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+        }
+        .logo-wrapper span {
+            font-size: 28px;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--accent), #ff922b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
         .user-info-bar {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 14px;
         }
 
         .user-badge {
             background: #0f172a;
             border: 1px solid var(--accent);
-            padding: 6px 14px;
-            border-radius: 20px;
-            font-weight: bold;
+            padding: 6px 16px;
+            border-radius: 30px;
+            font-weight: 600;
             color: var(--accent);
             font-size: 14px;
         }
@@ -81,78 +129,154 @@
         }
 
         .action-btn {
-            background: linear-gradient(135deg, var(--secondary), #10b981);
+            background: linear-gradient(135deg, var(--secondary), #2b8a3e);
             color: white;
             border: none;
-            padding: 10px 18px;
-            border-radius: 8px;
-            font-weight: bold;
+            padding: 9px 18px;
+            border-radius: 30px;
+            font-weight: 600;
             cursor: pointer;
             font-size: 14px;
-            transition: transform 0.1s, opacity 0.2s;
+            transition: transform 0.15s ease, box-shadow 0.2s;
+            box-shadow: 0 4px 10px rgba(81, 207, 102, 0.2);
+        }
+
+        .action-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(81, 207, 102, 0.3);
         }
 
         .action-btn.secondary-btn {
-            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            background: linear-gradient(135deg, #4dabf7, #1971c2);
+            box-shadow: 0 4px 10px rgba(77, 171, 247, 0.2);
+        }
+
+        .action-btn.secondary-btn:hover {
+            box-shadow: 0 8px 20px rgba(77, 171, 247, 0.3);
         }
 
         .action-btn.danger-btn {
-            background: linear-gradient(135deg, #ef4444, #dc2626);
+            background: linear-gradient(135deg, #ff6b6b, #c92a2a);
+            box-shadow: 0 4px 10px rgba(255, 107, 107, 0.2);
         }
 
-        .action-btn:hover { opacity: 0.95; }
-        .action-btn:active { transform: scale(0.98); }
+        .action-btn.danger-btn:hover {
+            box-shadow: 0 8px 20px rgba(255, 107, 107, 0.3);
+        }
 
-        /* Main Layout */
+        /* Main Content */
         .main-layout {
-            width: 100%;
-            max-width: 1100px;
-            display: grid;
-            grid-template-columns: 1fr 320px;
-            gap: 20px;
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 0 24px;
         }
 
-        @media (max-width: 850px) {
-            .main-layout { grid-template-columns: 1fr; }
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
         }
 
         .section-title {
-            font-size: 18px;
-            margin-bottom: 15px;
-            color: #94a3b8;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+            font-size: 20px;
+            font-weight: 700;
+            color: #ced4da;
+            letter-spacing: 0.3px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
         }
 
-        /* Matches Grid */
+        .history-toggle-btn {
+            background: var(--accent);
+            color: #0b1120;
+            border: none;
+            padding: 5px 18px;
+            border-radius: 30px;
+            font-weight: 700;
+            font-size: 13px;
+            cursor: pointer;
+            transition: transform 0.15s ease, background 0.2s;
+            box-shadow: 0 3px 8px rgba(252, 196, 25, 0.25);
+        }
+
+        .history-toggle-btn:hover {
+            transform: translateY(-2px);
+            background: #ffd43b;
+        }
+        .history-toggle-btn.active {
+            background: #4dabf7;
+            color: white;
+            box-shadow: 0 3px 8px rgba(77, 171, 247, 0.3);
+        }
+
         .matches-grid {
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 14px;
+        }
+
+        /* Cards */
+        .match-card,
+        .history-card {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            padding: 16px 22px;
+            border: 1px solid var(--border-color);
+            transition: transform 0.15s ease, box-shadow 0.2s;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .match-card:hover,
+        .history-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
         }
 
         .match-card {
-            background: var(--card-bg);
-            border-radius: 12px;
-            padding: 15px 20px;
             display: flex;
-            justify-content: space-between;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .match-top {
+            display: flex;
             align-items: center;
-            border: 1px solid #334155;
+            gap: 14px;
+            flex-wrap: wrap;
+        }
+
+        .match-bottom {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 4px;
+            border-top: 1px solid var(--border-color);
+            padding-top: 10px;
         }
 
         .match-user {
             display: flex;
             align-items: center;
-            gap: 12px;
-            font-weight: bold;
+            gap: 14px;
+            font-weight: 600;
+            flex-wrap: wrap;
+        }
+
+        .host-name {
+            font-weight: 700;
+            font-size: 16px;
+            color: #e9ecef;
         }
 
         .pet-badge {
             background: #0f172a;
             border: 1px solid var(--accent);
-            padding: 6px 12px;
-            border-radius: 20px;
+            padding: 5px 14px;
+            border-radius: 30px;
             color: var(--accent);
             font-size: 14px;
             display: flex;
@@ -160,212 +284,575 @@
             gap: 8px;
         }
 
-        /* Pet Image Styling */
         .pet-img {
-            width: 40px;
-            height: 40px;
+            width: 38px;
+            height: 38px;
             object-fit: contain;
             display: block;
             margin: 0 auto 4px auto;
+            border-radius: 6px;
         }
 
         .pet-badge .pet-img {
-            width: 28px;
-            height: 28px;
+            width: 26px;
+            height: 26px;
             margin: 0;
+        }
+
+        .pet-group {
+            display: flex;
+            gap: 4px;
+            flex-wrap: wrap;
+        }
+
+        .pet-group .pet-img {
+            width: 26px;
+            height: 26px;
+        }
+
+        .side-indicator {
+            background: #0f172a;
+            border-radius: 30px;
+            padding: 4px 12px;
+            font-weight: 700;
+            font-size: 14px;
+            border: 2px solid #4dabf7;
+            color: #4dabf7;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            flex-shrink: 0;
+        }
+        .side-indicator img {
+            width: 20px;
+            height: 20px;
+            object-fit: contain;
+        }
+
+        .opponent-side {
+            background: #0f172a;
+            border-radius: 30px;
+            padding: 4px 12px;
+            font-weight: 600;
+            font-size: 14px;
+            border: 2px solid #ff6b6b;
+            color: #ff6b6b;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            flex-shrink: 0;
+        }
+        .opponent-side img {
+            width: 20px;
+            height: 20px;
+            object-fit: contain;
+        }
+
+        .match-actions {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .join-btn,
+        .view-btn,
+        .cancel-match-btn {
+            border: none;
+            padding: 7px 16px;
+            border-radius: 30px;
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+            transition: transform 0.15s ease, box-shadow 0.2s;
         }
 
         .join-btn {
             background: var(--accent);
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 8px;
-            font-weight: bold;
-            cursor: pointer;
+            color: #0b1120;
+            box-shadow: 0 4px 10px rgba(252, 196, 25, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .join-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(252, 196, 25, 0.3);
         }
 
         .cancel-match-btn {
-            background: var(--primary);
+            background: #ff6b6b;
             color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 8px;
-            font-weight: bold;
-            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(255, 107, 107, 0.2);
+        }
+
+        .cancel-match-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(255, 107, 107, 0.3);
+        }
+
+        .view-btn {
+            background: #4dabf7;
+            color: white;
+            box-shadow: 0 4px 10px rgba(77, 171, 247, 0.2);
+            padding: 5px 14px;
+            font-size: 12px;
+        }
+
+        .view-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(77, 171, 247, 0.3);
+        }
+
+        .match-total-value {
+            color: var(--accent);
+            font-weight: 700;
+            font-size: 14px;
+            margin-left: 6px;
+        }
+
+        /* History card */
+        .history-card {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .history-card .top-row {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .history-card .result {
+            font-weight: 700;
+            font-size: 15px;
+        }
+        .history-card .result.win {
+            color: var(--secondary);
+        }
+        .history-card .result.lose {
+            color: #ff6b6b;
+        }
+
+        .history-card .opponent {
+            font-weight: 600;
+        }
+
+        .history-card .pets-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin: 4px 0;
+        }
+
+        .history-card .pets-row .label {
+            color: #868e96;
+            font-size: 13px;
+            margin-right: 4px;
+        }
+
+        .history-card .pets-row .pet-group {
+            display: flex;
+            gap: 4px;
+            flex-wrap: wrap;
+        }
+
+        .history-card .pets-row .pet-group .pet-img {
+            width: 26px;
+            height: 26px;
+        }
+
+        .history-card .total-value {
+            color: var(--accent);
+            font-weight: 700;
+        }
+
+        .history-side {
+            display: flex;
+            gap: 12px;
+            font-size: 13px;
+            color: #ced4da;
+            flex-wrap: wrap;
+        }
+        .history-side .side-tag {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .history-side .side-tag img {
+            width: 18px;
+            height: 18px;
+        }
+        .history-side .winner-side {
+            font-weight: 700;
         }
 
         /* Chat Sidebar */
         .chat-card {
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: var(--chat-width);
+            height: 100vh;
             background: var(--card-bg);
-            border-radius: 16px;
-            border: 1px solid #334155;
+            border-left: 1px solid var(--border-color);
             display: flex;
             flex-direction: column;
-            height: 520px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            z-index: 50;
+            box-shadow: -6px 0 30px rgba(0, 0, 0, 0.6);
         }
 
         .chat-header {
-            padding: 15px 20px;
-            border-bottom: 1px solid #334155;
-            font-weight: bold;
-            color: #94a3b8;
-            text-transform: uppercase;
-            font-size: 14px;
+            padding: 16px 22px;
+            border-bottom: 1px solid var(--border-color);
+            font-weight: 700;
+            font-size: 16px;
+            color: #ced4da;
             display: flex;
             align-items: center;
             justify-content: space-between;
+            background: var(--card-bg);
+            height: var(--header-height);
+            flex-shrink: 0;
+        }
+
+        .chat-header .left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--secondary);
+            display: inline-block;
+            animation: pulse-dot 1.8s ease-in-out infinite;
+            box-shadow: 0 0 8px rgba(81, 207, 102, 0.5);
+        }
+
+        @keyframes pulse-dot {
+            0%,
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+            50% {
+                opacity: 0.5;
+                transform: scale(0.85);
+            }
         }
 
         .chat-messages {
             flex: 1;
-            padding: 15px;
+            padding: 16px 20px;
             overflow-y: auto;
             display: flex;
             flex-direction: column;
             gap: 10px;
+            background: rgba(11, 17, 32, 0.6);
+            /* Scrollbar stilleri */
+            scrollbar-width: thin;
+            scrollbar-color: #2d3b4f transparent;
+        }
+
+        .chat-messages::-webkit-scrollbar {
+            width: 6px;
+        }
+        .chat-messages::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .chat-messages::-webkit-scrollbar-thumb {
+            background: #2d3b4f;
+            border-radius: 10px;
+        }
+        .chat-messages::-webkit-scrollbar-thumb:hover {
+            background: #3d4b5f;
         }
 
         .chat-msg {
-            background: #0f172a;
-            padding: 8px 12px;
-            border-radius: 8px;
-            font-size: 13px;
+            background: #141f2f;
+            padding: 8px 14px;
+            border-radius: 12px;
+            font-size: 14px;
             word-break: break-word;
-            border: 1px solid #1e293b;
+            border: 1px solid #253141;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
         }
 
         .chat-msg .username {
-            font-weight: bold;
+            font-weight: 700;
             color: var(--accent);
             margin-right: 6px;
         }
 
         .chat-msg .time {
             font-size: 10px;
-            color: #64748b;
+            color: #6c7a8a;
             float: right;
             margin-top: 2px;
         }
 
         .chat-input-area {
-            padding: 12px;
-            border-top: 1px solid #334155;
+            padding: 14px 18px;
+            border-top: 1px solid var(--border-color);
             display: flex;
-            gap: 8px;
+            gap: 10px;
+            flex-shrink: 0;
+            background: var(--card-bg);
         }
 
         .chat-input {
             flex: 1;
             background: #0f172a;
-            border: 1px solid #334155;
-            border-radius: 8px;
-            padding: 8px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 30px;
+            padding: 10px 18px;
             color: white;
             outline: none;
-            font-size: 13px;
+            font-size: 14px;
+            transition: border-color 0.2s;
+        }
+
+        .chat-input:focus {
+            border-color: var(--accent);
         }
 
         .chat-send-btn {
             background: var(--accent);
-            color: white;
+            color: #0b1120;
             border: none;
-            padding: 8px 14px;
-            border-radius: 8px;
-            font-weight: bold;
+            padding: 10px 22px;
+            border-radius: 30px;
+            font-weight: 700;
             cursor: pointer;
+            transition: transform 0.15s ease, box-shadow 0.2s;
+            box-shadow: 0 4px 10px rgba(252, 196, 25, 0.2);
         }
 
-        /* Modal Overlay */
+        .chat-send-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(252, 196, 25, 0.3);
+        }
+
+        /* Modals */
         .modal-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.8);
+            background: rgba(0, 0, 0, 0.75);
             display: none;
             justify-content: center;
             align-items: center;
-            z-index: 100;
-            backdrop-filter: blur(4px);
+            z-index: 200;
+            backdrop-filter: blur(6px);
         }
 
         .modal {
             background: var(--card-bg);
-            border-radius: 16px;
-            padding: 25px;
+            border-radius: var(--radius);
+            padding: 28px;
             width: 100%;
-            max-width: 440px;
-            border: 1px solid #334155;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            max-width: 540px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7);
             position: relative;
+            max-height: 90vh;
+            overflow-y: auto;
+            /* Scrollbar stilleri */
+            scrollbar-width: thin;
+            scrollbar-color: #2d3b4f transparent;
         }
 
-        .modal h2 { margin-bottom: 15px; font-size: 20px; }
+        .modal::-webkit-scrollbar {
+            width: 6px;
+        }
+        .modal::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .modal::-webkit-scrollbar-thumb {
+            background: #2d3b4f;
+            border-radius: 10px;
+        }
+        .modal::-webkit-scrollbar-thumb:hover {
+            background: #3d4b5f;
+        }
+
+        .modal h2 {
+            margin-bottom: 18px;
+            font-size: 22px;
+            font-weight: 700;
+            color: #e9ecef;
+        }
 
         .modal-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
+            gap: 12px;
             margin-bottom: 20px;
-            max-height: 280px;
+            max-height: 300px;
             overflow-y: auto;
+            /* Scrollbar stilleri */
+            scrollbar-width: thin;
+            scrollbar-color: #2d3b4f transparent;
+        }
+
+        .modal-grid::-webkit-scrollbar {
+            width: 6px;
+        }
+        .modal-grid::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .modal-grid::-webkit-scrollbar-thumb {
+            background: #2d3b4f;
+            border-radius: 10px;
+        }
+        .modal-grid::-webkit-scrollbar-thumb:hover {
+            background: #3d4b5f;
         }
 
         .modal-item {
             background: #0f172a;
-            border: 2px solid #334155;
-            border-radius: 8px;
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
             padding: 12px;
             text-align: center;
             cursor: pointer;
+            transition: transform 0.15s ease, border-color 0.2s, background 0.2s;
+            user-select: none;
+        }
+
+        .modal-item:hover {
+            transform: translateY(-2px);
+            border-color: #4dabf7;
         }
 
         .modal-item.selected {
             border-color: var(--accent);
-            background: rgba(255, 165, 2, 0.15);
+            background: rgba(252, 196, 25, 0.12);
+            box-shadow: 0 0 0 2px rgba(252, 196, 25, 0.2);
         }
 
-        .modal-actions { display: flex; gap: 10px; }
+        .modal-item .pet-value {
+            font-size: 12px;
+            color: #868e96;
+            margin-top: 4px;
+        }
 
-        .post-btn {
+        /* Side selection T/H with images */
+        .side-select {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 12px 0 16px;
+        }
+
+        .side-btn {
+            background: #0f172a;
+            border: 2px solid var(--border-color);
+            border-radius: 30px;
+            padding: 8px 20px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 700;
+            font-size: 16px;
+            color: #868e96;
+        }
+
+        .side-btn:hover {
+            transform: translateY(-2px);
+            border-color: #4dabf7;
+        }
+
+        .side-btn.selected {
+            border-color: var(--accent);
+            background: rgba(252, 196, 25, 0.15);
+            color: var(--accent);
+            box-shadow: 0 0 0 2px rgba(252, 196, 25, 0.2);
+        }
+
+        .side-btn img {
+            width: 28px;
+            height: 28px;
+            object-fit: contain;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 4px;
+        }
+
+        .post-btn,
+        .cancel-btn {
             flex: 1;
-            background: var(--secondary);
-            color: white;
             border: none;
             padding: 12px;
-            border-radius: 8px;
-            font-weight: bold;
+            border-radius: 30px;
+            font-weight: 700;
             cursor: pointer;
+            transition: transform 0.15s ease, box-shadow 0.2s;
+        }
+
+        .post-btn {
+            background: var(--secondary);
+            color: #0b1120;
+            box-shadow: 0 4px 10px rgba(81, 207, 102, 0.2);
+        }
+
+        .post-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(81, 207, 102, 0.3);
         }
 
         .cancel-btn {
-            flex: 1;
-            background: #475569;
+            background: #2d3b4f;
             color: white;
-            border: none;
-            padding: 12px;
-            border-radius: 8px;
-            font-weight: bold;
-            cursor: pointer;
         }
 
-        .form-group { margin-bottom: 15px; }
-        .form-group label { display: block; font-size: 13px; margin-bottom: 6px; color: #94a3b8; }
+        .cancel-btn:hover {
+            transform: translateY(-2px);
+            background: #3d4b5f;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+        .form-group label {
+            display: block;
+            font-size: 14px;
+            margin-bottom: 6px;
+            color: #868e96;
+            font-weight: 500;
+        }
         .form-group input {
             width: 100%;
-            padding: 10px;
+            padding: 10px 16px;
             background: #0f172a;
-            border: 1px solid #334155;
-            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            border-radius: 30px;
             color: white;
             outline: none;
+            font-size: 14px;
+            transition: border-color 0.2s;
         }
 
-        /* 3D Coin Rotation */
-        .coin-modal { text-align: center; }
+        .form-group input:focus {
+            border-color: var(--accent);
+        }
+
+        .coin-modal {
+            text-align: center;
+        }
 
         .coin-wrapper {
             perspective: 1200px;
@@ -389,10 +876,10 @@
             border-radius: 50%;
             backface-visibility: hidden;
             -webkit-backface-visibility: hidden;
-            box-shadow: 0 0 20px rgba(0,0,0,0.6);
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.7);
             background-size: cover;
             background-position: center;
-            border: 4px solid #f1c40f;
+            border: 4px solid #fcc419;
             background-color: #0f172a;
         }
 
@@ -407,112 +894,318 @@
         }
 
         #game-status {
-            font-size: 16px;
-            font-weight: bold;
-            margin-top: 15px;
-            min-height: 24px;
+            font-size: 17px;
+            font-weight: 700;
+            margin-top: 18px;
+            min-height: 28px;
         }
 
-        .status-dot {
-            width: 8px;
-            height: 8px;
+        /* View Match Modal */
+        .view-profile {
+            display: flex;
+            gap: 30px;
+            justify-content: center;
+            align-items: stretch;
+            margin: 10px 0 20px;
+        }
+
+        .view-profile .player {
+            flex: 1;
+            text-align: center;
+            background: #0f172a;
+            border-radius: 16px;
+            padding: 18px 12px;
+            border: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .view-profile .player .avatar {
+            width: 70px;
+            height: 70px;
             border-radius: 50%;
-            background: #2ed573;
-            display: inline-block;
+            background: #2d3b4f;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--accent);
+            border: 2px solid var(--accent);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .view-profile .player .avatar.empty {
+            border: 2px dashed #4dabf7;
+            color: #4dabf7;
+            background: transparent;
+            font-size: 14px;
+        }
+
+        .view-profile .player .name {
+            font-weight: 700;
+            font-size: 16px;
+            color: #e9ecef;
+        }
+
+        .view-profile .player .divider {
+            width: 80%;
+            height: 1px;
+            background: var(--border-color);
+            margin: 4px 0;
+        }
+
+        .view-profile .player .pets {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            justify-content: center;
+            margin-top: 4px;
+        }
+
+        .view-profile .player .pets .pet-img {
+            width: 34px;
+            height: 34px;
+            border-radius: 6px;
+            border: 1px solid #2d3b4f;
+        }
+
+        .view-profile .player .pets .pet-img.empty-pet {
+            border: 1px dashed #4dabf7;
+            opacity: 0.4;
+        }
+
+        .view-profile .vs {
+            display: flex;
+            align-items: center;
+            font-weight: 800;
+            font-size: 18px;
+            color: var(--accent);
+        }
+
+        .view-status {
+            text-align: center;
+            color: #868e96;
+            font-size: 15px;
+            margin-top: 6px;
+        }
+
+        .view-side {
+            margin-top: 6px;
+            font-weight: 600;
+            color: #4dabf7;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            justify-content: center;
+        }
+        .view-side img {
+            width: 22px;
+            height: 22px;
+        }
+
+        /* Mobile */
+        @media (max-width: 768px) {
+            body {
+                padding-right: 0;
+                padding-top: var(--header-height);
+            }
+            header {
+                right: 0;
+            }
+            .chat-card {
+                display: none;
+            }
+            .chat-card.mobile-open {
+                display: flex;
+                width: 100%;
+                height: 100vh;
+                top: 0;
+                left: 0;
+                border-left: none;
+                z-index: 300;
+            }
+            .mobile-chat-toggle {
+                display: block;
+                position: fixed;
+                bottom: 24px;
+                right: 24px;
+                background: var(--accent);
+                color: #0b1120;
+                border: none;
+                border-radius: 50%;
+                width: 58px;
+                height: 58px;
+                font-size: 26px;
+                cursor: pointer;
+                z-index: 150;
+                box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+                transition: transform 0.2s;
+            }
+            .mobile-chat-toggle:hover {
+                transform: scale(1.05);
+            }
+            .view-profile {
+                flex-direction: column;
+                align-items: center;
+                gap: 16px;
+            }
+            .view-profile .player {
+                width: 100%;
+                max-width: 280px;
+            }
+            .view-profile .vs {
+                transform: rotate(90deg);
+                margin: -10px 0;
+            }
+            .match-top {
+                flex-wrap: wrap;
+            }
+            .match-bottom {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .match-actions {
+                justify-content: center;
+            }
+        }
+        .mobile-chat-toggle {
+            display: none;
         }
     </style>
 </head>
 <body>
 
+    <!-- Toast Container -->
+    <div class="toast-container" id="toast-container">
+        <div class="toast" id="toast-message"></div>
+    </div>
+
+    <!-- Header -->
     <header>
         <div class="logo">
-            <span>🐉</span> Coinflip Multi-Browser
+            <div class="logo-wrapper">
+                <span>BloxWin</span>
+            </div>
         </div>
         <div id="user-header-area"></div>
     </header>
 
+    <!-- Main Content -->
     <div class="main-layout">
         <div>
-            <div class="section-title">Canlı Maçlar (Tüm Tarayıcılar)</div>
+            <div class="section-header">
+                <div class="section-title">
+                    <span id="section-title-text">Live Matches</span>
+                    <button id="history-toggle-btn" class="history-toggle-btn" onclick="toggleHistory()">History</button>
+                </div>
+            </div>
             <div class="matches-grid" id="matches-list"></div>
         </div>
+    </div>
 
-        <div class="chat-card">
-            <div class="chat-header">
-                <span>💬 Canlı Sohbet</span>
-                <span title="Canlı Ağ Bağlantısı"><i class="status-dot"></i> Canlı</span>
+    <!-- Chat Sidebar (Fixed) -->
+    <div class="chat-card" id="chat-card">
+        <div class="chat-header">
+            <div class="left">
+                <span>Chat</span>
+                <span class="status-dot"></span>
             </div>
-            <div class="chat-messages" id="chat-messages"></div>
-            <div class="chat-input-area">
-                <input type="text" class="chat-input" id="chat-input" placeholder="Mesaj yazın..." onkeydown="if(event.key==='Enter') sendMessage()">
-                <button class="chat-send-btn" onclick="sendMessage()">Gönder</button>
-            </div>
+        </div>
+        <div class="chat-messages" id="chat-messages"></div>
+        <div class="chat-input-area">
+            <input type="text" class="chat-input" id="chat-input" placeholder="Type a message..." onkeydown="if(event.key==='Enter') sendMessage()">
+            <button class="chat-send-btn" onclick="sendMessage()">Send</button>
         </div>
     </div>
 
-    <!-- Login Modal -->
+    <!-- Mobile Chat Toggle -->
+    <button class="mobile-chat-toggle" id="mobile-chat-toggle" onclick="toggleMobileChat()">💬</button>
+
+    <!-- Modals -->
     <div class="modal-overlay" id="login-modal">
         <div class="modal">
-            <h2>Giriş Yap / Kayıt Ol</h2>
+            <h2>Login / Register</h2>
             <div class="form-group">
-                <label>Kullanıcı Adı</label>
-                <input type="text" id="login-username" placeholder="Kullanıcı adınızı girin">
+                <label>Username</label>
+                <input type="text" id="login-username" placeholder="Enter your username">
             </div>
             <div class="form-group">
-                <label>Şifre</label>
-                <input type="password" id="login-password" placeholder="Şifrenizi girin">
+                <label>Password</label>
+                <input type="password" id="login-password" placeholder="Enter your password">
             </div>
             <div class="modal-actions">
-                <button class="post-btn" onclick="handleLogin()">Giriş Yap / Kayıt Ol</button>
+                <button class="post-btn" onclick="handleLogin()">Login / Register</button>
             </div>
         </div>
     </div>
 
-    <!-- Inventory Modal -->
     <div class="modal-overlay" id="inventory-modal">
         <div class="modal">
-            <h2>Envanteriniz</h2>
+            <h2>Your Inventory</h2>
             <div class="modal-grid" id="inventory-grid"></div>
-            <button class="cancel-btn" style="width: 100%;" onclick="closeModal('inventory-modal')">Kapat</button>
+            <button class="cancel-btn" style="width:100%;" onclick="closeModal('inventory-modal')">Close</button>
         </div>
     </div>
 
-    <!-- Create Match Modal -->
     <div class="modal-overlay" id="create-modal">
         <div class="modal">
-            <h2>Bahse Koyulacak Eşya Seçin</h2>
+            <h2>Select Pets to Wager (max 15)</h2>
             <div class="modal-grid" id="modal-inventory"></div>
+            <div id="create-total-value" style="text-align:center;font-weight:700;margin:10px 0;color:var(--accent);">Total Value: 0</div>
+
+            <!-- T / H Selection with images -->
+            <div class="side-select">
+                <button class="side-btn" data-side="H" onclick="selectSide('H', 'create')">
+                    <img src="https://bloxluck.com/img/dog.png" alt="H"> H
+                </button>
+                <button class="side-btn" data-side="T" onclick="selectSide('T', 'create')">
+                    <img src="https://bloxluck.com/img/gem.png" alt="T"> T
+                </button>
+            </div>
+
             <div class="modal-actions">
-                <button class="post-btn" onclick="postMatch()">Maçı Aç</button>
-                <button class="cancel-btn" onclick="closeModal('create-modal')">İptal</button>
+                <button class="post-btn" onclick="postMatch()">Create Match</button>
+                <button class="cancel-btn" onclick="closeModal('create-modal')">Cancel</button>
             </div>
         </div>
     </div>
 
-    <!-- Join Match Modal -->
     <div class="modal-overlay" id="join-select-modal">
         <div class="modal">
-            <h2>Maça Katılmak İçin Eşya Seçin</h2>
+            <h2>Select Pets to Join (max 15)</h2>
             <div class="modal-grid" id="join-modal-inventory"></div>
+            <div id="join-total-value" style="text-align:center;font-weight:700;margin:10px 0;color:var(--accent);">Total Value: 0</div>
+
             <div class="modal-actions">
-                <button class="post-btn" onclick="confirmJoinMatch()">Maça Gir</button>
-                <button class="cancel-btn" onclick="closeModal('join-select-modal')">İptal</button>
+                <button class="post-btn" onclick="confirmJoinMatch()">Join Match</button>
+                <button class="cancel-btn" onclick="closeModal('join-select-modal')">Cancel</button>
             </div>
         </div>
     </div>
 
-    <!-- Coin Flip Animation Modal -->
+    <!-- View Match Modal -->
+    <div class="modal-overlay" id="view-match-modal">
+        <div class="modal">
+            <h2>Match Details</h2>
+            <div id="view-match-content"></div>
+            <button class="cancel-btn" style="width:100%;margin-top:16px;" onclick="closeModal('view-match-modal')">Close</button>
+        </div>
+    </div>
+
     <div class="modal-overlay" id="flip-modal">
         <div class="modal coin-modal">
-            <h2 id="match-versus">Maç Başlıyor...</h2>
+            <h2 id="match-versus">Match Starting...</h2>
             <div class="coin-wrapper">
                 <div class="coin" id="coin">
                     <div class="side heads"></div>
                     <div class="side tails"></div>
                 </div>
             </div>
-            <div id="game-status">Yazı tura atılıyor...</div>
-            <button class="cancel-btn" id="close-game-btn" style="display: none; margin-top: 15px; width: 100%;" onclick="closeModal('flip-modal')">Kapat</button>
+            <div id="game-status">Flipping coin...</div>
+            <button class="cancel-btn" id="close-game-btn" style="display:none;margin-top:18px;width:100%;" onclick="closeModal('flip-modal')">Close</button>
         </div>
     </div>
 
@@ -529,22 +1222,71 @@
         let currentUser = localStorage.getItem('app_current_user') || null;
         let globalMatches = [];
         let chatHistory = JSON.parse(localStorage.getItem('app_chat_history') || '[]');
+        let showHistory = false;
 
-        // Pet görselleri güncellendi (elvebredd.com)
+        const MAX_PETS_PER_MATCH = 15;
+
         const defaultStarterPets = [
-            { id: 1, name: 'Shadow Dragon', icon: 'https://elvebredd.com/images/pets/Shadow%20Dragon.png?dpl=20260802-214403' },
-            { id: 2, name: 'Bat Dragon', icon: 'https://elvebredd.com/images/pets/Bat%20Dragon.png?dpl=20260802-214403' },
-            { id: 3, name: 'Frost Dragon', icon: 'https://elvebredd.com/images/pets/Frost%20Dragon.png?dpl=20260802-214403' },
-            { id: 4, name: 'Giraffe', icon: 'https://elvebredd.com/images/pets/Giraffe.png?dpl=20260802-214403' },
-            { id: 5, name: 'Owl', icon: 'https://elvebredd.com/images/pets/Owl.png?dpl=20260802-214403' }
+            { id: 1, name: 'FR Shadow Dragon', icon: 'https://elvebredd.com/images/pets/Shadow%20Dragon.png?dpl=20260802-214403', value: 670 },
+            { id: 2, name: 'FR Bat Dragon', icon: 'https://elvebredd.com/images/pets/Bat%20Dragon.png?dpl=20260802-214403', value: 914 },
+            { id: 3, name: 'FR Frost Dragon', icon: 'https://elvebredd.com/images/pets/Frost%20Dragon.png?dpl=20260802-214403', value: 308 },
+            { id: 4, name: 'FR Giraffe', icon: 'https://elvebredd.com/images/pets/Giraffe.png?dpl=20260802-214403', value: 455 },
+            { id: 5, name: 'FR Owl', icon: 'https://elvebredd.com/images/pets/Owl.png?dpl=20260802-214403', value: 241 }
         ];
 
-        let selectedPetForMatch = null;
-        let selectedPetForJoin = null;
+        let selectedPetsForMatch = [];
+        let selectedPetsForJoin = [];
         let matchToJoin = null;
         let isFlipping = false;
 
-        // --- Dışarı Tıklayınca Modalları Kapatma Mantığı ---
+        let selectedSideCreate = null;
+
+        // --- Toast ---
+        function showToast(message, duration = 4000) {
+            const toast = document.getElementById('toast-message');
+            toast.textContent = message;
+            toast.classList.add('show');
+            clearTimeout(window.toastTimeout);
+            window.toastTimeout = setTimeout(() => {
+                toast.classList.remove('show');
+            }, duration);
+        }
+
+        // --- UI functions ---
+        function selectSide(side, context) {
+            if (context === 'create') {
+                selectedSideCreate = side;
+                document.querySelectorAll('#create-modal .side-btn').forEach(btn => {
+                    btn.classList.toggle('selected', btn.dataset.side === side);
+                });
+            }
+        }
+
+        function toggleHistory() {
+            if (!currentUser) {
+                showToast('Please login first to view your history.');
+                return;
+            }
+            showHistory = !showHistory;
+            const btn = document.getElementById('history-toggle-btn');
+            const title = document.getElementById('section-title-text');
+            if (showHistory) {
+                btn.textContent = 'Live Matches';
+                btn.classList.add('active');
+                title.textContent = 'Match History';
+            } else {
+                btn.textContent = 'History';
+                btn.classList.remove('active');
+                title.textContent = 'Live Matches';
+            }
+            renderMatches();
+        }
+
+        function toggleMobileChat() {
+            document.getElementById('chat-card').classList.toggle('mobile-open');
+        }
+
+        // --- Modal close on outside click ---
         document.querySelectorAll('.modal-overlay').forEach(overlay => {
             overlay.addEventListener('click', function(e) {
                 if (e.target === this) {
@@ -554,6 +1296,7 @@
             });
         });
 
+        // --- Inventory helpers ---
         function getUserInventory(username) {
             const data = localStorage.getItem(`app_inv_${username}`);
             if (!data) {
@@ -567,103 +1310,142 @@
             localStorage.setItem(`app_inv_${username}`, JSON.stringify(inv));
         }
 
+        function addPetToInventory(username, pet) {
+            let inv = getUserInventory(username);
+            inv.push(pet);
+            setUserInventory(username, inv);
+            return true;
+        }
+
+        function removePetsFromInventory(username, petsToRemove) {
+            let inv = getUserInventory(username);
+            petsToRemove.forEach(petToRemove => {
+                const idx = inv.findIndex(p => p === petToRemove);
+                if (idx !== -1) {
+                    inv.splice(idx, 1);
+                } else {
+                    const idx2 = inv.findIndex(p => p.id === petToRemove.id);
+                    if (idx2 !== -1) inv.splice(idx2, 1);
+                }
+            });
+            setUserInventory(username, inv);
+        }
+
         function closeModal(modalId) {
             document.getElementById(modalId).style.display = 'none';
         }
 
+        // --- History ---
+        function getHistory(username) {
+            const data = localStorage.getItem(`app_history_${username}`);
+            return data ? JSON.parse(data) : [];
+        }
+
+        function setHistory(username, history) {
+            localStorage.setItem(`app_history_${username}`, JSON.stringify(history));
+        }
+
+        function addMatchToHistory(username, matchRecord) {
+            const history = getHistory(username);
+            history.unshift(matchRecord);
+            if (history.length > 50) history.pop();
+            setHistory(username, history);
+        }
+
+        // --- Header ---
         function renderHeader() {
             const container = document.getElementById('user-header-area');
             if (currentUser) {
                 container.innerHTML = `
-                    <div class="user-info-bar">
-                        <span class="user-badge">👤 ${currentUser}</span>
-                        <div class="header-actions">
-                            <button class="action-btn secondary-btn" onclick="openInventoryModal()">🎒 Envanter</button>
-                            <button class="action-btn" onclick="openCreateModal()">+ Maç Kur</button>
-                            <button class="action-btn danger-btn" onclick="handleLogout()">Çıkış</button>
+                        <div class="user-info-bar">
+                            <span class="user-badge">${currentUser}</span>
+                            <div class="header-actions">
+                                <button class="action-btn secondary-btn" onclick="openInventoryModal()">Inventory</button>
+                                <button class="action-btn" onclick="openCreateModal()">+ Create Match</button>
+                                <button class="action-btn danger-btn" onclick="handleLogout()">Logout</button>
+                            </div>
                         </div>
-                    </div>
-                `;
+                    `;
             } else {
                 container.innerHTML = `
-                    <button class="action-btn" onclick="document.getElementById('login-modal').style.display='flex'">Giriş Yap / Kayıt Ol</button>
-                `;
+                        <button class="action-btn" onclick="document.getElementById('login-modal').style.display='flex'">Login / Register</button>
+                    `;
             }
         }
 
-        // --- Şifreli Giriş & Kayıt Mantığı ---
+        // --- Login/Logout ---
         function handleLogin() {
             const userInp = document.getElementById('login-username').value.trim();
             const passInp = document.getElementById('login-password').value.trim();
-
-            if (!userInp || !passInp) return alert('Lütfen kullanıcı adı ve şifrenizi girin!');
-
+            if (!userInp || !passInp) {
+                showToast('Please enter username and password!');
+                return;
+            }
             const registeredUsers = JSON.parse(localStorage.getItem('app_registered_users') || '{}');
-
             if (registeredUsers[userInp]) {
                 if (registeredUsers[userInp] !== passInp) {
-                    return alert('Hatalı şifre! Lütfen şifrenizi kontrol edin.');
+                    showToast('Wrong password!');
+                    return;
                 }
             } else {
                 registeredUsers[userInp] = passInp;
                 localStorage.setItem('app_registered_users', JSON.stringify(registeredUsers));
-                alert('Yeni hesabınız başarıyla oluşturuldu!');
+                showToast('New account created!');
             }
-
             currentUser = userInp;
             localStorage.setItem('app_current_user', currentUser);
             getUserInventory(currentUser);
             closeModal('login-modal');
             renderHeader();
             renderMatches();
-
             pubnub.publish({ channel: CHANNEL, message: { type: 'REQUEST_SYNC' } });
         }
 
         function handleLogout() {
             currentUser = null;
             localStorage.removeItem('app_current_user');
+            if (showHistory) {
+                showHistory = false;
+                const btn = document.getElementById('history-toggle-btn');
+                const title = document.getElementById('section-title-text');
+                btn.textContent = 'History';
+                btn.classList.remove('active');
+                title.textContent = 'Live Matches';
+            }
             renderHeader();
             renderMatches();
         }
 
-        // Network Listener
+        // --- PubNub ---
         pubnub.addListener({
             message: function(event) {
                 const msg = event.message;
-
                 if (msg.type === 'CHAT') {
                     saveAndRenderChat(msg.username, msg.text, msg.time);
                 }
-
                 if (msg.type === 'MATCH_CREATED') {
                     if (!globalMatches.some(m => m.id === msg.match.id)) {
                         globalMatches.unshift(msg.match);
                         renderMatches();
                     }
                 }
-
                 if (msg.type === 'MATCH_CANCELED') {
                     globalMatches = globalMatches.filter(m => m.id !== msg.matchId);
                     renderMatches();
                 }
-
                 if (msg.type === 'GAME_START') {
                     globalMatches = globalMatches.filter(m => m.id !== msg.matchId);
                     renderMatches();
-
                     if (currentUser === msg.host || currentUser === msg.joiner) {
                         executeCoinFlip(msg);
                     }
                 }
-
                 if (msg.type === 'REQUEST_SYNC' && globalMatches.length > 0) {
                     pubnub.publish({
                         channel: CHANNEL,
                         message: { type: 'SYNC_MATCHES', matches: globalMatches }
                     });
                 }
-
                 if (msg.type === 'SYNC_MATCHES') {
                     msg.matches.forEach(m => {
                         if (!globalMatches.some(existing => existing.id === m.id)) {
@@ -675,13 +1457,11 @@
             }
         });
 
-        // --- Chat Geçmişini Saklama Mantığı ---
+        // --- Chat ---
         function renderChatHistory() {
             const container = document.getElementById('chat-messages');
             container.innerHTML = '';
-            chatHistory.forEach(msg => {
-                appendChatMessageDOM(msg.username, msg.text, msg.time);
-            });
+            chatHistory.forEach(msg => appendChatMessageDOM(msg.username, msg.text, msg.time));
         }
 
         function saveAndRenderChat(username, text, time) {
@@ -693,105 +1473,284 @@
         }
 
         function sendMessage() {
-            if (!currentUser) return document.getElementById('login-modal').style.display = 'flex';
+            if (!currentUser) {
+                showToast('Please login first to send a message.');
+                return;
+            }
             const input = document.getElementById('chat-input');
             const text = input.value.trim();
             if (!text) return;
-
             const now = new Date();
             const timeStr = now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
-
             pubnub.publish({
                 channel: CHANNEL,
                 message: { type: 'CHAT', username: currentUser, text: text, time: timeStr }
             });
-
             input.value = '';
         }
 
         function appendChatMessageDOM(username, text, time) {
-            const messagesContainer = document.getElementById('chat-messages');
+            const container = document.getElementById('chat-messages');
             const msgDiv = document.createElement('div');
             msgDiv.className = 'chat-msg';
             msgDiv.innerHTML = `<span class="username">${escapeHTML(username)}:</span>${escapeHTML(text)} <span class="time">${time}</span>`;
-            messagesContainer.appendChild(msgDiv);
-            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            container.appendChild(msgDiv);
+            container.scrollTop = container.scrollHeight;
         }
 
+        function escapeHTML(str) {
+            return str.replace(/[&<>'"]/g, tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag));
+        }
+
+        function sumPets(pets) {
+            return pets.reduce((acc, p) => acc + (p.value || 0), 0);
+        }
+
+        // --- Render ---
         function renderMatches() {
             const container = document.getElementById('matches-list');
             container.innerHTML = '';
 
-            if (globalMatches.length === 0) {
-                container.innerHTML = '<div style="color: #64748b; padding: 20px; text-align: center;">Aktif maç bulunmuyor. Herhangi bir tarayıcıdan maç kurabilirsin!</div>';
+            if (showHistory) {
+                if (!currentUser) {
+                    container.innerHTML = '<div style="color:#868e96;padding:20px;text-align:center;">Please login to view your history.</div>';
+                    return;
+                }
+                const history = getHistory(currentUser);
+                if (history.length === 0) {
+                    container.innerHTML = '<div style="color:#868e96;padding:20px;text-align:center;">No match history yet.</div>';
+                    return;
+                }
+                history.forEach(record => {
+                    const isWinner = record.winner === currentUser;
+                    const opponent = isWinner ? record.loser : record.winner;
+                    const resultText = isWinner ? 'You Won!' : 'You Lost!';
+                    const resultClass = isWinner ? 'win' : 'lose';
+
+                    const hostPetsHtml = record.hostPets.map(p =>
+                        `<img class="pet-img" src="${p.icon}" alt="${p.name}" title="${p.name}">`
+                    ).join('');
+                    const joinerPetsHtml = record.joinerPets.map(p =>
+                        `<img class="pet-img" src="${p.icon}" alt="${p.name}" title="${p.name}">`
+                    ).join('');
+
+                    // yardımcı fonksiyonlar
+                    const sideIcon = (side) => side === 'H' ? 'https://bloxluck.com/img/dog.png' : 'https://bloxluck.com/img/gem.png';
+                    const sideClass = (side) => side === 'H' ? 'side-indicator' : 'opponent-side';
+
+                    const currentUserSide = isWinner ? record.hostSide : record.joinerSide;
+                    const opponentSide = isWinner ? record.joinerSide : record.hostSide;
+
+                    const card = document.createElement('div');
+                    card.className = 'history-card';
+                    card.innerHTML = `
+                            <div class="top-row">
+                                <span class="result ${resultClass}">${resultText}</span>
+                            </div>
+                            <div><span class="opponent">Opponent:</span> ${opponent}</div>
+                            <div class="pets-row">
+                                <span class="label">Your Pets:</span>
+                                <div class="pet-group">${isWinner ? hostPetsHtml : joinerPetsHtml}</div>
+                            </div>
+                            <div class="pets-row">
+                                <span class="label">Opponent's Pets:</span>
+                                <div class="pet-group">${isWinner ? joinerPetsHtml : hostPetsHtml}</div>
+                            </div>
+                            <div class="total-value">Total Value: ${record.totalValue}</div>
+                            <div class="history-side">
+                                <span class="${sideClass(currentUserSide)}"><img src="${sideIcon(currentUserSide)}" alt="${currentUserSide}"> ${currentUser}'s side: ${currentUserSide}</span>
+                                <span class="${sideClass(opponentSide)}"><img src="${sideIcon(opponentSide)}" alt="${opponentSide}"> ${opponent}'s side: ${opponentSide}</span>
+                                <span class="${sideClass(record.winnerSide)}">Winner side: ${record.winnerSide}</span>
+                            </div>
+                        `;
+                    container.appendChild(card);
+                });
                 return;
             }
 
+            // Live
+            if (globalMatches.length === 0) {
+                container.innerHTML = '<div style="color:#868e96;padding:20px;text-align:center;">No Active Matches.</div>';
+                return;
+            }
             globalMatches.forEach(match => {
                 const isMyMatch = currentUser && match.host === currentUser;
+                const totalValue = sumPets(match.hostPets);
+
                 const card = document.createElement('div');
                 card.className = 'match-card';
+
+                // Host side - H mavi, T kırmızı
+                const hostSideImg = match.hostSide === 'H' ? 'https://bloxluck.com/img/dog.png' : 'https://bloxluck.com/img/gem.png';
+                const hostSideClass = match.hostSide === 'H' ? 'side-indicator' : 'opponent-side';
+                const hostSideHtml = match.hostSide ? `<span class="${hostSideClass}"><img src="${hostSideImg}" alt="${match.hostSide}"> ${match.hostSide}</span>` : '';
+
+                // Host pets
+                const petsHtml = match.hostPets.map(pet =>
+                    `<img class="pet-img" src="${pet.icon}" alt="${pet.name}" title="${pet.name}">`
+                ).join('');
+
+                // Opponent side - H mavi, T kırmızı
+                const opponentSide = match.hostSide === 'H' ? 'T' : 'H';
+                const opponentImg = opponentSide === 'H' ? 'https://bloxluck.com/img/dog.png' : 'https://bloxluck.com/img/gem.png';
+                const opponentSideClass = opponentSide === 'H' ? 'side-indicator' : 'opponent-side';
+                const opponentSideHtml = `<span class="${opponentSideClass}"><img src="${opponentImg}" alt="${opponentSide}"> ${opponentSide}</span>`;
+
+                // Join button label
+                const joinLabel = `Join Match For ${totalValue}`;
+
+                // Actions (buttons)
+                let actionsHtml = '';
+                if (isMyMatch) {
+                    actionsHtml = `
+                            <button class="view-btn" onclick="viewMatch(${match.id})">View</button>
+                            <button class="cancel-match-btn" onclick="cancelMyMatch(${match.id})">Cancel</button>
+                        `;
+                } else {
+                    actionsHtml = `
+                            <button class="view-btn" onclick="viewMatch(${match.id})">View</button>
+                            <button class="join-btn" onclick="openJoinSelectModal(${match.id})">${joinLabel}</button>
+                        `;
+                }
+
                 card.innerHTML = `
-                    <div class="match-user">
-                        <span>👤 ${match.host}</span>
-                        <div class="pet-badge">
-                            <img class="pet-img" src="${match.petIcon}" alt="${match.petName}">
-                            <span>${match.petName}</span>
+                        <div class="match-top">
+                            ${hostSideHtml}
+                            <span class="host-name">${match.host}</span>
+                            <div class="pet-badge">
+                                <div class="pet-group">${petsHtml}</div>
+                                <span>${match.hostPets.length} pet(s)</span>
+                                <span class="match-total-value">Value: ${totalValue}</span>
+                            </div>
                         </div>
-                    </div>
-                    ${isMyMatch 
-                        ? `<button class="cancel-match-btn" onclick="cancelMyMatch(${match.id})">İptal Et</button>` 
-                        : `<button class="join-btn" onclick="openJoinSelectModal(${match.id})">Maça Katıl</button>`}
-                `;
+                        <div class="match-bottom">
+                            ${opponentSideHtml}
+                            <div class="match-actions">
+                                ${actionsHtml}
+                            </div>
+                        </div>
+                    `;
                 container.appendChild(card);
             });
         }
 
+        // --- View Match ---
+        function viewMatch(matchId) {
+            const match = globalMatches.find(m => m.id === matchId);
+            if (!match) return showToast('Match not found!');
+            const content = document.getElementById('view-match-content');
+
+            const hostPetsHtml = match.hostPets.map(p =>
+                `<img class="pet-img" src="${p.icon}" alt="${p.name}" title="${p.name}">`
+            ).join('');
+
+            const hostSideImg = match.hostSide === 'H' ? 'https://bloxluck.com/img/dog.png' : 'https://bloxluck.com/img/gem.png';
+            const hostSide = match.hostSide || '?';
+
+            const joinerSide = match.hostSide === 'H' ? 'T' : 'H';
+            const joinerSideImg = joinerSide === 'H' ? 'https://bloxluck.com/img/dog.png' : 'https://bloxluck.com/img/gem.png';
+
+            const joinerPetsHtml = `<div class="pet-img empty-pet" style="width:34px;height:34px;border-radius:6px;border:1px dashed #4dabf7;opacity:0.4;"></div>`;
+
+            let html = `
+                    <div class="view-profile">
+                        <div class="player">
+                            <div class="avatar">${match.host.charAt(0).toUpperCase()}</div>
+                            <div class="name">${match.host}</div>
+                            <div class="divider"></div>
+                            <div class="pets">${hostPetsHtml}</div>
+                            <div class="view-side"><img src="${hostSideImg}" alt="${hostSide}"> Side: ${hostSide}</div>
+                        </div>
+                        <div class="vs">VS</div>
+                        <div class="player">
+                            <div class="avatar empty">?</div>
+                            <div class="name" style="color:#868e96;">Waiting for opponent</div>
+                            <div class="divider"></div>
+                            <div class="pets">${joinerPetsHtml}</div>
+                            <div class="view-side" style="color:#868e96;"><img src="${joinerSideImg}" alt="${joinerSide}"> Side: ${joinerSide}</div>
+                        </div>
+                    </div>
+                    <div class="view-status">Status: Waiting for opponent</div>
+                `;
+            content.innerHTML = html;
+            document.getElementById('view-match-modal').style.display = 'flex';
+        }
+
+        // --- Create ---
         function openCreateModal() {
-            if (!currentUser) return document.getElementById('login-modal').style.display = 'flex';
+            if (!currentUser) {
+                showToast('Please login first to create a match.');
+                return;
+            }
             const inv = getUserInventory(currentUser);
             const grid = document.getElementById('modal-inventory');
             grid.innerHTML = '';
-            selectedPetForMatch = null;
+            selectedPetsForMatch = [];
+            selectedSideCreate = null;
+            document.querySelectorAll('#create-modal .side-btn').forEach(btn => btn.classList.remove('selected'));
 
-            inv.forEach(pet => {
-                const item = document.createElement('div');
-                item.className = 'modal-item';
-                item.innerHTML = `<img class="pet-img" src="${pet.icon}" alt="${pet.name}"><div>${pet.name}</div>`;
-                item.onclick = () => {
-                    selectedPetForMatch = pet;
-                    document.querySelectorAll('#modal-inventory .modal-item').forEach(e => e.classList.remove('selected'));
-                    item.classList.add('selected');
-                };
-                grid.appendChild(item);
-            });
+            if (inv.length === 0) {
+                grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;color:#868e96;padding:20px;">No pets in inventory.</div>';
+            } else {
+                inv.forEach(pet => {
+                    const item = document.createElement('div');
+                    item.className = 'modal-item';
+                    item.innerHTML = `
+                            <img class="pet-img" src="${pet.icon}" alt="${pet.name}" style="width:44px;height:44px;">
+                            <div style="font-weight:600;font-size:14px;">${pet.name}</div>
+                            <div class="pet-value">Value: ${pet.value}</div>
+                        `;
+                    item.onclick = () => {
+                        const idx = selectedPetsForMatch.findIndex(p => p === pet);
+                        if (idx !== -1) {
+                            selectedPetsForMatch.splice(idx, 1);
+                            item.classList.remove('selected');
+                        } else {
+                            if (selectedPetsForMatch.length >= MAX_PETS_PER_MATCH) {
+                                showToast(`You can select max ${MAX_PETS_PER_MATCH} pets per match.`);
+                                return;
+                            }
+                            selectedPetsForMatch.push(pet);
+                            item.classList.add('selected');
+                        }
+                        updateCreateTotal();
+                    };
+                    grid.appendChild(item);
+                });
+            }
+            updateCreateTotal();
             document.getElementById('create-modal').style.display = 'flex';
         }
 
-        function postMatch() {
-            if (!selectedPetForMatch) return alert('Bir eşya seçin!');
+        function updateCreateTotal() {
+            const total = sumPets(selectedPetsForMatch);
+            document.getElementById('create-total-value').textContent = `Total Value: ${total} (${selectedPetsForMatch.length}/${MAX_PETS_PER_MATCH})`;
+        }
 
-            let inv = getUserInventory(currentUser);
-            const petIdx = inv.findIndex(p => p.id === selectedPetForMatch.id);
-            const wageredPet = inv.splice(petIdx, 1)[0];
-            setUserInventory(currentUser, inv);
+        function postMatch() {
+            if (selectedPetsForMatch.length === 0) {
+                showToast('Select at least one pet!');
+                return;
+            }
+            if (!selectedSideCreate) {
+                showToast('Please select a side (H or T)!');
+                return;
+            }
+
+            removePetsFromInventory(currentUser, selectedPetsForMatch);
 
             const newMatch = {
                 id: Date.now(),
                 host: currentUser,
-                petName: wageredPet.name,
-                petIcon: wageredPet.icon,
-                petObject: wageredPet
+                hostPets: selectedPetsForMatch.slice(),
+                hostSide: selectedSideCreate
             };
-
             globalMatches.unshift(newMatch);
             renderMatches();
-
             pubnub.publish({
                 channel: CHANNEL,
                 message: { type: 'MATCH_CREATED', match: newMatch }
             });
-
             closeModal('create-modal');
         }
 
@@ -799,11 +1758,8 @@
             const matchIdx = globalMatches.findIndex(m => m.id === matchId);
             if (matchIdx !== -1) {
                 const canceled = globalMatches.splice(matchIdx, 1)[0];
-                let inv = getUserInventory(currentUser);
-                inv.push(canceled.petObject);
-                setUserInventory(currentUser, inv);
+                canceled.hostPets.forEach(pet => addPetToInventory(currentUser, pet));
                 renderMatches();
-
                 pubnub.publish({
                     channel: CHANNEL,
                     message: { type: 'MATCH_CANCELED', matchId: matchId }
@@ -811,123 +1767,195 @@
             }
         }
 
+        // --- Join ---
         function openJoinSelectModal(matchId) {
-            if (!currentUser) return document.getElementById('login-modal').style.display = 'flex';
+            if (!currentUser) {
+                showToast('Please login first to join a match.');
+                return;
+            }
             matchToJoin = globalMatches.find(m => m.id === matchId);
             if (!matchToJoin) return;
 
             const inv = getUserInventory(currentUser);
             const grid = document.getElementById('join-modal-inventory');
             grid.innerHTML = '';
-            selectedPetForJoin = null;
+            selectedPetsForJoin = [];
 
-            inv.forEach(pet => {
-                const item = document.createElement('div');
-                item.className = 'modal-item';
-                item.innerHTML = `<img class="pet-img" src="${pet.icon}" alt="${pet.name}"><div>${pet.name}</div>`;
-                item.onclick = () => {
-                    selectedPetForJoin = pet;
-                    document.querySelectorAll('#join-modal-inventory .modal-item').forEach(e => e.classList.remove('selected'));
-                    item.classList.add('selected');
-                };
-                grid.appendChild(item);
-            });
+            if (inv.length === 0) {
+                grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;color:#868e96;padding:20px;">No pets in inventory.</div>';
+            } else {
+                inv.forEach(pet => {
+                    const item = document.createElement('div');
+                    item.className = 'modal-item';
+                    item.innerHTML = `
+                            <img class="pet-img" src="${pet.icon}" alt="${pet.name}" style="width:44px;height:44px;">
+                            <div style="font-weight:600;font-size:14px;">${pet.name}</div>
+                            <div class="pet-value">Value: ${pet.value}</div>
+                        `;
+                    item.onclick = () => {
+                        const idx = selectedPetsForJoin.findIndex(p => p === pet);
+                        if (idx !== -1) {
+                            selectedPetsForJoin.splice(idx, 1);
+                            item.classList.remove('selected');
+                        } else {
+                            if (selectedPetsForJoin.length >= MAX_PETS_PER_MATCH) {
+                                showToast(`You can select max ${MAX_PETS_PER_MATCH} pets per match.`);
+                                return;
+                            }
+                            selectedPetsForJoin.push(pet);
+                            item.classList.add('selected');
+                        }
+                        updateJoinTotal();
+                    };
+                    grid.appendChild(item);
+                });
+            }
+            updateJoinTotal();
             document.getElementById('join-select-modal').style.display = 'flex';
         }
 
-        function confirmJoinMatch() {
-            if (!selectedPetForJoin) return alert('Eşya seçin!');
+        function updateJoinTotal() {
+            const total = sumPets(selectedPetsForJoin);
+            document.getElementById('join-total-value').textContent = `Total Value: ${total} (${selectedPetsForJoin.length}/${MAX_PETS_PER_MATCH})`;
+        }
 
-            let inv = getUserInventory(currentUser);
-            const petIdx = inv.findIndex(p => p.id === selectedPetForJoin.id);
-            const joinerWageredPet = inv.splice(petIdx, 1)[0];
-            setUserInventory(currentUser, inv);
+        function confirmJoinMatch() {
+            if (selectedPetsForJoin.length === 0) {
+                showToast('Select at least one pet!');
+                return;
+            }
+
+            const joinerSide = matchToJoin.hostSide === 'H' ? 'T' : 'H';
+
+            removePetsFromInventory(currentUser, selectedPetsForJoin);
 
             const hostWins = Math.random() < 0.5;
-
             closeModal('join-select-modal');
-
             pubnub.publish({
                 channel: CHANNEL,
                 message: {
                     type: 'GAME_START',
                     matchId: matchToJoin.id,
                     host: matchToJoin.host,
-                    hostPet: matchToJoin.petObject,
+                    hostPets: matchToJoin.hostPets,
+                    hostSide: matchToJoin.hostSide,
                     joiner: currentUser,
-                    joinerPet: joinerWageredPet,
+                    joinerPets: selectedPetsForJoin.slice(),
+                    joinerSide: joinerSide,
                     hostWins: hostWins
                 }
             });
         }
 
+        // --- Coin flip ---
         function executeCoinFlip(gameData) {
             const flipModal = document.getElementById('flip-modal');
             const statusEl = document.getElementById('game-status');
             const closeBtn = document.getElementById('close-game-btn');
             const coin = document.getElementById('coin');
-
             document.getElementById('match-versus').textContent = `${gameData.host} vs ${gameData.joiner}`;
-            statusEl.style.color = '#f8fafc';
-            statusEl.textContent = 'Yazı tura atılıyor...';
+            statusEl.style.color = '#f1f3f5';
+            statusEl.textContent = 'Flipping coin...';
             closeBtn.style.display = 'none';
             flipModal.style.display = 'flex';
-
             isFlipping = true;
 
+            // Animasyonu sıfırla
             coin.style.animation = 'none';
-            coin.offsetHeight;
+            coin.offsetHeight; // reflow
+
+            // Kazanan tarafı belirle
+            const winnerSide = gameData.hostWins ? gameData.hostSide : gameData.joinerSide;
+            // H için 0°, T için 180°
+            const endDegree = (10 * 360) + (winnerSide === 'H' ? 0 : 180);
 
             const durationSec = gameData.hostWins ? 2.1 : 2.3;
             const keyframeName = `flip_${Date.now()}`;
-            const endDegree = (10 * 360) + (gameData.hostWins ? 0 : 180);
 
             const styleSheet = document.createElement('style');
-            styleSheet.innerHTML = `@keyframes ${keyframeName} { 0% { transform: rotateY(0deg); } 100% { transform: rotateY(${endDegree}deg); } }`;
+            styleSheet.innerHTML =
+                `@keyframes ${keyframeName} { 0% { transform: rotateY(0deg); } 100% { transform: rotateY(${endDegree}deg); } }`;
             document.head.appendChild(styleSheet);
             coin.style.animation = `${keyframeName} ${durationSec}s cubic-bezier(0.15, 0.85, 0.35, 1) forwards`;
 
             setTimeout(() => {
                 isFlipping = false;
+                // Animasyonu kaldır ve transform'u manuel olarak ata
+                coin.style.animation = 'none';
+                coin.style.transform = `rotateY(${endDegree}deg)`;
+
+                if (styleSheet.parentNode) {
+                    document.head.removeChild(styleSheet);
+                }
 
                 const winner = gameData.hostWins ? gameData.host : gameData.joiner;
+                const loser = gameData.hostWins ? gameData.joiner : gameData.host;
+                const allPets = [...gameData.hostPets, ...gameData.joinerPets];
+                const totalValue = sumPets(allPets);
+                const now = new Date();
+                const dateStr = now.toLocaleString();
+
+                const historyRecord = {
+                    date: dateStr,
+                    host: gameData.host,
+                    joiner: gameData.joiner,
+                    winner: winner,
+                    loser: loser,
+                    hostPets: gameData.hostPets,
+                    joinerPets: gameData.joinerPets,
+                    hostSide: gameData.hostSide,
+                    joinerSide: gameData.joinerSide,
+                    winnerSide: winnerSide,
+                    totalValue: totalValue
+                };
 
                 if (currentUser === winner) {
-                    statusEl.style.color = '#2ed573';
-                    statusEl.textContent = `TEBRİKLER KAZANDIN! Odadaki tüm eşyaları aldın!`;
-                    let inv = getUserInventory(currentUser);
-                    inv.push(gameData.hostPet);
-                    inv.push(gameData.joinerPet);
-                    setUserInventory(currentUser, inv);
+                    statusEl.style.color = '#51cf66';
+                    statusEl.textContent = `CONGRATULATIONS! You won all pets! (Value: ${totalValue})`;
+                    allPets.forEach(pet => addPetToInventory(currentUser, pet));
+                } else if (currentUser === loser) {
+                    statusEl.style.color = '#ff6b6b';
+                    statusEl.textContent = `You lost! Your pets go to ${winner}.`;
                 } else {
-                    statusEl.style.color = '#ff4757';
-                    statusEl.textContent = `KAYBETTİN! Eşyan ${winner} kullanıcısına gitti.`;
+                    statusEl.style.color = '#f1f3f5';
+                    statusEl.textContent = `${winner} won the match!`;
+                }
+
+                if (currentUser === gameData.host || currentUser === gameData.joiner) {
+                    addMatchToHistory(currentUser, historyRecord);
                 }
 
                 closeBtn.style.display = 'block';
-                document.head.removeChild(styleSheet);
-            }, durationSec * 1000);
+            }, durationSec * 1000 + 50);
         }
 
+        // --- Inventory ---
         function openInventoryModal() {
-            if (!currentUser) return;
+            if (!currentUser) {
+                showToast('Please login first to view your inventory.');
+                return;
+            }
             const inv = getUserInventory(currentUser);
             const grid = document.getElementById('inventory-grid');
             grid.innerHTML = '';
-            inv.forEach(pet => {
-                const item = document.createElement('div');
-                item.className = 'modal-item';
-                item.innerHTML = `<img class="pet-img" src="${pet.icon}" alt="${pet.name}"><div>${pet.name}</div>`;
-                grid.appendChild(item);
-            });
+            if (inv.length === 0) {
+                grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;color:#868e96;padding:20px;">No pets in inventory.</div>';
+            } else {
+                inv.forEach(pet => {
+                    const item = document.createElement('div');
+                    item.className = 'modal-item';
+                    item.innerHTML = `
+                            <img class="pet-img" src="${pet.icon}" alt="${pet.name}" style="width:44px;height:44px;">
+                            <div style="font-weight:600;font-size:14px;">${pet.name}</div>
+                            <div class="pet-value">Value: ${pet.value}</div>
+                        `;
+                    grid.appendChild(item);
+                });
+            }
             document.getElementById('inventory-modal').style.display = 'flex';
         }
 
-        function escapeHTML(str) {
-            return str.replace(/[&<>'"]/g, tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag));
-        }
-
-        // Başlangıç Yüklemeleri
+        // --- Init ---
         renderHeader();
         renderMatches();
         renderChatHistory();
