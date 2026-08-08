@@ -134,16 +134,6 @@
             border-color: #4dabf7;
             box-shadow: 0 0 12px rgba(77, 171, 247, 0.15);
         }
-        .user-badge .admin-tag {
-            background: #ff6b6b;
-            color: #fff;
-            font-size: 9px;
-            font-weight: 800;
-            padding: 2px 8px;
-            border-radius: 20px;
-            letter-spacing: 0.5px;
-            text-transform: uppercase;
-        }
 
         .header-actions {
             display: flex;
@@ -280,23 +270,24 @@
         .matches-grid {
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 12px;
         }
 
-        /* ---- Compact Match Card ---- */
+        /* ---- Match Card ---- */
         .match-card {
             background: var(--card-bg);
             border-radius: var(--radius);
-            padding: 10px 14px;
+            padding: 14px 18px;
             border: 1px solid var(--border-color);
             display: flex;
             align-items: center;
             justify-content: space-between;
             flex-wrap: wrap;
-            gap: 6px 12px;
+            gap: 8px 14px;
             transition: transform 0.15s ease, box-shadow 0.2s;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
             will-change: transform;
+            min-height: 72px;
         }
 
         .match-card:hover {
@@ -307,7 +298,7 @@
         .match-left {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
             flex-wrap: wrap;
             flex: 1 1 auto;
             min-width: 0;
@@ -316,21 +307,21 @@
         .match-right {
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 8px;
             flex-shrink: 0;
         }
 
-        /* Avatar circle with initial and color indicator */
+        /* Avatar circle */
         .avatar-circle {
             position: relative;
-            width: 36px;
-            height: 36px;
+            width: 44px;
+            height: 44px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: 700;
-            font-size: 16px;
+            font-size: 18px;
             color: #fff;
             background: #0f172a;
             border: 2px solid #4dabf7;
@@ -341,8 +332,8 @@
             position: absolute;
             top: -4px;
             right: -4px;
-            width: 14px;
-            height: 14px;
+            width: 16px;
+            height: 16px;
             border-radius: 50%;
             border: 2px solid var(--bg-dark);
             box-shadow: 0 0 4px rgba(0,0,0,0.5);
@@ -370,7 +361,7 @@
 
         .match-pets {
             display: flex;
-            gap: 4px;
+            gap: 6px;
             flex-wrap: wrap;
             align-items: center;
         }
@@ -382,8 +373,8 @@
             background: #0f172a;
             border: 2px solid #2d3b4f;
             border-radius: 50%;
-            width: 38px;
-            height: 38px;
+            width: 46px;
+            height: 46px;
             transition: border-color 0.2s, transform 0.2s;
         }
         .pet-circle:hover {
@@ -391,8 +382,8 @@
             transform: scale(1.05);
         }
         .pet-circle .pet-img {
-            width: 26px;
-            height: 26px;
+            width: 32px;
+            height: 32px;
             object-fit: cover;
             border-radius: 50%;
             display: block;
@@ -447,7 +438,7 @@
 
         .match-actions {
             display: flex;
-            gap: 4px;
+            gap: 6px;
             align-items: center;
         }
 
@@ -455,10 +446,10 @@
         .view-btn,
         .cancel-match-btn {
             border: none;
-            padding: 4px 12px;
+            padding: 5px 14px;
             border-radius: 30px;
             font-weight: 600;
-            font-size: 11px;
+            font-size: 12px;
             cursor: pointer;
             transition: transform 0.15s ease, box-shadow 0.2s;
             will-change: transform;
@@ -491,8 +482,8 @@
             background: #4dabf7;
             color: white;
             box-shadow: 0 4px 10px rgba(77, 171, 247, 0.2);
-            padding: 4px 10px;
-            font-size: 10px;
+            padding: 4px 12px;
+            font-size: 11px;
         }
 
         .view-btn:hover {
@@ -507,14 +498,14 @@
         .ongoing-match .match-status {
             color: var(--accent);
             font-weight: 700;
-            font-size: 13px;
+            font-size: 14px;
             margin-right: 4px;
         }
 
         .mini-coin-wrapper {
             perspective: 600px;
-            width: 36px;
-            height: 36px;
+            width: 38px;
+            height: 38px;
             display: inline-block;
             margin: 0 4px;
         }
@@ -612,8 +603,8 @@
             flex-wrap: wrap;
         }
         .history-card .pets-row .pet-group .pet-img {
-            width: 28px;
-            height: 28px;
+            width: 30px;
+            height: 30px;
             border-radius: 50%;
             border: 1px solid #2d3b4f;
         }
@@ -759,17 +750,6 @@
         }
         .chat-msg .username:hover {
             color: #4dabf7;
-        }
-        .chat-msg .username .admin-tag {
-            background: #ff6b6b;
-            color: #fff;
-            font-size: 8px;
-            font-weight: 800;
-            padding: 1px 7px;
-            border-radius: 20px;
-            margin-left: 4px;
-            letter-spacing: 0.3px;
-            text-transform: uppercase;
         }
         .chat-msg .time {
             font-size: 10px;
@@ -1298,8 +1278,8 @@
             box-shadow: 0 0 0 2px rgba(252, 196, 25, 0.2);
         }
         .withdraw-pet-item .pet-img {
-            width: 44px;
-            height: 44px;
+            width: 48px;
+            height: 48px;
             object-fit: cover;
             border-radius: 50%;
             border: 1px solid #2d3b4f;
@@ -1514,16 +1494,6 @@
             font-weight: 700;
             color: #f1f3f5;
         }
-        .profile-username .admin-tag {
-            background: #ff6b6b;
-            color: #fff;
-            font-size: 11px;
-            font-weight: 800;
-            padding: 2px 12px;
-            border-radius: 20px;
-            margin-left: 8px;
-            letter-spacing: 0.5px;
-        }
 
         /* Leaderboard Modal */
         .leaderboard-list {
@@ -1671,7 +1641,8 @@
             .match-card {
                 flex-direction: column;
                 align-items: stretch;
-                gap: 6px;
+                gap: 8px;
+                min-height: unset;
             }
             .match-left,
             .match-right {
@@ -2067,7 +2038,6 @@
         <div class="modal" style="max-width:480px;">
             <div id="profile-content" style="text-align:center;">
                 <div id="profile-username" class="profile-username"></div>
-                <div id="profile-admin-badge" style="display:none;margin-top:4px;"><span class="admin-tag" style="background:#ff6b6b;color:#fff;font-size:11px;font-weight:800;padding:2px 12px;border-radius:20px;">Admin</span></div>
                 <div class="profile-stats" id="profile-stats"></div>
                 <button class="cancel-btn" style="width:100%;margin-top:16px;" onclick="closeModal('profile-modal')">Close</button>
             </div>
@@ -2077,7 +2047,7 @@
     <!-- Leaderboard Modal -->
     <div class="modal-overlay" id="leaderboard-modal">
         <div class="modal" style="max-width:500px;">
-            <h2>🏆 Leaderboard</h2>
+            <h2>Leaderboard</h2>
             <p style="color:#868e96;font-size:14px;margin-bottom:12px;">Top players by total profit</p>
             <div class="leaderboard-list" id="leaderboard-list"></div>
             <button class="cancel-btn" style="width:100%;margin-top:12px;" onclick="closeModal('leaderboard-modal')">Close</button>
@@ -2122,7 +2092,6 @@
                     localStorage.removeItem(key);
                 }
             });
-            // Also reset current user stats if logged in
             if (currentUser) {
                 setUserStats(currentUser, { totalWager: 0, totalProfit: 0, totalLost: 0 });
             }
@@ -2398,17 +2367,16 @@
         function renderHeader() {
             const container = document.getElementById('user-header-area');
             if (currentUser) {
-                const adminTag = isAdmin(currentUser) ? `<span class="admin-tag">Admin</span>` : '';
                 const adminPanelBtn = isAdmin(currentUser) ?
                     `<button class="action-btn admin-btn" onclick="openAdminPanel()">Admin</button>` : '';
 
                 container.innerHTML = `
                         <div class="user-info-bar">
                             <span class="user-badge" onclick="openProfile('${escapeHTML(currentUser)}')">
-                                ${escapeHTML(currentUser)} ${adminTag}
+                                ${escapeHTML(currentUser)}
                             </span>
                             <div class="header-actions">
-                                <button class="action-btn leaderboard-btn" onclick="openLeaderboard()">🏆 Leaderboard</button>
+                                <button class="action-btn leaderboard-btn" onclick="openLeaderboard()">Leaderboard</button>
                                 <button class="action-btn gold-btn" onclick="openDepositModal()">Deposit</button>
                                 <button class="action-btn purple-btn" onclick="openWithdrawModal()">Withdraw</button>
                                 <button class="action-btn" onclick="openCreateModal()">Create</button>
@@ -2420,7 +2388,7 @@
             } else {
                 container.innerHTML = `
                         <div class="header-actions">
-                            <button class="action-btn leaderboard-btn" onclick="openLeaderboard()">🏆 Leaderboard</button>
+                            <button class="action-btn leaderboard-btn" onclick="openLeaderboard()">Leaderboard</button>
                             <button class="action-btn" onclick="resetRobloxLoginModal(); openModal('login-modal')">Login with Roblox</button>
                         </div>
                     `;
@@ -2812,11 +2780,10 @@
             const container = document.getElementById('chat-messages');
             const msgDiv = document.createElement('div');
             msgDiv.className = 'chat-msg';
-            const adminTag = isAdmin(username) ? `<span class="admin-tag">Admin</span>` : '';
             const mutedLabel = isMuted(username) ? `<span class="muted-label">[MUTED]</span>` : '';
             msgDiv.innerHTML = `
                     <div class="msg-content">
-                        <span class="username" onclick="openProfile('${escapeHTML(username)}')">${escapeHTML(username)}${adminTag}</span>${mutedLabel} ${escapeHTML(text)} <span class="time">${time}</span>
+                        <span class="username" onclick="openProfile('${escapeHTML(username)}')">${escapeHTML(username)}</span>${mutedLabel} ${escapeHTML(text)} <span class="time">${time}</span>
                     </div>
                 `;
             container.appendChild(msgDiv);
@@ -2824,7 +2791,7 @@
         }
 
         // ============================================================
-        //  RENDER MATCHES (with avatar initials and color indicators)
+        //  RENDER MATCHES
         // ============================================================
         function renderMatches() {
             const container = document.getElementById('matches-list');
@@ -2908,17 +2875,14 @@
                 const card = document.createElement('div');
                 card.className = 'match-card';
 
-                // Host avatar
                 const hostInitial = getInitial(match.host);
                 const hostSideColor = match.hostSide === 'H' ? 'h-side' : 't-side';
 
-                // Opponent avatar
                 const opponentName = match.joiner || '?';
                 const opponentInitial = getInitial(opponentName);
                 const opponentSide = match.hostSide === 'H' ? 'T' : 'H';
                 const opponentSideColor = opponentSide === 'H' ? 'h-side' : 't-side';
 
-                // Pets in circles (no value text, border gray)
                 const petsHtml = match.hostPets.map(pet =>
                     `<div class="pet-circle"><img class="pet-img" src="${pet.icon}" alt="${pet.name}" title="${pet.name}"></div>`
                 ).join('');
@@ -2945,7 +2909,7 @@
                             <span class="match-vs">vs</span>
                             <div class="avatar-circle opponent" style="border-color: #868e96;">
                                 <span class="initials">${opponentInitial}</span>
-                                ${match.joiner ? `<span class="color-indicator ${opponentSideColor}"></span>` : ''}
+                                <span class="color-indicator ${opponentSideColor}"></span>
                             </div>
                             <div class="match-pets">${petsHtml}</div>
                         </div>
@@ -3414,8 +3378,7 @@
             if (!username) return;
             const stats = getUserStats(username);
 
-            const adminTag = isAdmin(username) ? `<span class="admin-tag">Admin</span>` : '';
-            document.getElementById('profile-username').innerHTML = `${escapeHTML(username)} ${adminTag}`;
+            document.getElementById('profile-username').innerHTML = `${escapeHTML(username)}`;
 
             const statsHtml = `
                     <div class="profile-stat">
@@ -3687,7 +3650,6 @@
         // ============================================================
         //  INIT
         // ============================================================
-        // Reset all stats so everyone starts fresh
         resetAllStats();
 
         renderHeader();
