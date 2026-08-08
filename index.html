@@ -1057,13 +1057,21 @@
                 stroke-width: 2.5;
             }
             .chat-header .close-chat-btn {
-                display: block;
-                background: none;
+                display: block !important;
+                background: #ff6b6b;
                 border: none;
-                color: #ced4da;
-                font-size: 26px;
+                color: white;
+                font-size: 22px;
+                font-weight: 700;
                 cursor: pointer;
-                padding: 0 8px;
+                padding: 6px 14px;
+                border-radius: 8px;
+                line-height: 1;
+                z-index: 10;
+                box-shadow: 0 2px 8px rgba(255, 107, 107, 0.3);
+            }
+            .chat-header .close-chat-btn:hover {
+                background: #ff5252;
             }
             .view-profile {
                 flex-direction: column;
