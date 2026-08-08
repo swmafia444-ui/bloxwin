@@ -320,29 +320,52 @@
             flex-shrink: 0;
         }
 
-        .match-names {
+        /* Avatar circle with initial and color indicator */
+        .avatar-circle {
+            position: relative;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
             display: flex;
             align-items: center;
-            gap: 4px;
+            justify-content: center;
             font-weight: 700;
-            font-size: 14px;
-            color: #e9ecef;
+            font-size: 16px;
+            color: #fff;
+            background: #0f172a;
+            border: 2px solid #4dabf7;
+            flex-shrink: 0;
+            cursor: default;
+        }
+        .avatar-circle .color-indicator {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            border: 2px solid var(--bg-dark);
+            box-shadow: 0 0 4px rgba(0,0,0,0.5);
+        }
+        .avatar-circle .color-indicator.h-side {
+            background: #4dabf7;
+        }
+        .avatar-circle .color-indicator.t-side {
+            background: #ff6b6b;
         }
 
-        .match-names .vs {
+        .avatar-circle.opponent {
+            border-color: #868e96;
+        }
+        .avatar-circle .initials {
+            z-index: 1;
+        }
+
+        .match-vs {
+            font-weight: 700;
             color: #868e96;
-            font-weight: 400;
-            font-size: 12px;
-        }
-        .match-names .host-name {
-            cursor: pointer;
-            transition: color 0.2s;
-        }
-        .match-names .host-name:hover {
-            color: #4dabf7;
-        }
-        .match-names .opponent-name {
-            color: #868e96;
+            font-size: 14px;
+            margin: 0 2px;
         }
 
         .match-pets {
@@ -357,7 +380,7 @@
             align-items: center;
             justify-content: center;
             background: #0f172a;
-            border: 2px solid #4dabf7;
+            border: 2px solid #2d3b4f;
             border-radius: 50%;
             width: 38px;
             height: 38px;
@@ -1654,9 +1677,6 @@
             .match-right {
                 justify-content: center;
             }
-            .match-names {
-                justify-content: center;
-            }
             .match-pets {
                 justify-content: center;
             }
@@ -2329,6 +2349,11 @@
             return pets.reduce((acc, p) => acc + (p.value || 0), 0);
         }
 
+        function getInitial(username) {
+            if (!username) return '?';
+            return username.charAt(0).toUpperCase();
+        }
+
         // ============================================================
         //  HISTORY
         // ============================================================
@@ -2799,7 +2824,7 @@
         }
 
         // ============================================================
-        //  RENDER MATCHES (compact, no pet values inside circles)
+        //  RENDER MATCHES (with avatar initials and color indicators)
         // ============================================================
         function renderMatches() {
             const container = document.getElementById('matches-list');
@@ -2883,21 +2908,20 @@
                 const card = document.createElement('div');
                 card.className = 'match-card';
 
-                const hostSideImg = match.hostSide === 'H' ? 'https://bloxluck.com/img/dog.png' :
-                    'https://bloxluck.com/img/gem.png';
-                const hostSideHtml = match.hostSide ? `<span class="side-indicator"><img src="${hostSideImg}" alt="${match.hostSide}"> ${match.hostSide}</span>` :
-                    '';
+                // Host avatar
+                const hostInitial = getInitial(match.host);
+                const hostSideColor = match.hostSide === 'H' ? 'h-side' : 't-side';
 
-                // Pets in circles (no value text)
+                // Opponent avatar
+                const opponentName = match.joiner || '?';
+                const opponentInitial = getInitial(opponentName);
+                const opponentSide = match.hostSide === 'H' ? 'T' : 'H';
+                const opponentSideColor = opponentSide === 'H' ? 'h-side' : 't-side';
+
+                // Pets in circles (no value text, border gray)
                 const petsHtml = match.hostPets.map(pet =>
                     `<div class="pet-circle"><img class="pet-img" src="${pet.icon}" alt="${pet.name}" title="${pet.name}"></div>`
                 ).join('');
-
-                const opponentSide = match.hostSide === 'H' ? 'T' : 'H';
-                const opponentImg = opponentSide === 'H' ? 'https://bloxluck.com/img/dog.png' :
-                    'https://bloxluck.com/img/gem.png';
-                const opponentSideHtml =
-                    `<span class="opponent-side"><img src="${opponentImg}" alt="${opponentSide}"> ${opponentSide}</span>`;
 
                 let actionsHtml = '';
                 if (isMyMatch) {
@@ -2914,11 +2938,14 @@
 
                 card.innerHTML = `
                         <div class="match-left">
-                            ${hostSideHtml}
-                            <div class="match-names">
-                                <span class="host-name" onclick="openProfile('${escapeHTML(match.host)}')">${escapeHTML(match.host)}</span>
-                                <span class="vs">vs</span>
-                                <span class="opponent-name">${escapeHTML(match.joiner || '?')}</span>
+                            <div class="avatar-circle" style="border-color: #4dabf7;">
+                                <span class="initials">${hostInitial}</span>
+                                <span class="color-indicator ${hostSideColor}"></span>
+                            </div>
+                            <span class="match-vs">vs</span>
+                            <div class="avatar-circle opponent" style="border-color: #868e96;">
+                                <span class="initials">${opponentInitial}</span>
+                                ${match.joiner ? `<span class="color-indicator ${opponentSideColor}"></span>` : ''}
                             </div>
                             <div class="match-pets">${petsHtml}</div>
                         </div>
@@ -2937,10 +2964,10 @@
                 const winnerSide = match.winnerSide || (match.hostWins ? match.hostSide : match.joinerSide);
                 const winnerName = match.winner || '...';
 
-                const hostSideImg = match.hostSide === 'H' ? 'https://bloxluck.com/img/dog.png' :
-                    'https://bloxluck.com/img/gem.png';
-                const joinerSideImg = match.joinerSide === 'H' ? 'https://bloxluck.com/img/dog.png' :
-                    'https://bloxluck.com/img/gem.png';
+                const hostInitial = getInitial(match.host);
+                const hostSideColor = match.hostSide === 'H' ? 'h-side' : 't-side';
+                const joinerInitial = getInitial(match.joiner);
+                const joinerSideColor = match.joinerSide === 'H' ? 'h-side' : 't-side';
 
                 const card = document.createElement('div');
                 card.className = 'match-card ongoing-match';
@@ -2957,14 +2984,14 @@
                 card.innerHTML = `
                         <div class="match-left">
                             <span class="match-status">⚡</span>
-                            <div class="match-names">
-                                <span class="host-name" onclick="openProfile('${escapeHTML(match.host)}')">${escapeHTML(match.host)}</span>
-                                <span class="vs">vs</span>
-                                <span class="opponent-name" onclick="openProfile('${escapeHTML(match.joiner)}')">${escapeHTML(match.joiner)}</span>
+                            <div class="avatar-circle" style="border-color: #4dabf7;">
+                                <span class="initials">${hostInitial}</span>
+                                <span class="color-indicator ${hostSideColor}"></span>
                             </div>
-                            <div style="display:flex;align-items:center;gap:4px;">
-                                <span class="side-indicator" style="font-size:10px;padding:2px 6px;"><img src="${hostSideImg}" alt="${match.hostSide}"> ${match.hostSide}</span>
-                                <span class="opponent-side" style="font-size:10px;padding:2px 6px;"><img src="${joinerSideImg}" alt="${match.joinerSide}"> ${match.joinerSide}</span>
+                            <span class="match-vs">vs</span>
+                            <div class="avatar-circle" style="border-color: #ff6b6b;">
+                                <span class="initials">${joinerInitial}</span>
+                                <span class="color-indicator ${joinerSideColor}"></span>
                             </div>
                             ${coinHtml}
                             <span class="mini-result" id="mini-result-${match.id}">Flipping...</span>
