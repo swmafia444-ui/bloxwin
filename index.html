@@ -1014,6 +1014,7 @@
             }
             header {
                 right: 0;
+                padding: 0 12px;
             }
             .chat-card {
                 display: none;
@@ -1069,6 +1070,33 @@
             }
             .match-actions {
                 justify-content: center;
+            }
+
+            /* Header butonları mobilde düzgün göster */
+            .user-info-bar {
+                flex-wrap: wrap;
+                gap: 4px;
+                justify-content: flex-end;
+            }
+            .user-badge {
+                font-size: 11px;
+                padding: 4px 10px;
+            }
+            .header-actions {
+                flex-wrap: wrap;
+                gap: 4px;
+                justify-content: flex-end;
+            }
+            .action-btn {
+                font-size: 10px;
+                padding: 5px 10px;
+                box-shadow: none;
+            }
+            .action-btn:hover {
+                transform: none;
+            }
+            .logo-wrapper span {
+                font-size: 20px;
             }
         }
         .mobile-chat-toggle {
