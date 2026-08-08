@@ -27,6 +27,10 @@
             font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
         }
 
+        html {
+            scroll-behavior: smooth;
+        }
+
         body {
             background-color: var(--bg-dark);
             color: var(--text-light);
@@ -51,6 +55,7 @@
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
             z-index: 100;
             backdrop-filter: blur(6px);
+            will-change: transform;
         }
 
         .toast-container {
@@ -159,6 +164,7 @@
             transition: transform 0.15s ease, box-shadow 0.2s;
             box-shadow: 0 4px 10px rgba(81, 207, 102, 0.2);
             white-space: nowrap;
+            will-change: transform;
         }
 
         .action-btn:hover {
@@ -248,6 +254,7 @@
             cursor: pointer;
             transition: transform 0.15s ease, background 0.2s;
             box-shadow: 0 3px 8px rgba(252, 196, 25, 0.25);
+            will-change: transform;
         }
 
         .history-toggle-btn:hover {
@@ -274,6 +281,7 @@
             border: 1px solid var(--border-color);
             transition: transform 0.15s ease, box-shadow 0.2s;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            will-change: transform;
         }
 
         .match-card:hover,
@@ -420,6 +428,7 @@
             font-size: 13px;
             cursor: pointer;
             transition: transform 0.15s ease, box-shadow 0.2s;
+            will-change: transform;
         }
 
         .join-btn {
@@ -612,6 +621,7 @@
             background: rgba(11, 17, 32, 0.6);
             scrollbar-width: thin;
             scrollbar-color: #2d3b4f transparent;
+            scroll-behavior: smooth;
         }
 
         .chat-messages::-webkit-scrollbar {
@@ -636,6 +646,18 @@
             word-break: break-word;
             border: 1px solid #253141;
             box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+            animation: fadeInUp 0.2s ease;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(6px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .chat-msg .username {
@@ -713,6 +735,7 @@
             cursor: pointer;
             transition: transform 0.15s ease, box-shadow 0.2s;
             box-shadow: 0 4px 10px rgba(252, 196, 25, 0.2);
+            will-change: transform;
         }
 
         .chat-send-btn:hover {
@@ -738,6 +761,13 @@
             align-items: center;
             z-index: 200;
             backdrop-filter: blur(6px);
+            opacity: 0;
+            transition: opacity 0.25s ease;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+            opacity: 1;
         }
 
         .modal {
@@ -753,6 +783,14 @@
             overflow-y: auto;
             scrollbar-width: thin;
             scrollbar-color: #2d3b4f transparent;
+            transform: scale(0.96);
+            transition: transform 0.25s ease, opacity 0.25s ease;
+            opacity: 0;
+        }
+
+        .modal-overlay.active .modal {
+            transform: scale(1);
+            opacity: 1;
         }
 
         .modal::-webkit-scrollbar {
@@ -810,6 +848,7 @@
             cursor: pointer;
             transition: transform 0.15s ease, border-color 0.2s, background 0.2s;
             user-select: none;
+            will-change: transform;
         }
 
         .modal-item:hover {
@@ -849,6 +888,7 @@
             font-weight: 700;
             font-size: 16px;
             color: #868e96;
+            will-change: transform;
         }
 
         .side-btn:hover {
@@ -884,6 +924,7 @@
             font-weight: 700;
             cursor: pointer;
             transition: transform 0.15s ease, box-shadow 0.2s;
+            will-change: transform;
         }
 
         .post-btn {
@@ -988,12 +1029,12 @@
             min-height: 28px;
         }
 
-        /* --- Mini Coin Widget (for ongoing matches) --- */
+        /* --- Mini Coin Widget (smaller) --- */
         .mini-coin-wrapper {
             perspective: 600px;
-            width: 60px;
-            height: 60px;
-            margin: 0 auto 6px;
+            width: 44px;
+            height: 44px;
+            margin: 0 auto 4px;
             display: inline-block;
         }
         .mini-coin-wrapper .coin {
@@ -1146,6 +1187,7 @@
             transition: transform 0.15s ease, box-shadow 0.2s;
             box-shadow: 0 4px 10px rgba(252, 196, 25, 0.25);
             font-size: 15px;
+            will-change: transform;
         }
 
         .join-bot-btn:hover {
@@ -1183,6 +1225,7 @@
             text-align: center;
             cursor: pointer;
             transition: all 0.2s;
+            will-change: transform;
         }
         .withdraw-pet-item:hover {
             transform: translateY(-2px);
@@ -1227,6 +1270,7 @@
             font-weight: 600;
             font-size: 13px;
             transition: all 0.2s;
+            will-change: transform;
         }
 
         .admin-panel-tabs .tab-btn:hover {
@@ -1276,6 +1320,11 @@
             margin-bottom: 4px;
             border: 1px solid #1a2332;
             font-size: 14px;
+            transition: background 0.2s;
+        }
+
+        .admin-user-item:hover {
+            background: #1e2a3a;
         }
 
         .admin-user-item .username {
@@ -1298,6 +1347,7 @@
             font-size: 11px;
             cursor: pointer;
             transition: background 0.2s;
+            will-change: transform;
         }
         .admin-user-item .user-actions button:hover {
             background: #3d4b5f;
@@ -1894,7 +1944,6 @@
                 <div id="profile-username" class="profile-username"></div>
                 <div id="profile-admin-badge" style="display:none;margin-top:4px;"><span class="admin-tag" style="background:#ff6b6b;color:#fff;font-size:11px;font-weight:800;padding:2px 12px;border-radius:20px;">Admin</span></div>
                 <div class="profile-stats" id="profile-stats"></div>
-                <!-- pets section removed -->
                 <button class="cancel-btn" style="width:100%;margin-top:16px;" onclick="closeModal('profile-modal')">Close</button>
             </div>
         </div>
@@ -1956,9 +2005,11 @@
         //  USER DATA STORAGE
         // ============================================================
         function getUserData(username) {
-            const data = localStorage.getItem(`app_user_data_${username}`);
-            if (data) return JSON.parse(data);
-            return null;
+            try {
+                const data = localStorage.getItem(`app_user_data_${username}`);
+                if (data) return JSON.parse(data);
+                return null;
+            } catch { return null; }
         }
 
         function setUserData(username, data) {
@@ -1997,8 +2048,10 @@
         //  STATS (new: totalWager, totalProfit, totalLost)
         // ============================================================
         function getUserStats(username) {
-            const data = localStorage.getItem(`app_stats_${username}`);
-            if (data) return JSON.parse(data);
+            try {
+                const data = localStorage.getItem(`app_stats_${username}`);
+                if (data) return JSON.parse(data);
+            } catch {}
             return { totalWager: 0, totalProfit: 0, totalLost: 0 };
         }
 
@@ -2018,19 +2071,26 @@
         }
 
         // ============================================================
-        //  REGISTERED USERS
+        //  REGISTERED USERS (with error handling)
         // ============================================================
         function getRegisteredUsers() {
-            const data = localStorage.getItem('app_registered_users');
-            if (data) return JSON.parse(data);
-            return [];
+            try {
+                const data = localStorage.getItem('app_registered_users');
+                return data ? JSON.parse(data) : [];
+            } catch {
+                return [];
+            }
+        }
+
+        function setRegisteredUsers(list) {
+            localStorage.setItem('app_registered_users', JSON.stringify(list));
         }
 
         function addRegisteredUser(username) {
             const list = getRegisteredUsers();
             if (!list.includes(username)) {
                 list.push(username);
-                localStorage.setItem('app_registered_users', JSON.stringify(list));
+                setRegisteredUsers(list);
             }
         }
 
@@ -2091,8 +2151,20 @@
             document.getElementById('chat-card').classList.remove('mobile-open');
         }
 
+        function openModal(modalId) {
+            const overlay = document.getElementById(modalId);
+            overlay.style.display = 'flex';
+            // trigger reflow for transition
+            void overlay.offsetWidth;
+            overlay.classList.add('active');
+        }
+
         function closeModal(modalId) {
-            document.getElementById(modalId).style.display = 'none';
+            const overlay = document.getElementById(modalId);
+            overlay.classList.remove('active');
+            setTimeout(() => {
+                overlay.style.display = 'none';
+            }, 250);
             if (modalId === 'login-modal') resetRobloxLoginModal();
             if (modalId === 'admin-add-pet-modal') {
                 document.getElementById('admin-add-pet-status').textContent = '';
@@ -2105,6 +2177,7 @@
             }
         }
 
+        // Override modal clicks to use new openModal/closeModal
         document.querySelectorAll('.modal-overlay').forEach(overlay => {
             overlay.addEventListener('click', function(e) {
                 if (e.target === this) {
@@ -2127,8 +2200,10 @@
         //  HISTORY
         // ============================================================
         function getHistory(username) {
-            const data = localStorage.getItem(`app_history_${username}`);
-            return data ? JSON.parse(data) : [];
+            try {
+                const data = localStorage.getItem(`app_history_${username}`);
+                return data ? JSON.parse(data) : [];
+            } catch { return []; }
         }
 
         function setHistory(username, history) {
@@ -2184,7 +2259,7 @@
             } else {
                 container.innerHTML = `
                         <div class="header-actions">
-                            <button class="action-btn" onclick="resetRobloxLoginModal(); document.getElementById('login-modal').style.display='flex'">Login with Roblox</button>
+                            <button class="action-btn" onclick="resetRobloxLoginModal(); openModal('login-modal')">Login with Roblox</button>
                         </div>
                     `;
             }
@@ -2353,12 +2428,16 @@
         //  INVENTORY
         // ============================================================
         function getUserInventory(username) {
-            const data = localStorage.getItem(`app_inv_${username}`);
-            if (!data) {
-                localStorage.setItem(`app_inv_${username}`, JSON.stringify([]));
+            try {
+                const data = localStorage.getItem(`app_inv_${username}`);
+                if (!data) {
+                    localStorage.setItem(`app_inv_${username}`, JSON.stringify([]));
+                    return [];
+                }
+                return JSON.parse(data);
+            } catch {
                 return [];
             }
-            return JSON.parse(data);
         }
 
         function setUserInventory(username, inv) {
@@ -2390,8 +2469,10 @@
         //  MUTED (with expiry)
         // ============================================================
         function getMutedUsers() {
-            const data = localStorage.getItem('app_muted_users');
-            return data ? JSON.parse(data) : {};
+            try {
+                const data = localStorage.getItem('app_muted_users');
+                return data ? JSON.parse(data) : {};
+            } catch { return {}; }
         }
 
         function setMutedUsers(obj) {
@@ -2404,7 +2485,6 @@
                 if (muted[username] > Date.now()) {
                     return true;
                 } else {
-                    // expired, remove
                     delete muted[username];
                     setMutedUsers(muted);
                     return false;
@@ -2422,8 +2502,6 @@
             return 0;
         }
 
-        // BAN completely removed
-
         // ============================================================
         //  PUBSUB
         // ============================================================
@@ -2431,7 +2509,6 @@
             message: function(event) {
                 const msg = event.message;
                 if (msg.type === 'CHAT') {
-                    // ban removed, only mute check
                     saveAndRenderChat(msg.username, msg.text, msg.time);
                 }
                 if (msg.type === 'MATCH_CREATED') {
@@ -2465,7 +2542,6 @@
                         }, 70000);
                         renderMatches();
 
-                        // Show fullscreen flip only for host/joiner
                         if (currentUser === msg.host || currentUser === msg.joiner) {
                             executeCoinFlip(msg);
                         }
@@ -2499,7 +2575,6 @@
         }
 
         function saveAndRenderChat(username, text, time) {
-            // mute check only (ban removed)
             const newMsg = { username, text, time };
             chatHistory.push(newMsg);
             if (chatHistory.length > 50) chatHistory.shift();
@@ -2617,11 +2692,9 @@
                 return;
             }
 
-            // Separate waiting and ongoing
             const waiting = globalMatches.filter(m => m.status === 'waiting');
             const ongoing = globalMatches.filter(m => m.status === 'ongoing');
 
-            // Render waiting matches
             waiting.forEach(match => {
                 const isMyMatch = currentUser && match.host === currentUser;
                 const totalValue = sumPets(match.hostPets);
@@ -2683,7 +2756,6 @@
                 container.appendChild(card);
             });
 
-            // Render ongoing matches (mini coin flip)
             ongoing.forEach(match => {
                 const totalValue = sumPets(match.hostPets) + sumPets(match.joinerPets);
                 const winnerSide = match.winnerSide || (match.hostWins ? match.hostSide : match.joinerSide);
@@ -2697,7 +2769,6 @@
                 const card = document.createElement('div');
                 card.className = 'match-card ongoing-match';
 
-                // Mini coin animation
                 const coinHtml = `
                         <div class="mini-coin-wrapper">
                             <div class="coin" id="mini-coin-${match.id}">
@@ -2727,7 +2798,6 @@
 
                 container.appendChild(card);
 
-                // Trigger mini coin flip animation after a short delay
                 setTimeout(() => {
                     const miniCoin = document.getElementById(`mini-coin-${match.id}`);
                     const resultDiv = document.getElementById(`mini-result-${match.id}`);
@@ -2793,7 +2863,7 @@
                     <div class="view-status">Status: Waiting for opponent</div>
                 `;
             content.innerHTML = html;
-            document.getElementById('view-match-modal').style.display = 'flex';
+            openModal('view-match-modal');
         }
 
         // ============================================================
@@ -2801,7 +2871,6 @@
         // ============================================================
         function openCreateModal() {
             if (!currentUser) { showToast('Please login first to create a match.'); return; }
-            // ban removed
             const inv = getUserInventory(currentUser);
             const grid = document.getElementById('modal-inventory');
             grid.innerHTML = '';
@@ -2839,7 +2908,7 @@
                 });
             }
             updateCreateTotal();
-            document.getElementById('create-modal').style.display = 'flex';
+            openModal('create-modal');
         }
 
         function updateCreateTotal() {
@@ -2888,7 +2957,6 @@
         // ============================================================
         function openJoinSelectModal(matchId) {
             if (!currentUser) { showToast('Please login first to join a match.'); return; }
-            // ban removed
             matchToJoin = globalMatches.find(m => m.id === matchId);
             if (!matchToJoin) return;
 
@@ -2927,7 +2995,7 @@
                 });
             }
             updateJoinTotal();
-            document.getElementById('join-select-modal').style.display = 'flex';
+            openModal('join-select-modal');
         }
 
         function updateJoinTotal() {
@@ -2972,7 +3040,7 @@
             statusEl.style.color = '#f1f3f5';
             statusEl.textContent = 'Flipping coin...';
             closeBtn.style.display = 'none';
-            flipModal.style.display = 'flex';
+            openModal('flip-modal');
             isFlipping = true;
 
             coin.style.animation = 'none';
@@ -3057,7 +3125,7 @@
                 showToast('Please login first.');
                 return;
             }
-            document.getElementById('deposit-modal').style.display = 'flex';
+            openModal('deposit-modal');
         }
 
         // ============================================================
@@ -3065,7 +3133,6 @@
         // ============================================================
         function openWithdrawModal() {
             if (!currentUser) { showToast('Please login first.'); return; }
-            // ban removed
             const inv = getUserInventory(currentUser);
             const grid = document.getElementById('withdraw-pets-grid');
             grid.innerHTML = '';
@@ -3102,7 +3169,7 @@
             }
             document.getElementById('withdraw-total-info').textContent = `Selected: 0 pets`;
             document.getElementById('withdraw-status').textContent = '';
-            document.getElementById('withdraw-modal').style.display = 'flex';
+            openModal('withdraw-modal');
         }
 
         function confirmWithdraw() {
@@ -3152,8 +3219,7 @@
                 `;
             document.getElementById('profile-stats').innerHTML = statsHtml;
 
-            // pets removed
-            document.getElementById('profile-modal').style.display = 'flex';
+            openModal('profile-modal');
         }
 
         // ============================================================
@@ -3164,7 +3230,9 @@
                 showToast('Access denied.');
                 return;
             }
-            document.getElementById('admin-modal').style.display = 'flex';
+            // Ensure current user is in the list
+            addRegisteredUser(currentUser);
+            openModal('admin-modal');
             adminRefreshUsers();
             adminRenderMuted();
             switchAdminTab('tab-users');
@@ -3182,7 +3250,12 @@
 
         function adminRefreshUsers() {
             const list = document.getElementById('admin-user-list');
-            const users = getAllUsernames();
+            let users = getAllUsernames();
+            // Ensure current user is in the list
+            if (currentUser && !users.includes(currentUser)) {
+                addRegisteredUser(currentUser);
+                users = getAllUsernames();
+            }
             if (users.length === 0) {
                 list.innerHTML = '<div style="color:#868e96;padding:8px;">No users registered.</div>';
                 return;
@@ -3288,7 +3361,7 @@
             document.getElementById('admin-add-pet-icon').value = '';
             document.getElementById('admin-add-pet-value').value = '100';
             document.getElementById('admin-add-pet-status').textContent = '';
-            document.getElementById('admin-add-pet-modal').style.display = 'flex';
+            openModal('admin-add-pet-modal');
         }
 
         function adminConfirmAddPet() {
