@@ -114,7 +114,7 @@
         .user-badge {
             background: #0f172a;
             border: 1px solid var(--accent);
-            padding: 4px 16px 4px 8px;
+            padding: 4px 16px 4px 16px;
             border-radius: 30px;
             font-weight: 600;
             color: var(--accent);
@@ -128,15 +128,6 @@
         .user-badge:hover {
             border-color: #4dabf7;
             box-shadow: 0 0 12px rgba(77, 171, 247, 0.15);
-        }
-        .user-badge .avatar-thumb {
-            width: 28px;
-            height: 28px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 2px solid var(--accent);
-            flex-shrink: 0;
-            background: #1a2332;
         }
         .user-badge .admin-tag {
             background: #ff6b6b;
@@ -335,15 +326,6 @@
         }
         .host-name:hover {
             color: #4dabf7;
-        }
-        .host-name .avatar-thumb {
-            width: 26px;
-            height: 26px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 2px solid var(--accent);
-            flex-shrink: 0;
-            background: #0f172a;
         }
 
         .pet-badge {
@@ -654,24 +636,6 @@
             word-break: break-word;
             border: 1px solid #253141;
             box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-            display: flex;
-            align-items: flex-start;
-            gap: 10px;
-        }
-
-        .chat-msg .msg-avatar {
-            width: 28px;
-            height: 28px;
-            border-radius: 50%;
-            object-fit: cover;
-            flex-shrink: 0;
-            border: 2px solid var(--border-color);
-            background: #0f172a;
-            margin-top: 1px;
-        }
-
-        .chat-msg .msg-content {
-            flex: 1;
         }
 
         .chat-msg .username {
@@ -1043,29 +1007,6 @@
             flex-direction: column;
             align-items: center;
             gap: 8px;
-        }
-
-        .view-profile .player .avatar {
-            width: 70px;
-            height: 70px;
-            border-radius: 50%;
-            background: #2d3b4f;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 28px;
-            font-weight: 700;
-            color: var(--accent);
-            border: 2px solid var(--accent);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-            object-fit: cover;
-        }
-
-        .view-profile .player .avatar.empty {
-            border: 2px dashed #4dabf7;
-            color: #4dabf7;
-            background: transparent;
-            font-size: 14px;
         }
 
         .view-profile .player .name {
@@ -1451,17 +1392,6 @@
             color: #ff6b6b;
         }
 
-        .profile-avatar-large {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 3px solid var(--accent);
-            background: #0f172a;
-            display: block;
-            margin: 0 auto 10px;
-        }
-
         .profile-username {
             text-align: center;
             font-size: 22px;
@@ -1580,11 +1510,7 @@
             }
             .user-badge {
                 font-size: 11px;
-                padding: 3px 10px 3px 4px;
-            }
-            .user-badge .avatar-thumb {
-                width: 22px;
-                height: 22px;
+                padding: 3px 10px 3px 10px;
             }
             .header-actions {
                 flex-wrap: wrap;
@@ -1638,14 +1564,6 @@
             }
             .profile-stat .stat-number {
                 font-size: 18px;
-            }
-            .chat-msg .msg-avatar {
-                width: 22px;
-                height: 22px;
-            }
-            .host-name .avatar-thumb {
-                width: 22px;
-                height: 22px;
             }
             .admin-manual-input {
                 flex-direction: column;
@@ -1784,8 +1702,6 @@
             <div id="roblox-verify-status" style="text-align:center;margin-top:14px;min-height:20px;font-size:13px;color:#868e96;"></div>
         </div>
     </div>
-
-    <!-- Inventory (removed from UI but kept for admin) -->
 
     <!-- Create Match -->
     <div class="modal-overlay" id="create-modal">
@@ -1985,7 +1901,6 @@
     <div class="modal-overlay" id="profile-modal">
         <div class="modal" style="max-width:480px;">
             <div id="profile-content" style="text-align:center;">
-                <img id="profile-avatar" class="profile-avatar-large" src="" alt="Avatar" onerror="this.style.display='none'">
                 <div id="profile-username" class="profile-username"></div>
                 <div id="profile-admin-badge" style="display:none;margin-top:4px;"><span class="admin-tag" style="background:#ff6b6b;color:#fff;font-size:11px;font-weight:800;padding:2px 12px;border-radius:20px;">Admin</span></div>
                 <div class="profile-stats" id="profile-stats"></div>
@@ -2261,7 +2176,6 @@
         function renderHeader() {
             const container = document.getElementById('user-header-area');
             if (currentUser) {
-                const avatarUrl = currentUserAvatar || getAvatarUrl(currentUser) || getDefaultAvatar();
                 const adminTag = isAdmin(currentUser) ? `<span class="admin-tag">Admin</span>` : '';
                 const adminPanelBtn = isAdmin(currentUser) ?
                     `<button class="action-btn admin-btn" onclick="openAdminPanel()">Admin</button>` : '';
@@ -2269,7 +2183,6 @@
                 container.innerHTML = `
                         <div class="user-info-bar">
                             <span class="user-badge" onclick="openProfile('${escapeHTML(currentUser)}')">
-                                <img class="avatar-thumb" src="${avatarUrl}" alt="${escapeHTML(currentUser)}" onerror="this.src='${getDefaultAvatar()}'">
                                 ${escapeHTML(currentUser)} ${adminTag}
                             </span>
                             <div class="header-actions">
@@ -2601,11 +2514,9 @@
             const container = document.getElementById('chat-messages');
             const msgDiv = document.createElement('div');
             msgDiv.className = 'chat-msg';
-            const avatarUrl = getAvatarUrl(username) || getDefaultAvatar();
             const adminTag = isAdmin(username) ? `<span class="admin-tag">Admin</span>` : '';
             const mutedLabel = isMuted(username) ? `<span class="muted-label">[MUTED]</span>` : '';
             msgDiv.innerHTML = `
-                    <img class="msg-avatar" src="${avatarUrl}" alt="${escapeHTML(username)}" onerror="this.src='${getDefaultAvatar()}'">
                     <div class="msg-content">
                         <span class="username" onclick="openProfile('${escapeHTML(username)}')">${escapeHTML(username)}${adminTag}</span>${mutedLabel} ${escapeHTML(text)} <span class="time">${time}</span>
                     </div>
@@ -2691,7 +2602,6 @@
             globalMatches.forEach(match => {
                 const isMyMatch = currentUser && match.host === currentUser;
                 const totalValue = sumPets(match.hostPets);
-                const hostAvatar = getAvatarUrl(match.host) || getDefaultAvatar();
 
                 const card = document.createElement('div');
                 card.className = 'match-card';
@@ -2732,7 +2642,6 @@
                         <div class="match-top">
                             ${hostSideHtml}
                             <span class="host-name" onclick="openProfile('${escapeHTML(match.host)}')">
-                                <img class="avatar-thumb" src="${hostAvatar}" alt="${escapeHTML(match.host)}" onerror="this.src='${getDefaultAvatar()}'">
                                 ${match.host}
                             </span>
                             <div class="pet-badge">
@@ -2775,12 +2684,9 @@
             const joinerPetsHtml =
                 `<div class="pet-img empty-pet" style="width:34px;height:34px;border-radius:6px;border:1px dashed #4dabf7;opacity:0.4;"></div>`;
 
-            const hostAvatar = getAvatarUrl(match.host) || getDefaultAvatar();
-
             let html = `
                     <div class="view-profile">
                         <div class="player">
-                            <img class="avatar" src="${hostAvatar}" alt="${match.host}" onerror="this.src='${getDefaultAvatar()}'">
                             <div class="name">${match.host}</div>
                             <div class="divider"></div>
                             <div class="pets">${hostPetsHtml}</div>
@@ -2788,7 +2694,6 @@
                         </div>
                         <div class="vs">VS</div>
                         <div class="player">
-                            <div class="avatar empty">?</div>
                             <div class="name" style="color:#868e96;">Waiting for opponent</div>
                             <div class="divider"></div>
                             <div class="pets">${joinerPetsHtml}</div>
@@ -3142,12 +3047,8 @@
         // ============================================================
         function openProfile(username) {
             if (!username) return;
-            const avatarUrl = getAvatarUrl(username) || getDefaultAvatar();
             const stats = getUserStats(username);
             const inv = getUserInventory(username);
-
-            document.getElementById('profile-avatar').src = avatarUrl;
-            document.getElementById('profile-avatar').onerror = function() { this.src = getDefaultAvatar(); };
 
             const adminTag = isAdmin(username) ? `<span class="admin-tag">Admin</span>` : '';
             document.getElementById('profile-username').innerHTML = `${escapeHTML(username)} ${adminTag}`;
@@ -3225,12 +3126,10 @@
                 const isAdminUser = isAdmin(u);
                 const isMutedUser = isMuted(u);
                 const isBannedUser = isBanned(u);
-                const avatar = getAvatarUrl(u) || getDefaultAvatar();
                 const div = document.createElement('div');
                 div.className = 'admin-user-item';
                 div.innerHTML = `
                         <span class="username">
-                            <img src="${avatar}" style="width:22px;height:22px;border-radius:50%;object-fit:cover;border:1px solid var(--border-color);" onerror="this.src='${getDefaultAvatar()}'">
                             ${escapeHTML(u)} ${isAdminUser ? '👑' : ''} ${isBannedUser ? '⛔' : ''} ${isMutedUser ? '🔇' : ''}
                             <span style="color:#868e96;font-weight:400;font-size:12px;">${petCount} pets</span>
                         </span>
