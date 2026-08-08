@@ -1028,38 +1028,39 @@
                 display: flex;
             }
             .mobile-chat-toggle {
-                display: flex;
+                display: flex !important;
                 align-items: center;
                 justify-content: center;
                 position: fixed;
-                bottom: 24px;
-                right: 24px;
+                bottom: 30px;
+                right: 30px;
                 background: var(--accent);
                 color: #0b1120;
                 border: none;
                 border-radius: 50%;
-                width: 60px;
-                height: 60px;
+                width: 64px;
+                height: 64px;
                 cursor: pointer;
                 z-index: 150;
-                box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+                box-shadow: 0 6px 25px rgba(0, 0, 0, 0.6);
                 transition: transform 0.2s;
             }
             .mobile-chat-toggle:hover {
                 transform: scale(1.05);
             }
             .mobile-chat-toggle svg {
-                width: 28px;
-                height: 28px;
+                width: 32px;
+                height: 32px;
                 stroke: #0b1120;
                 fill: none;
+                stroke-width: 2.5;
             }
             .chat-header .close-chat-btn {
                 display: block;
                 background: none;
                 border: none;
                 color: #ced4da;
-                font-size: 24px;
+                font-size: 26px;
                 cursor: pointer;
                 padding: 0 8px;
             }
@@ -1186,7 +1187,7 @@
 
     <!-- Mobile Chat Toggle -->
     <button class="mobile-chat-toggle" id="mobile-chat-toggle" onclick="toggleMobileChat()">
-        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
             <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
         </svg>
     </button>
