@@ -1040,7 +1040,6 @@
                 border-radius: 50%;
                 width: 60px;
                 height: 60px;
-                font-size: 28px;
                 cursor: pointer;
                 z-index: 150;
                 box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
@@ -1048,6 +1047,12 @@
             }
             .mobile-chat-toggle:hover {
                 transform: scale(1.05);
+            }
+            .mobile-chat-toggle svg {
+                width: 28px;
+                height: 28px;
+                stroke: #0b1120;
+                fill: none;
             }
             .chat-header .close-chat-btn {
                 display: block;
@@ -1180,7 +1185,11 @@
     </div>
 
     <!-- Mobile Chat Toggle -->
-    <button class="mobile-chat-toggle" id="mobile-chat-toggle" onclick="toggleMobileChat()">💬</button>
+    <button class="mobile-chat-toggle" id="mobile-chat-toggle" onclick="toggleMobileChat()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+        </svg>
+    </button>
 
     <!-- Modals -->
     <div class="modal-overlay" id="login-modal">
