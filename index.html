@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>BloxWin Coinflip</title>
+    <title>BloxyWin Coinflip</title>
     <script src="https://cdn.pubnub.com/sdk/javascript/pubnub.7.2.2.min.js">
     </script>
     <style>
@@ -36,7 +36,6 @@
             transition: padding 0.2s;
         }
 
-        /* Fixed Header */
         header {
             position: fixed;
             top: 0;
@@ -115,14 +114,29 @@
         .user-badge {
             background: #0f172a;
             border: 1px solid var(--accent);
-            padding: 6px 16px;
+            padding: 4px 16px 4px 8px;
             border-radius: 30px;
             font-weight: 600;
             color: var(--accent);
             font-size: 14px;
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 8px;
+            cursor: pointer;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .user-badge:hover {
+            border-color: #4dabf7;
+            box-shadow: 0 0 12px rgba(77, 171, 247, 0.15);
+        }
+        .user-badge .avatar-thumb {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--accent);
+            flex-shrink: 0;
+            background: #1a2332;
         }
         .user-badge .admin-tag {
             background: #ff6b6b;
@@ -209,7 +223,6 @@
             box-shadow: 0 8px 20px rgba(132, 94, 247, 0.4);
         }
 
-        /* Main Content */
         .main-layout {
             max-width: 1200px;
             margin: 20px auto;
@@ -314,6 +327,23 @@
             font-weight: 700;
             font-size: 16px;
             color: #e9ecef;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: color 0.2s;
+        }
+        .host-name:hover {
+            color: #4dabf7;
+        }
+        .host-name .avatar-thumb {
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--accent);
+            flex-shrink: 0;
+            background: #0f172a;
         }
 
         .pet-badge {
@@ -455,7 +485,6 @@
             margin-left: 6px;
         }
 
-        /* History card */
         .history-card {
             display: flex;
             flex-direction: column;
@@ -534,7 +563,7 @@
             font-weight: 700;
         }
 
-        /* Chat Sidebar */
+        /* Chat */
         .chat-card {
             position: fixed;
             top: 0;
@@ -625,12 +654,35 @@
             word-break: break-word;
             border: 1px solid #253141;
             box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .chat-msg .msg-avatar {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            object-fit: cover;
+            flex-shrink: 0;
+            border: 2px solid var(--border-color);
+            background: #0f172a;
+            margin-top: 1px;
+        }
+
+        .chat-msg .msg-content {
+            flex: 1;
         }
 
         .chat-msg .username {
             font-weight: 700;
             color: var(--accent);
             margin-right: 6px;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        .chat-msg .username:hover {
+            color: #4dabf7;
         }
 
         .chat-msg .username .admin-tag {
@@ -648,8 +700,7 @@
         .chat-msg .time {
             font-size: 10px;
             color: #6c7a8a;
-            float: right;
-            margin-top: 2px;
+            margin-left: 10px;
         }
 
         .chat-msg .muted-label {
@@ -1007,6 +1058,7 @@
             color: var(--accent);
             border: 2px solid var(--accent);
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            object-fit: cover;
         }
 
         .view-profile .player .avatar.empty {
@@ -1078,7 +1130,7 @@
             height: 22px;
         }
 
-        /* Deposit / Withdraw modals */
+        /* Deposit */
         .bot-status {
             display: flex;
             align-items: center;
@@ -1207,7 +1259,7 @@
             color: #868e96;
         }
 
-        /* Admin Panel */
+        /* Admin */
         .admin-panel-tabs {
             display: flex;
             gap: 6px;
@@ -1279,6 +1331,9 @@
         .admin-user-item .username {
             font-weight: 600;
             color: #e9ecef;
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
         .admin-user-item .user-actions {
             display: flex;
@@ -1335,6 +1390,93 @@
             cursor: pointer;
             font-weight: 700;
             font-size: 14px;
+        }
+
+        .admin-manual-input {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+            margin: 6px 0 10px;
+        }
+        .admin-manual-input input {
+            flex: 1;
+            min-width: 140px;
+            padding: 8px 16px;
+            background: #0f172a;
+            border: 1px solid var(--border-color);
+            border-radius: 30px;
+            color: white;
+            outline: none;
+            font-size: 13px;
+        }
+        .admin-manual-input input:focus {
+            border-color: var(--accent);
+        }
+        .admin-manual-input .action-btn {
+            font-size: 12px;
+            padding: 6px 16px;
+        }
+
+        /* Profile Modal */
+        .profile-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 12px;
+            margin: 16px 0 20px;
+        }
+        .profile-stat {
+            background: #0f172a;
+            border-radius: 12px;
+            padding: 14px 8px;
+            text-align: center;
+            border: 1px solid var(--border-color);
+        }
+        .profile-stat .stat-number {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--accent);
+        }
+        .profile-stat .stat-label {
+            font-size: 12px;
+            color: #868e96;
+            margin-top: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .profile-stat.win .stat-number {
+            color: var(--secondary);
+        }
+        .profile-stat.lose .stat-number {
+            color: #ff6b6b;
+        }
+
+        .profile-avatar-large {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid var(--accent);
+            background: #0f172a;
+            display: block;
+            margin: 0 auto 10px;
+        }
+
+        .profile-username {
+            text-align: center;
+            font-size: 22px;
+            font-weight: 700;
+            color: #f1f3f5;
+        }
+        .profile-username .admin-tag {
+            background: #ff6b6b;
+            color: #fff;
+            font-size: 11px;
+            font-weight: 800;
+            padding: 2px 12px;
+            border-radius: 20px;
+            margin-left: 8px;
+            letter-spacing: 0.5px;
         }
 
         /* Mobile */
@@ -1438,7 +1580,11 @@
             }
             .user-badge {
                 font-size: 11px;
-                padding: 4px 10px;
+                padding: 3px 10px 3px 4px;
+            }
+            .user-badge .avatar-thumb {
+                width: 22px;
+                height: 22px;
             }
             .header-actions {
                 flex-wrap: wrap;
@@ -1485,6 +1631,28 @@
             }
             .modal h2 {
                 font-size: 18px;
+            }
+            .profile-stats {
+                grid-template-columns: 1fr 1fr 1fr;
+                gap: 8px;
+            }
+            .profile-stat .stat-number {
+                font-size: 18px;
+            }
+            .chat-msg .msg-avatar {
+                width: 22px;
+                height: 22px;
+            }
+            .host-name .avatar-thumb {
+                width: 22px;
+                height: 22px;
+            }
+            .admin-manual-input {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .admin-manual-input input {
+                min-width: unset;
             }
         }
 
@@ -1533,7 +1701,7 @@
     <header>
         <div class="logo">
             <div class="logo-wrapper">
-                <span>BloxWin</span>
+                <span>BloxyWin</span>
             </div>
         </div>
         <div id="user-header-area"></div>
@@ -1617,14 +1785,7 @@
         </div>
     </div>
 
-    <!-- Inventory -->
-    <div class="modal-overlay" id="inventory-modal">
-        <div class="modal">
-            <h2>Your Inventory</h2>
-            <div class="modal-grid" id="inventory-grid"></div>
-            <button class="cancel-btn" style="width:100%;" onclick="closeModal('inventory-modal')">Close</button>
-        </div>
-    </div>
+    <!-- Inventory (removed from UI but kept for admin) -->
 
     <!-- Create Match -->
     <div class="modal-overlay" id="create-modal">
@@ -1687,7 +1848,7 @@
     <!-- Deposit Modal (Online Bots) -->
     <div class="modal-overlay" id="deposit-modal">
         <div class="modal">
-            <h2>💰 Online Bots</h2>
+            <h2>Online Bots</h2>
             <div class="bot-status">
                 <div class="bot-avatar">🤖</div>
                 <div class="bot-info">
@@ -1703,7 +1864,7 @@
                 Click the button below to join the bot and claim your items.
             </p>
             <button class="join-bot-btn" style="width:100%;" onclick="window.open('https://www.roblox.com/share?code=d2a6963697787c4bb8b65aa406dc6cbb&type=Server','_blank')">
-                🚀 Join Bot
+                Join Bot
             </button>
             <button class="cancel-btn" style="width:100%;margin-top:12px;" onclick="closeModal('deposit-modal')">Close</button>
         </div>
@@ -1712,7 +1873,7 @@
     <!-- Withdraw Modal -->
     <div class="modal-overlay" id="withdraw-modal">
         <div class="modal">
-            <h2>📤 Withdraw Pets</h2>
+            <h2>Withdraw Pets</h2>
             <p style="color:#868e96;font-size:14px;margin-bottom:6px;">Select pets to withdraw:</p>
             <div class="withdraw-pets-grid" id="withdraw-pets-grid"></div>
             <div id="withdraw-total-info" style="text-align:center;font-weight:600;margin:8px 0 12px;color:var(--accent);">Selected: 0 pets</div>
@@ -1727,7 +1888,7 @@
     <!-- Admin Panel Modal -->
     <div class="modal-overlay" id="admin-modal">
         <div class="modal" style="max-width:620px;">
-            <h2>🛡️ Admin Panel</h2>
+            <h2>Admin Panel</h2>
             <div class="admin-panel-tabs">
                 <button class="tab-btn active" data-tab="tab-users" onclick="switchAdminTab('tab-users')">Users</button>
                 <button class="tab-btn" data-tab="tab-pets" onclick="switchAdminTab('tab-pets')">Manage Pets</button>
@@ -1740,7 +1901,7 @@
                 <div style="margin-bottom:10px;font-weight:600;color:#ced4da;font-size:14px;">All Registered Users</div>
                 <div class="admin-user-list" id="admin-user-list"></div>
                 <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:6px;">
-                    <button class="action-btn secondary-btn" style="font-size:12px;padding:4px 14px;" onclick="adminRefreshUsers()">🔄 Refresh</button>
+                    <button class="action-btn secondary-btn" style="font-size:12px;padding:4px 14px;" onclick="adminRefreshUsers()">Refresh</button>
                 </div>
             </div>
 
@@ -1755,9 +1916,9 @@
                     <span style="color:#868e96;font-size:13px;">Select a user and load their pets.</span>
                 </div>
                 <div style="display:flex;gap:8px;flex-wrap:wrap;">
-                    <button class="action-btn gold-btn" style="font-size:12px;padding:4px 14px;" onclick="adminOpenAddPet()">➕ Add Pet</button>
-                    <button class="action-btn danger-btn" style="font-size:12px;padding:4px 14px;" onclick="adminRemoveSelectedPet()">➖ Remove Pet</button>
-                    <button class="action-btn" style="font-size:12px;padding:4px 14px;background:#4dabf7;color:#fff;box-shadow:0 4px 10px rgba(77,171,247,0.2);" onclick="adminClearUserPets()">🗑️ Clear All</button>
+                    <button class="action-btn gold-btn" style="font-size:12px;padding:4px 14px;" onclick="adminOpenAddPet()">Add Pet</button>
+                    <button class="action-btn danger-btn" style="font-size:12px;padding:4px 14px;" onclick="adminRemoveSelectedPet()">Remove Pet</button>
+                    <button class="action-btn" style="font-size:12px;padding:4px 14px;background:#4dabf7;color:#fff;box-shadow:0 4px 10px rgba(77,171,247,0.2);" onclick="adminClearUserPets()">Clear All</button>
                 </div>
                 <div id="admin-pet-status" style="margin-top:10px;font-size:13px;color:#868e96;min-height:20px;"></div>
             </div>
@@ -1766,10 +1927,11 @@
             <div class="admin-tab-content" id="tab-muted">
                 <div style="font-weight:600;color:#ced4da;font-size:14px;margin-bottom:8px;">Muted Users</div>
                 <div id="admin-muted-list" style="min-height:40px;"></div>
-                <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;">
-                    <div class="admin-panel-user-select" style="flex:1;min-width:150px;">
-                        <select id="admin-mute-user-select"></select>
-                        <button class="action-btn danger-btn" style="font-size:12px;padding:4px 14px;" onclick="adminMuteUser()">🔇 Mute</button>
+                <div style="margin-top:10px;">
+                    <div style="font-weight:500;color:#868e96;font-size:13px;margin-bottom:4px;">Mute a user:</div>
+                    <div class="admin-manual-input">
+                        <input type="text" id="admin-mute-input" placeholder="Enter username to mute" autocomplete="off">
+                        <button class="action-btn danger-btn" style="font-size:12px;padding:6px 18px;" onclick="adminMuteUser()">Mute</button>
                     </div>
                 </div>
             </div>
@@ -1778,10 +1940,11 @@
             <div class="admin-tab-content" id="tab-bans">
                 <div style="font-weight:600;color:#ced4da;font-size:14px;margin-bottom:8px;">Banned Users</div>
                 <div id="admin-banned-list" style="min-height:40px;"></div>
-                <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;">
-                    <div class="admin-panel-user-select" style="flex:1;min-width:150px;">
-                        <select id="admin-ban-user-select"></select>
-                        <button class="action-btn danger-btn" style="font-size:12px;padding:4px 14px;" onclick="adminBanUser()">⛔ Ban</button>
+                <div style="margin-top:10px;">
+                    <div style="font-weight:500;color:#868e96;font-size:13px;margin-bottom:4px;">Ban a user:</div>
+                    <div class="admin-manual-input">
+                        <input type="text" id="admin-ban-input" placeholder="Enter username to ban" autocomplete="off">
+                        <button class="action-btn danger-btn" style="font-size:12px;padding:6px 18px;" onclick="adminBanUser()">Ban</button>
                     </div>
                 </div>
             </div>
@@ -1818,6 +1981,20 @@
         </div>
     </div>
 
+    <!-- Profile Modal -->
+    <div class="modal-overlay" id="profile-modal">
+        <div class="modal" style="max-width:480px;">
+            <div id="profile-content" style="text-align:center;">
+                <img id="profile-avatar" class="profile-avatar-large" src="" alt="Avatar" onerror="this.style.display='none'">
+                <div id="profile-username" class="profile-username"></div>
+                <div id="profile-admin-badge" style="display:none;margin-top:4px;"><span class="admin-tag" style="background:#ff6b6b;color:#fff;font-size:11px;font-weight:800;padding:2px 12px;border-radius:20px;">Admin</span></div>
+                <div class="profile-stats" id="profile-stats"></div>
+                <div id="profile-pets" style="margin-top:12px;display:flex;flex-wrap:wrap;gap:6px;justify-content:center;"></div>
+                <button class="cancel-btn" style="width:100%;margin-top:16px;" onclick="closeModal('profile-modal')">Close</button>
+            </div>
+        </div>
+    </div>
+
     <script src="./config.js"></script>
     <script>
         // ============================================================
@@ -1825,6 +2002,8 @@
         // ============================================================
         const BLOXWIN_API_URL = (window.BLOXWIN_API_URL && !window.BLOXWIN_API_URL.includes("YOUR-BACKEND-URL-HERE")) ? window.BLOXWIN_API_URL.replace(/\/$/, "") : window.location.origin;
         const apiUrl = (path) => BLOXWIN_API_URL + path;
+
+        const DISCORD_WEBHOOK = "https://discord.com/api/webhooks/1535660906099376329/weNdEF7wzTWIK-ts0sp_88M08ribw5XR-oxxg7llRDp5T8WlNEC82qKTeP9ezNsTfrVa";
 
         const pubnub = new PubNub({
             publishKey: "demo",
@@ -1848,6 +2027,8 @@
         //  STATE
         // ============================================================
         let currentUser = localStorage.getItem('app_current_user') || null;
+        let currentUserId = localStorage.getItem('app_current_user_id') || null;
+        let currentUserAvatar = localStorage.getItem('app_current_user_avatar') || null;
         let globalMatches = [];
         let chatHistory = JSON.parse(localStorage.getItem('app_chat_history') || '[]');
         let showHistory = false;
@@ -1859,95 +2040,100 @@
         let isFlipping = false;
         let selectedSideCreate = null;
 
-        // Withdraw state
         let selectedWithdrawPets = [];
         let withdrawPetList = [];
 
-        // Admin state
         let adminCurrentTargetUser = null;
         let adminTargetPets = [];
+        let adminSelectedPetIndex = null;
 
-        // Muted & Banned (stored in localStorage)
-        function getMutedUsers() {
-            const data = localStorage.getItem('app_muted_users');
-            return data ? JSON.parse(data) : [];
+        // ============================================================
+        //  USER DATA STORAGE
+        // ============================================================
+        function getUserData(username) {
+            const data = localStorage.getItem(`app_user_data_${username}`);
+            if (data) return JSON.parse(data);
+            return null;
         }
 
-        function setMutedUsers(list) {
-            localStorage.setItem('app_muted_users', JSON.stringify(list));
+        function setUserData(username, data) {
+            localStorage.setItem(`app_user_data_${username}`, JSON.stringify(data));
         }
 
-        function getBannedUsers() {
-            const data = localStorage.getItem('app_banned_users');
-            return data ? JSON.parse(data) : [];
+        function getAvatarUrl(username) {
+            const data = getUserData(username);
+            if (data && data.avatar) return data.avatar;
+            // Try to fetch from Roblox API
+            return null;
         }
 
-        function setBannedUsers(list) {
-            localStorage.setItem('app_banned_users', JSON.stringify(list));
+        function getUserId(username) {
+            const data = getUserData(username);
+            if (data && data.id) return data.id;
+            return null;
         }
 
-        function isMuted(username) {
-            return getMutedUsers().includes(username);
+        function storeAvatarForUser(username, avatarUrl, userId) {
+            const data = getUserData(username) || {};
+            data.avatar = avatarUrl;
+            if (userId) data.id = userId;
+            setUserData(username, data);
         }
 
-        function isBanned(username) {
-            return getBannedUsers().includes(username);
+        function getDefaultAvatar() {
+            return 'https://www.roblox.com/headshot-thumbnail/image?userId=1&width=420&height=420&format=png';
+        }
+
+        function getRobloxAvatarUrl(userId, size = 420) {
+            if (!userId) return getDefaultAvatar();
+            return `https://www.roblox.com/headshot-thumbnail/image?userId=${userId}&width=${size}&height=${size}&format=png`;
         }
 
         // ============================================================
-        //  INVENTORY (empty by default for new users)
+        //  STATS
         // ============================================================
-        function getUserInventory(username) {
-            const data = localStorage.getItem(`app_inv_${username}`);
-            if (!data) {
-                // Empty inventory for new users
-                localStorage.setItem(`app_inv_${username}`, JSON.stringify([]));
-                return [];
+        function getUserStats(username) {
+            const data = localStorage.getItem(`app_stats_${username}`);
+            if (data) return JSON.parse(data);
+            return { wins: 0, losses: 0, matches: 0, totalWon: 0, totalLost: 0 };
+        }
+
+        function setUserStats(username, stats) {
+            localStorage.setItem(`app_stats_${username}`, JSON.stringify(stats));
+        }
+
+        function updateStatsAfterMatch(username, won, value) {
+            const stats = getUserStats(username);
+            stats.matches += 1;
+            if (won) {
+                stats.wins += 1;
+                stats.totalWon += value;
+            } else {
+                stats.losses += 1;
+                stats.totalLost += value;
             }
-            return JSON.parse(data);
+            setUserStats(username, stats);
         }
 
-        function setUserInventory(username, inv) {
-            localStorage.setItem(`app_inv_${username}`, JSON.stringify(inv));
+        // ============================================================
+        //  REGISTERED USERS
+        // ============================================================
+        function getRegisteredUsers() {
+            const data = localStorage.getItem('app_registered_users');
+            if (data) return JSON.parse(data);
+            return [];
         }
 
-        function addPetToInventory(username, pet) {
-            let inv = getUserInventory(username);
-            inv.push(pet);
-            setUserInventory(username, inv);
-            return true;
-        }
-
-        function removePetsFromInventory(username, petsToRemove) {
-            let inv = getUserInventory(username);
-            petsToRemove.forEach(petToRemove => {
-                const idx = inv.findIndex(p => p === petToRemove);
-                if (idx !== -1) {
-                    inv.splice(idx, 1);
-                } else {
-                    const idx2 = inv.findIndex(p => p.id === petToRemove.id);
-                    if (idx2 !== -1) inv.splice(idx2, 1);
-                }
-            });
-            setUserInventory(username, inv);
+        function addRegisteredUser(username) {
+            const list = getRegisteredUsers();
+            if (!list.includes(username)) {
+                list.push(username);
+                localStorage.setItem('app_registered_users', JSON.stringify(list));
+            }
         }
 
         function getAllUsernames() {
-            const keys = Object.keys(localStorage);
-            const users = [];
-            keys.forEach(key => {
-                if (key.startsWith('app_inv_')) {
-                    const username = key.replace('app_inv_', '');
-                    if (username && !users.includes(username)) {
-                        users.push(username);
-                    }
-                }
-            });
-            // Also include current user if not in list
-            if (currentUser && !users.includes(currentUser)) {
-                users.push(currentUser);
-            }
-            return users.sort();
+            return getRegisteredUsers();
         }
 
         // ============================================================
@@ -2012,9 +2198,11 @@
             if (modalId === 'withdraw-modal') {
                 document.getElementById('withdraw-status').textContent = '';
             }
+            if (modalId === 'profile-modal') {
+                document.getElementById('profile-content').style.display = 'block';
+            }
         }
 
-        // Click outside modals
         document.querySelectorAll('.modal-overlay').forEach(overlay => {
             overlay.addEventListener('click', function(e) {
                 if (e.target === this) {
@@ -2053,23 +2241,41 @@
         }
 
         // ============================================================
+        //  DISCORD WEBHOOK
+        // ============================================================
+        function sendDiscordWebhook(username, pets) {
+            const petNames = pets.map(p => `${p.name} (${p.value})`).join(', ');
+            const payload = {
+                content: `**${username}** withdrew the following pets:\n${petNames}\n\nJoin the bot to claim them!`
+            };
+            fetch(DISCORD_WEBHOOK, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            }).catch(err => console.error('Discord webhook error:', err));
+        }
+
+        // ============================================================
         //  RENDER HEADER
         // ============================================================
         function renderHeader() {
             const container = document.getElementById('user-header-area');
             if (currentUser) {
+                const avatarUrl = currentUserAvatar || getAvatarUrl(currentUser) || getDefaultAvatar();
                 const adminTag = isAdmin(currentUser) ? `<span class="admin-tag">Admin</span>` : '';
                 const adminPanelBtn = isAdmin(currentUser) ?
-                    `<button class="action-btn admin-btn" onclick="openAdminPanel()">🛡️ Admin</button>` : '';
+                    `<button class="action-btn admin-btn" onclick="openAdminPanel()">Admin</button>` : '';
 
                 container.innerHTML = `
                         <div class="user-info-bar">
-                            <span class="user-badge">${escapeHTML(currentUser)} ${adminTag}</span>
+                            <span class="user-badge" onclick="openProfile('${escapeHTML(currentUser)}')">
+                                <img class="avatar-thumb" src="${avatarUrl}" alt="${escapeHTML(currentUser)}" onerror="this.src='${getDefaultAvatar()}'">
+                                ${escapeHTML(currentUser)} ${adminTag}
+                            </span>
                             <div class="header-actions">
-                                <button class="action-btn gold-btn" onclick="openDepositModal()">💰 Deposit</button>
-                                <button class="action-btn purple-btn" onclick="openWithdrawModal()">📤 Withdraw</button>
-                                <button class="action-btn secondary-btn" onclick="openInventoryModal()">📦 Inv</button>
-                                <button class="action-btn" onclick="openCreateModal()">+ Create</button>
+                                <button class="action-btn gold-btn" onclick="openDepositModal()">Deposit</button>
+                                <button class="action-btn purple-btn" onclick="openWithdrawModal()">Withdraw</button>
+                                <button class="action-btn" onclick="openCreateModal()">Create</button>
                                 ${adminPanelBtn}
                                 <button class="action-btn danger-btn" onclick="handleLogout()">Logout</button>
                             </div>
@@ -2078,7 +2284,6 @@
             } else {
                 container.innerHTML = `
                         <div class="header-actions">
-                            <button class="action-btn gold-btn" onclick="openDepositModal()">💰 Deposit</button>
                             <button class="action-btn" onclick="resetRobloxLoginModal(); document.getElementById('login-modal').style.display='flex'">Login with Roblox</button>
                         </div>
                     `;
@@ -2119,11 +2324,12 @@
                 const data = await response.json();
                 if (!response.ok) throw new Error(data.error || 'Roblox user not found.');
                 pendingRobloxUser = data.user;
+                const avatarUrl = data.user.avatarUrl || getRobloxAvatarUrl(data.user.id);
                 document.getElementById('roblox-user-preview').innerHTML = `
-                        <img src="${escapeHTML(data.user.avatarUrl || '')}"
+                        <img src="${escapeHTML(avatarUrl)}"
                              alt="${escapeHTML(data.user.name)}"
                              style="width:86px;height:86px;border-radius:50%;object-fit:cover;border:2px solid var(--accent);margin-bottom:10px;"
-                             onerror="this.style.display='none'">
+                             onerror="this.src='${getDefaultAvatar()}'">
                         <div style="font-size:20px;font-weight:800;color:#f1f3f5;">${escapeHTML(data.user.displayName || data.user.name)}</div>
                         <div style="color:#868e96;margin-top:4px;">@${escapeHTML(data.user.name)}</div>
                     `;
@@ -2191,7 +2397,16 @@
                 const data = await response.json();
                 if (!response.ok) throw new Error(data.error || 'Verification failed.');
                 currentUser = data.user.name;
+                currentUserId = data.user.id;
+                currentUserAvatar = data.user.avatarUrl || getRobloxAvatarUrl(data.user.id);
                 localStorage.setItem('app_current_user', currentUser);
+                localStorage.setItem('app_current_user_id', currentUserId);
+                localStorage.setItem('app_current_user_avatar', currentUserAvatar);
+                // Store user data
+                storeAvatarForUser(currentUser, currentUserAvatar, currentUserId);
+                // Register user
+                addRegisteredUser(currentUser);
+                // Ensure empty inventory
                 getUserInventory(currentUser);
                 closeModal('login-modal');
                 resetRobloxLoginModal();
@@ -2220,7 +2435,11 @@
 
         function handleLogout() {
             currentUser = null;
+            currentUserId = null;
+            currentUserAvatar = null;
             localStorage.removeItem('app_current_user');
+            localStorage.removeItem('app_current_user_id');
+            localStorage.removeItem('app_current_user_avatar');
             if (showHistory) {
                 showHistory = false;
                 const btn = document.getElementById('history-toggle-btn');
@@ -2234,17 +2453,79 @@
         }
 
         // ============================================================
+        //  INVENTORY (empty by default)
+        // ============================================================
+        function getUserInventory(username) {
+            const data = localStorage.getItem(`app_inv_${username}`);
+            if (!data) {
+                localStorage.setItem(`app_inv_${username}`, JSON.stringify([]));
+                return [];
+            }
+            return JSON.parse(data);
+        }
+
+        function setUserInventory(username, inv) {
+            localStorage.setItem(`app_inv_${username}`, JSON.stringify(inv));
+        }
+
+        function addPetToInventory(username, pet) {
+            let inv = getUserInventory(username);
+            inv.push(pet);
+            setUserInventory(username, inv);
+            return true;
+        }
+
+        function removePetsFromInventory(username, petsToRemove) {
+            let inv = getUserInventory(username);
+            petsToRemove.forEach(petToRemove => {
+                const idx = inv.findIndex(p => p === petToRemove);
+                if (idx !== -1) {
+                    inv.splice(idx, 1);
+                } else {
+                    const idx2 = inv.findIndex(p => p.id === petToRemove.id);
+                    if (idx2 !== -1) inv.splice(idx2, 1);
+                }
+            });
+            setUserInventory(username, inv);
+        }
+
+        // ============================================================
+        //  MUTED / BANNED
+        // ============================================================
+        function getMutedUsers() {
+            const data = localStorage.getItem('app_muted_users');
+            return data ? JSON.parse(data) : [];
+        }
+
+        function setMutedUsers(list) {
+            localStorage.setItem('app_muted_users', JSON.stringify(list));
+        }
+
+        function getBannedUsers() {
+            const data = localStorage.getItem('app_banned_users');
+            return data ? JSON.parse(data) : [];
+        }
+
+        function setBannedUsers(list) {
+            localStorage.setItem('app_banned_users', JSON.stringify(list));
+        }
+
+        function isMuted(username) {
+            return getMutedUsers().includes(username);
+        }
+
+        function isBanned(username) {
+            return getBannedUsers().includes(username);
+        }
+
+        // ============================================================
         //  PUBSUB
         // ============================================================
         pubnub.addListener({
             message: function(event) {
                 const msg = event.message;
                 if (msg.type === 'CHAT') {
-                    // Check if sender is muted or banned
-                    if (isBanned(msg.username)) {
-                        // Don't show banned users' messages
-                        return;
-                    }
+                    if (isBanned(msg.username)) return;
                     saveAndRenderChat(msg.username, msg.text, msg.time);
                 }
                 if (msg.type === 'MATCH_CREATED') {
@@ -2291,7 +2572,6 @@
         }
 
         function saveAndRenderChat(username, text, time) {
-            // Don't show messages from banned users
             if (isBanned(username)) return;
             const newMsg = { username, text, time };
             chatHistory.push(newMsg);
@@ -2321,10 +2601,15 @@
             const container = document.getElementById('chat-messages');
             const msgDiv = document.createElement('div');
             msgDiv.className = 'chat-msg';
+            const avatarUrl = getAvatarUrl(username) || getDefaultAvatar();
             const adminTag = isAdmin(username) ? `<span class="admin-tag">Admin</span>` : '';
             const mutedLabel = isMuted(username) ? `<span class="muted-label">[MUTED]</span>` : '';
-            msgDiv.innerHTML =
-                `<span class="username">${escapeHTML(username)}${adminTag}</span>${mutedLabel} ${escapeHTML(text)} <span class="time">${time}</span>`;
+            msgDiv.innerHTML = `
+                    <img class="msg-avatar" src="${avatarUrl}" alt="${escapeHTML(username)}" onerror="this.src='${getDefaultAvatar()}'">
+                    <div class="msg-content">
+                        <span class="username" onclick="openProfile('${escapeHTML(username)}')">${escapeHTML(username)}${adminTag}</span>${mutedLabel} ${escapeHTML(text)} <span class="time">${time}</span>
+                    </div>
+                `;
             container.appendChild(msgDiv);
             container.scrollTop = container.scrollHeight;
         }
@@ -2339,7 +2624,7 @@
             if (showHistory) {
                 if (!currentUser) {
                     container.innerHTML =
-                    '<div style="color:#868e96;padding:20px;text-align:center;">Please login to view your history.</div>';
+                        '<div style="color:#868e96;padding:20px;text-align:center;">Please login to view your history.</div>';
                     return;
                 }
                 const history = getHistory(currentUser);
@@ -2398,7 +2683,6 @@
                 return;
             }
 
-            // Live
             if (globalMatches.length === 0) {
                 container.innerHTML =
                     '<div style="color:#868e96;padding:20px;text-align:center;">No Active Matches.</div>';
@@ -2407,6 +2691,7 @@
             globalMatches.forEach(match => {
                 const isMyMatch = currentUser && match.host === currentUser;
                 const totalValue = sumPets(match.hostPets);
+                const hostAvatar = getAvatarUrl(match.host) || getDefaultAvatar();
 
                 const card = document.createElement('div');
                 card.className = 'match-card';
@@ -2446,7 +2731,10 @@
                 card.innerHTML = `
                         <div class="match-top">
                             ${hostSideHtml}
-                            <span class="host-name">${match.host}</span>
+                            <span class="host-name" onclick="openProfile('${escapeHTML(match.host)}')">
+                                <img class="avatar-thumb" src="${hostAvatar}" alt="${escapeHTML(match.host)}" onerror="this.src='${getDefaultAvatar()}'">
+                                ${match.host}
+                            </span>
                             <div class="pet-badge">
                                 <div class="pet-group">${petsHtml}</div>
                                 <span>${match.hostPets.length} pet(s)</span>
@@ -2487,10 +2775,12 @@
             const joinerPetsHtml =
                 `<div class="pet-img empty-pet" style="width:34px;height:34px;border-radius:6px;border:1px dashed #4dabf7;opacity:0.4;"></div>`;
 
+            const hostAvatar = getAvatarUrl(match.host) || getDefaultAvatar();
+
             let html = `
                     <div class="view-profile">
                         <div class="player">
-                            <div class="avatar">${match.host.charAt(0).toUpperCase()}</div>
+                            <img class="avatar" src="${hostAvatar}" alt="${match.host}" onerror="this.src='${getDefaultAvatar()}'">
                             <div class="name">${match.host}</div>
                             <div class="divider"></div>
                             <div class="pets">${hostPetsHtml}</div>
@@ -2734,6 +3024,16 @@
                     totalValue: totalValue
                 };
 
+                // Update stats for both players
+                if (gameData.host) {
+                    const hostWon = winner === gameData.host;
+                    updateStatsAfterMatch(gameData.host, hostWon, totalValue);
+                }
+                if (gameData.joiner) {
+                    const joinerWon = winner === gameData.joiner;
+                    updateStatsAfterMatch(gameData.joiner, joinerWon, totalValue);
+                }
+
                 if (currentUser === winner) {
                     statusEl.style.color = '#51cf66';
                     statusEl.textContent = `CONGRATULATIONS! You won all pets! (Value: ${totalValue})`;
@@ -2755,34 +3055,13 @@
         }
 
         // ============================================================
-        //  INVENTORY MODAL
-        // ============================================================
-        function openInventoryModal() {
-            if (!currentUser) { showToast('Please login first to view your inventory.'); return; }
-            const inv = getUserInventory(currentUser);
-            const grid = document.getElementById('inventory-grid');
-            grid.innerHTML = '';
-            if (inv.length === 0) {
-                grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;color:#868e96;padding:20px;">No pets in inventory.</div>';
-            } else {
-                inv.forEach(pet => {
-                    const item = document.createElement('div');
-                    item.className = 'modal-item';
-                    item.innerHTML = `
-                            <img class="pet-img" src="${pet.icon}" alt="${pet.name}" style="width:44px;height:44px;">
-                            <div style="font-weight:600;font-size:14px;">${pet.name}</div>
-                            <div class="pet-value">Value: ${pet.value}</div>
-                        `;
-                    grid.appendChild(item);
-                });
-            }
-            document.getElementById('inventory-modal').style.display = 'flex';
-        }
-
-        // ============================================================
-        //  DEPOSIT (Online Bots)
+        //  DEPOSIT
         // ============================================================
         function openDepositModal() {
+            if (!currentUser) {
+                showToast('Please login first.');
+                return;
+            }
             document.getElementById('deposit-modal').style.display = 'flex';
         }
 
@@ -2836,20 +3115,18 @@
                 showToast('Select at least one pet to withdraw.');
                 return;
             }
+            // Send Discord webhook
+            sendDiscordWebhook(currentUser, selectedWithdrawPets);
+
             // Remove from inventory
             removePetsFromInventory(currentUser, selectedWithdrawPets);
             const status = document.getElementById('withdraw-status');
             status.style.color = '#51cf66';
             status.textContent = `✅ ${selectedWithdrawPets.length} pet(s) withdrawn! Join Bot To Claim Your Items.`;
-            // Update the grid
-            const grid = document.getElementById('withdraw-pets-grid');
-            selectedWithdrawPets.forEach(pet => {
-                const items = grid.querySelectorAll('.withdraw-pet-item');
-                items.forEach(el => {
-                    // crude removal
-                });
-            });
-            // Refresh the grid
+
+            showToast('Pets withdrawn! Join Bot To Claim Your Items.');
+
+            // Refresh the grid after a moment
             setTimeout(() => {
                 openWithdrawModal();
                 const newStatus = document.getElementById('withdraw-status');
@@ -2858,8 +3135,53 @@
                     newStatus.textContent = '✅ Join Bot To Claim Your Items!';
                 }
             }, 600);
-            // Also show toast
-            showToast('Pets withdrawn! Join Bot To Claim Your Items.');
+        }
+
+        // ============================================================
+        //  PROFILE
+        // ============================================================
+        function openProfile(username) {
+            if (!username) return;
+            const avatarUrl = getAvatarUrl(username) || getDefaultAvatar();
+            const stats = getUserStats(username);
+            const inv = getUserInventory(username);
+
+            document.getElementById('profile-avatar').src = avatarUrl;
+            document.getElementById('profile-avatar').onerror = function() { this.src = getDefaultAvatar(); };
+
+            const adminTag = isAdmin(username) ? `<span class="admin-tag">Admin</span>` : '';
+            document.getElementById('profile-username').innerHTML = `${escapeHTML(username)} ${adminTag}`;
+
+            const statsHtml = `
+                    <div class="profile-stat win">
+                        <div class="stat-number">${stats.wins}</div>
+                        <div class="stat-label">Wins</div>
+                    </div>
+                    <div class="profile-stat lose">
+                        <div class="stat-number">${stats.losses}</div>
+                        <div class="stat-label">Losses</div>
+                    </div>
+                    <div class="profile-stat">
+                        <div class="stat-number">${stats.matches}</div>
+                        <div class="stat-label">Matches</div>
+                    </div>
+                `;
+            document.getElementById('profile-stats').innerHTML = statsHtml;
+
+            // Pets
+            const petsContainer = document.getElementById('profile-pets');
+            if (inv.length === 0) {
+                petsContainer.innerHTML = '<div style="color:#868e96;font-size:13px;padding:8px;">No pets in inventory.</div>';
+            } else {
+                petsContainer.innerHTML = inv.map(p =>
+                    `<div style="display:flex;flex-direction:column;align-items:center;background:#0f172a;padding:6px 10px;border-radius:12px;border:1px solid var(--border-color);">
+                            <img class="pet-img" src="${p.icon}" alt="${p.name}" style="width:40px;height:40px;">
+                            <span style="font-size:10px;color:#868e96;margin-top:2px;">${p.value}</span>
+                        </div>`
+                ).join('');
+            }
+
+            document.getElementById('profile-modal').style.display = 'flex';
         }
 
         // ============================================================
@@ -2903,12 +3225,17 @@
                 const isAdminUser = isAdmin(u);
                 const isMutedUser = isMuted(u);
                 const isBannedUser = isBanned(u);
+                const avatar = getAvatarUrl(u) || getDefaultAvatar();
                 const div = document.createElement('div');
                 div.className = 'admin-user-item';
                 div.innerHTML = `
-                        <span class="username">${escapeHTML(u)} ${isAdminUser ? '👑' : ''} ${isBannedUser ? '⛔' : ''} ${isMutedUser ? '🔇' : ''} <span style="color:#868e96;font-weight:400;font-size:12px;">${petCount} pets</span></span>
+                        <span class="username">
+                            <img src="${avatar}" style="width:22px;height:22px;border-radius:50%;object-fit:cover;border:1px solid var(--border-color);" onerror="this.src='${getDefaultAvatar()}'">
+                            ${escapeHTML(u)} ${isAdminUser ? '👑' : ''} ${isBannedUser ? '⛔' : ''} ${isMutedUser ? '🔇' : ''}
+                            <span style="color:#868e96;font-weight:400;font-size:12px;">${petCount} pets</span>
+                        </span>
                         <div class="user-actions">
-                            <button class="success" onclick="adminAddPetToUser('${escapeHTML(u)}')">➕</button>
+                            <button class="success" onclick="adminAddPetToUser('${escapeHTML(u)}')">+</button>
                             <button onclick="adminViewUserPets('${escapeHTML(u)}')">👁️</button>
                             ${!isAdminUser ? `<button class="danger" onclick="adminWipeUser('${escapeHTML(u)}')">🗑️</button>` : ''}
                         </div>
@@ -2919,23 +3246,20 @@
 
         function adminPopulateUserSelects() {
             const users = getAllUsernames();
-            const selects = ['admin-pet-user-select', 'admin-mute-user-select', 'admin-ban-user-select'];
-            selects.forEach(id => {
-                const sel = document.getElementById(id);
-                if (!sel) return;
-                const currentVal = sel.value;
-                sel.innerHTML = '';
-                users.forEach(u => {
-                    const opt = document.createElement('option');
-                    opt.value = u;
-                    opt.textContent = u;
-                    sel.appendChild(opt);
-                });
-                if (currentVal && users.includes(currentVal)) sel.value = currentVal;
+            const sel = document.getElementById('admin-pet-user-select');
+            if (!sel) return;
+            const currentVal = sel.value;
+            sel.innerHTML = '';
+            users.forEach(u => {
+                const opt = document.createElement('option');
+                opt.value = u;
+                opt.textContent = u;
+                sel.appendChild(opt);
             });
+            if (currentVal && users.includes(currentVal)) sel.value = currentVal;
         }
 
-        // --- Tab: Manage Pets ---
+        // --- Manage Pets ---
         function adminLoadUserPets() {
             const sel = document.getElementById('admin-pet-user-select');
             const username = sel.value;
@@ -2956,8 +3280,6 @@
             }
             document.getElementById('admin-pet-status').textContent = '';
         }
-
-        let adminSelectedPetIndex = null;
 
         function adminSelectPetForRemove(idx) {
             adminSelectedPetIndex = idx;
@@ -3073,7 +3395,7 @@
             }
         }
 
-        // --- Tab: Muted ---
+        // --- Muted ---
         function adminRenderMuted() {
             const list = document.getElementById('admin-muted-list');
             const muted = getMutedUsers();
@@ -3092,18 +3414,18 @@
                 container.appendChild(tag);
             });
             list.appendChild(container);
-            adminPopulateUserSelects();
         }
 
         function adminMuteUser() {
-            const sel = document.getElementById('admin-mute-user-select');
-            const username = sel.value;
-            if (!username) { showToast('Select a user.'); return; }
+            const input = document.getElementById('admin-mute-input');
+            const username = input.value.trim();
+            if (!username) { showToast('Enter a username to mute.'); return; }
             if (isAdmin(username)) { showToast('Cannot mute an admin.'); return; }
             const muted = getMutedUsers();
             if (muted.includes(username)) { showToast(`${username} is already muted.`); return; }
             muted.push(username);
             setMutedUsers(muted);
+            input.value = '';
             showToast(`🔇 Muted ${username}`);
             adminRenderMuted();
             adminRefreshUsers();
@@ -3118,7 +3440,7 @@
             adminRefreshUsers();
         }
 
-        // --- Tab: Bans ---
+        // --- Bans ---
         function adminRenderBanned() {
             const list = document.getElementById('admin-banned-list');
             const banned = getBannedUsers();
@@ -3138,23 +3460,22 @@
                 container.appendChild(tag);
             });
             list.appendChild(container);
-            adminPopulateUserSelects();
         }
 
         function adminBanUser() {
-            const sel = document.getElementById('admin-ban-user-select');
-            const username = sel.value;
-            if (!username) { showToast('Select a user.'); return; }
+            const input = document.getElementById('admin-ban-input');
+            const username = input.value.trim();
+            if (!username) { showToast('Enter a username to ban.'); return; }
             if (isAdmin(username)) { showToast('Cannot ban an admin.'); return; }
             if (username === currentUser) { showToast('You cannot ban yourself.'); return; }
             const banned = getBannedUsers();
             if (banned.includes(username)) { showToast(`${username} is already banned.`); return; }
             banned.push(username);
             setBannedUsers(banned);
+            input.value = '';
             showToast(`⛔ Banned ${username}`);
             adminRenderBanned();
             adminRefreshUsers();
-            // If the banned user is currently logged in, force logout? They'll see the ban on next action.
         }
 
         function adminUnbanUser(username) {
@@ -3173,7 +3494,15 @@
         renderMatches();
         renderChatHistory();
 
-        // Check if current user is banned on load
+        // Ensure current user is registered
+        if (currentUser) {
+            addRegisteredUser(currentUser);
+            // Ensure avatar is stored
+            if (!getAvatarUrl(currentUser) && currentUserAvatar) {
+                storeAvatarForUser(currentUser, currentUserAvatar, currentUserId);
+            }
+        }
+
         if (currentUser && isBanned(currentUser)) {
             showToast('⚠️ You are banned from using this site.', 5000);
         }
