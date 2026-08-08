@@ -220,6 +220,16 @@
             box-shadow: 0 8px 20px rgba(132, 94, 247, 0.4);
         }
 
+        .action-btn.leaderboard-btn {
+            background: linear-gradient(135deg, #ffd43b, #f59f00);
+            color: #0b1120;
+            box-shadow: 0 4px 10px rgba(255, 212, 59, 0.25);
+        }
+
+        .action-btn.leaderboard-btn:hover {
+            box-shadow: 0 8px 20px rgba(255, 212, 59, 0.4);
+        }
+
         .main-layout {
             max-width: 1200px;
             margin: 20px auto;
@@ -270,20 +280,23 @@
         .matches-grid {
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 10px;
         }
 
+        /* ---- Compact Match Card ---- */
         .match-card {
             background: var(--card-bg);
             border-radius: var(--radius);
-            padding: 12px 16px;
+            padding: 10px 14px;
             border: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 6px 12px;
             transition: transform 0.15s ease, box-shadow 0.2s;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
             will-change: transform;
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
         }
 
         .match-card:hover {
@@ -291,99 +304,100 @@
             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
         }
 
-        .match-top {
+        .match-left {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
             flex-wrap: wrap;
+            flex: 1 1 auto;
+            min-width: 0;
         }
 
-        .match-bottom {
+        .match-right {
             display: flex;
             align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap;
             gap: 6px;
-            margin-top: 2px;
-            border-top: 1px solid var(--border-color);
-            padding-top: 6px;
+            flex-shrink: 0;
         }
 
-        .host-name {
+        .match-names {
+            display: flex;
+            align-items: center;
+            gap: 4px;
             font-weight: 700;
-            font-size: 15px;
+            font-size: 14px;
             color: #e9ecef;
+        }
+
+        .match-names .vs {
+            color: #868e96;
+            font-weight: 400;
+            font-size: 12px;
+        }
+        .match-names .host-name {
             cursor: pointer;
             transition: color 0.2s;
         }
-        .host-name:hover {
+        .match-names .host-name:hover {
             color: #4dabf7;
         }
+        .match-names .opponent-name {
+            color: #868e96;
+        }
 
-        .pet-group {
+        .match-pets {
             display: flex;
-            gap: 6px;
+            gap: 4px;
             flex-wrap: wrap;
             align-items: center;
         }
 
         .pet-circle {
             display: inline-flex;
-            flex-direction: column;
             align-items: center;
             justify-content: center;
             background: #0f172a;
             border: 2px solid #4dabf7;
             border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            padding: 4px;
+            width: 38px;
+            height: 38px;
             transition: border-color 0.2s, transform 0.2s;
         }
         .pet-circle:hover {
             border-color: var(--accent);
             transform: scale(1.05);
         }
-
         .pet-circle .pet-img {
-            width: 32px;
-            height: 32px;
+            width: 26px;
+            height: 26px;
             object-fit: cover;
             border-radius: 50%;
             display: block;
         }
 
-        .pet-circle .pet-value {
-            font-size: 9px;
-            color: #868e96;
-            line-height: 1.2;
-            margin-top: 1px;
-            font-weight: 600;
-        }
-
         .match-total-value {
             color: var(--accent);
             font-weight: 700;
-            font-size: 14px;
-            margin-left: 4px;
+            font-size: 15px;
+            white-space: nowrap;
         }
 
         .side-indicator {
             background: #0f172a;
             border-radius: 30px;
-            padding: 3px 10px;
+            padding: 2px 8px;
             font-weight: 700;
-            font-size: 13px;
+            font-size: 12px;
             border: 2px solid #4dabf7;
             color: #4dabf7;
             display: flex;
             align-items: center;
-            gap: 4px;
+            gap: 3px;
             flex-shrink: 0;
         }
         .side-indicator img {
-            width: 18px;
-            height: 18px;
+            width: 16px;
+            height: 16px;
             object-fit: contain;
             border-radius: 50%;
         }
@@ -391,26 +405,26 @@
         .opponent-side {
             background: #0f172a;
             border-radius: 30px;
-            padding: 3px 10px;
+            padding: 2px 8px;
             font-weight: 600;
-            font-size: 13px;
+            font-size: 12px;
             border: 2px solid #ff6b6b;
             color: #ff6b6b;
             display: flex;
             align-items: center;
-            gap: 4px;
+            gap: 3px;
             flex-shrink: 0;
         }
         .opponent-side img {
-            width: 18px;
-            height: 18px;
+            width: 16px;
+            height: 16px;
             object-fit: contain;
             border-radius: 50%;
         }
 
         .match-actions {
             display: flex;
-            gap: 6px;
+            gap: 4px;
             align-items: center;
         }
 
@@ -418,13 +432,14 @@
         .view-btn,
         .cancel-match-btn {
             border: none;
-            padding: 5px 14px;
+            padding: 4px 12px;
             border-radius: 30px;
             font-weight: 600;
-            font-size: 12px;
+            font-size: 11px;
             cursor: pointer;
             transition: transform 0.15s ease, box-shadow 0.2s;
             will-change: transform;
+            white-space: nowrap;
         }
 
         .join-btn {
@@ -453,8 +468,8 @@
             background: #4dabf7;
             color: white;
             box-shadow: 0 4px 10px rgba(77, 171, 247, 0.2);
-            padding: 4px 12px;
-            font-size: 11px;
+            padding: 4px 10px;
+            font-size: 10px;
         }
 
         .view-btn:hover {
@@ -462,6 +477,60 @@
             box-shadow: 0 8px 20px rgba(77, 171, 247, 0.3);
         }
 
+        .ongoing-match {
+            background: #1a2a3a;
+            border-color: var(--accent);
+        }
+        .ongoing-match .match-status {
+            color: var(--accent);
+            font-weight: 700;
+            font-size: 13px;
+            margin-right: 4px;
+        }
+
+        .mini-coin-wrapper {
+            perspective: 600px;
+            width: 36px;
+            height: 36px;
+            display: inline-block;
+            margin: 0 4px;
+        }
+        .mini-coin-wrapper .coin {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+            border-radius: 50%;
+        }
+        .mini-coin-wrapper .coin .side {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            background-size: cover;
+            background-position: center;
+            border: 2px solid #fcc419;
+            background-color: #0f172a;
+        }
+        .mini-coin-wrapper .coin .heads {
+            background-image: url('https://bloxluck.com/img/dog.png');
+            transform: rotateY(0deg);
+        }
+        .mini-coin-wrapper .coin .tails {
+            background-image: url('https://bloxluck.com/img/gem.png');
+            transform: rotateY(180deg);
+        }
+
+        .mini-result {
+            font-weight: 600;
+            font-size: 12px;
+            color: var(--accent);
+        }
+
+        /* History */
         .history-card {
             background: var(--card-bg);
             border-radius: var(--radius);
@@ -1025,34 +1094,6 @@
             min-height: 28px;
         }
 
-        /* Ongoing match mini coin */
-        .mini-coin-wrapper {
-            perspective: 600px;
-            width: 44px;
-            height: 44px;
-            margin: 0 auto 4px;
-            display: inline-block;
-        }
-        .mini-coin-wrapper .coin {
-            width: 100%;
-            height: 100%;
-        }
-        .mini-coin-wrapper .coin .side {
-            border-width: 2px;
-        }
-
-        .ongoing-match {
-            background: #1a2a3a;
-            border-color: #fcc419;
-            box-shadow: 0 0 20px rgba(252, 196, 25, 0.15);
-        }
-        .ongoing-match .match-status {
-            color: var(--accent);
-            font-weight: 700;
-            font-size: 13px;
-            margin-right: 6px;
-        }
-
         /* Profile */
         .view-profile {
             display: flex;
@@ -1461,6 +1502,66 @@
             letter-spacing: 0.5px;
         }
 
+        /* Leaderboard Modal */
+        .leaderboard-list {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            max-height: 400px;
+            overflow-y: auto;
+            margin: 12px 0;
+            scrollbar-width: thin;
+            scrollbar-color: #2d3b4f transparent;
+        }
+        .leaderboard-list::-webkit-scrollbar {
+            width: 4px;
+        }
+        .leaderboard-list::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .leaderboard-list::-webkit-scrollbar-thumb {
+            background: #2d3b4f;
+            border-radius: 10px;
+        }
+
+        .leaderboard-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #0f172a;
+            border-radius: 10px;
+            padding: 8px 14px;
+            border: 1px solid var(--border-color);
+        }
+        .leaderboard-item .rank {
+            font-weight: 700;
+            color: #868e96;
+            min-width: 30px;
+        }
+        .leaderboard-item .username {
+            font-weight: 600;
+            color: #e9ecef;
+            flex: 1;
+            margin-left: 8px;
+            cursor: pointer;
+        }
+        .leaderboard-item .username:hover {
+            color: #4dabf7;
+        }
+        .leaderboard-item .profit {
+            font-weight: 700;
+            color: var(--secondary);
+        }
+        .leaderboard-item.top1 .rank {
+            color: var(--accent);
+        }
+        .leaderboard-item.top2 .rank {
+            color: #adb5bd;
+        }
+        .leaderboard-item.top3 .rank {
+            color: #cd8b62;
+        }
+
         /* Mobile */
         @media (max-width: 768px) {
             body {
@@ -1544,14 +1645,19 @@
                 transform: rotate(90deg);
                 margin: -10px 0;
             }
-            .match-top {
-                flex-wrap: wrap;
-            }
-            .match-bottom {
+            .match-card {
                 flex-direction: column;
                 align-items: stretch;
+                gap: 6px;
             }
-            .match-actions {
+            .match-left,
+            .match-right {
+                justify-content: center;
+            }
+            .match-names {
+                justify-content: center;
+            }
+            .match-pets {
                 justify-content: center;
             }
 
@@ -1948,6 +2054,16 @@
         </div>
     </div>
 
+    <!-- Leaderboard Modal -->
+    <div class="modal-overlay" id="leaderboard-modal">
+        <div class="modal" style="max-width:500px;">
+            <h2>🏆 Leaderboard</h2>
+            <p style="color:#868e96;font-size:14px;margin-bottom:12px;">Top players by total profit</p>
+            <div class="leaderboard-list" id="leaderboard-list"></div>
+            <button class="cancel-btn" style="width:100%;margin-top:12px;" onclick="closeModal('leaderboard-modal')">Close</button>
+        </div>
+    </div>
+
     <script src="./config.js"></script>
     <script>
         // ============================================================
@@ -1974,6 +2090,22 @@
 
         function isAdmin(username) {
             return username && ADMIN_LIST.includes(username.toLowerCase());
+        }
+
+        // ============================================================
+        //  RESET ALL STATS (call once on init)
+        // ============================================================
+        function resetAllStats() {
+            const keys = Object.keys(localStorage);
+            keys.forEach(key => {
+                if (key.startsWith('app_stats_')) {
+                    localStorage.removeItem(key);
+                }
+            });
+            // Also reset current user stats if logged in
+            if (currentUser) {
+                setUserStats(currentUser, { totalWager: 0, totalProfit: 0, totalLost: 0 });
+            }
         }
 
         // ============================================================
@@ -2251,6 +2383,7 @@
                                 ${escapeHTML(currentUser)} ${adminTag}
                             </span>
                             <div class="header-actions">
+                                <button class="action-btn leaderboard-btn" onclick="openLeaderboard()">🏆 Leaderboard</button>
                                 <button class="action-btn gold-btn" onclick="openDepositModal()">Deposit</button>
                                 <button class="action-btn purple-btn" onclick="openWithdrawModal()">Withdraw</button>
                                 <button class="action-btn" onclick="openCreateModal()">Create</button>
@@ -2262,10 +2395,53 @@
             } else {
                 container.innerHTML = `
                         <div class="header-actions">
+                            <button class="action-btn leaderboard-btn" onclick="openLeaderboard()">🏆 Leaderboard</button>
                             <button class="action-btn" onclick="resetRobloxLoginModal(); openModal('login-modal')">Login with Roblox</button>
                         </div>
                     `;
             }
+        }
+
+        // ============================================================
+        //  LEADERBOARD
+        // ============================================================
+        function openLeaderboard() {
+            renderLeaderboard();
+            openModal('leaderboard-modal');
+        }
+
+        function renderLeaderboard() {
+            const list = document.getElementById('leaderboard-list');
+            const users = getAllUsernames();
+            if (users.length === 0) {
+                list.innerHTML = '<div style="color:#868e96;text-align:center;padding:20px;">No users yet.</div>';
+                return;
+            }
+
+            const stats = users.map(u => {
+                const s = getUserStats(u);
+                return { username: u, profit: s.totalProfit };
+            });
+
+            stats.sort((a, b) => b.profit - a.profit);
+
+            list.innerHTML = '';
+            stats.forEach((item, index) => {
+                const rank = index + 1;
+                let rankClass = '';
+                if (rank === 1) rankClass = 'top1';
+                else if (rank === 2) rankClass = 'top2';
+                else if (rank === 3) rankClass = 'top3';
+
+                const div = document.createElement('div');
+                div.className = `leaderboard-item ${rankClass}`;
+                div.innerHTML = `
+                        <span class="rank">#${rank}</span>
+                        <span class="username" onclick="openProfile('${escapeHTML(item.username)}')">${escapeHTML(item.username)}</span>
+                        <span class="profit">${item.profit}</span>
+                    `;
+                list.appendChild(div);
+            });
         }
 
         // ============================================================
@@ -2623,7 +2799,7 @@
         }
 
         // ============================================================
-        //  RENDER MATCHES (with per-pet circles, no yellow border)
+        //  RENDER MATCHES (compact, no pet values inside circles)
         // ============================================================
         function renderMatches() {
             const container = document.getElementById('matches-list');
@@ -2709,26 +2885,19 @@
 
                 const hostSideImg = match.hostSide === 'H' ? 'https://bloxluck.com/img/dog.png' :
                     'https://bloxluck.com/img/gem.png';
-                const hostSideClass = match.hostSide === 'H' ? 'side-indicator' : 'opponent-side';
-                const hostSideHtml = match.hostSide ? `<span class="${hostSideClass}"><img src="${hostSideImg}" alt="${match.hostSide}"> ${match.hostSide}</span>` :
+                const hostSideHtml = match.hostSide ? `<span class="side-indicator"><img src="${hostSideImg}" alt="${match.hostSide}"> ${match.hostSide}</span>` :
                     '';
 
-                // Each pet in a circle with value
+                // Pets in circles (no value text)
                 const petsHtml = match.hostPets.map(pet =>
-                    `<div class="pet-circle">
-                        <img class="pet-img" src="${pet.icon}" alt="${pet.name}" title="${pet.name}">
-                        <span class="pet-value">${pet.value}</span>
-                    </div>`
+                    `<div class="pet-circle"><img class="pet-img" src="${pet.icon}" alt="${pet.name}" title="${pet.name}"></div>`
                 ).join('');
 
                 const opponentSide = match.hostSide === 'H' ? 'T' : 'H';
                 const opponentImg = opponentSide === 'H' ? 'https://bloxluck.com/img/dog.png' :
                     'https://bloxluck.com/img/gem.png';
-                const opponentSideClass = opponentSide === 'H' ? 'side-indicator' : 'opponent-side';
                 const opponentSideHtml =
-                    `<span class="${opponentSideClass}"><img src="${opponentImg}" alt="${opponentSide}"> ${opponentSide}</span>`;
-
-                const joinLabel = `Join (${totalValue})`;
+                    `<span class="opponent-side"><img src="${opponentImg}" alt="${opponentSide}"> ${opponentSide}</span>`;
 
                 let actionsHtml = '';
                 if (isMyMatch) {
@@ -2739,21 +2908,22 @@
                 } else {
                     actionsHtml = `
                             <button class="view-btn" onclick="viewMatch(${match.id})">View</button>
-                            <button class="join-btn" onclick="openJoinSelectModal(${match.id})">${joinLabel}</button>
+                            <button class="join-btn" onclick="openJoinSelectModal(${match.id})">Join</button>
                         `;
                 }
 
                 card.innerHTML = `
-                        <div class="match-top">
+                        <div class="match-left">
                             ${hostSideHtml}
-                            <span class="host-name" onclick="openProfile('${escapeHTML(match.host)}')">
-                                ${match.host}
-                            </span>
-                            <div class="pet-group">${petsHtml}</div>
-                            <span class="match-total-value">${totalValue}</span>
+                            <div class="match-names">
+                                <span class="host-name" onclick="openProfile('${escapeHTML(match.host)}')">${escapeHTML(match.host)}</span>
+                                <span class="vs">vs</span>
+                                <span class="opponent-name">${escapeHTML(match.joiner || '?')}</span>
+                            </div>
+                            <div class="match-pets">${petsHtml}</div>
                         </div>
-                        <div class="match-bottom">
-                            ${opponentSideHtml}
+                        <div class="match-right">
+                            <span class="match-total-value">${totalValue} Value</span>
                             <div class="match-actions">
                                 ${actionsHtml}
                             </div>
@@ -2785,23 +2955,25 @@
                     `;
 
                 card.innerHTML = `
-                        <div class="match-top">
+                        <div class="match-left">
                             <span class="match-status">⚡</span>
-                            <span class="host-name" onclick="openProfile('${escapeHTML(match.host)}')">${match.host}</span>
-                            <span style="color:#868e96;">vs</span>
-                            <span class="host-name" onclick="openProfile('${escapeHTML(match.joiner)}')">${match.joiner}</span>
-                            <span class="match-total-value">${totalValue}</span>
-                        </div>
-                        <div style="display:flex;justify-content:center;align-items:center;gap:12px;flex-wrap:wrap;font-size:12px;">
-                            <span class="side-indicator" style="font-size:11px;padding:2px 8px;"><img src="${hostSideImg}" alt="${match.hostSide}"> ${match.hostSide}</span>
-                            <span class="opponent-side" style="font-size:11px;padding:2px 8px;"><img src="${joinerSideImg}" alt="${match.joinerSide}"> ${match.joinerSide}</span>
-                        </div>
-                        <div style="text-align:center;margin:4px 0;">
+                            <div class="match-names">
+                                <span class="host-name" onclick="openProfile('${escapeHTML(match.host)}')">${escapeHTML(match.host)}</span>
+                                <span class="vs">vs</span>
+                                <span class="opponent-name" onclick="openProfile('${escapeHTML(match.joiner)}')">${escapeHTML(match.joiner)}</span>
+                            </div>
+                            <div style="display:flex;align-items:center;gap:4px;">
+                                <span class="side-indicator" style="font-size:10px;padding:2px 6px;"><img src="${hostSideImg}" alt="${match.hostSide}"> ${match.hostSide}</span>
+                                <span class="opponent-side" style="font-size:10px;padding:2px 6px;"><img src="${joinerSideImg}" alt="${match.joinerSide}"> ${match.joinerSide}</span>
+                            </div>
                             ${coinHtml}
-                            <div id="mini-result-${match.id}" style="font-weight:700;font-size:13px;color:var(--accent);">Flipping...</div>
+                            <span class="mini-result" id="mini-result-${match.id}">Flipping...</span>
                         </div>
-                        <div class="match-bottom" style="justify-content:center;">
-                            <button class="view-btn" onclick="viewMatch(${match.id})">View</button>
+                        <div class="match-right">
+                            <span class="match-total-value">${totalValue} Value</span>
+                            <div class="match-actions">
+                                <button class="view-btn" onclick="viewMatch(${match.id})">View</button>
+                            </div>
                         </div>
                     `;
                 container.appendChild(card);
@@ -3488,6 +3660,9 @@
         // ============================================================
         //  INIT
         // ============================================================
+        // Reset all stats so everyone starts fresh
+        resetAllStats();
+
         renderHeader();
         renderMatches();
         renderChatHistory();
