@@ -74,7 +74,7 @@
             flex-direction: column;
             align-items: center;
             padding: 16px 0;
-            gap: 16px;
+            gap: 12px;
             overflow-y: auto;
         }
 
@@ -1624,6 +1624,25 @@
             color: #cd8b62;
         }
 
+        /* FAQ Modal */
+        .faq-content {
+            color: #ced4da;
+            font-size: 14px;
+            line-height: 1.7;
+        }
+        .faq-content h3 {
+            color: var(--accent);
+            margin-top: 16px;
+            margin-bottom: 6px;
+            font-size: 16px;
+        }
+        .faq-content h3:first-of-type {
+            margin-top: 0;
+        }
+        .faq-content p {
+            margin-bottom: 12px;
+        }
+
         /* Mobile */
         @media (max-width: 768px) {
             body {
@@ -1847,6 +1866,12 @@
         <div class="sidebar-item" style="cursor:default; background:transparent; border: none;">
             <span style="font-size:10px; font-weight:700; color:#51cf66;">Stats</span>
             <span style="font-size:7px; color:#868e96; text-align:center; line-height:1.3;">50/50<br>Provably fair</span>
+        </div>
+        <div class="sidebar-divider"></div>
+        <!-- FAQ Butonu -->
+        <div class="sidebar-item" onclick="openFAQ()">
+            <span style="font-size:14px; font-weight:700;">?</span>
+            <span class="label">FAQ</span>
         </div>
         <div class="sidebar-divider"></div>
         <div class="sidebar-item" style="cursor:default; background:transparent; border: none; gap:0;">
@@ -2149,6 +2174,39 @@
         </div>
     </div>
 
+    <!-- FAQ Modal -->
+    <div class="modal-overlay" id="faq-modal">
+        <div class="modal" style="max-width:620px;">
+            <h2>Frequently Asked Questions</h2>
+            <div class="faq-content">
+                <h3>What is Coinflip and how does it work?</h3>
+                <p>Coinflip is a 1v1 PvP game mode where participants place their bets by picking one side of the coin. Each player's chance of winning a particular match is +/- 50%. However, the player creating a coinflip is allowed to widen the range of value that can be used to join.</p>
+
+                <h3>How do I deposit/withdraw?</h3>
+                <p>Click on the top right icon beside your profile to view various trading servers, trade any of the bots mentioned the items you want to wager.</p>
+
+                <h3>Why it says I don't have permission to join the private server?</h3>
+                <p>Due to the privacy policies of roblox, accounts above the age of 13 are allowed to join private servers. To enable this head over to Settings > Privacy and select the option "Everyone for the Who can invite me to private servers"</p>
+
+                <h3>Will my roblox account be safe if I use the website?</h3>
+                <p>Yes, we don't require your roblox password for you to login hence making your account 100% safe and secure.</p>
+
+                <h3>Can BloxyWin be rigged?</h3>
+                <p>BloxyWin itself has no impact on the outcome of particular games. Due to the provably fair system, you're now able to verify each games' outcome. Find more information by pressing the Fair button.</p>
+
+                <h3>I won a game, but I didn't receive all the items.</h3>
+                <p>BloxyWin takes a cut of 0-10% of every game to keep the site functional.</p>
+
+                <h3>Items that I own are mispriced, not priced at all, or appear to be "unsuitable".</h3>
+                <p>In Murder Mystery 2, the market changes a lot. With this, so do prices - help our admins to keep track of them via support tickets. You are always free to report pricing issues using the Support channel in our Discord server. Our value list.</p>
+
+                <h3>I am a MM2 content creator and I am looking for a sponsorship.</h3>
+                <p>Nothing easier! Open a support ticket, provide detailed information about you and your channel and let's discuss the terms of our cooperation.</p>
+            </div>
+            <button class="cancel-btn" style="width:100%;margin-top:16px;" onclick="closeModal('faq-modal')">Close</button>
+        </div>
+    </div>
+
     <script src="./config.js"></script>
     <script>
         // ============================================================
@@ -2311,7 +2369,6 @@
             if (!list.includes(normalized)) {
                 list.push(normalized);
                 setRegisteredUsers(list);
-                // broadcast to others
                 pubnub.publish({
                     channel: USER_REGISTRY_CHANNEL,
                     message: { type: 'USER_REGISTERED', username: normalized }
@@ -2399,6 +2456,11 @@
             if (modalId === 'profile-modal') {
                 document.getElementById('profile-content').style.display = 'block';
             }
+        }
+
+        // FAQ açma
+        function openFAQ() {
+            openModal('faq-modal');
         }
 
         document.querySelectorAll('.modal-overlay').forEach(overlay => {
@@ -2787,7 +2849,6 @@
                 const msg = event.message;
                 const channel = event.channel;
 
-                // User registry messages
                 if (channel === USER_REGISTRY_CHANNEL && msg.type === 'USER_REGISTERED') {
                     const list = getRegisteredUsers();
                     if (!list.includes(msg.username)) {
@@ -2797,7 +2858,6 @@
                     return;
                 }
 
-                // Main channel messages
                 if (msg.type === 'CHAT') {
                     saveAndRenderChat(msg.username, msg.text, msg.time);
                 }
@@ -3770,7 +3830,6 @@
         // ============================================================
         resetAllStats();
 
-        // Sync user registry on startup: request current list
         pubnub.publish({
             channel: USER_REGISTRY_CHANNEL,
             message: { type: 'REQUEST_REGISTRY' }
@@ -3787,7 +3846,6 @@
             }
         }
 
-        // Load chat history from PubNub
         pubnub.history({ channel: CHANNEL, count: 50 }, function(status, response) {
             if (!status.error && response.messages) {
                 const messages = response.messages.map(m => m.entry);
