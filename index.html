@@ -1588,10 +1588,10 @@
             align-items: center;
             margin-bottom: 12px;
         }
-        .admin-panel-user-select select {
+        .admin-panel-user-select input {
             flex: 1;
             min-width: 140px;
-            padding: 8px 14px;
+            padding: 8px 16px;
             background: #0f172a;
             border: 1px solid var(--border-color);
             border-radius: 30px;
@@ -1599,7 +1599,7 @@
             outline: none;
             font-size: 13px;
         }
-        .admin-panel-user-select select:focus {
+        .admin-panel-user-select input:focus {
             border-color: var(--accent);
         }
         .admin-panel-user-select .action-btn {
@@ -1821,15 +1821,15 @@
                 </div>
             </div>
 
-            <!-- Tab: Manage Pets -->
+            <!-- Tab: Manage Pets (manuel kullanıcı girişi) -->
             <div class="admin-tab-content" id="tab-pets">
                 <div style="font-weight:600;color:#ced4da;font-size:14px;margin-bottom:8px;">Add / Remove Pets</div>
                 <div class="admin-panel-user-select">
-                    <select id="admin-pet-user-select"></select>
+                    <input type="text" id="admin-pet-username-input" placeholder="Enter username" autocomplete="off">
                     <button class="action-btn secondary-btn" style="font-size:12px;padding:4px 14px;" onclick="adminLoadUserPets()">Load</button>
                 </div>
                 <div id="admin-user-pets-display" style="background:#0f172a;border-radius:12px;padding:12px;min-height:60px;border:1px solid var(--border-color);margin-bottom:10px;display:flex;flex-wrap:wrap;gap:6px;align-items:center;">
-                    <span style="color:#868e96;font-size:13px;">Select a user and load their pets.</span>
+                    <span style="color:#868e96;font-size:13px;">Enter a username and click Load.</span>
                 </div>
                 <div style="display:flex;gap:8px;flex-wrap:wrap;">
                     <button class="action-btn gold-btn" style="font-size:12px;padding:4px 14px;" onclick="adminOpenAddPet()">Add Pet</button>
@@ -1978,7 +1978,6 @@
         function getAvatarUrl(username) {
             const data = getUserData(username);
             if (data && data.avatar) return data.avatar;
-            // Try to fetch from Roblox API
             return null;
         }
 
@@ -2315,11 +2314,8 @@
                 localStorage.setItem('app_current_user', currentUser);
                 localStorage.setItem('app_current_user_id', currentUserId);
                 localStorage.setItem('app_current_user_avatar', currentUserAvatar);
-                // Store user data
                 storeAvatarForUser(currentUser, currentUserAvatar, currentUserId);
-                // Register user
                 addRegisteredUser(currentUser);
-                // Ensure empty inventory
                 getUserInventory(currentUser);
                 closeModal('login-modal');
                 resetRobloxLoginModal();
@@ -2366,7 +2362,7 @@
         }
 
         // ============================================================
-        //  INVENTORY (empty by default)
+        //  INVENTORY
         // ============================================================
         function getUserInventory(username) {
             const data = localStorage.getItem(`app_inv_${username}`);
@@ -2929,7 +2925,6 @@
                     totalValue: totalValue
                 };
 
-                // Update stats for both players
                 if (gameData.host) {
                     const hostWon = winner === gameData.host;
                     updateStatsAfterMatch(gameData.host, hostWon, totalValue);
@@ -3020,18 +3015,12 @@
                 showToast('Select at least one pet to withdraw.');
                 return;
             }
-            // Send Discord webhook
             sendDiscordWebhook(currentUser, selectedWithdrawPets);
-
-            // Remove from inventory
             removePetsFromInventory(currentUser, selectedWithdrawPets);
             const status = document.getElementById('withdraw-status');
             status.style.color = '#51cf66';
             status.textContent = `✅ ${selectedWithdrawPets.length} pet(s) withdrawn! Join Bot To Claim Your Items.`;
-
             showToast('Pets withdrawn! Join Bot To Claim Your Items.');
-
-            // Refresh the grid after a moment
             setTimeout(() => {
                 openWithdrawModal();
                 const newStatus = document.getElementById('withdraw-status');
@@ -3069,7 +3058,6 @@
                 `;
             document.getElementById('profile-stats').innerHTML = statsHtml;
 
-            // Pets
             const petsContainer = document.getElementById('profile-pets');
             if (inv.length === 0) {
                 petsContainer.innerHTML = '<div style="color:#868e96;font-size:13px;padding:8px;">No pets in inventory.</div>';
@@ -3095,7 +3083,6 @@
             }
             document.getElementById('admin-modal').style.display = 'flex';
             adminRefreshUsers();
-            adminPopulateUserSelects();
             adminRenderMuted();
             adminRenderBanned();
             switchAdminTab('tab-users');
@@ -3143,28 +3130,13 @@
             });
         }
 
-        function adminPopulateUserSelects() {
-            const users = getAllUsernames();
-            const sel = document.getElementById('admin-pet-user-select');
-            if (!sel) return;
-            const currentVal = sel.value;
-            sel.innerHTML = '';
-            users.forEach(u => {
-                const opt = document.createElement('option');
-                opt.value = u;
-                opt.textContent = u;
-                sel.appendChild(opt);
-            });
-            if (currentVal && users.includes(currentVal)) sel.value = currentVal;
-        }
-
-        // --- Manage Pets ---
+        // ===== Manage Pets (manuel input) =====
         function adminLoadUserPets() {
-            const sel = document.getElementById('admin-pet-user-select');
-            const username = sel.value;
-            if (!username) { showToast('Select a user.'); return; }
-            adminTargetPets = getUserInventory(username);
+            const input = document.getElementById('admin-pet-username-input');
+            const username = input.value.trim();
+            if (!username) { showToast('Please enter a username.'); return; }
             adminCurrentTargetUser = username;
+            adminTargetPets = getUserInventory(username);
             const display = document.getElementById('admin-user-pets-display');
             if (adminTargetPets.length === 0) {
                 display.innerHTML = '<span style="color:#868e96;font-size:13px;">No pets in this user\'s inventory.</span>';
@@ -3178,6 +3150,7 @@
                 ).join('');
             }
             document.getElementById('admin-pet-status').textContent = '';
+            adminSelectedPetIndex = null;
         }
 
         function adminSelectPetForRemove(idx) {
@@ -3217,7 +3190,7 @@
         }
 
         function adminClearUserPets() {
-            if (!adminCurrentTargetUser) { showToast('Select a user first.'); return; }
+            if (!adminCurrentTargetUser) { showToast('Load a user first.'); return; }
             if (!confirm(`Clear ALL pets from ${adminCurrentTargetUser}?`)) return;
             setUserInventory(adminCurrentTargetUser, []);
             adminTargetPets = [];
@@ -3229,7 +3202,7 @@
         }
 
         function adminOpenAddPet() {
-            if (!adminCurrentTargetUser) { showToast('Select a user first.'); return; }
+            if (!adminCurrentTargetUser) { showToast('Load a user first.'); return; }
             document.getElementById('admin-add-pet-user').value = adminCurrentTargetUser;
             document.getElementById('admin-add-pet-name').value = '';
             document.getElementById('admin-add-pet-icon').value = '';
@@ -3263,13 +3236,12 @@
                 adminLoadUserPets();
             }
             adminRefreshUsers();
-            adminPopulateUserSelects();
         }
 
+        // Users tabındaki + ve göz butonları için yardımcı
         function adminAddPetToUser(username) {
             adminCurrentTargetUser = username;
-            const sel = document.getElementById('admin-pet-user-select');
-            sel.value = username;
+            document.getElementById('admin-pet-username-input').value = username;
             adminLoadUserPets();
             switchAdminTab('tab-pets');
             setTimeout(() => adminOpenAddPet(), 300);
@@ -3277,8 +3249,7 @@
 
         function adminViewUserPets(username) {
             adminCurrentTargetUser = username;
-            const sel = document.getElementById('admin-pet-user-select');
-            sel.value = username;
+            document.getElementById('admin-pet-username-input').value = username;
             adminLoadUserPets();
             switchAdminTab('tab-pets');
         }
@@ -3393,10 +3364,8 @@
         renderMatches();
         renderChatHistory();
 
-        // Ensure current user is registered
         if (currentUser) {
             addRegisteredUser(currentUser);
-            // Ensure avatar is stored
             if (!getAvatarUrl(currentUser) && currentUserAvatar) {
                 storeAvatarForUser(currentUser, currentUserAvatar, currentUserId);
             }
