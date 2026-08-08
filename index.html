@@ -7,6 +7,7 @@
     <script src="https://cdn.pubnub.com/sdk/javascript/pubnub.7.2.2.min.js">
     </script>
     <style>
+        /* AYNI STILLER – DEĞİŞMEDİ */
         :root {
             --primary: #ff6b6b;
             --secondary: #51cf66;
@@ -20,14 +21,12 @@
             --radius: 14px;
             --admin-color: #ff6bff;
         }
-
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
             font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
         }
-
         body {
             background-color: var(--bg-dark);
             color: var(--text-light);
@@ -36,13 +35,9 @@
             padding-right: var(--chat-width);
             transition: padding 0.3s ease;
         }
-
-        /* Smooth scroll */
         html {
             scroll-behavior: smooth;
         }
-
-        /* Fade animations */
         .fade-in {
             animation: fadeIn 0.4s ease forwards;
         }
@@ -56,7 +51,6 @@
                 transform: translateY(0);
             }
         }
-
         header {
             position: fixed;
             top: 0;
@@ -76,7 +70,6 @@
             flex-wrap: nowrap;
             transition: right 0.3s ease;
         }
-
         .toast-container {
             position: fixed;
             top: calc(var(--header-height) + 12px);
@@ -106,7 +99,6 @@
             opacity: 1;
             transform: translateY(0) scale(1);
         }
-
         .logo {
             display: flex;
             align-items: center;
@@ -126,7 +118,6 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
-
         .user-info-bar {
             display: flex;
             align-items: center;
@@ -145,7 +136,6 @@
             font-size: 13px;
             white-space: nowrap;
         }
-
         .header-actions {
             display: flex;
             gap: 6px;
@@ -208,7 +198,6 @@
         .action-btn.withdraw-btn:hover {
             box-shadow: 0 8px 20px rgba(255, 212, 59, 0.3);
         }
-
         .main-layout {
             max-width: 1200px;
             margin: 20px auto;
@@ -254,13 +243,11 @@
             color: white;
             box-shadow: 0 3px 8px rgba(77, 171, 247, 0.3);
         }
-
         .matches-grid {
             display: flex;
             flex-direction: column;
             gap: 14px;
         }
-
         .match-card,
         .history-card {
             background: var(--card-bg);
@@ -338,7 +325,6 @@
             width: 26px;
             height: 26px;
         }
-
         .side-indicator {
             background: #0f172a;
             border-radius: 30px;
@@ -375,7 +361,6 @@
             height: 20px;
             object-fit: contain;
         }
-
         .match-actions {
             display: flex;
             gap: 8px;
@@ -433,7 +418,6 @@
             font-size: 14px;
             margin-left: 6px;
         }
-
         .history-card {
             display: flex;
             flex-direction: column;
@@ -502,8 +486,6 @@
         .history-side .winner-side {
             font-weight: 700;
         }
-
-        /* Chat */
         .chat-card {
             position: fixed;
             top: 0;
@@ -556,7 +538,6 @@
                 transform: scale(0.85);
             }
         }
-
         .chat-messages {
             flex: 1;
             padding: 16px 20px;
@@ -581,7 +562,6 @@
         .chat-messages::-webkit-scrollbar-thumb:hover {
             background: #3d4b5f;
         }
-
         .chat-msg {
             background: #141f2f;
             padding: 8px 14px;
@@ -611,7 +591,6 @@
         .chat-msg.muted .username {
             color: #6c7a8a;
         }
-
         .chat-input-area {
             padding: 14px 18px;
             border-top: 1px solid var(--border-color);
@@ -661,8 +640,6 @@
             cursor: not-allowed;
             transform: none !important;
         }
-
-        /* Modals */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -752,7 +729,6 @@
         .modal-grid::-webkit-scrollbar-thumb:hover {
             background: #3d4b5f;
         }
-
         .modal-item {
             background: #0f172a;
             border: 2px solid var(--border-color);
@@ -783,7 +759,6 @@
             object-fit: contain;
             border-radius: 6px;
         }
-
         .side-select {
             display: flex;
             justify-content: center;
@@ -819,7 +794,6 @@
             height: 28px;
             object-fit: contain;
         }
-
         .modal-actions {
             display: flex;
             gap: 12px;
@@ -865,7 +839,6 @@
         .cancel-btn:active {
             transform: scale(0.96);
         }
-
         .form-group {
             margin-bottom: 16px;
         }
@@ -896,7 +869,6 @@
             background: #0f172a;
             color: white;
         }
-
         .coin-modal {
             text-align: center;
         }
@@ -941,8 +913,6 @@
             min-height: 28px;
             transition: color 0.3s ease;
         }
-
-        /* View Match */
         .view-profile {
             display: flex;
             gap: 30px;
@@ -1040,8 +1010,6 @@
             width: 22px;
             height: 22px;
         }
-
-        /* Deposit / Online Bots */
         .deposit-modal .bot-status {
             display: flex;
             align-items: center;
@@ -1112,8 +1080,6 @@
         .deposit-modal .join-bot-btn:active {
             transform: scale(0.96);
         }
-
-        /* Withdraw */
         .withdraw-modal .withdraw-info {
             text-align: center;
             color: #868e96;
@@ -1123,8 +1089,6 @@
         .withdraw-modal .withdraw-info strong {
             color: var(--accent);
         }
-
-        /* Admin Panel */
         .admin-panel .admin-tabs {
             display: flex;
             gap: 8px;
@@ -1247,8 +1211,6 @@
             border-color: var(--secondary);
             color: var(--secondary);
         }
-
-        /* Mobile */
         @media (max-width: 768px) {
             body {
                 padding-right: 0;
@@ -1287,7 +1249,6 @@
             .action-btn:hover {
                 transform: none !important;
             }
-
             .chat-card {
                 display: none;
                 position: fixed;
@@ -1397,8 +1358,6 @@
         .chat-header .close-chat-btn {
             display: none;
         }
-
-        /* Scrollbar global */
         ::-webkit-scrollbar {
             width: 6px;
             height: 6px;
@@ -1413,8 +1372,6 @@
         ::-webkit-scrollbar-thumb:hover {
             background: #3d4b5f;
         }
-
-        /* Loading spinner for buttons */
         .btn-loading {
             opacity: 0.7;
             pointer-events: none;
@@ -1699,11 +1656,17 @@
     <script src="./config.js"></script>
     <script>
         // ============================================================
-        //  CONFIG
+        //  CONFIG & API
         // ============================================================
         const BLOXWIN_API_URL = (window.BLOXWIN_API_URL && !window.BLOXWIN_API_URL.includes("YOUR-BACKEND-URL-HERE")) ? window
             .BLOXWIN_API_URL.replace(/\/$/, "") : window.location.origin;
         const apiUrl = (path) => BLOXWIN_API_URL + path;
+
+        // Auth headers for backend
+        function getAuthHeaders() {
+            const token = localStorage.getItem('app_session_token');
+            return token ? { 'x-session-token': token } : {};
+        }
 
         const pubnub = new PubNub({
             publishKey: "demo",
@@ -1732,7 +1695,7 @@
         let selectedPetsForWithdraw = [];
 
         // ============================================================
-        //  HELPERS - Case-insensitive utils & Auth
+        //  HELPERS - Case-insensitive utils
         // ============================================================
         function normalize(str) { return str.toLowerCase().trim(); }
 
@@ -1801,7 +1764,7 @@
         }
 
         function escapeHTML(str) {
-            return String(str).replace(/[&<>'"]/g, tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[
+            return String(str).replace(/[&<>'"]/g, tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' } [
                 tag
             ] || tag));
         }
@@ -1819,30 +1782,6 @@
         function closeModal(modalId) {
             document.getElementById(modalId).style.display = 'none';
             if (modalId === 'login-modal') resetRobloxLoginModal();
-        }
-
-        // ============================================================
-        //  AUTH HELPERS
-        // ============================================================
-        function getAuthHeaders() {
-            const token = localStorage.getItem('app_session_token');
-            return token ? { 'x-session-token': token } : {};
-        }
-
-        // ============================================================
-        //  LOAD INVENTORY FROM BACKEND
-        // ============================================================
-        async function loadUserInventory(username) {
-            try {
-                const res = await fetch(apiUrl('/api/inventory'), {
-                    headers: getAuthHeaders()
-                });
-                if (!res.ok) return;
-                const data = await res.json();
-                if (data.inventory) {
-                    setUserInventory(username, data.inventory);
-                }
-            } catch (_) {}
         }
 
         // ============================================================
@@ -1864,7 +1803,6 @@
                     return;
                 }
 
-                // Admin button only, no visual "ADMIN" tag
                 const adminBtnHtml = isAdminUser ?
                     `<button class="action-btn admin-btn" onclick="openAdminPanel()">Admin</button>` : '';
 
@@ -1995,6 +1933,20 @@
             }
         }
 
+        // ===== YENİ: Backend'den envanter çekme =====
+        async function loadUserInventory(username) {
+            try {
+                const res = await fetch(apiUrl('/api/inventory'), {
+                    headers: getAuthHeaders()
+                });
+                if (!res.ok) return;
+                const data = await res.json();
+                if (data.inventory) {
+                    setUserInventory(username, data.inventory);
+                }
+            } catch (_) {}
+        }
+
         async function verifyRobloxAccount() {
             if (!pendingRobloxUser || !robloxVerificationToken) {
                 showToast('Please restart the Roblox login process.');
@@ -2025,10 +1977,15 @@
                 if (!response.ok) throw new Error(data.error || 'Verification failed.');
                 currentUser = data.user.name;
                 localStorage.setItem('app_current_user', currentUser);
+                // Token'ı sakla
                 if (data.token) {
                     localStorage.setItem('app_session_token', data.token);
                 }
+                // Envanteri backend'den çek
                 await loadUserInventory(currentUser);
+                if (!localStorage.getItem(`app_inv_${currentUser}`)) {
+                    setUserInventory(currentUser, []);
+                }
                 closeModal('login-modal');
                 resetRobloxLoginModal();
                 renderHeader();
@@ -2186,10 +2143,11 @@
                     });
                     renderMatches();
                 }
+                // === YENİ: Envanter güncelleme ===
                 if (msg.type === 'INVENTORY_UPDATE') {
                     if (currentUser && normalize(msg.username) === normalize(currentUser)) {
                         setUserInventory(currentUser, msg.inventory);
-                        // Optionally refresh UI if inventory modal is open
+                        // Modal açık ise güncelle (isteğe bağlı)
                     }
                 }
             }
@@ -2686,7 +2644,7 @@
         }
 
         // ============================================================
-        //  ADMIN PANEL
+        //  ADMIN PANEL – TAMAMEN BACKEND'E BAĞLANDI
         // ============================================================
         function openAdminPanel() {
             if (!isAdmin(currentUser)) {
@@ -2713,15 +2671,12 @@
             const target = document.getElementById(`admin-tab-${tab}`);
             if (target) target.classList.add('active');
             if (tab === 'users') renderAdminUserList();
-            // Clear status messages
             document.getElementById('admin-add-status').textContent = '';
             document.getElementById('admin-remove-status').textContent = '';
             document.getElementById('admin-mute-status').textContent = '';
         }
 
-        // ============================================================
-        //  ADMIN - USER LIST (Backend)
-        // ============================================================
+        // ---- Kullanıcı listesini backend'den çek ----
         async function renderAdminUserList() {
             const container = document.getElementById('admin-user-list');
             const search = document.getElementById('admin-user-search')?.value?.toLowerCase() || '';
@@ -2739,8 +2694,7 @@
                 }
 
                 if (users.length === 0) {
-                    container.innerHTML =
-                    '<div style="color:#868e96;padding:10px;text-align:center;">No users found.</div>';
+                    container.innerHTML = '<div style="color:#868e96;padding:10px;text-align:center;">No users found.</div>';
                     return;
                 }
 
@@ -2765,14 +2719,10 @@
                     container.appendChild(div);
                 });
             } catch (err) {
-                container.innerHTML =
-                    '<div style="color:#ff6b6b;padding:10px;text-align:center;">Error loading users.</div>';
+                container.innerHTML = '<div style="color:#ff6b6b;padding:10px;text-align:center;">Error loading users.</div>';
             }
         }
 
-        // ============================================================
-        //  ADMIN - VIEW USER
-        // ============================================================
         function adminViewUser(uname) {
             const inv = getUserInventory(uname);
             if (inv.length === 0) {
@@ -2786,9 +2736,7 @@
             alert(msg);
         }
 
-        // ============================================================
-        //  ADMIN - ADD PET (Backend)
-        // ============================================================
+        // ---- Admin Pet Ekle (backend) ----
         async function adminAddPet() {
             if (!isAdmin(currentUser)) { showToast('Access denied.'); return; }
             const uname = document.getElementById('admin-add-username').value.trim();
@@ -2819,13 +2767,13 @@
                 statusEl.style.color = '#51cf66';
                 showToast(data.message);
 
-                // Refresh target user's inventory in localStorage
+                // Hedef kullanıcının envanterini güncelle (backend'den çek)
                 const updatedInv = await fetch(apiUrl('/api/inventory?username=' + encodeURIComponent(uname)), {
                     headers: getAuthHeaders()
                 }).then(r => r.json()).then(d => d.inventory || []);
                 setUserInventory(uname, updatedInv);
 
-                // Notify other clients via PubNub
+                // PubNub ile diğer kullanıcılara bildir
                 pubnub.publish({
                     channel: CHANNEL,
                     message: {
@@ -2847,9 +2795,7 @@
             }
         }
 
-        // ============================================================
-        //  ADMIN - REMOVE PET (Backend)
-        // ============================================================
+        // ---- Admin Pet Sil (backend) ----
         async function adminRemovePet() {
             if (!isAdmin(currentUser)) { showToast('Access denied.'); return; }
             const uname = document.getElementById('admin-remove-username').value.trim();
@@ -2901,9 +2847,7 @@
             }
         }
 
-        // ============================================================
-        //  ADMIN - MUTE / BAN (Backend)
-        // ============================================================
+        // ---- Mute / Ban (backend) ----
         async function adminMuteUserByName(uname) {
             if (!isAdmin(currentUser)) return;
             try {
