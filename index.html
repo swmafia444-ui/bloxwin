@@ -555,7 +555,6 @@
             flex-direction: column;
             gap: 10px;
             background: rgba(11, 17, 32, 0.6);
-            /* Scrollbar stilleri */
             scrollbar-width: thin;
             scrollbar-color: #2d3b4f transparent;
         }
@@ -665,7 +664,6 @@
             position: relative;
             max-height: 90vh;
             overflow-y: auto;
-            /* Scrollbar stilleri */
             scrollbar-width: thin;
             scrollbar-color: #2d3b4f transparent;
         }
@@ -698,7 +696,6 @@
             margin-bottom: 20px;
             max-height: 300px;
             overflow-y: auto;
-            /* Scrollbar stilleri */
             scrollbar-width: thin;
             scrollbar-color: #2d3b4f transparent;
         }
@@ -1018,18 +1015,22 @@
             }
             .chat-card {
                 display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100vh;
+                z-index: 300;
+                border-left: none;
+                box-shadow: none;
             }
             .chat-card.mobile-open {
                 display: flex;
-                width: 100%;
-                height: 100vh;
-                top: 0;
-                left: 0;
-                border-left: none;
-                z-index: 300;
             }
             .mobile-chat-toggle {
-                display: block;
+                display: flex;
+                align-items: center;
+                justify-content: center;
                 position: fixed;
                 bottom: 24px;
                 right: 24px;
@@ -1037,22 +1038,25 @@
                 color: #0b1120;
                 border: none;
                 border-radius: 50%;
-                width: 58px;
-                height: 58px;
-                font-size: 14px;
-                font-weight: 700;
+                width: 60px;
+                height: 60px;
+                font-size: 28px;
                 cursor: pointer;
                 z-index: 150;
                 box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
                 transition: transform 0.2s;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                text-transform: uppercase;
-                letter-spacing: 1px;
             }
             .mobile-chat-toggle:hover {
                 transform: scale(1.05);
+            }
+            .chat-header .close-chat-btn {
+                display: block;
+                background: none;
+                border: none;
+                color: #ced4da;
+                font-size: 24px;
+                cursor: pointer;
+                padding: 0 8px;
             }
             .view-profile {
                 flex-direction: column;
@@ -1078,7 +1082,6 @@
                 justify-content: center;
             }
 
-            /* Header butonları mobilde düzgün göster */
             .user-info-bar {
                 flex-wrap: wrap;
                 gap: 4px;
@@ -1105,13 +1108,27 @@
                 font-size: 20px;
             }
 
-            /* History butonu mobilde tam görünsün */
-            .history-toggle-btn {
-                font-size: 11px;
-                padding: 4px 12px;
+            /* History scroll'da beyaz çizgiyi kaldır */
+            .history-card {
+                scrollbar-width: thin;
+                scrollbar-color: #2d3b4f transparent;
+            }
+            .history-card::-webkit-scrollbar {
+                width: 4px;
+            }
+            .history-card::-webkit-scrollbar-track {
+                background: transparent;
+            }
+            .history-card::-webkit-scrollbar-thumb {
+                background: #2d3b4f;
+                border-radius: 10px;
             }
         }
+
         .mobile-chat-toggle {
+            display: none;
+        }
+        .chat-header .close-chat-btn {
             display: none;
         }
     </style>
@@ -1153,7 +1170,7 @@
                 <span>Chat</span>
                 <span class="status-dot"></span>
             </div>
-            <button onclick="toggleMobileChat()" style="background:none;border:none;color:#f1f3f5;font-size:20px;cursor:pointer;">✕</button>
+            <button class="close-chat-btn" onclick="closeMobileChat()">✕</button>
         </div>
         <div class="chat-messages" id="chat-messages"></div>
         <div class="chat-input-area">
@@ -1163,7 +1180,7 @@
     </div>
 
     <!-- Mobile Chat Toggle -->
-    <button class="mobile-chat-toggle" id="mobile-chat-toggle" onclick="toggleMobileChat()">Chat</button>
+    <button class="mobile-chat-toggle" id="mobile-chat-toggle" onclick="toggleMobileChat()">💬</button>
 
     <!-- Modals -->
     <div class="modal-overlay" id="login-modal">
@@ -1324,7 +1341,12 @@
         }
 
         function toggleMobileChat() {
-            document.getElementById('chat-card').classList.toggle('mobile-open');
+            const chat = document.getElementById('chat-card');
+            chat.classList.toggle('mobile-open');
+        }
+
+        function closeMobileChat() {
+            document.getElementById('chat-card').classList.remove('mobile-open');
         }
 
         // --- Modal close on outside click ---
@@ -1563,8 +1585,13 @@
                     return;
                 }
                 history.forEach(record => {
-                    const isWinner = record.winner === currentUser;
-                    const opponent = isWinner ? record.loser : record.winner;
+                    // Doğru side hesaplama
+                    const isHost = currentUser === record.host;
+                    const currentUserSide = isHost ? record.hostSide : record.joinerSide;
+                    const opponentSide = isHost ? record.joinerSide : record.hostSide;
+                    const opponent = isHost ? record.joiner : record.host;
+
+                    const isWinner = currentUser === record.winner;
                     const resultText = isWinner ? 'You Won!' : 'You Lost!';
                     const resultClass = isWinner ? 'win' : 'lose';
 
@@ -1575,12 +1602,11 @@
                         `<img class="pet-img" src="${p.icon}" alt="${p.name}" title="${p.name}">`
                     ).join('');
 
-                    // yardımcı fonksiyonlar
+                    const yourPetsHtml = isHost ? hostPetsHtml : joinerPetsHtml;
+                    const opponentPetsHtml = isHost ? joinerPetsHtml : hostPetsHtml;
+
                     const sideIcon = (side) => side === 'H' ? 'https://bloxluck.com/img/dog.png' : 'https://bloxluck.com/img/gem.png';
                     const sideClass = (side) => side === 'H' ? 'side-indicator' : 'opponent-side';
-
-                    const currentUserSide = isWinner ? record.hostSide : record.joinerSide;
-                    const opponentSide = isWinner ? record.joinerSide : record.hostSide;
 
                     const card = document.createElement('div');
                     card.className = 'history-card';
@@ -1591,11 +1617,11 @@
                             <div><span class="opponent">Opponent:</span> ${opponent}</div>
                             <div class="pets-row">
                                 <span class="label">Your Pets:</span>
-                                <div class="pet-group">${isWinner ? hostPetsHtml : joinerPetsHtml}</div>
+                                <div class="pet-group">${yourPetsHtml}</div>
                             </div>
                             <div class="pets-row">
                                 <span class="label">Opponent's Pets:</span>
-                                <div class="pet-group">${isWinner ? joinerPetsHtml : hostPetsHtml}</div>
+                                <div class="pet-group">${opponentPetsHtml}</div>
                             </div>
                             <div class="total-value">Total Value: ${record.totalValue}</div>
                             <div class="history-side">
@@ -1621,26 +1647,21 @@
                 const card = document.createElement('div');
                 card.className = 'match-card';
 
-                // Host side - H mavi, T kırmızı
                 const hostSideImg = match.hostSide === 'H' ? 'https://bloxluck.com/img/dog.png' : 'https://bloxluck.com/img/gem.png';
                 const hostSideClass = match.hostSide === 'H' ? 'side-indicator' : 'opponent-side';
                 const hostSideHtml = match.hostSide ? `<span class="${hostSideClass}"><img src="${hostSideImg}" alt="${match.hostSide}"> ${match.hostSide}</span>` : '';
 
-                // Host pets
                 const petsHtml = match.hostPets.map(pet =>
                     `<img class="pet-img" src="${pet.icon}" alt="${pet.name}" title="${pet.name}">`
                 ).join('');
 
-                // Opponent side - H mavi, T kırmızı
                 const opponentSide = match.hostSide === 'H' ? 'T' : 'H';
                 const opponentImg = opponentSide === 'H' ? 'https://bloxluck.com/img/dog.png' : 'https://bloxluck.com/img/gem.png';
                 const opponentSideClass = opponentSide === 'H' ? 'side-indicator' : 'opponent-side';
                 const opponentSideHtml = `<span class="${opponentSideClass}"><img src="${opponentImg}" alt="${opponentSide}"> ${opponentSide}</span>`;
 
-                // Join button label
                 const joinLabel = `Join Match For ${totalValue}`;
 
-                // Actions (buttons)
                 let actionsHtml = '';
                 if (isMyMatch) {
                     actionsHtml = `
@@ -1901,13 +1922,10 @@
             flipModal.style.display = 'flex';
             isFlipping = true;
 
-            // Animasyonu sıfırla
             coin.style.animation = 'none';
-            coin.offsetHeight; // reflow
+            coin.offsetHeight;
 
-            // Kazanan tarafı belirle
             const winnerSide = gameData.hostWins ? gameData.hostSide : gameData.joinerSide;
-            // H için 0°, T için 180°
             const endDegree = (10 * 360) + (winnerSide === 'H' ? 0 : 180);
 
             const durationSec = gameData.hostWins ? 2.1 : 2.3;
@@ -1921,7 +1939,6 @@
 
             setTimeout(() => {
                 isFlipping = false;
-                // Animasyonu kaldır ve transform'u manuel olarak ata
                 coin.style.animation = 'none';
                 coin.style.transform = `rotateY(${endDegree}deg)`;
 
