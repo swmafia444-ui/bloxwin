@@ -1039,11 +1039,17 @@
                 border-radius: 50%;
                 width: 58px;
                 height: 58px;
-                font-size: 26px;
+                font-size: 14px;
+                font-weight: 700;
                 cursor: pointer;
                 z-index: 150;
                 box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
                 transition: transform 0.2s;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                text-transform: uppercase;
+                letter-spacing: 1px;
             }
             .mobile-chat-toggle:hover {
                 transform: scale(1.05);
@@ -1098,6 +1104,12 @@
             .logo-wrapper span {
                 font-size: 20px;
             }
+
+            /* History butonu mobilde tam görünsün */
+            .history-toggle-btn {
+                font-size: 11px;
+                padding: 4px 12px;
+            }
         }
         .mobile-chat-toggle {
             display: none;
@@ -1141,6 +1153,7 @@
                 <span>Chat</span>
                 <span class="status-dot"></span>
             </div>
+            <button onclick="toggleMobileChat()" style="background:none;border:none;color:#f1f3f5;font-size:20px;cursor:pointer;">✕</button>
         </div>
         <div class="chat-messages" id="chat-messages"></div>
         <div class="chat-input-area">
@@ -1150,7 +1163,7 @@
     </div>
 
     <!-- Mobile Chat Toggle -->
-    <button class="mobile-chat-toggle" id="mobile-chat-toggle" onclick="toggleMobileChat()">💬</button>
+    <button class="mobile-chat-toggle" id="mobile-chat-toggle" onclick="toggleMobileChat()">Chat</button>
 
     <!-- Modals -->
     <div class="modal-overlay" id="login-modal">
