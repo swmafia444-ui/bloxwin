@@ -273,164 +273,106 @@
             gap: 12px;
         }
 
-        .match-card,
-        .history-card {
+        /* ---- New Match Card Style ---- */
+        .match-card {
             background: var(--card-bg);
             border-radius: var(--radius);
-            padding: 12px 18px;
+            padding: 14px 20px;
             border: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
             transition: transform 0.15s ease, box-shadow 0.2s;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
             will-change: transform;
         }
 
-        .match-card:hover,
-        .history-card:hover {
+        .match-card:hover {
             transform: translateY(-2px);
             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
         }
 
-        .match-card {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
-
-        .match-top {
+        .match-left {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
             flex-wrap: wrap;
+            flex: 1;
         }
 
-        .match-bottom {
+        .match-names {
             display: flex;
             align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap;
             gap: 6px;
-            margin-top: 2px;
-            border-top: 1px solid var(--border-color);
-            padding-top: 6px;
-        }
-
-        .host-name {
             font-weight: 700;
-            font-size: 15px;
+            font-size: 16px;
             color: #e9ecef;
+        }
+
+        .match-names .vs {
+            color: #868e96;
+            font-weight: 400;
+            font-size: 14px;
+        }
+
+        .match-names .host-name {
             cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 6px;
             transition: color 0.2s;
         }
-        .host-name:hover {
+        .match-names .host-name:hover {
             color: #4dabf7;
         }
 
-        .pet-badge {
-            background: #0f172a;
-            border: 1px solid var(--accent);
-            padding: 4px 12px;
-            border-radius: 30px;
+        .match-names .opponent-name {
+            color: #868e96;
+        }
+
+        .match-center {
+            text-align: center;
+            flex: 1;
+            min-width: 120px;
+        }
+
+        .match-value {
+            font-size: 26px;
+            font-weight: 800;
             color: var(--accent);
+            letter-spacing: -0.5px;
+            line-height: 1.2;
+        }
+
+        .match-range {
             font-size: 13px;
+            color: #868e96;
+            margin-top: 2px;
+        }
+
+        .match-right {
             display: flex;
             align-items: center;
-            gap: 6px;
-        }
-
-        .pet-img {
-            width: 32px;
-            height: 32px;
-            object-fit: cover;
-            display: block;
-            border-radius: 50%;
-            border: 1px solid #2d3b4f;
-        }
-
-        .pet-badge .pet-img {
-            width: 22px;
-            height: 22px;
-            margin: 0;
-        }
-
-        .pet-group {
-            display: flex;
-            gap: 3px;
-            flex-wrap: wrap;
-            align-items: center;
-        }
-
-        .pet-group .pet-img {
-            width: 22px;
-            height: 22px;
-        }
-
-        .side-indicator {
-            background: #0f172a;
-            border-radius: 30px;
-            padding: 3px 10px;
-            font-weight: 700;
-            font-size: 13px;
-            border: 2px solid #4dabf7;
-            color: #4dabf7;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            flex-shrink: 0;
-        }
-        .side-indicator img {
-            width: 18px;
-            height: 18px;
-            object-fit: contain;
-        }
-
-        .opponent-side {
-            background: #0f172a;
-            border-radius: 30px;
-            padding: 3px 10px;
-            font-weight: 600;
-            font-size: 13px;
-            border: 2px solid #ff6b6b;
-            color: #ff6b6b;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            flex-shrink: 0;
-        }
-        .opponent-side img {
-            width: 18px;
-            height: 18px;
-            object-fit: contain;
-        }
-
-        .match-actions {
-            display: flex;
-            gap: 6px;
-            align-items: center;
+            gap: 8px;
         }
 
         .join-btn,
-        .view-btn,
-        .cancel-match-btn {
+        .cancel-match-btn,
+        .view-btn {
             border: none;
-            padding: 5px 14px;
+            padding: 6px 18px;
             border-radius: 30px;
-            font-weight: 600;
-            font-size: 12px;
+            font-weight: 700;
+            font-size: 14px;
             cursor: pointer;
             transition: transform 0.15s ease, box-shadow 0.2s;
             will-change: transform;
+            white-space: nowrap;
         }
 
         .join-btn {
             background: var(--accent);
             color: #0b1120;
             box-shadow: 0 4px 10px rgba(252, 196, 25, 0.2);
-            display: flex;
-            align-items: center;
-            gap: 4px;
         }
 
         .join-btn:hover {
@@ -442,6 +384,8 @@
             background: #ff6b6b;
             color: white;
             box-shadow: 0 4px 10px rgba(255, 107, 107, 0.2);
+            font-size: 13px;
+            padding: 6px 14px;
         }
 
         .cancel-match-btn:hover {
@@ -453,8 +397,8 @@
             background: #4dabf7;
             color: white;
             box-shadow: 0 4px 10px rgba(77, 171, 247, 0.2);
-            padding: 4px 12px;
-            font-size: 11px;
+            font-size: 12px;
+            padding: 5px 14px;
         }
 
         .view-btn:hover {
@@ -462,17 +406,68 @@
             box-shadow: 0 8px 20px rgba(77, 171, 247, 0.3);
         }
 
-        .match-total-value {
+        /* Ongoing match */
+        .ongoing-match {
+            border-color: var(--accent);
+            background: #1a2a3a;
+        }
+        .ongoing-match .match-status {
             color: var(--accent);
             font-weight: 700;
-            font-size: 13px;
-            margin-left: 4px;
+            font-size: 14px;
+            margin-right: 8px;
         }
 
+        .mini-coin-wrapper {
+            perspective: 600px;
+            width: 44px;
+            height: 44px;
+            display: inline-block;
+            margin: 0 6px;
+        }
+        .mini-coin-wrapper .coin {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+            border-radius: 50%;
+        }
+        .mini-coin-wrapper .coin .side {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            background-size: cover;
+            background-position: center;
+            border: 2px solid #fcc419;
+            background-color: #0f172a;
+        }
+        .mini-coin-wrapper .coin .heads {
+            background-image: url('https://bloxluck.com/img/dog.png');
+            transform: rotateY(0deg);
+        }
+        .mini-coin-wrapper .coin .tails {
+            background-image: url('https://bloxluck.com/img/gem.png');
+            transform: rotateY(180deg);
+        }
+
+        /* History cards */
         .history-card {
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            padding: 14px 20px;
+            border: 1px solid var(--border-color);
+            transition: transform 0.15s ease, box-shadow 0.2s;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            will-change: transform;
+        }
+
+        .history-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
         }
 
         .history-card .top-row {
@@ -485,7 +480,7 @@
 
         .history-card .result {
             font-weight: 700;
-            font-size: 14px;
+            font-size: 15px;
         }
         .history-card .result.win {
             color: var(--secondary);
@@ -502,24 +497,31 @@
             display: flex;
             flex-wrap: wrap;
             gap: 8px;
-            margin: 2px 0;
+            margin: 4px 0;
         }
-
         .history-card .pets-row .label {
             color: #868e96;
             font-size: 12px;
             margin-right: 2px;
         }
-
         .history-card .pets-row .pet-group {
             display: flex;
-            gap: 3px;
+            gap: 4px;
             flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .pet-img {
+            width: 38px;
+            height: 38px;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 1px solid #2d3b4f;
         }
 
         .history-card .pets-row .pet-group .pet-img {
-            width: 22px;
-            height: 22px;
+            width: 28px;
+            height: 28px;
         }
 
         .history-card .total-value {
@@ -542,6 +544,7 @@
         .history-side .side-tag img {
             width: 16px;
             height: 16px;
+            border-radius: 50%;
         }
         .history-side .winner-side {
             font-weight: 700;
@@ -663,7 +666,6 @@
         .chat-msg .username:hover {
             color: #4dabf7;
         }
-
         .chat-msg .username .admin-tag {
             background: #ff6b6b;
             color: #fff;
@@ -675,13 +677,11 @@
             letter-spacing: 0.3px;
             text-transform: uppercase;
         }
-
         .chat-msg .time {
             font-size: 10px;
             color: #6c7a8a;
             margin-left: 10px;
         }
-
         .chat-msg .muted-label {
             color: #ff6b6b;
             font-size: 11px;
@@ -900,6 +900,7 @@
             width: 28px;
             height: 28px;
             object-fit: contain;
+            border-radius: 50%;
         }
 
         .modal-actions {
@@ -1022,34 +1023,6 @@
             min-height: 28px;
         }
 
-        /* Mini Coin Widget */
-        .mini-coin-wrapper {
-            perspective: 600px;
-            width: 44px;
-            height: 44px;
-            margin: 0 auto 4px;
-            display: inline-block;
-        }
-        .mini-coin-wrapper .coin {
-            width: 100%;
-            height: 100%;
-        }
-        .mini-coin-wrapper .coin .side {
-            border-width: 2px;
-        }
-
-        .ongoing-match {
-            background: #1a2a3a;
-            border-color: #fcc419;
-            box-shadow: 0 0 20px rgba(252, 196, 25, 0.15);
-        }
-        .ongoing-match .match-status {
-            color: var(--accent);
-            font-weight: 700;
-            font-size: 14px;
-            margin-bottom: 4px;
-        }
-
         /* Profile */
         .view-profile {
             display: flex;
@@ -1112,6 +1085,7 @@
         .view-side img {
             width: 22px;
             height: 22px;
+            border-radius: 50%;
         }
 
         /* Deposit */
@@ -1230,8 +1204,8 @@
             box-shadow: 0 0 0 2px rgba(252, 196, 25, 0.2);
         }
         .withdraw-pet-item .pet-img {
-            width: 40px;
-            height: 40px;
+            width: 44px;
+            height: 44px;
             object-fit: cover;
             border-radius: 50%;
             border: 1px solid #2d3b4f;
@@ -1540,15 +1514,22 @@
                 transform: rotate(90deg);
                 margin: -10px 0;
             }
-            .match-top {
-                flex-wrap: wrap;
-            }
-            .match-bottom {
+            .match-card {
                 flex-direction: column;
                 align-items: stretch;
+                gap: 8px;
             }
-            .match-actions {
+            .match-left,
+            .match-center,
+            .match-right {
                 justify-content: center;
+                text-align: center;
+            }
+            .match-names {
+                justify-content: center;
+            }
+            .match-value {
+                font-size: 22px;
             }
 
             .user-info-bar {
@@ -1997,7 +1978,7 @@
         let adminSelectedPetIndex = null;
 
         // ============================================================
-        //  USER DATA STORAGE (all usernames normalized to lowercase)
+        //  USER DATA STORAGE (normalized to lowercase)
         // ============================================================
         function getUserData(username) {
             try {
@@ -2191,6 +2172,12 @@
 
         function sumPets(pets) {
             return pets.reduce((acc, p) => acc + (p.value || 0), 0);
+        }
+
+        function getPetsMinMax(pets) {
+            if (!pets || pets.length === 0) return { min: 0, max: 0 };
+            const values = pets.map(p => p.value || 0);
+            return { min: Math.min(...values), max: Math.max(...values) };
         }
 
         // ============================================================
@@ -2619,7 +2606,7 @@
         }
 
         // ============================================================
-        //  RENDER MATCHES (compact)
+        //  RENDER MATCHES (new compact style)
         // ============================================================
         function renderMatches() {
             const container = document.getElementById('matches-list');
@@ -2699,28 +2686,14 @@
             waiting.forEach(match => {
                 const isMyMatch = currentUser && match.host === currentUser;
                 const totalValue = sumPets(match.hostPets);
+                const { min, max } = getPetsMinMax(match.hostPets);
+                const formattedTotal = totalValue.toLocaleString('en-US');
+                const rangeStr = `(${min.toFixed(4)} - ${max.toFixed(4)})`;
 
                 const card = document.createElement('div');
                 card.className = 'match-card';
 
-                const hostSideImg = match.hostSide === 'H' ? 'https://bloxluck.com/img/dog.png' :
-                    'https://bloxluck.com/img/gem.png';
-                const hostSideClass = match.hostSide === 'H' ? 'side-indicator' : 'opponent-side';
-                const hostSideHtml = match.hostSide ? `<span class="${hostSideClass}"><img src="${hostSideImg}" alt="${match.hostSide}"> ${match.hostSide}</span>` :
-                    '';
-
-                const petsHtml = match.hostPets.map(pet =>
-                    `<img class="pet-img" src="${pet.icon}" alt="${pet.name}" title="${pet.name}"><span style="font-size:10px;color:#868e96;margin-left:2px;">${pet.value}</span>`
-                ).join('');
-
-                const opponentSide = match.hostSide === 'H' ? 'T' : 'H';
-                const opponentImg = opponentSide === 'H' ? 'https://bloxluck.com/img/dog.png' :
-                    'https://bloxluck.com/img/gem.png';
-                const opponentSideClass = opponentSide === 'H' ? 'side-indicator' : 'opponent-side';
-                const opponentSideHtml =
-                    `<span class="${opponentSideClass}"><img src="${opponentImg}" alt="${opponentSide}"> ${opponentSide}</span>`;
-
-                const joinLabel = `Join ${totalValue}`;
+                const opponentName = match.joiner ? match.joiner : '?';
 
                 let actionsHtml = '';
                 if (isMyMatch) {
@@ -2731,26 +2704,24 @@
                 } else {
                     actionsHtml = `
                             <button class="view-btn" onclick="viewMatch(${match.id})">View</button>
-                            <button class="join-btn" onclick="openJoinSelectModal(${match.id})">${joinLabel}</button>
+                            <button class="join-btn" onclick="openJoinSelectModal(${match.id})">Join</button>
                         `;
                 }
 
                 card.innerHTML = `
-                        <div class="match-top">
-                            ${hostSideHtml}
-                            <span class="host-name" onclick="openProfile('${escapeHTML(match.host)}')">
-                                ${match.host}
-                            </span>
-                            <div class="pet-badge">
-                                <div class="pet-group">${petsHtml}</div>
-                                <span class="match-total-value">${totalValue}</span>
+                        <div class="match-left">
+                            <div class="match-names">
+                                <span class="host-name" onclick="openProfile('${escapeHTML(match.host)}')">${escapeHTML(match.host)}</span>
+                                <span class="vs">vs</span>
+                                <span class="opponent-name">${escapeHTML(opponentName)}</span>
                             </div>
                         </div>
-                        <div class="match-bottom">
-                            ${opponentSideHtml}
-                            <div class="match-actions">
-                                ${actionsHtml}
-                            </div>
+                        <div class="match-center">
+                            <div class="match-value">${formattedTotal}</div>
+                            <div class="match-range">${rangeStr}</div>
+                        </div>
+                        <div class="match-right">
+                            ${actionsHtml}
                         </div>
                     `;
                 container.appendChild(card);
@@ -2758,13 +2729,11 @@
 
             ongoing.forEach(match => {
                 const totalValue = sumPets(match.hostPets) + sumPets(match.joinerPets);
+                const formattedTotal = totalValue.toLocaleString('en-US');
+                const allPets = [...match.hostPets, ...match.joinerPets];
+                const { min, max } = getPetsMinMax(allPets);
+                const rangeStr = `(${min.toFixed(4)} - ${max.toFixed(4)})`;
                 const winnerSide = match.winnerSide || (match.hostWins ? match.hostSide : match.joinerSide);
-                const winnerName = match.winner || '...';
-
-                const hostSideImg = match.hostSide === 'H' ? 'https://bloxluck.com/img/dog.png' :
-                    'https://bloxluck.com/img/gem.png';
-                const joinerSideImg = match.joinerSide === 'H' ? 'https://bloxluck.com/img/dog.png' :
-                    'https://bloxluck.com/img/gem.png';
 
                 const card = document.createElement('div');
                 card.className = 'match-card ongoing-match';
@@ -2779,23 +2748,26 @@
                     `;
 
                 card.innerHTML = `
-                        <div class="match-status">⚡ In progress</div>
-                        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:center;">
-                            <span><img src="${hostSideImg}" style="width:20px;height:20px;border-radius:50%;"> ${match.host}</span>
-                            <span style="color:var(--accent);font-weight:700;">VS</span>
-                            <span><img src="${joinerSideImg}" style="width:20px;height:20px;border-radius:50%;"> ${match.joiner}</span>
+                        <div class="match-left">
+                            <div class="match-names">
+                                <span class="host-name" onclick="openProfile('${escapeHTML(match.host)}')">${escapeHTML(match.host)}</span>
+                                <span class="vs">vs</span>
+                                <span class="opponent-name" onclick="openProfile('${escapeHTML(match.joiner)}')">${escapeHTML(match.joiner)}</span>
+                            </div>
+                            <span class="match-status">⚡</span>
                         </div>
-                        <div style="display:flex;justify-content:center;align-items:center;gap:12px;flex-wrap:wrap;font-size:12px;">
-                            <span class="side-indicator" style="font-size:11px;padding:2px 8px;"><img src="${hostSideImg}" alt="${match.hostSide}"> ${match.hostSide}</span>
-                            <span class="opponent-side" style="font-size:11px;padding:2px 8px;"><img src="${joinerSideImg}" alt="${match.joinerSide}"> ${match.joinerSide}</span>
+                        <div class="match-center">
+                            <div class="match-value">${formattedTotal}</div>
+                            <div class="match-range">${rangeStr}</div>
+                            <div style="display:flex;justify-content:center;align-items:center;gap:6px;margin-top:2px;">
+                                ${coinHtml}
+                                <span id="mini-result-${match.id}" style="font-weight:600;font-size:13px;color:var(--accent);">Flipping...</span>
+                            </div>
                         </div>
-                        <div style="text-align:center;margin:4px 0;">
-                            ${coinHtml}
-                            <div id="mini-result-${match.id}" style="font-weight:700;font-size:13px;color:var(--accent);">Flipping...</div>
+                        <div class="match-right">
+                            <button class="view-btn" onclick="viewMatch(${match.id})">View</button>
                         </div>
-                        <div style="text-align:center;color:#868e96;font-size:12px;">Total: ${totalValue}</div>
                     `;
-
                 container.appendChild(card);
 
                 setTimeout(() => {
@@ -2815,7 +2787,7 @@
                         miniCoin.style.animation = 'none';
                         miniCoin.style.transform = `rotateY(${endDegree}deg)`;
                         if (styleSheet.parentNode) document.head.removeChild(styleSheet);
-                        resultDiv.textContent = `🏆 ${winnerName}`;
+                        resultDiv.textContent = `🏆 ${match.winner}`;
                     }, 2300);
                 }, 300);
             });
@@ -2830,7 +2802,7 @@
             const content = document.getElementById('view-match-content');
 
             const hostPetsHtml = match.hostPets.map(p =>
-                `<img class="pet-img" src="${p.icon}" alt="${p.name}" title="${p.name}">`
+                `<img class="pet-img" src="${p.icon}" alt="${p.name}" title="${p.name}" style="width:44px;height:44px;">`
             ).join('');
 
             const hostSideImg = match.hostSide === 'H' ? 'https://bloxluck.com/img/dog.png' :
@@ -2841,8 +2813,15 @@
             const joinerSideImg = joinerSide === 'H' ? 'https://bloxluck.com/img/dog.png' :
                 'https://bloxluck.com/img/gem.png';
 
-            const joinerPetsHtml =
-                `<div class="pet-img empty-pet" style="width:34px;height:34px;border-radius:50%;border:1px dashed #4dabf7;opacity:0.4;"></div>`;
+            let joinerPetsHtml = '';
+            if (match.joinerPets && match.joinerPets.length > 0) {
+                joinerPetsHtml = match.joinerPets.map(p =>
+                    `<img class="pet-img" src="${p.icon}" alt="${p.name}" title="${p.name}" style="width:44px;height:44px;">`
+                ).join('');
+            } else {
+                joinerPetsHtml =
+                    `<div class="pet-img empty-pet" style="width:44px;height:44px;border-radius:50%;border:1px dashed #4dabf7;opacity:0.4;"></div>`;
+            }
 
             let html = `
                     <div class="view-profile">
@@ -2854,13 +2833,13 @@
                         </div>
                         <div class="vs">VS</div>
                         <div class="player">
-                            <div class="name" style="color:#868e96;">Waiting for opponent</div>
+                            <div class="name">${match.joiner || 'Waiting...'}</div>
                             <div class="divider"></div>
                             <div class="pets">${joinerPetsHtml}</div>
-                            <div class="view-side" style="color:#868e96;"><img src="${joinerSideImg}" alt="${joinerSide}"> Side: ${joinerSide}</div>
+                            <div class="view-side"><img src="${joinerSideImg}" alt="${joinerSide}"> Side: ${joinerSide}</div>
                         </div>
                     </div>
-                    <div class="view-status">Status: Waiting for opponent</div>
+                    <div class="view-status">Status: ${match.status === 'ongoing' ? '⚡ In progress' : 'Waiting for opponent'}</div>
                 `;
             content.innerHTML = html;
             openModal('view-match-modal');
@@ -2885,7 +2864,7 @@
                     const item = document.createElement('div');
                     item.className = 'modal-item';
                     item.innerHTML = `
-                            <img class="pet-img" src="${pet.icon}" alt="${pet.name}" style="width:44px;height:44px;border-radius:50%;">
+                            <img class="pet-img" src="${pet.icon}" alt="${pet.name}" style="width:48px;height:48px;border-radius:50%;">
                             <div style="font-weight:600;font-size:14px;">${pet.name}</div>
                             <div class="pet-value">Value: ${pet.value}</div>
                         `;
@@ -2972,7 +2951,7 @@
                     const item = document.createElement('div');
                     item.className = 'modal-item';
                     item.innerHTML = `
-                            <img class="pet-img" src="${pet.icon}" alt="${pet.name}" style="width:44px;height:44px;border-radius:50%;">
+                            <img class="pet-img" src="${pet.icon}" alt="${pet.name}" style="width:48px;height:48px;border-radius:50%;">
                             <div style="font-weight:600;font-size:14px;">${pet.name}</div>
                             <div class="pet-value">Value: ${pet.value}</div>
                         `;
@@ -3029,7 +3008,7 @@
         }
 
         // ============================================================
-        //  COIN FLIP
+        //  COIN FLIP (fullscreen for players)
         // ============================================================
         function executeCoinFlip(gameData) {
             const flipModal = document.getElementById('flip-modal');
@@ -3294,7 +3273,7 @@
             } else {
                 display.innerHTML = adminTargetPets.map((p, idx) =>
                     `<div style="display:inline-flex;align-items:center;gap:4px;background:#0f172a;border:1px solid var(--border-color);border-radius:20px;padding:4px 12px 4px 6px;cursor:pointer;" onclick="adminSelectPetForRemove(${idx})" id="admin-pet-${idx}">
-                            <img class="pet-img" src="${p.icon}" alt="${p.name}" style="width:24px;height:24px;border-radius:50%;margin:0;">
+                            <img class="pet-img" src="${p.icon}" alt="${p.name}" style="width:28px;height:28px;border-radius:50%;margin:0;">
                             <span style="font-size:12px;">${p.name}</span>
                             <span style="font-size:10px;color:#868e96;">${p.value}</span>
                         </div>`
