@@ -1732,7 +1732,7 @@
         let selectedPetsForWithdraw = [];
 
         // ============================================================
-        //  HELPERS - Case-insensitive utils
+        //  HELPERS - Case-insensitive utils & Auth
         // ============================================================
         function normalize(str) { return str.toLowerCase().trim(); }
 
@@ -1801,7 +1801,7 @@
         }
 
         function escapeHTML(str) {
-            return String(str).replace(/[&<>'"]/g, tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' } [
+            return String(str).replace(/[&<>'"]/g, tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[
                 tag
             ] || tag));
         }
@@ -1819,6 +1819,30 @@
         function closeModal(modalId) {
             document.getElementById(modalId).style.display = 'none';
             if (modalId === 'login-modal') resetRobloxLoginModal();
+        }
+
+        // ============================================================
+        //  AUTH HELPERS
+        // ============================================================
+        function getAuthHeaders() {
+            const token = localStorage.getItem('app_session_token');
+            return token ? { 'x-session-token': token } : {};
+        }
+
+        // ============================================================
+        //  LOAD INVENTORY FROM BACKEND
+        // ============================================================
+        async function loadUserInventory(username) {
+            try {
+                const res = await fetch(apiUrl('/api/inventory'), {
+                    headers: getAuthHeaders()
+                });
+                if (!res.ok) return;
+                const data = await res.json();
+                if (data.inventory) {
+                    setUserInventory(username, data.inventory);
+                }
+            } catch (_) {}
         }
 
         // ============================================================
@@ -2001,10 +2025,10 @@
                 if (!response.ok) throw new Error(data.error || 'Verification failed.');
                 currentUser = data.user.name;
                 localStorage.setItem('app_current_user', currentUser);
-                // Ensure inventory exists (empty for new users)
-                if (!localStorage.getItem(`app_inv_${currentUser}`)) {
-                    setUserInventory(currentUser, []);
+                if (data.token) {
+                    localStorage.setItem('app_session_token', data.token);
                 }
+                await loadUserInventory(currentUser);
                 closeModal('login-modal');
                 resetRobloxLoginModal();
                 renderHeader();
@@ -2034,6 +2058,7 @@
         function handleLogout() {
             currentUser = null;
             localStorage.removeItem('app_current_user');
+            localStorage.removeItem('app_session_token');
             if (showHistory) {
                 showHistory = false;
                 const btn = document.getElementById('history-toggle-btn');
@@ -2115,7 +2140,6 @@
             if (isMuted(username)) {
                 msgDiv.classList.add('muted');
             }
-            // No admin tag, just the username
             const usernameDisplay = `<span class="username">${escapeHTML(username)}</span>`;
             msgDiv.innerHTML = `${usernameDisplay}: ${escapeHTML(text)} <span class="time">${time}</span>`;
             container.appendChild(msgDiv);
@@ -2161,6 +2185,12 @@
                         }
                     });
                     renderMatches();
+                }
+                if (msg.type === 'INVENTORY_UPDATE') {
+                    if (currentUser && normalize(msg.username) === normalize(currentUser)) {
+                        setUserInventory(currentUser, msg.inventory);
+                        // Optionally refresh UI if inventory modal is open
+                    }
                 }
             }
         });
@@ -2689,67 +2719,60 @@
             document.getElementById('admin-mute-status').textContent = '';
         }
 
-        function renderAdminUserList() {
+        // ============================================================
+        //  ADMIN - USER LIST (Backend)
+        // ============================================================
+        async function renderAdminUserList() {
             const container = document.getElementById('admin-user-list');
             const search = document.getElementById('admin-user-search')?.value?.toLowerCase() || '';
-            // Gather all users from localStorage keys
-            const keys = Object.keys(localStorage);
-            const userSet = new Set();
-            keys.forEach(key => {
-                if (key.startsWith('app_inv_')) {
-                    const uname = key.replace('app_inv_', '');
-                    if (uname) userSet.add(uname);
+
+            try {
+                const res = await fetch(apiUrl('/api/admin/users'), {
+                    headers: getAuthHeaders()
+                });
+                if (!res.ok) throw new Error('Cannot fetch users');
+                const data = await res.json();
+                let users = data.users || [];
+
+                if (search) {
+                    users = users.filter(u => normalize(u.username).includes(search));
                 }
-                if (key.startsWith('app_history_')) {
-                    const uname = key.replace('app_history_', '');
-                    if (uname) userSet.add(uname);
+
+                if (users.length === 0) {
+                    container.innerHTML =
+                    '<div style="color:#868e96;padding:10px;text-align:center;">No users found.</div>';
+                    return;
                 }
-            });
-            if (currentUser) userSet.add(currentUser);
-            ADMIN_USERS.forEach(u => userSet.add(u));
 
-            let users = Array.from(userSet).filter(u => u && u.length > 0);
-            if (search) {
-                users = users.filter(u => normalize(u).includes(search));
+                container.innerHTML = '';
+                users.forEach(u => {
+                    const div = document.createElement('div');
+                    div.className = 'admin-user-item';
+                    let badges = '';
+                    if (u.admin) badges += `<span class="badge admin-badge-sm">ADMIN</span>`;
+                    if (u.muted) badges += `<span class="badge muted">MUTED</span>`;
+                    if (u.banned) badges += `<span class="badge banned">BANNED</span>`;
+
+                    div.innerHTML = `
+                        <div class="uname">${escapeHTML(u.username)} <span style="color:#868e96;font-size:12px;">(${u.petCount} pets)</span></div>
+                        <div class="badges">${badges}</div>
+                        <div class="actions">
+                            <button class="success" onclick="adminViewUser('${escapeHTML(u.username)}')">View</button>
+                            ${u.muted ? `<button class="success" onclick="adminUnmuteUserByName('${escapeHTML(u.username)}')">Unmute</button>` : `<button onclick="adminMuteUserByName('${escapeHTML(u.username)}')">Mute</button>`}
+                            ${u.banned ? `<button class="success" onclick="adminUnbanUserByName('${escapeHTML(u.username)}')">Unban</button>` : `<button class="danger" onclick="adminBanUserByName('${escapeHTML(u.username)}')">Ban</button>`}
+                        </div>
+                    `;
+                    container.appendChild(div);
+                });
+            } catch (err) {
+                container.innerHTML =
+                    '<div style="color:#ff6b6b;padding:10px;text-align:center;">Error loading users.</div>';
             }
-            users.sort((a, b) => normalize(a).localeCompare(normalize(b)));
-
-            const muted = getMutedUsers();
-            const banned = getBannedUsers();
-
-            if (users.length === 0) {
-                container.innerHTML = '<div style="color:#868e96;padding:10px;text-align:center;">No users found.</div>';
-                return;
-            }
-
-            container.innerHTML = '';
-            users.forEach(uname => {
-                const isAdminUser = isAdmin(uname);
-                const isMutedUser = muted.includes(normalize(uname));
-                const isBannedUser = banned.includes(normalize(uname));
-                const inv = getUserInventory(uname);
-                const petCount = inv.length;
-
-                const div = document.createElement('div');
-                div.className = 'admin-user-item';
-                let badgesHtml = '';
-                if (isAdminUser) badgesHtml += `<span class="badge admin-badge-sm">ADMIN</span>`;
-                if (isMutedUser) badgesHtml += `<span class="badge muted">MUTED</span>`;
-                if (isBannedUser) badgesHtml += `<span class="badge banned">BANNED</span>`;
-
-                div.innerHTML = `
-                    <div class="uname">${escapeHTML(uname)} <span style="color:#868e96;font-size:12px;">(${petCount} pets)</span></div>
-                    <div class="badges">${badgesHtml}</div>
-                    <div class="actions">
-                        <button class="success" onclick="adminViewUser('${escapeHTML(uname)}')">View</button>
-                        ${isMutedUser ? `<button class="success" onclick="adminUnmuteUserByName('${escapeHTML(uname)}')">Unmute</button>` : `<button onclick="adminMuteUserByName('${escapeHTML(uname)}')">Mute</button>`}
-                        ${isBannedUser ? `<button class="success" onclick="adminUnbanUserByName('${escapeHTML(uname)}')">Unban</button>` : `<button class="danger" onclick="adminBanUserByName('${escapeHTML(uname)}')">Ban</button>`}
-                    </div>
-                `;
-                container.appendChild(div);
-            });
         }
 
+        // ============================================================
+        //  ADMIN - VIEW USER
+        // ============================================================
         function adminViewUser(uname) {
             const inv = getUserInventory(uname);
             if (inv.length === 0) {
@@ -2763,74 +2786,219 @@
             alert(msg);
         }
 
-        // ---- Mute / Ban (case-insensitive) ----
-        function adminMuteUserByName(uname) {
-            if (!isAdmin(currentUser)) return;
-            const norm = normalize(uname);
-            let muted = getMutedUsers();
-            if (!muted.includes(norm)) {
-                muted.push(norm);
-                setMutedUsers(muted);
-                showToast(`Muted ${uname}`);
+        // ============================================================
+        //  ADMIN - ADD PET (Backend)
+        // ============================================================
+        async function adminAddPet() {
+            if (!isAdmin(currentUser)) { showToast('Access denied.'); return; }
+            const uname = document.getElementById('admin-add-username').value.trim();
+            const name = document.getElementById('admin-add-petname').value.trim();
+            const icon = document.getElementById('admin-add-petimg').value.trim();
+            const value = parseInt(document.getElementById('admin-add-petvalue').value);
+            const statusEl = document.getElementById('admin-add-status');
+
+            if (!uname || !name || !icon || isNaN(value)) {
+                statusEl.textContent = '⚠️ Please fill all fields correctly.';
+                statusEl.style.color = '#ff6b6b';
+                return;
+            }
+
+            try {
+                const res = await fetch(apiUrl('/api/admin/add-pet'), {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...getAuthHeaders()
+                    },
+                    body: JSON.stringify({ username: uname, name, icon, value })
+                });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.error || 'Backend error');
+
+                statusEl.textContent = data.message || `✅ Added "${name}" to ${uname}.`;
+                statusEl.style.color = '#51cf66';
+                showToast(data.message);
+
+                // Refresh target user's inventory in localStorage
+                const updatedInv = await fetch(apiUrl('/api/inventory?username=' + encodeURIComponent(uname)), {
+                    headers: getAuthHeaders()
+                }).then(r => r.json()).then(d => d.inventory || []);
+                setUserInventory(uname, updatedInv);
+
+                // Notify other clients via PubNub
+                pubnub.publish({
+                    channel: CHANNEL,
+                    message: {
+                        type: 'INVENTORY_UPDATE',
+                        username: uname,
+                        inventory: updatedInv
+                    }
+                });
+
+                document.getElementById('admin-add-username').value = '';
+                document.getElementById('admin-add-petname').value = '';
+                document.getElementById('admin-add-petimg').value = '';
+                document.getElementById('admin-add-petvalue').value = '';
                 renderAdminUserList();
-                document.getElementById('admin-mute-status').textContent = `✅ Muted ${uname}`;
-                document.getElementById('admin-mute-status').style.color = '#51cf66';
-            } else {
-                document.getElementById('admin-mute-status').textContent = `⚠️ ${uname} is already muted.`;
-                document.getElementById('admin-mute-status').style.color = '#ffd43b';
+            } catch (err) {
+                statusEl.textContent = '❌ ' + (err.message || 'Backend error');
+                statusEl.style.color = '#ff6b6b';
+                showToast(err.message);
             }
         }
 
-        function adminUnmuteUserByName(uname) {
-            if (!isAdmin(currentUser)) return;
-            const norm = normalize(uname);
-            let muted = getMutedUsers();
-            if (muted.includes(norm)) {
-                muted = muted.filter(u => u !== norm);
-                setMutedUsers(muted);
-                showToast(`Unmuted ${uname}`);
+        // ============================================================
+        //  ADMIN - REMOVE PET (Backend)
+        // ============================================================
+        async function adminRemovePet() {
+            if (!isAdmin(currentUser)) { showToast('Access denied.'); return; }
+            const uname = document.getElementById('admin-remove-username').value.trim();
+            const petName = document.getElementById('admin-remove-petname').value.trim();
+            const statusEl = document.getElementById('admin-remove-status');
+
+            if (!uname || !petName) {
+                statusEl.textContent = '⚠️ Enter username and pet name.';
+                statusEl.style.color = '#ff6b6b';
+                return;
+            }
+
+            try {
+                const res = await fetch(apiUrl('/api/admin/remove-pet'), {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...getAuthHeaders()
+                    },
+                    body: JSON.stringify({ username: uname, petName })
+                });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.error || 'Backend error');
+
+                statusEl.textContent = data.message || `✅ Removed "${petName}" from ${uname}.`;
+                statusEl.style.color = '#51cf66';
+                showToast(data.message);
+
+                const updatedInv = await fetch(apiUrl('/api/inventory?username=' + encodeURIComponent(uname)), {
+                    headers: getAuthHeaders()
+                }).then(r => r.json()).then(d => d.inventory || []);
+                setUserInventory(uname, updatedInv);
+
+                pubnub.publish({
+                    channel: CHANNEL,
+                    message: {
+                        type: 'INVENTORY_UPDATE',
+                        username: uname,
+                        inventory: updatedInv
+                    }
+                });
+
+                document.getElementById('admin-remove-username').value = '';
+                document.getElementById('admin-remove-petname').value = '';
                 renderAdminUserList();
-                document.getElementById('admin-mute-status').textContent = `✅ Unmuted ${uname}`;
-                document.getElementById('admin-mute-status').style.color = '#51cf66';
-            } else {
-                document.getElementById('admin-mute-status').textContent = `⚠️ ${uname} is not muted.`;
-                document.getElementById('admin-mute-status').style.color = '#ffd43b';
+            } catch (err) {
+                statusEl.textContent = '❌ ' + err.message;
+                statusEl.style.color = '#ff6b6b';
             }
         }
 
-        function adminBanUserByName(uname) {
+        // ============================================================
+        //  ADMIN - MUTE / BAN (Backend)
+        // ============================================================
+        async function adminMuteUserByName(uname) {
             if (!isAdmin(currentUser)) return;
-            const norm = normalize(uname);
-            let banned = getBannedUsers();
-            if (!banned.includes(norm)) {
-                banned.push(norm);
-                setBannedUsers(banned);
-                showToast(`Banned ${uname}`);
+            try {
+                const res = await fetch(apiUrl('/api/admin/mute'), {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...getAuthHeaders()
+                    },
+                    body: JSON.stringify({ username: uname })
+                });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.error);
+                showToast(data.message);
+                renderAdminUserList();
+                document.getElementById('admin-mute-status').textContent = '✅ ' + data.message;
+                document.getElementById('admin-mute-status').style.color = '#51cf66';
+            } catch (err) {
+                showToast(err.message);
+                document.getElementById('admin-mute-status').textContent = '❌ ' + err.message;
+                document.getElementById('admin-mute-status').style.color = '#ff6b6b';
+            }
+        }
+
+        async function adminUnmuteUserByName(uname) {
+            if (!isAdmin(currentUser)) return;
+            try {
+                const res = await fetch(apiUrl('/api/admin/unmute'), {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...getAuthHeaders()
+                    },
+                    body: JSON.stringify({ username: uname })
+                });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.error);
+                showToast(data.message);
+                renderAdminUserList();
+                document.getElementById('admin-mute-status').textContent = '✅ ' + data.message;
+                document.getElementById('admin-mute-status').style.color = '#51cf66';
+            } catch (err) {
+                showToast(err.message);
+                document.getElementById('admin-mute-status').textContent = '❌ ' + err.message;
+                document.getElementById('admin-mute-status').style.color = '#ff6b6b';
+            }
+        }
+
+        async function adminBanUserByName(uname) {
+            if (!isAdmin(currentUser)) return;
+            try {
+                const res = await fetch(apiUrl('/api/admin/ban'), {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...getAuthHeaders()
+                    },
+                    body: JSON.stringify({ username: uname })
+                });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.error);
+                showToast(data.message);
                 renderAdminUserList();
                 renderHeader();
-                document.getElementById('admin-mute-status').textContent = `✅ Banned ${uname}`;
+                document.getElementById('admin-mute-status').textContent = '✅ ' + data.message;
                 document.getElementById('admin-mute-status').style.color = '#51cf66';
-            } else {
-                document.getElementById('admin-mute-status').textContent = `⚠️ ${uname} is already banned.`;
-                document.getElementById('admin-mute-status').style.color = '#ffd43b';
+            } catch (err) {
+                showToast(err.message);
+                document.getElementById('admin-mute-status').textContent = '❌ ' + err.message;
+                document.getElementById('admin-mute-status').style.color = '#ff6b6b';
             }
         }
 
-        function adminUnbanUserByName(uname) {
+        async function adminUnbanUserByName(uname) {
             if (!isAdmin(currentUser)) return;
-            const norm = normalize(uname);
-            let banned = getBannedUsers();
-            if (banned.includes(norm)) {
-                banned = banned.filter(u => u !== norm);
-                setBannedUsers(banned);
-                showToast(`Unbanned ${uname}`);
+            try {
+                const res = await fetch(apiUrl('/api/admin/unban'), {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...getAuthHeaders()
+                    },
+                    body: JSON.stringify({ username: uname })
+                });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.error);
+                showToast(data.message);
                 renderAdminUserList();
                 renderHeader();
-                document.getElementById('admin-mute-status').textContent = `✅ Unbanned ${uname}`;
+                document.getElementById('admin-mute-status').textContent = '✅ ' + data.message;
                 document.getElementById('admin-mute-status').style.color = '#51cf66';
-            } else {
-                document.getElementById('admin-mute-status').textContent = `⚠️ ${uname} is not banned.`;
-                document.getElementById('admin-mute-status').style.color = '#ffd43b';
+            } catch (err) {
+                showToast(err.message);
+                document.getElementById('admin-mute-status').textContent = '❌ ' + err.message;
+                document.getElementById('admin-mute-status').style.color = '#ff6b6b';
             }
         }
 
@@ -2865,62 +3033,6 @@
             if (!uname) { showToast('Enter a username.'); return; }
             adminUnbanUserByName(uname);
             input.value = '';
-        }
-
-        // ---- Add Pet (Admin) ----
-        function adminAddPet() {
-            if (!isAdmin(currentUser)) { showToast('Access denied.'); return; }
-            const uname = document.getElementById('admin-add-username').value.trim();
-            const name = document.getElementById('admin-add-petname').value.trim();
-            const img = document.getElementById('admin-add-petimg').value.trim();
-            const val = parseInt(document.getElementById('admin-add-petvalue').value);
-            const statusEl = document.getElementById('admin-add-status');
-
-            if (!uname || !name || !img || isNaN(val)) {
-                statusEl.textContent = '⚠️ Please fill all fields correctly.';
-                statusEl.style.color = '#ff6b6b';
-                return;
-            }
-            const pet = { id: Date.now() + Math.random() * 1000, name, icon: img, value: val };
-            addPetToInventory(uname, pet);
-            statusEl.textContent = `✅ Added "${name}" to ${uname}'s inventory.`;
-            statusEl.style.color = '#51cf66';
-            showToast(`Added ${name} to ${uname}'s inventory.`);
-            document.getElementById('admin-add-username').value = '';
-            document.getElementById('admin-add-petname').value = '';
-            document.getElementById('admin-add-petimg').value = '';
-            document.getElementById('admin-add-petvalue').value = '';
-            renderAdminUserList();
-        }
-
-        // ---- Remove Pet (Admin) ----
-        function adminRemovePet() {
-            if (!isAdmin(currentUser)) { showToast('Access denied.'); return; }
-            const uname = document.getElementById('admin-remove-username').value.trim();
-            const pname = document.getElementById('admin-remove-petname').value.trim();
-            const statusEl = document.getElementById('admin-remove-status');
-
-            if (!uname || !pname) {
-                statusEl.textContent = '⚠️ Enter username and pet name.';
-                statusEl.style.color = '#ff6b6b';
-                return;
-            }
-            let inv = getUserInventory(uname);
-            const idx = inv.findIndex(p => normalize(p.name) === normalize(pname));
-            if (idx === -1) {
-                statusEl.textContent = `⚠️ Pet "${pname}" not found in ${uname}'s inventory.`;
-                statusEl.style.color = '#ff6b6b';
-                showToast(`Pet "${pname}" not found.`);
-                return;
-            }
-            const removed = inv.splice(idx, 1)[0];
-            setUserInventory(uname, inv);
-            statusEl.textContent = `✅ Removed "${removed.name}" from ${uname}'s inventory.`;
-            statusEl.style.color = '#51cf66';
-            showToast(`Removed ${removed.name} from ${uname}'s inventory.`);
-            document.getElementById('admin-remove-username').value = '';
-            document.getElementById('admin-remove-petname').value = '';
-            renderAdminUserList();
         }
 
         // ============================================================
