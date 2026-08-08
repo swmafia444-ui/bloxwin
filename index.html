@@ -270,14 +270,14 @@
         .matches-grid {
             display: flex;
             flex-direction: column;
-            gap: 14px;
+            gap: 12px;
         }
 
         .match-card,
         .history-card {
             background: var(--card-bg);
             border-radius: var(--radius);
-            padding: 16px 22px;
+            padding: 12px 18px;
             border: 1px solid var(--border-color);
             transition: transform 0.15s ease, box-shadow 0.2s;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
@@ -293,13 +293,13 @@
         .match-card {
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 6px;
         }
 
         .match-top {
             display: flex;
             align-items: center;
-            gap: 14px;
+            gap: 10px;
             flex-wrap: wrap;
         }
 
@@ -308,28 +308,20 @@
             align-items: center;
             justify-content: space-between;
             flex-wrap: wrap;
-            gap: 10px;
-            margin-top: 4px;
+            gap: 6px;
+            margin-top: 2px;
             border-top: 1px solid var(--border-color);
-            padding-top: 10px;
-        }
-
-        .match-user {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            font-weight: 600;
-            flex-wrap: wrap;
+            padding-top: 6px;
         }
 
         .host-name {
             font-weight: 700;
-            font-size: 16px;
+            font-size: 15px;
             color: #e9ecef;
             cursor: pointer;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
             transition: color 0.2s;
         }
         .host-name:hover {
@@ -339,47 +331,48 @@
         .pet-badge {
             background: #0f172a;
             border: 1px solid var(--accent);
-            padding: 5px 14px;
+            padding: 4px 12px;
             border-radius: 30px;
             color: var(--accent);
-            font-size: 14px;
+            font-size: 13px;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
         }
 
         .pet-img {
-            width: 38px;
-            height: 38px;
-            object-fit: contain;
+            width: 32px;
+            height: 32px;
+            object-fit: cover;
             display: block;
-            margin: 0 auto 4px auto;
-            border-radius: 6px;
+            border-radius: 50%;
+            border: 1px solid #2d3b4f;
         }
 
         .pet-badge .pet-img {
-            width: 26px;
-            height: 26px;
+            width: 22px;
+            height: 22px;
             margin: 0;
         }
 
         .pet-group {
             display: flex;
-            gap: 4px;
+            gap: 3px;
             flex-wrap: wrap;
+            align-items: center;
         }
 
         .pet-group .pet-img {
-            width: 26px;
-            height: 26px;
+            width: 22px;
+            height: 22px;
         }
 
         .side-indicator {
             background: #0f172a;
             border-radius: 30px;
-            padding: 4px 12px;
+            padding: 3px 10px;
             font-weight: 700;
-            font-size: 14px;
+            font-size: 13px;
             border: 2px solid #4dabf7;
             color: #4dabf7;
             display: flex;
@@ -388,17 +381,17 @@
             flex-shrink: 0;
         }
         .side-indicator img {
-            width: 20px;
-            height: 20px;
+            width: 18px;
+            height: 18px;
             object-fit: contain;
         }
 
         .opponent-side {
             background: #0f172a;
             border-radius: 30px;
-            padding: 4px 12px;
+            padding: 3px 10px;
             font-weight: 600;
-            font-size: 14px;
+            font-size: 13px;
             border: 2px solid #ff6b6b;
             color: #ff6b6b;
             display: flex;
@@ -407,14 +400,14 @@
             flex-shrink: 0;
         }
         .opponent-side img {
-            width: 20px;
-            height: 20px;
+            width: 18px;
+            height: 18px;
             object-fit: contain;
         }
 
         .match-actions {
             display: flex;
-            gap: 8px;
+            gap: 6px;
             align-items: center;
         }
 
@@ -422,10 +415,10 @@
         .view-btn,
         .cancel-match-btn {
             border: none;
-            padding: 7px 16px;
+            padding: 5px 14px;
             border-radius: 30px;
             font-weight: 600;
-            font-size: 13px;
+            font-size: 12px;
             cursor: pointer;
             transition: transform 0.15s ease, box-shadow 0.2s;
             will-change: transform;
@@ -437,7 +430,7 @@
             box-shadow: 0 4px 10px rgba(252, 196, 25, 0.2);
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 4px;
         }
 
         .join-btn:hover {
@@ -460,8 +453,8 @@
             background: #4dabf7;
             color: white;
             box-shadow: 0 4px 10px rgba(77, 171, 247, 0.2);
-            padding: 5px 14px;
-            font-size: 12px;
+            padding: 4px 12px;
+            font-size: 11px;
         }
 
         .view-btn:hover {
@@ -472,14 +465,14 @@
         .match-total-value {
             color: var(--accent);
             font-weight: 700;
-            font-size: 14px;
-            margin-left: 6px;
+            font-size: 13px;
+            margin-left: 4px;
         }
 
         .history-card {
             display: flex;
             flex-direction: column;
-            gap: 6px;
+            gap: 4px;
         }
 
         .history-card .top-row {
@@ -487,12 +480,12 @@
             justify-content: flex-end;
             align-items: center;
             flex-wrap: wrap;
-            gap: 8px;
+            gap: 6px;
         }
 
         .history-card .result {
             font-weight: 700;
-            font-size: 15px;
+            font-size: 14px;
         }
         .history-card .result.win {
             color: var(--secondary);
@@ -508,25 +501,25 @@
         .history-card .pets-row {
             display: flex;
             flex-wrap: wrap;
-            gap: 12px;
-            margin: 4px 0;
+            gap: 8px;
+            margin: 2px 0;
         }
 
         .history-card .pets-row .label {
             color: #868e96;
-            font-size: 13px;
-            margin-right: 4px;
+            font-size: 12px;
+            margin-right: 2px;
         }
 
         .history-card .pets-row .pet-group {
             display: flex;
-            gap: 4px;
+            gap: 3px;
             flex-wrap: wrap;
         }
 
         .history-card .pets-row .pet-group .pet-img {
-            width: 26px;
-            height: 26px;
+            width: 22px;
+            height: 22px;
         }
 
         .history-card .total-value {
@@ -536,8 +529,8 @@
 
         .history-side {
             display: flex;
-            gap: 12px;
-            font-size: 13px;
+            gap: 10px;
+            font-size: 12px;
             color: #ced4da;
             flex-wrap: wrap;
         }
@@ -547,8 +540,8 @@
             gap: 4px;
         }
         .history-side .side-tag img {
-            width: 18px;
-            height: 18px;
+            width: 16px;
+            height: 16px;
         }
         .history-side .winner-side {
             font-weight: 700;
@@ -1029,7 +1022,7 @@
             min-height: 28px;
         }
 
-        /* --- Mini Coin Widget (smaller) --- */
+        /* Mini Coin Widget */
         .mini-coin-wrapper {
             perspective: 600px;
             width: 44px;
@@ -1239,7 +1232,9 @@
         .withdraw-pet-item .pet-img {
             width: 40px;
             height: 40px;
-            object-fit: contain;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 1px solid #2d3b4f;
         }
         .withdraw-pet-item .pet-name {
             font-size: 11px;
@@ -2002,18 +1997,19 @@
         let adminSelectedPetIndex = null;
 
         // ============================================================
-        //  USER DATA STORAGE
+        //  USER DATA STORAGE (all usernames normalized to lowercase)
         // ============================================================
         function getUserData(username) {
             try {
-                const data = localStorage.getItem(`app_user_data_${username}`);
-                if (data) return JSON.parse(data);
-                return null;
+                const key = `app_user_data_${username.toLowerCase()}`;
+                const data = localStorage.getItem(key);
+                return data ? JSON.parse(data) : null;
             } catch { return null; }
         }
 
         function setUserData(username, data) {
-            localStorage.setItem(`app_user_data_${username}`, JSON.stringify(data));
+            const key = `app_user_data_${username.toLowerCase()}`;
+            localStorage.setItem(key, JSON.stringify(data));
         }
 
         function getAvatarUrl(username) {
@@ -2045,18 +2041,20 @@
         }
 
         // ============================================================
-        //  STATS (new: totalWager, totalProfit, totalLost)
+        //  STATS (totalWager, totalProfit, totalLost)
         // ============================================================
         function getUserStats(username) {
             try {
-                const data = localStorage.getItem(`app_stats_${username}`);
+                const key = `app_stats_${username.toLowerCase()}`;
+                const data = localStorage.getItem(key);
                 if (data) return JSON.parse(data);
             } catch {}
             return { totalWager: 0, totalProfit: 0, totalLost: 0 };
         }
 
         function setUserStats(username, stats) {
-            localStorage.setItem(`app_stats_${username}`, JSON.stringify(stats));
+            const key = `app_stats_${username.toLowerCase()}`;
+            localStorage.setItem(key, JSON.stringify(stats));
         }
 
         function updateStatsAfterMatch(username, won, value) {
@@ -2071,7 +2069,7 @@
         }
 
         // ============================================================
-        //  REGISTERED USERS (with error handling)
+        //  REGISTERED USERS (normalized)
         // ============================================================
         function getRegisteredUsers() {
             try {
@@ -2087,9 +2085,10 @@
         }
 
         function addRegisteredUser(username) {
-            const list = getRegisteredUsers();
-            if (!list.includes(username)) {
-                list.push(username);
+            const normalized = username.toLowerCase();
+            let list = getRegisteredUsers();
+            if (!list.includes(normalized)) {
+                list.push(normalized);
                 setRegisteredUsers(list);
             }
         }
@@ -2154,7 +2153,6 @@
         function openModal(modalId) {
             const overlay = document.getElementById(modalId);
             overlay.style.display = 'flex';
-            // trigger reflow for transition
             void overlay.offsetWidth;
             overlay.classList.add('active');
         }
@@ -2177,7 +2175,6 @@
             }
         }
 
-        // Override modal clicks to use new openModal/closeModal
         document.querySelectorAll('.modal-overlay').forEach(overlay => {
             overlay.addEventListener('click', function(e) {
                 if (e.target === this) {
@@ -2201,13 +2198,15 @@
         // ============================================================
         function getHistory(username) {
             try {
-                const data = localStorage.getItem(`app_history_${username}`);
+                const key = `app_history_${username.toLowerCase()}`;
+                const data = localStorage.getItem(key);
                 return data ? JSON.parse(data) : [];
             } catch { return []; }
         }
 
         function setHistory(username, history) {
-            localStorage.setItem(`app_history_${username}`, JSON.stringify(history));
+            const key = `app_history_${username.toLowerCase()}`;
+            localStorage.setItem(key, JSON.stringify(history));
         }
 
         function addMatchToHistory(username, matchRecord) {
@@ -2425,13 +2424,14 @@
         }
 
         // ============================================================
-        //  INVENTORY
+        //  INVENTORY (normalized keys)
         // ============================================================
         function getUserInventory(username) {
             try {
-                const data = localStorage.getItem(`app_inv_${username}`);
+                const key = `app_inv_${username.toLowerCase()}`;
+                const data = localStorage.getItem(key);
                 if (!data) {
-                    localStorage.setItem(`app_inv_${username}`, JSON.stringify([]));
+                    localStorage.setItem(key, JSON.stringify([]));
                     return [];
                 }
                 return JSON.parse(data);
@@ -2441,7 +2441,8 @@
         }
 
         function setUserInventory(username, inv) {
-            localStorage.setItem(`app_inv_${username}`, JSON.stringify(inv));
+            const key = `app_inv_${username.toLowerCase()}`;
+            localStorage.setItem(key, JSON.stringify(inv));
         }
 
         function addPetToInventory(username, pet) {
@@ -2466,7 +2467,7 @@
         }
 
         // ============================================================
-        //  MUTED (with expiry)
+        //  MUTED (with expiry, normalized)
         // ============================================================
         function getMutedUsers() {
             try {
@@ -2481,11 +2482,12 @@
 
         function isMuted(username) {
             const muted = getMutedUsers();
-            if (muted[username]) {
-                if (muted[username] > Date.now()) {
+            const key = username.toLowerCase();
+            if (muted[key]) {
+                if (muted[key] > Date.now()) {
                     return true;
                 } else {
-                    delete muted[username];
+                    delete muted[key];
                     setMutedUsers(muted);
                     return false;
                 }
@@ -2495,8 +2497,9 @@
 
         function getMuteRemaining(username) {
             const muted = getMutedUsers();
-            if (muted[username]) {
-                const remaining = Math.ceil((muted[username] - Date.now()) / 3600000);
+            const key = username.toLowerCase();
+            if (muted[key]) {
+                const remaining = Math.ceil((muted[key] - Date.now()) / 3600000);
                 return remaining > 0 ? remaining : 0;
             }
             return 0;
@@ -2532,7 +2535,6 @@
                         match.hostWins = msg.hostWins;
                         match.winner = msg.hostWins ? msg.host : msg.joiner;
                         match.winnerSide = msg.hostWins ? match.hostSide : msg.joinerSide;
-                        // Remove after 70 seconds
                         setTimeout(() => {
                             const idx = globalMatches.findIndex(m => m.id === msg.matchId);
                             if (idx !== -1) {
@@ -2545,7 +2547,6 @@
                         if (currentUser === msg.host || currentUser === msg.joiner) {
                             executeCoinFlip(msg);
                         }
-                        // For others, the ongoing match card will show the mini animation
                     }
                 }
                 if (msg.type === 'REQUEST_SYNC' && globalMatches.length > 0) {
@@ -2618,7 +2619,7 @@
         }
 
         // ============================================================
-        //  RENDER MATCHES (supports waiting & ongoing)
+        //  RENDER MATCHES (compact)
         // ============================================================
         function renderMatches() {
             const container = document.getElementById('matches-list');
@@ -2709,7 +2710,7 @@
                     '';
 
                 const petsHtml = match.hostPets.map(pet =>
-                    `<img class="pet-img" src="${pet.icon}" alt="${pet.name}" title="${pet.name}">`
+                    `<img class="pet-img" src="${pet.icon}" alt="${pet.name}" title="${pet.name}"><span style="font-size:10px;color:#868e96;margin-left:2px;">${pet.value}</span>`
                 ).join('');
 
                 const opponentSide = match.hostSide === 'H' ? 'T' : 'H';
@@ -2719,13 +2720,13 @@
                 const opponentSideHtml =
                     `<span class="${opponentSideClass}"><img src="${opponentImg}" alt="${opponentSide}"> ${opponentSide}</span>`;
 
-                const joinLabel = `Join Match For ${totalValue}`;
+                const joinLabel = `Join ${totalValue}`;
 
                 let actionsHtml = '';
                 if (isMyMatch) {
                     actionsHtml = `
                             <button class="view-btn" onclick="viewMatch(${match.id})">View</button>
-                            <button class="cancel-match-btn" onclick="cancelMyMatch(${match.id})">Cancel</button>
+                            <button class="cancel-match-btn" onclick="cancelMyMatch(${match.id})">✕</button>
                         `;
                 } else {
                     actionsHtml = `
@@ -2742,8 +2743,7 @@
                             </span>
                             <div class="pet-badge">
                                 <div class="pet-group">${petsHtml}</div>
-                                <span>${match.hostPets.length} pet(s)</span>
-                                <span class="match-total-value">Value: ${totalValue}</span>
+                                <span class="match-total-value">${totalValue}</span>
                             </div>
                         </div>
                         <div class="match-bottom">
@@ -2779,21 +2779,21 @@
                     `;
 
                 card.innerHTML = `
-                        <div class="match-status">⚡ Match in progress ⚡</div>
-                        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:center;">
-                            <span><img src="${hostSideImg}" style="width:24px;height:24px;"> ${match.host}</span>
+                        <div class="match-status">⚡ In progress</div>
+                        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:center;">
+                            <span><img src="${hostSideImg}" style="width:20px;height:20px;border-radius:50%;"> ${match.host}</span>
                             <span style="color:var(--accent);font-weight:700;">VS</span>
-                            <span><img src="${joinerSideImg}" style="width:24px;height:24px;"> ${match.joiner}</span>
+                            <span><img src="${joinerSideImg}" style="width:20px;height:20px;border-radius:50%;"> ${match.joiner}</span>
                         </div>
-                        <div style="display:flex;justify-content:center;align-items:center;gap:16px;flex-wrap:wrap;">
-                            <div>Host side: <span class="side-indicator" style="font-size:12px;padding:2px 10px;"><img src="${hostSideImg}" alt="${match.hostSide}"> ${match.hostSide}</span></div>
-                            <div>Joiner side: <span class="opponent-side" style="font-size:12px;padding:2px 10px;"><img src="${joinerSideImg}" alt="${match.joinerSide}"> ${match.joinerSide}</span></div>
+                        <div style="display:flex;justify-content:center;align-items:center;gap:12px;flex-wrap:wrap;font-size:12px;">
+                            <span class="side-indicator" style="font-size:11px;padding:2px 8px;"><img src="${hostSideImg}" alt="${match.hostSide}"> ${match.hostSide}</span>
+                            <span class="opponent-side" style="font-size:11px;padding:2px 8px;"><img src="${joinerSideImg}" alt="${match.joinerSide}"> ${match.joinerSide}</span>
                         </div>
-                        <div style="text-align:center;margin:6px 0;">
+                        <div style="text-align:center;margin:4px 0;">
                             ${coinHtml}
-                            <div id="mini-result-${match.id}" style="font-weight:700;font-size:14px;color:var(--accent);">Flipping...</div>
+                            <div id="mini-result-${match.id}" style="font-weight:700;font-size:13px;color:var(--accent);">Flipping...</div>
                         </div>
-                        <div style="text-align:center;color:#868e96;font-size:13px;">Total Wager: ${totalValue}</div>
+                        <div style="text-align:center;color:#868e96;font-size:12px;">Total: ${totalValue}</div>
                     `;
 
                 container.appendChild(card);
@@ -2815,7 +2815,7 @@
                         miniCoin.style.animation = 'none';
                         miniCoin.style.transform = `rotateY(${endDegree}deg)`;
                         if (styleSheet.parentNode) document.head.removeChild(styleSheet);
-                        resultDiv.textContent = `🏆 ${winnerName} wins! (Side: ${winnerSide})`;
+                        resultDiv.textContent = `🏆 ${winnerName}`;
                     }, 2300);
                 }, 300);
             });
@@ -2842,7 +2842,7 @@
                 'https://bloxluck.com/img/gem.png';
 
             const joinerPetsHtml =
-                `<div class="pet-img empty-pet" style="width:34px;height:34px;border-radius:6px;border:1px dashed #4dabf7;opacity:0.4;"></div>`;
+                `<div class="pet-img empty-pet" style="width:34px;height:34px;border-radius:50%;border:1px dashed #4dabf7;opacity:0.4;"></div>`;
 
             let html = `
                     <div class="view-profile">
@@ -2885,7 +2885,7 @@
                     const item = document.createElement('div');
                     item.className = 'modal-item';
                     item.innerHTML = `
-                            <img class="pet-img" src="${pet.icon}" alt="${pet.name}" style="width:44px;height:44px;">
+                            <img class="pet-img" src="${pet.icon}" alt="${pet.name}" style="width:44px;height:44px;border-radius:50%;">
                             <div style="font-weight:600;font-size:14px;">${pet.name}</div>
                             <div class="pet-value">Value: ${pet.value}</div>
                         `;
@@ -2972,7 +2972,7 @@
                     const item = document.createElement('div');
                     item.className = 'modal-item';
                     item.innerHTML = `
-                            <img class="pet-img" src="${pet.icon}" alt="${pet.name}" style="width:44px;height:44px;">
+                            <img class="pet-img" src="${pet.icon}" alt="${pet.name}" style="width:44px;height:44px;border-radius:50%;">
                             <div style="font-weight:600;font-size:14px;">${pet.name}</div>
                             <div class="pet-value">Value: ${pet.value}</div>
                         `;
@@ -3029,7 +3029,7 @@
         }
 
         // ============================================================
-        //  COIN FLIP (fullscreen for players)
+        //  COIN FLIP
         // ============================================================
         function executeCoinFlip(gameData) {
             const flipModal = document.getElementById('flip-modal');
@@ -3194,7 +3194,7 @@
         }
 
         // ============================================================
-        //  PROFILE (stats only, no pets)
+        //  PROFILE
         // ============================================================
         function openProfile(username) {
             if (!username) return;
@@ -3230,7 +3230,6 @@
                 showToast('Access denied.');
                 return;
             }
-            // Ensure current user is in the list
             addRegisteredUser(currentUser);
             openModal('admin-modal');
             adminRefreshUsers();
@@ -3251,8 +3250,7 @@
         function adminRefreshUsers() {
             const list = document.getElementById('admin-user-list');
             let users = getAllUsernames();
-            // Ensure current user is in the list
-            if (currentUser && !users.includes(currentUser)) {
+            if (currentUser && !users.includes(currentUser.toLowerCase())) {
                 addRegisteredUser(currentUser);
                 users = getAllUsernames();
             }
@@ -3296,7 +3294,7 @@
             } else {
                 display.innerHTML = adminTargetPets.map((p, idx) =>
                     `<div style="display:inline-flex;align-items:center;gap:4px;background:#0f172a;border:1px solid var(--border-color);border-radius:20px;padding:4px 12px 4px 6px;cursor:pointer;" onclick="adminSelectPetForRemove(${idx})" id="admin-pet-${idx}">
-                            <img class="pet-img" src="${p.icon}" alt="${p.name}" style="width:24px;height:24px;margin:0;">
+                            <img class="pet-img" src="${p.icon}" alt="${p.name}" style="width:24px;height:24px;border-radius:50%;margin:0;">
                             <span style="font-size:12px;">${p.name}</span>
                             <span style="font-size:10px;color:#868e96;">${p.value}</span>
                         </div>`
@@ -3417,7 +3415,7 @@
             }
         }
 
-        // --- Muted with expiry ---
+        // --- Muted ---
         function adminRenderMuted() {
             const list = document.getElementById('admin-muted-list');
             const muted = getMutedUsers();
@@ -3450,8 +3448,9 @@
             if (!username) { showToast('Enter a username to mute.'); return; }
             if (isAdmin(username)) { showToast('Cannot mute an admin.'); return; }
             const muted = getMutedUsers();
-            if (muted[username]) { showToast(`${username} is already muted.`); return; }
-            muted[username] = Date.now() + hours * 3600000;
+            const key = username.toLowerCase();
+            if (muted[key]) { showToast(`${username} is already muted.`); return; }
+            muted[key] = Date.now() + hours * 3600000;
             setMutedUsers(muted);
             input.value = '';
             showToast(`🔇 Muted ${username} for ${hours} hour(s).`);
@@ -3461,8 +3460,9 @@
 
         function adminUnmuteUser(username) {
             let muted = getMutedUsers();
-            if (muted[username]) {
-                delete muted[username];
+            const key = username.toLowerCase();
+            if (muted[key]) {
+                delete muted[key];
                 setMutedUsers(muted);
                 showToast(`🔊 Unmuted ${username}`);
                 adminRenderMuted();
@@ -3484,7 +3484,6 @@
             }
         }
 
-        // Load chat history from PubNub (optional, fallback to localStorage)
         pubnub.history({ channel: CHANNEL, count: 50 }, function(status, response) {
             if (!status.error && response.messages) {
                 const messages = response.messages.map(m => m.entry);
