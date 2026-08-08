@@ -144,20 +144,7 @@
         }
 
         .deposit-avatar {
-            width: 28px;
-            height: 28px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 2px solid var(--accent);
-            background: #1a2332;
-            flex-shrink: 0;
-            cursor: pointer;
-            transition: transform 0.15s ease, box-shadow 0.2s ease;
-        }
-
-        .deposit-avatar:hover {
-            transform: scale(1.06);
-            box-shadow: 0 0 12px rgba(252, 196, 25, 0.25);
+            display: none;
         }
 
         .header-actions {
@@ -338,14 +325,6 @@
         }
         .host-name:hover {
             color: #4dabf7;
-        }
-        .host-name {
-            font-weight: 700;
-            color: #f1f3f5;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 8px;
         }
 
         .host-name .avatar-thumb {
@@ -1625,8 +1604,7 @@
                 justify-content: flex-end;
             }
             .deposit-avatar {
-                width: 22px;
-                height: 22px;
+                display: none;
             }
             .action-btn {
                 font-size: 10px;
@@ -1783,42 +1761,21 @@
 
     <!-- ===== MODALS ===== -->
 
-    <!-- Login -->
+    <!-- Login (basitleştirilmiş) -->
     <div class="modal-overlay" id="login-modal">
-        <div class="modal" id="roblox-login-step-username">
-            <h2>Login with Roblox</h2>
+        <div class="modal">
+            <h2>Login</h2>
             <div class="form-group">
-                <label>Roblox Username</label>
-                <input type="text" id="login-username" placeholder="Enter your Roblox username" autocomplete="off">
+                <label>Kullanıcı Adı</label>
+                <input type="text" id="login-username" placeholder="Bir kullanıcı adı girin" autocomplete="off">
+            </div>
+            <div style="font-size:13px;color:#868e96;margin-bottom:16px;text-align:center;">
+                Herhangi bir isimle giriş yapabilirsiniz (demo).
             </div>
             <div class="modal-actions">
-                <button class="post-btn" id="find-roblox-user-btn" onclick="findRobloxUser()">Continue</button>
+                <button class="post-btn" onclick="simpleLogin()">Giriş Yap</button>
                 <button class="cancel-btn" onclick="closeModal('login-modal')">Cancel</button>
             </div>
-        </div>
-        <div class="modal" id="roblox-login-step-confirm" style="display:none;">
-            <h2>Is this you?</h2>
-            <div id="roblox-user-preview" style="text-align:center;margin:8px 0 20px;"></div>
-            <div class="modal-actions">
-                <button class="post-btn" onclick="confirmRobloxUser()">Yes, this is me</button>
-                <button class="cancel-btn" onclick="backToRobloxUsernameStep()">No</button>
-            </div>
-        </div>
-        <div class="modal" id="roblox-login-step-verify" style="display:none;">
-            <h2>Verify your Roblox account</h2>
-            <div id="roblox-verify-info" style="text-align:center;color:#adb5bd;line-height:1.6;margin-bottom:18px;"></div>
-            <div style="background:#0f172a;border:1px solid var(--accent);border-radius:14px;padding:18px;text-align:center;margin-bottom:18px;">
-                <div style="font-size:12px;color:#868e96;margin-bottom:6px;">YOUR 9-LETTER CODE</div>
-                <div id="roblox-verification-code" style="font-size:30px;font-weight:800;letter-spacing:5px;color:var(--accent);"></div>
-            </div>
-            <div style="font-size:13px;color:#868e96;text-align:center;margin-bottom:12px;">
-                Copy this code and paste it into your Roblox profile's <b style="color:#f1f3f5;">About / Description</b> section, then click Verify.
-            </div>
-            <div class="modal-actions">
-                <button class="post-btn" id="verify-roblox-btn" onclick="verifyRobloxAccount()">Verify & Login</button>
-                <button class="cancel-btn" onclick="backToRobloxConfirmStep()">Back</button>
-            </div>
-            <div id="roblox-verify-status" style="text-align:center;margin-top:14px;min-height:20px;font-size:13px;color:#868e96;"></div>
         </div>
     </div>
 
@@ -2031,13 +1988,11 @@
         </div>
     </div>
 
-    <script src="./config.js"></script>
     <script>
         // ============================================================
-        //  CONFIG & CONSTANTS
+        //  CONFIG
         // ============================================================
-        const BLOXWIN_API_URL = (window.BLOXWIN_API_URL && !window.BLOXWIN_API_URL.includes("YOUR-BACKEND-URL-HERE")) ? window.BLOXWIN_API_URL.replace(/\/$/, "") : window.location.origin;
-        const apiUrl = (path) => BLOXWIN_API_URL + path;
+        const BLOXWIN_API_URL = window.location.origin; // placeholder, not used for login now
 
         const DISCORD_WEBHOOK = "https://discord.com/api/webhooks/1535660906099376329/weNdEF7wzTWIK-ts0sp_88M08ribw5XR-oxxg7llRDp5T8WlNEC82qKTeP9ezNsTfrVa";
 
@@ -2125,7 +2080,7 @@
         }
 
         // ============================================================
-        //  STATS (value won / lost only)
+        //  STATS
         // ============================================================
         function getUserStats(username) {
             const data = localStorage.getItem(`app_stats_${username}`);
@@ -2224,15 +2179,14 @@
 
         function closeModal(modalId) {
             document.getElementById(modalId).style.display = 'none';
-            if (modalId === 'login-modal') resetRobloxLoginModal();
+            if (modalId === 'login-modal') {
+                document.getElementById('login-username').value = '';
+            }
             if (modalId === 'admin-add-pet-modal') {
                 document.getElementById('admin-add-pet-status').textContent = '';
             }
             if (modalId === 'withdraw-modal') {
                 document.getElementById('withdraw-status').textContent = '';
-            }
-            if (modalId === 'profile-modal') {
-                document.getElementById('profile-content').style.display = 'block';
             }
         }
 
@@ -2306,7 +2260,6 @@
             if (!muted[username]) return false;
             const expiry = muted[username];
             if (expiry && Date.now() > expiry) {
-                // Auto-unmute
                 delete muted[username];
                 setMutedUsers(muted);
                 return false;
@@ -2378,7 +2331,7 @@
         }
 
         // ============================================================
-        //  INVENTORY (empty by default)
+        //  INVENTORY
         // ============================================================
         function getUserInventory(username) {
             const data = localStorage.getItem(`app_inv_${username}`);
@@ -2455,6 +2408,15 @@
                     });
                     renderMatches();
                 }
+                if (msg.type === 'BAN_USER') {
+                    if (currentUser && currentUser === msg.username) {
+                        showToast('⛔ You have been banned.', 5000);
+                        handleLogout();
+                    }
+                }
+                if (msg.type === 'MUTE_USER') {
+                    // mute only updates local storage, already handled by adminMuteUser
+                }
             }
         });
 
@@ -2503,7 +2465,7 @@
         function sendMessage() {
             if (!currentUser) { showToast('Please login first to send a message.'); return; }
             if (isBanned(currentUser)) {
-                showToast('⛔ You are banned from this site.', 5000);
+                showToast('⛔ You have been banned from this site.', 5000);
                 return;
             }
             if (isMuted(currentUser)) {
@@ -2544,7 +2506,6 @@
                 getDefaultAvatar();
             const adminTag = isAdmin(username) ? `<span class="admin-tag">Admin</span>` : '';
             const mutedLabel = isMuted(username) ? `<span class="muted-label">[MUTED]</span>` : '';
-            const isMutedNow = isMuted(username);
             msgDiv.innerHTML = `
                     <img class="msg-avatar" src="${avatarUrl}" alt="${escapeHTML(username)}" onerror="this.src='${getDefaultAvatar()}'">
                     <div class="msg-content">
@@ -2553,6 +2514,55 @@
                 `;
             container.appendChild(msgDiv);
             container.scrollTop = container.scrollHeight;
+        }
+
+        // ============================================================
+        //  LOGIN (basitleştirilmiş)
+        // ============================================================
+        function simpleLogin() {
+            const input = document.getElementById('login-username');
+            const username = input.value.trim();
+            if (!username) {
+                showToast('Lütfen bir kullanıcı adı girin.');
+                return;
+            }
+            if (isBanned(username)) {
+                showToast('⛔ You have been banned from this site.', 5000);
+                return;
+            }
+            currentUser = username;
+            currentUserId = null;
+            currentUserAvatar = getDefaultAvatar();
+            localStorage.setItem('app_current_user', currentUser);
+            localStorage.setItem('app_current_user_id', currentUserId || '');
+            localStorage.setItem('app_current_user_avatar', currentUserAvatar);
+            storeAvatarForUser(currentUser, currentUserAvatar, currentUserId);
+            addRegisteredUser(currentUser);
+            getUserInventory(currentUser);
+            closeModal('login-modal');
+            renderHeader();
+            renderMatches();
+            pubnub.publish({ channel: CHANNEL, message: { type: 'REQUEST_SYNC' } });
+            showToast(`Logged in as @${currentUser}!`);
+        }
+
+        function handleLogout() {
+            currentUser = null;
+            currentUserId = null;
+            currentUserAvatar = null;
+            localStorage.removeItem('app_current_user');
+            localStorage.removeItem('app_current_user_id');
+            localStorage.removeItem('app_current_user_avatar');
+            if (showHistory) {
+                showHistory = false;
+                const btn = document.getElementById('history-toggle-btn');
+                const title = document.getElementById('section-title-text');
+                btn.textContent = 'History';
+                btn.classList.remove('active');
+                title.textContent = 'Live Matches';
+            }
+            renderHeader();
+            renderMatches();
         }
 
         // ============================================================
@@ -2573,10 +2583,6 @@
                                 ${escapeHTML(currentUser)} ${adminTag}
                             </span>
                             <div class="header-actions">
-                                <img class="deposit-avatar" src="${avatarUrl}" alt="${escapeHTML(currentUser)}"
-                                     title="${escapeHTML(currentUser)}"
-                                     onclick="openProfile('${escapeHTML(currentUser)}')"
-                                     onerror="this.src='${getDefaultAvatar()}'">
                                 <button class="action-btn gold-btn" onclick="openDepositModal()">Deposit</button>
                                 <button class="action-btn purple-btn" onclick="openWithdrawModal()">Withdraw</button>
                                 <button class="action-btn" onclick="openCreateModal()">Create</button>
@@ -2588,175 +2594,10 @@
             } else {
                 container.innerHTML = `
                         <div class="header-actions">
-                            <button class="action-btn" onclick="resetRobloxLoginModal(); document.getElementById('login-modal').style.display='flex'">Login with Roblox</button>
+                            <button class="action-btn" onclick="document.getElementById('login-modal').style.display='flex'">Login</button>
                         </div>
                     `;
             }
-        }
-
-        // ============================================================
-        //  LOGIN / LOGOUT
-        // ============================================================
-        let pendingRobloxUser = null;
-        let robloxVerificationToken = null;
-
-        function resetRobloxLoginModal() {
-            pendingRobloxUser = null;
-            robloxVerificationToken = null;
-            document.getElementById('roblox-login-step-username').style.display = 'block';
-            document.getElementById('roblox-login-step-confirm').style.display = 'none';
-            document.getElementById('roblox-login-step-verify').style.display = 'none';
-            document.getElementById('login-username').value = '';
-            document.getElementById('roblox-verification-code').textContent = '';
-            document.getElementById('roblox-verify-status').textContent = '';
-        }
-
-        async function findRobloxUser() {
-            const input = document.getElementById('login-username');
-            const btn = document.getElementById('find-roblox-user-btn');
-            const username = input.value.trim();
-            if (!username) { showToast('Please enter your Roblox username.'); return; }
-            btn.disabled = true;
-            btn.textContent = 'Searching...';
-            try {
-                const response = await fetch(apiUrl('/api/roblox/user'), {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ username })
-                });
-                const data = await response.json();
-                if (!response.ok) throw new Error(data.error || 'Roblox user not found.');
-                pendingRobloxUser = data.user;
-                const avatarUrl = data.user.avatarUrl || getRobloxAvatarUrl(data.user.id);
-                document.getElementById('roblox-user-preview').innerHTML = `
-                        <img src="${escapeHTML(avatarUrl)}"
-                             alt="${escapeHTML(data.user.name)}"
-                             style="width:86px;height:86px;border-radius:50%;object-fit:cover;border:2px solid var(--accent);margin-bottom:10px;"
-                             onerror="this.src='${getDefaultAvatar()}'">
-                        <div style="font-size:20px;font-weight:800;color:#f1f3f5;">${escapeHTML(data.user.displayName || data.user.name)}</div>
-                        <div style="color:#868e96;margin-top:4px;">@${escapeHTML(data.user.name)}</div>
-                    `;
-                document.getElementById('roblox-login-step-username').style.display = 'none';
-                document.getElementById('roblox-login-step-confirm').style.display = 'block';
-            } catch (error) {
-                showToast(error.message || 'Could not find that Roblox account.');
-            } finally {
-                btn.disabled = false;
-                btn.textContent = 'Continue';
-            }
-        }
-
-        async function confirmRobloxUser() {
-            if (!pendingRobloxUser) return;
-            const info = document.getElementById('roblox-verify-info');
-            const codeEl = document.getElementById('roblox-verification-code');
-            info.textContent = 'Creating your verification code...';
-            codeEl.textContent = '•••••••••';
-            try {
-                const response = await fetch(apiUrl('/api/roblox/start-verification'), {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ userId: pendingRobloxUser.id })
-                });
-                const data = await response.json();
-                if (!response.ok) throw new Error(data.error || 'Could not create verification code.');
-                robloxVerificationToken = data.token;
-                codeEl.textContent = data.code;
-                info.innerHTML =
-                    `Open your Roblox profile for <b style="color:#f1f3f5;">@${escapeHTML(pendingRobloxUser.name)}</b> and put this code in your <b style="color:#f1f3f5;">About / Description</b>.<br><span style="font-size:12px;color:#868e96;">The code expires in 10 minutes and can only be used once.</span>`;
-                document.getElementById('roblox-login-step-confirm').style.display = 'none';
-                document.getElementById('roblox-login-step-verify').style.display = 'block';
-            } catch (error) {
-                showToast(error.message || 'Could not create verification code.');
-            }
-        }
-
-        async function verifyRobloxAccount() {
-            if (!pendingRobloxUser || !robloxVerificationToken) {
-                showToast('Please restart the Roblox login process.');
-                return;
-            }
-            const status = document.getElementById('roblox-verify-status');
-            const btn = document.getElementById('verify-roblox-btn');
-
-            btn.disabled = true;
-            btn.textContent = 'Checking...';
-            status.style.color = '#868e96';
-            status.textContent = 'Checking your Roblox profile...';
-
-            // We no longer have a code input; we just verify using the token
-            try {
-                const response = await fetch(apiUrl('/api/roblox/verify'), {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        token: robloxVerificationToken,
-                        code: '' // empty because we already sent the code via the token
-                    })
-                });
-                const data = await response.json();
-                if (!response.ok) throw new Error(data.error || 'Verification failed.');
-
-                // Check if user is banned
-                if (isBanned(data.user.name)) {
-                    status.style.color = '#ff6b6b';
-                    status.textContent = '⛔ You have been banned from this site.';
-                    btn.disabled = false;
-                    btn.textContent = 'Verify & Login';
-                    return;
-                }
-
-                currentUser = data.user.name;
-                currentUserId = data.user.id;
-                currentUserAvatar = data.user.avatarUrl || getRobloxAvatarUrl(data.user.id);
-                localStorage.setItem('app_current_user', currentUser);
-                localStorage.setItem('app_current_user_id', currentUserId);
-                localStorage.setItem('app_current_user_avatar', currentUserAvatar);
-                storeAvatarForUser(currentUser, currentUserAvatar, currentUserId);
-                addRegisteredUser(currentUser);
-                getUserInventory(currentUser);
-                closeModal('login-modal');
-                resetRobloxLoginModal();
-                renderHeader();
-                renderMatches();
-                pubnub.publish({ channel: CHANNEL, message: { type: 'REQUEST_SYNC' } });
-                showToast(`Logged in as @${currentUser}!`);
-            } catch (error) {
-                status.style.color = '#ff6b6b';
-                status.textContent = error.message || 'Verification failed.';
-            } finally {
-                btn.disabled = false;
-                btn.textContent = 'Verify & Login';
-            }
-        }
-
-        function backToRobloxUsernameStep() {
-            document.getElementById('roblox-login-step-confirm').style.display = 'none';
-            document.getElementById('roblox-login-step-username').style.display = 'block';
-        }
-
-        function backToRobloxConfirmStep() {
-            document.getElementById('roblox-login-step-verify').style.display = 'none';
-            document.getElementById('roblox-login-step-confirm').style.display = 'block';
-        }
-
-        function handleLogout() {
-            currentUser = null;
-            currentUserId = null;
-            currentUserAvatar = null;
-            localStorage.removeItem('app_current_user');
-            localStorage.removeItem('app_current_user_id');
-            localStorage.removeItem('app_current_user_avatar');
-            if (showHistory) {
-                showHistory = false;
-                const btn = document.getElementById('history-toggle-btn');
-                const title = document.getElementById('section-title-text');
-                btn.textContent = 'History';
-                btn.classList.remove('active');
-                title.textContent = 'Live Matches';
-            }
-            renderHeader();
-            renderMatches();
         }
 
         // ============================================================
@@ -3314,7 +3155,6 @@
             const adminTag = isAdmin(username) ? `<span class="admin-tag">Admin</span>` : '';
             document.getElementById('profile-username').innerHTML = `${escapeHTML(username)} ${adminTag}`;
 
-            // Only show value won / lost
             const statsHtml = `
                     <div class="profile-stat win">
                         <div class="stat-number">${stats.valueWon}</div>
@@ -3327,7 +3167,6 @@
                 `;
             document.getElementById('profile-stats').innerHTML = statsHtml;
 
-            // Don't show pets in profile
             document.getElementById('profile-pets').innerHTML = '';
 
             document.getElementById('profile-modal').style.display = 'flex';
@@ -3343,7 +3182,6 @@
             }
             document.getElementById('admin-modal').style.display = 'flex';
             adminRefreshUsers();
-            adminPopulateUserSelects();
             adminRenderMuted();
             adminRenderBanned();
             switchAdminTab('tab-users');
@@ -3393,11 +3231,7 @@
             });
         }
 
-        function adminPopulateUserSelects() {
-            // Not needed for manual input
-        }
-
-        // --- Manage Pets (manual username) ---
+        // --- Manage Pets ---
         function adminLoadUserPetsManual() {
             const input = document.getElementById('admin-pet-username-input');
             const username = input.value.trim();
@@ -3497,6 +3331,8 @@
             document.getElementById('admin-add-pet-status').textContent = `✅ Added ${name} to ${username}`;
             showToast(`Added ${name} to ${username}`);
             closeModal('admin-add-pet-modal');
+
+            // Reload pets for the user if it's the current target
             if (adminCurrentTargetUser === username) {
                 adminTargetPets = getUserInventory(username);
                 adminLoadUserPetsManual();
@@ -3565,6 +3401,10 @@
             showToast(`🔇 Muted ${username} for ${hours} hour(s).`);
             adminRenderMuted();
             adminRefreshUsers();
+            pubnub.publish({
+                channel: CHANNEL,
+                message: { type: 'MUTE_USER', username: username }
+            });
         }
 
         function adminUnmuteUser(username) {
@@ -3608,7 +3448,13 @@
             showToast(`⛔ Banned ${username}`);
             adminRenderBanned();
             adminRefreshUsers();
-            // If the banned user is currently logged in, force logout
+
+            // Notify all clients to logout if they are this user
+            pubnub.publish({
+                channel: CHANNEL,
+                message: { type: 'BAN_USER', username: username }
+            });
+
             if (username === currentUser) {
                 handleLogout();
                 showToast('You have been banned.', 5000);
@@ -3634,10 +3480,8 @@
             if (!getAvatarUrl(currentUser) && currentUserAvatar) {
                 storeAvatarForUser(currentUser, currentUserAvatar, currentUserId);
             }
-            // Check if banned on load
             if (isBanned(currentUser)) {
                 showToast('⛔ You have been banned from this site.', 5000);
-                // Optionally force logout after a moment
                 setTimeout(() => {
                     if (isBanned(currentUser)) {
                         handleLogout();
@@ -3647,9 +3491,10 @@
             }
         }
 
+        // Delay PubNub sync to avoid blocking
         setTimeout(() => {
             pubnub.publish({ channel: CHANNEL, message: { type: 'REQUEST_SYNC' } });
-        }, 1000);
+        }, 1500);
     </script>
 </body>
 </html>
