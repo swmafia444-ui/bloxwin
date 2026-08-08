@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>BloxWin Coinflip</title>
     <script src="https://cdn.pubnub.com/sdk/javascript/pubnub.7.2.2.min.js">
     </script>
@@ -54,7 +54,6 @@
             backdrop-filter: blur(6px);
         }
 
-        /* --- Toast Notification --- */
         .toast-container {
             position: fixed;
             top: calc(var(--header-height) + 12px);
@@ -109,7 +108,8 @@
         .user-info-bar {
             display: flex;
             align-items: center;
-            gap: 14px;
+            gap: 10px;
+            flex-wrap: wrap;
         }
 
         .user-badge {
@@ -120,25 +120,40 @@
             font-weight: 600;
             color: var(--accent);
             font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .user-badge .admin-tag {
+            background: #ff6b6b;
+            color: #fff;
+            font-size: 9px;
+            font-weight: 800;
+            padding: 2px 8px;
+            border-radius: 20px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
         }
 
         .header-actions {
             display: flex;
-            gap: 10px;
+            gap: 8px;
             align-items: center;
+            flex-wrap: wrap;
         }
 
         .action-btn {
             background: linear-gradient(135deg, var(--secondary), #2b8a3e);
             color: white;
             border: none;
-            padding: 9px 18px;
+            padding: 8px 16px;
             border-radius: 30px;
             font-weight: 600;
             cursor: pointer;
-            font-size: 14px;
+            font-size: 13px;
             transition: transform 0.15s ease, box-shadow 0.2s;
             box-shadow: 0 4px 10px rgba(81, 207, 102, 0.2);
+            white-space: nowrap;
         }
 
         .action-btn:hover {
@@ -162,6 +177,36 @@
 
         .action-btn.danger-btn:hover {
             box-shadow: 0 8px 20px rgba(255, 107, 107, 0.3);
+        }
+
+        .action-btn.gold-btn {
+            background: linear-gradient(135deg, #fcc419, #f59f00);
+            color: #0b1120;
+            box-shadow: 0 4px 10px rgba(252, 196, 25, 0.25);
+        }
+
+        .action-btn.gold-btn:hover {
+            box-shadow: 0 8px 20px rgba(252, 196, 25, 0.4);
+        }
+
+        .action-btn.admin-btn {
+            background: linear-gradient(135deg, #da77f2, #9c36b5);
+            color: #fff;
+            box-shadow: 0 4px 10px rgba(218, 119, 242, 0.25);
+        }
+
+        .action-btn.admin-btn:hover {
+            box-shadow: 0 8px 20px rgba(218, 119, 242, 0.4);
+        }
+
+        .action-btn.purple-btn {
+            background: linear-gradient(135deg, #845ef7, #5f3dc4);
+            color: #fff;
+            box-shadow: 0 4px 10px rgba(132, 94, 247, 0.25);
+        }
+
+        .action-btn.purple-btn:hover {
+            box-shadow: 0 8px 20px rgba(132, 94, 247, 0.4);
         }
 
         /* Main Content */
@@ -217,7 +262,6 @@
             gap: 14px;
         }
 
-        /* Cards */
         .match-card,
         .history-card {
             background: var(--card-bg);
@@ -589,11 +633,30 @@
             margin-right: 6px;
         }
 
+        .chat-msg .username .admin-tag {
+            background: #ff6b6b;
+            color: #fff;
+            font-size: 8px;
+            font-weight: 800;
+            padding: 1px 7px;
+            border-radius: 20px;
+            margin-left: 4px;
+            letter-spacing: 0.3px;
+            text-transform: uppercase;
+        }
+
         .chat-msg .time {
             font-size: 10px;
             color: #6c7a8a;
             float: right;
             margin-top: 2px;
+        }
+
+        .chat-msg .muted-label {
+            color: #ff6b6b;
+            font-size: 11px;
+            font-weight: 600;
+            margin-left: 6px;
         }
 
         .chat-input-area {
@@ -620,6 +683,10 @@
         .chat-input:focus {
             border-color: var(--accent);
         }
+        .chat-input:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
 
         .chat-send-btn {
             background: var(--accent);
@@ -636,6 +703,11 @@
         .chat-send-btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 8px 20px rgba(252, 196, 25, 0.3);
+        }
+        .chat-send-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            transform: none !important;
         }
 
         /* Modals */
@@ -742,7 +814,6 @@
             margin-top: 4px;
         }
 
-        /* Side selection T/H with images */
         .side-select {
             display: flex;
             justify-content: center;
@@ -831,7 +902,8 @@
             color: #868e96;
             font-weight: 500;
         }
-        .form-group input {
+        .form-group input,
+        .form-group select {
             width: 100%;
             padding: 10px 16px;
             background: #0f172a;
@@ -843,8 +915,12 @@
             transition: border-color 0.2s;
         }
 
-        .form-group input:focus {
+        .form-group input:focus,
+        .form-group select:focus {
             border-color: var(--accent);
+        }
+        .form-group select option {
+            background: #1a2332;
         }
 
         .coin-modal {
@@ -897,7 +973,6 @@
             min-height: 28px;
         }
 
-        /* View Match Modal */
         .view-profile {
             display: flex;
             gap: 30px;
@@ -1001,6 +1076,265 @@
         .view-side img {
             width: 22px;
             height: 22px;
+        }
+
+        /* Deposit / Withdraw modals */
+        .bot-status {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            padding: 20px;
+            background: #0f172a;
+            border-radius: 16px;
+            border: 1px solid var(--border-color);
+            margin: 12px 0 20px;
+        }
+
+        .bot-status .bot-avatar {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: #2d3b4f;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            border: 2px solid var(--secondary);
+        }
+
+        .bot-status .bot-info {
+            text-align: left;
+        }
+        .bot-status .bot-info .bot-name {
+            font-weight: 700;
+            font-size: 18px;
+            color: #f1f3f5;
+        }
+        .bot-status .bot-info .bot-status-text {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            color: #868e96;
+            margin-top: 2px;
+        }
+        .bot-status .bot-info .bot-status-text .online-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--secondary);
+            display: inline-block;
+            animation: pulse-dot 1.8s ease-in-out infinite;
+            box-shadow: 0 0 8px rgba(81, 207, 102, 0.5);
+        }
+        .bot-status .bot-info .bot-status-text .online-label {
+            color: var(--secondary);
+            font-weight: 600;
+        }
+
+        .join-bot-btn {
+            background: var(--accent);
+            color: #0b1120;
+            border: none;
+            padding: 10px 28px;
+            border-radius: 30px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: transform 0.15s ease, box-shadow 0.2s;
+            box-shadow: 0 4px 10px rgba(252, 196, 25, 0.25);
+            font-size: 15px;
+        }
+
+        .join-bot-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(252, 196, 25, 0.4);
+        }
+
+        .withdraw-pets-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin: 12px 0 16px;
+            max-height: 260px;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: #2d3b4f transparent;
+        }
+
+        .withdraw-pets-grid::-webkit-scrollbar {
+            width: 4px;
+        }
+        .withdraw-pets-grid::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .withdraw-pets-grid::-webkit-scrollbar-thumb {
+            background: #2d3b4f;
+            border-radius: 10px;
+        }
+
+        .withdraw-pet-item {
+            background: #0f172a;
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            padding: 10px 6px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .withdraw-pet-item:hover {
+            transform: translateY(-2px);
+            border-color: #4dabf7;
+        }
+        .withdraw-pet-item.selected {
+            border-color: var(--accent);
+            background: rgba(252, 196, 25, 0.12);
+            box-shadow: 0 0 0 2px rgba(252, 196, 25, 0.2);
+        }
+        .withdraw-pet-item .pet-img {
+            width: 40px;
+            height: 40px;
+            object-fit: contain;
+        }
+        .withdraw-pet-item .pet-name {
+            font-size: 11px;
+            color: #ced4da;
+            margin-top: 4px;
+            font-weight: 500;
+        }
+        .withdraw-pet-item .pet-val {
+            font-size: 10px;
+            color: #868e96;
+        }
+
+        /* Admin Panel */
+        .admin-panel-tabs {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+
+        .admin-panel-tabs .tab-btn {
+            background: #0f172a;
+            border: 1px solid var(--border-color);
+            color: #868e96;
+            padding: 6px 16px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 13px;
+            transition: all 0.2s;
+        }
+
+        .admin-panel-tabs .tab-btn:hover {
+            border-color: #4dabf7;
+            color: #f1f3f5;
+        }
+
+        .admin-panel-tabs .tab-btn.active {
+            background: var(--accent);
+            color: #0b1120;
+            border-color: var(--accent);
+        }
+
+        .admin-tab-content {
+            display: none;
+        }
+        .admin-tab-content.active {
+            display: block;
+        }
+
+        .admin-user-list {
+            max-height: 200px;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: #2d3b4f transparent;
+            margin-bottom: 12px;
+        }
+
+        .admin-user-list::-webkit-scrollbar {
+            width: 4px;
+        }
+        .admin-user-list::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .admin-user-list::-webkit-scrollbar-thumb {
+            background: #2d3b4f;
+            border-radius: 10px;
+        }
+
+        .admin-user-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 12px;
+            background: #0f172a;
+            border-radius: 8px;
+            margin-bottom: 4px;
+            border: 1px solid #1a2332;
+            font-size: 14px;
+        }
+
+        .admin-user-item .username {
+            font-weight: 600;
+            color: #e9ecef;
+        }
+        .admin-user-item .user-actions {
+            display: flex;
+            gap: 6px;
+        }
+        .admin-user-item .user-actions button {
+            background: #2d3b4f;
+            border: none;
+            color: #ced4da;
+            padding: 3px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .admin-user-item .user-actions button:hover {
+            background: #3d4b5f;
+        }
+        .admin-user-item .user-actions button.danger {
+            background: #ff6b6b;
+            color: #0b1120;
+        }
+        .admin-user-item .user-actions button.danger:hover {
+            background: #ff5252;
+        }
+        .admin-user-item .user-actions button.success {
+            background: var(--secondary);
+            color: #0b1120;
+        }
+        .admin-user-item .user-actions button.success:hover {
+            background: #40c057;
+        }
+
+        .admin-muted-users {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 8px;
+        }
+        .admin-muted-user {
+            background: #ff6b6b22;
+            border: 1px solid #ff6b6b44;
+            padding: 4px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .admin-muted-user .unmute-btn {
+            background: none;
+            border: none;
+            color: #ff6b6b;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 14px;
         }
 
         /* Mobile */
@@ -1123,7 +1457,6 @@
                 font-size: 20px;
             }
 
-            /* History scroll'da beyaz çizgiyi kaldır */
             .history-card {
                 scrollbar-width: thin;
                 scrollbar-color: #2d3b4f transparent;
@@ -1138,6 +1471,21 @@
                 background: #2d3b4f;
                 border-radius: 10px;
             }
+
+            .withdraw-pets-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .admin-panel-tabs .tab-btn {
+                font-size: 11px;
+                padding: 4px 12px;
+            }
+            .modal {
+                padding: 18px;
+                max-width: 98vw;
+            }
+            .modal h2 {
+                font-size: 18px;
+            }
         }
 
         .mobile-chat-toggle {
@@ -1146,11 +1494,37 @@
         .chat-header .close-chat-btn {
             display: none;
         }
+
+        .admin-panel-user-select {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        .admin-panel-user-select select {
+            flex: 1;
+            min-width: 140px;
+            padding: 8px 14px;
+            background: #0f172a;
+            border: 1px solid var(--border-color);
+            border-radius: 30px;
+            color: white;
+            outline: none;
+            font-size: 13px;
+        }
+        .admin-panel-user-select select:focus {
+            border-color: var(--accent);
+        }
+        .admin-panel-user-select .action-btn {
+            font-size: 12px;
+            padding: 6px 16px;
+        }
     </style>
 </head>
 <body>
 
-    <!-- Toast Container -->
+    <!-- Toast -->
     <div class="toast-container" id="toast-container">
         <div class="toast" id="toast-message"></div>
     </div>
@@ -1178,7 +1552,7 @@
         </div>
     </div>
 
-    <!-- Chat Sidebar (Fixed) -->
+    <!-- Chat Sidebar -->
     <div class="chat-card" id="chat-card">
         <div class="chat-header">
             <div class="left">
@@ -1201,7 +1575,9 @@
         </svg>
     </button>
 
-    <!-- Modals -->
+    <!-- ===== MODALS ===== -->
+
+    <!-- Login -->
     <div class="modal-overlay" id="login-modal">
         <div class="modal" id="roblox-login-step-username">
             <h2>Login with Roblox</h2>
@@ -1214,7 +1590,6 @@
                 <button class="cancel-btn" onclick="closeModal('login-modal')">Cancel</button>
             </div>
         </div>
-
         <div class="modal" id="roblox-login-step-confirm" style="display:none;">
             <h2>Is this you?</h2>
             <div id="roblox-user-preview" style="text-align:center;margin:8px 0 20px;"></div>
@@ -1223,7 +1598,6 @@
                 <button class="cancel-btn" onclick="backToRobloxUsernameStep()">No</button>
             </div>
         </div>
-
         <div class="modal" id="roblox-login-step-verify" style="display:none;">
             <h2>Verify your Roblox account</h2>
             <div id="roblox-verify-info" style="text-align:center;color:#adb5bd;line-height:1.6;margin-bottom:18px;"></div>
@@ -1243,6 +1617,7 @@
         </div>
     </div>
 
+    <!-- Inventory -->
     <div class="modal-overlay" id="inventory-modal">
         <div class="modal">
             <h2>Your Inventory</h2>
@@ -1251,13 +1626,12 @@
         </div>
     </div>
 
+    <!-- Create Match -->
     <div class="modal-overlay" id="create-modal">
         <div class="modal">
             <h2>Select Pets to Wager (max 15)</h2>
             <div class="modal-grid" id="modal-inventory"></div>
             <div id="create-total-value" style="text-align:center;font-weight:700;margin:10px 0;color:var(--accent);">Total Value: 0</div>
-
-            <!-- T / H Selection with images -->
             <div class="side-select">
                 <button class="side-btn" data-side="H" onclick="selectSide('H', 'create')">
                     <img src="https://bloxluck.com/img/dog.png" alt="H"> H
@@ -1266,7 +1640,6 @@
                     <img src="https://bloxluck.com/img/gem.png" alt="T"> T
                 </button>
             </div>
-
             <div class="modal-actions">
                 <button class="post-btn" onclick="postMatch()">Create Match</button>
                 <button class="cancel-btn" onclick="closeModal('create-modal')">Cancel</button>
@@ -1274,12 +1647,12 @@
         </div>
     </div>
 
+    <!-- Join Select -->
     <div class="modal-overlay" id="join-select-modal">
         <div class="modal">
             <h2>Select Pets to Join (max 15)</h2>
             <div class="modal-grid" id="join-modal-inventory"></div>
             <div id="join-total-value" style="text-align:center;font-weight:700;margin:10px 0;color:var(--accent);">Total Value: 0</div>
-
             <div class="modal-actions">
                 <button class="post-btn" onclick="confirmJoinMatch()">Join Match</button>
                 <button class="cancel-btn" onclick="closeModal('join-select-modal')">Cancel</button>
@@ -1287,7 +1660,7 @@
         </div>
     </div>
 
-    <!-- View Match Modal -->
+    <!-- View Match -->
     <div class="modal-overlay" id="view-match-modal">
         <div class="modal">
             <h2>Match Details</h2>
@@ -1296,6 +1669,7 @@
         </div>
     </div>
 
+    <!-- Coin Flip -->
     <div class="modal-overlay" id="flip-modal">
         <div class="modal coin-modal">
             <h2 id="match-versus">Match Starting...</h2>
@@ -1310,8 +1684,145 @@
         </div>
     </div>
 
+    <!-- Deposit Modal (Online Bots) -->
+    <div class="modal-overlay" id="deposit-modal">
+        <div class="modal">
+            <h2>💰 Online Bots</h2>
+            <div class="bot-status">
+                <div class="bot-avatar">🤖</div>
+                <div class="bot-info">
+                    <div class="bot-name">emoxdrillampcomeback</div>
+                    <div class="bot-status-text">
+                        <span class="online-dot"></span>
+                        <span class="online-label">● Online</span>
+                        <span style="color:#868e96;font-size:13px;">| Ready to trade</span>
+                    </div>
+                </div>
+            </div>
+            <p style="text-align:center;color:#adb5bd;font-size:14px;margin-bottom:16px;">
+                Click the button below to join the bot and claim your items.
+            </p>
+            <button class="join-bot-btn" style="width:100%;" onclick="window.open('https://www.roblox.com/share?code=d2a6963697787c4bb8b65aa406dc6cbb&type=Server','_blank')">
+                🚀 Join Bot
+            </button>
+            <button class="cancel-btn" style="width:100%;margin-top:12px;" onclick="closeModal('deposit-modal')">Close</button>
+        </div>
+    </div>
+
+    <!-- Withdraw Modal -->
+    <div class="modal-overlay" id="withdraw-modal">
+        <div class="modal">
+            <h2>📤 Withdraw Pets</h2>
+            <p style="color:#868e96;font-size:14px;margin-bottom:6px;">Select pets to withdraw:</p>
+            <div class="withdraw-pets-grid" id="withdraw-pets-grid"></div>
+            <div id="withdraw-total-info" style="text-align:center;font-weight:600;margin:8px 0 12px;color:var(--accent);">Selected: 0 pets</div>
+            <div class="modal-actions">
+                <button class="post-btn" onclick="confirmWithdraw()">Withdraw</button>
+                <button class="cancel-btn" onclick="closeModal('withdraw-modal')">Cancel</button>
+            </div>
+            <div id="withdraw-status" style="text-align:center;margin-top:10px;font-size:14px;color:#868e96;min-height:22px;"></div>
+        </div>
+    </div>
+
+    <!-- Admin Panel Modal -->
+    <div class="modal-overlay" id="admin-modal">
+        <div class="modal" style="max-width:620px;">
+            <h2>🛡️ Admin Panel</h2>
+            <div class="admin-panel-tabs">
+                <button class="tab-btn active" data-tab="tab-users" onclick="switchAdminTab('tab-users')">Users</button>
+                <button class="tab-btn" data-tab="tab-pets" onclick="switchAdminTab('tab-pets')">Manage Pets</button>
+                <button class="tab-btn" data-tab="tab-muted" onclick="switchAdminTab('tab-muted')">Muted</button>
+                <button class="tab-btn" data-tab="tab-bans" onclick="switchAdminTab('tab-bans')">Bans</button>
+            </div>
+
+            <!-- Tab: Users -->
+            <div class="admin-tab-content active" id="tab-users">
+                <div style="margin-bottom:10px;font-weight:600;color:#ced4da;font-size:14px;">All Registered Users</div>
+                <div class="admin-user-list" id="admin-user-list"></div>
+                <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:6px;">
+                    <button class="action-btn secondary-btn" style="font-size:12px;padding:4px 14px;" onclick="adminRefreshUsers()">🔄 Refresh</button>
+                </div>
+            </div>
+
+            <!-- Tab: Manage Pets -->
+            <div class="admin-tab-content" id="tab-pets">
+                <div style="font-weight:600;color:#ced4da;font-size:14px;margin-bottom:8px;">Add / Remove Pets</div>
+                <div class="admin-panel-user-select">
+                    <select id="admin-pet-user-select"></select>
+                    <button class="action-btn secondary-btn" style="font-size:12px;padding:4px 14px;" onclick="adminLoadUserPets()">Load</button>
+                </div>
+                <div id="admin-user-pets-display" style="background:#0f172a;border-radius:12px;padding:12px;min-height:60px;border:1px solid var(--border-color);margin-bottom:10px;display:flex;flex-wrap:wrap;gap:6px;align-items:center;">
+                    <span style="color:#868e96;font-size:13px;">Select a user and load their pets.</span>
+                </div>
+                <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                    <button class="action-btn gold-btn" style="font-size:12px;padding:4px 14px;" onclick="adminOpenAddPet()">➕ Add Pet</button>
+                    <button class="action-btn danger-btn" style="font-size:12px;padding:4px 14px;" onclick="adminRemoveSelectedPet()">➖ Remove Pet</button>
+                    <button class="action-btn" style="font-size:12px;padding:4px 14px;background:#4dabf7;color:#fff;box-shadow:0 4px 10px rgba(77,171,247,0.2);" onclick="adminClearUserPets()">🗑️ Clear All</button>
+                </div>
+                <div id="admin-pet-status" style="margin-top:10px;font-size:13px;color:#868e96;min-height:20px;"></div>
+            </div>
+
+            <!-- Tab: Muted -->
+            <div class="admin-tab-content" id="tab-muted">
+                <div style="font-weight:600;color:#ced4da;font-size:14px;margin-bottom:8px;">Muted Users</div>
+                <div id="admin-muted-list" style="min-height:40px;"></div>
+                <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;">
+                    <div class="admin-panel-user-select" style="flex:1;min-width:150px;">
+                        <select id="admin-mute-user-select"></select>
+                        <button class="action-btn danger-btn" style="font-size:12px;padding:4px 14px;" onclick="adminMuteUser()">🔇 Mute</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab: Bans -->
+            <div class="admin-tab-content" id="tab-bans">
+                <div style="font-weight:600;color:#ced4da;font-size:14px;margin-bottom:8px;">Banned Users</div>
+                <div id="admin-banned-list" style="min-height:40px;"></div>
+                <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;">
+                    <div class="admin-panel-user-select" style="flex:1;min-width:150px;">
+                        <select id="admin-ban-user-select"></select>
+                        <button class="action-btn danger-btn" style="font-size:12px;padding:4px 14px;" onclick="adminBanUser()">⛔ Ban</button>
+                    </div>
+                </div>
+            </div>
+
+            <button class="cancel-btn" style="width:100%;margin-top:16px;" onclick="closeModal('admin-modal')">Close</button>
+        </div>
+    </div>
+
+    <!-- Add Pet Modal (Admin) -->
+    <div class="modal-overlay" id="admin-add-pet-modal">
+        <div class="modal" style="max-width:460px;">
+            <h2>Add Pet to User</h2>
+            <div class="form-group">
+                <label>User</label>
+                <input type="text" id="admin-add-pet-user" readonly style="background:#1a2332;cursor:not-allowed;">
+            </div>
+            <div class="form-group">
+                <label>Pet Name</label>
+                <input type="text" id="admin-add-pet-name" placeholder="e.g. FR Shadow Dragon">
+            </div>
+            <div class="form-group">
+                <label>Pet Icon URL</label>
+                <input type="text" id="admin-add-pet-icon" placeholder="https://...">
+            </div>
+            <div class="form-group">
+                <label>Pet Value</label>
+                <input type="number" id="admin-add-pet-value" placeholder="670" value="100">
+            </div>
+            <div class="modal-actions">
+                <button class="post-btn" onclick="adminConfirmAddPet()">Add Pet</button>
+                <button class="cancel-btn" onclick="closeModal('admin-add-pet-modal')">Cancel</button>
+            </div>
+            <div id="admin-add-pet-status" style="margin-top:10px;font-size:13px;color:#868e96;min-height:20px;text-align:center;"></div>
+        </div>
+    </div>
+
     <script src="./config.js"></script>
     <script>
+        // ============================================================
+        //  CONFIG & CONSTANTS
+        // ============================================================
         const BLOXWIN_API_URL = (window.BLOXWIN_API_URL && !window.BLOXWIN_API_URL.includes("YOUR-BACKEND-URL-HERE")) ? window.BLOXWIN_API_URL.replace(/\/$/, "") : window.location.origin;
         const apiUrl = (path) => BLOXWIN_API_URL + path;
 
@@ -1324,29 +1835,124 @@
         const CHANNEL = "adoptme_coinflip_live_v3";
         pubnub.subscribe({ channels: [CHANNEL] });
 
+        // ============================================================
+        //  ADMINS
+        // ============================================================
+        const ADMIN_LIST = ['dedokxxreal', 'emoxdrill'];
+
+        function isAdmin(username) {
+            return username && ADMIN_LIST.includes(username.toLowerCase());
+        }
+
+        // ============================================================
+        //  STATE
+        // ============================================================
         let currentUser = localStorage.getItem('app_current_user') || null;
         let globalMatches = [];
         let chatHistory = JSON.parse(localStorage.getItem('app_chat_history') || '[]');
         let showHistory = false;
 
         const MAX_PETS_PER_MATCH = 15;
-
-        const defaultStarterPets = [
-            { id: 1, name: 'FR Shadow Dragon', icon: 'https://elvebredd.com/images/pets/Shadow%20Dragon.png?dpl=20260802-214403', value: 670 },
-            { id: 2, name: 'FR Bat Dragon', icon: 'https://elvebredd.com/images/pets/Bat%20Dragon.png?dpl=20260802-214403', value: 914 },
-            { id: 3, name: 'FR Frost Dragon', icon: 'https://elvebredd.com/images/pets/Frost%20Dragon.png?dpl=20260802-214403', value: 308 },
-            { id: 4, name: 'FR Giraffe', icon: 'https://elvebredd.com/images/pets/Giraffe.png?dpl=20260802-214403', value: 455 },
-            { id: 5, name: 'FR Owl', icon: 'https://elvebredd.com/images/pets/Owl.png?dpl=20260802-214403', value: 241 }
-        ];
-
         let selectedPetsForMatch = [];
         let selectedPetsForJoin = [];
         let matchToJoin = null;
         let isFlipping = false;
-
         let selectedSideCreate = null;
 
-        // --- Toast ---
+        // Withdraw state
+        let selectedWithdrawPets = [];
+        let withdrawPetList = [];
+
+        // Admin state
+        let adminCurrentTargetUser = null;
+        let adminTargetPets = [];
+
+        // Muted & Banned (stored in localStorage)
+        function getMutedUsers() {
+            const data = localStorage.getItem('app_muted_users');
+            return data ? JSON.parse(data) : [];
+        }
+
+        function setMutedUsers(list) {
+            localStorage.setItem('app_muted_users', JSON.stringify(list));
+        }
+
+        function getBannedUsers() {
+            const data = localStorage.getItem('app_banned_users');
+            return data ? JSON.parse(data) : [];
+        }
+
+        function setBannedUsers(list) {
+            localStorage.setItem('app_banned_users', JSON.stringify(list));
+        }
+
+        function isMuted(username) {
+            return getMutedUsers().includes(username);
+        }
+
+        function isBanned(username) {
+            return getBannedUsers().includes(username);
+        }
+
+        // ============================================================
+        //  INVENTORY (empty by default for new users)
+        // ============================================================
+        function getUserInventory(username) {
+            const data = localStorage.getItem(`app_inv_${username}`);
+            if (!data) {
+                // Empty inventory for new users
+                localStorage.setItem(`app_inv_${username}`, JSON.stringify([]));
+                return [];
+            }
+            return JSON.parse(data);
+        }
+
+        function setUserInventory(username, inv) {
+            localStorage.setItem(`app_inv_${username}`, JSON.stringify(inv));
+        }
+
+        function addPetToInventory(username, pet) {
+            let inv = getUserInventory(username);
+            inv.push(pet);
+            setUserInventory(username, inv);
+            return true;
+        }
+
+        function removePetsFromInventory(username, petsToRemove) {
+            let inv = getUserInventory(username);
+            petsToRemove.forEach(petToRemove => {
+                const idx = inv.findIndex(p => p === petToRemove);
+                if (idx !== -1) {
+                    inv.splice(idx, 1);
+                } else {
+                    const idx2 = inv.findIndex(p => p.id === petToRemove.id);
+                    if (idx2 !== -1) inv.splice(idx2, 1);
+                }
+            });
+            setUserInventory(username, inv);
+        }
+
+        function getAllUsernames() {
+            const keys = Object.keys(localStorage);
+            const users = [];
+            keys.forEach(key => {
+                if (key.startsWith('app_inv_')) {
+                    const username = key.replace('app_inv_', '');
+                    if (username && !users.includes(username)) {
+                        users.push(username);
+                    }
+                }
+            });
+            // Also include current user if not in list
+            if (currentUser && !users.includes(currentUser)) {
+                users.push(currentUser);
+            }
+            return users.sort();
+        }
+
+        // ============================================================
+        //  TOAST
+        // ============================================================
         function showToast(message, duration = 4000) {
             const toast = document.getElementById('toast-message');
             toast.textContent = message;
@@ -1357,7 +1963,9 @@
             }, duration);
         }
 
-        // --- UI functions ---
+        // ============================================================
+        //  UI HELPERS
+        // ============================================================
         function selectSide(side, context) {
             if (context === 'create') {
                 selectedSideCreate = side;
@@ -1388,15 +1996,25 @@
         }
 
         function toggleMobileChat() {
-            const chat = document.getElementById('chat-card');
-            chat.classList.toggle('mobile-open');
+            document.getElementById('chat-card').classList.toggle('mobile-open');
         }
 
         function closeMobileChat() {
             document.getElementById('chat-card').classList.remove('mobile-open');
         }
 
-        // --- Modal close on outside click ---
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+            if (modalId === 'login-modal') resetRobloxLoginModal();
+            if (modalId === 'admin-add-pet-modal') {
+                document.getElementById('admin-add-pet-status').textContent = '';
+            }
+            if (modalId === 'withdraw-modal') {
+                document.getElementById('withdraw-status').textContent = '';
+            }
+        }
+
+        // Click outside modals
         document.querySelectorAll('.modal-overlay').forEach(overlay => {
             overlay.addEventListener('click', function(e) {
                 if (e.target === this) {
@@ -1406,47 +2024,18 @@
             });
         });
 
-        // --- Inventory helpers ---
-        function getUserInventory(username) {
-            const data = localStorage.getItem(`app_inv_${username}`);
-            if (!data) {
-                localStorage.setItem(`app_inv_${username}`, JSON.stringify(defaultStarterPets));
-                return [...defaultStarterPets];
-            }
-            return JSON.parse(data);
+        function escapeHTML(str) {
+            return str.replace(/[&<>'"]/g, tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' } [tag] ||
+                tag));
         }
 
-        function setUserInventory(username, inv) {
-            localStorage.setItem(`app_inv_${username}`, JSON.stringify(inv));
+        function sumPets(pets) {
+            return pets.reduce((acc, p) => acc + (p.value || 0), 0);
         }
 
-        function addPetToInventory(username, pet) {
-            let inv = getUserInventory(username);
-            inv.push(pet);
-            setUserInventory(username, inv);
-            return true;
-        }
-
-        function removePetsFromInventory(username, petsToRemove) {
-            let inv = getUserInventory(username);
-            petsToRemove.forEach(petToRemove => {
-                const idx = inv.findIndex(p => p === petToRemove);
-                if (idx !== -1) {
-                    inv.splice(idx, 1);
-                } else {
-                    const idx2 = inv.findIndex(p => p.id === petToRemove.id);
-                    if (idx2 !== -1) inv.splice(idx2, 1);
-                }
-            });
-            setUserInventory(username, inv);
-        }
-
-        function closeModal(modalId) {
-            document.getElementById(modalId).style.display = 'none';
-            if (modalId === 'login-modal') resetRobloxLoginModal();
-        }
-
-        // --- History ---
+        // ============================================================
+        //  HISTORY
+        // ============================================================
         function getHistory(username) {
             const data = localStorage.getItem(`app_history_${username}`);
             return data ? JSON.parse(data) : [];
@@ -1463,28 +2052,42 @@
             setHistory(username, history);
         }
 
-        // --- Header ---
+        // ============================================================
+        //  RENDER HEADER
+        // ============================================================
         function renderHeader() {
             const container = document.getElementById('user-header-area');
             if (currentUser) {
+                const adminTag = isAdmin(currentUser) ? `<span class="admin-tag">Admin</span>` : '';
+                const adminPanelBtn = isAdmin(currentUser) ?
+                    `<button class="action-btn admin-btn" onclick="openAdminPanel()">🛡️ Admin</button>` : '';
+
                 container.innerHTML = `
                         <div class="user-info-bar">
-                            <span class="user-badge">${currentUser}</span>
+                            <span class="user-badge">${escapeHTML(currentUser)} ${adminTag}</span>
                             <div class="header-actions">
-                                <button class="action-btn secondary-btn" onclick="openInventoryModal()">Inventory</button>
-                                <button class="action-btn" onclick="openCreateModal()">+ Create Match</button>
+                                <button class="action-btn gold-btn" onclick="openDepositModal()">💰 Deposit</button>
+                                <button class="action-btn purple-btn" onclick="openWithdrawModal()">📤 Withdraw</button>
+                                <button class="action-btn secondary-btn" onclick="openInventoryModal()">📦 Inv</button>
+                                <button class="action-btn" onclick="openCreateModal()">+ Create</button>
+                                ${adminPanelBtn}
                                 <button class="action-btn danger-btn" onclick="handleLogout()">Logout</button>
                             </div>
                         </div>
                     `;
             } else {
                 container.innerHTML = `
-                        <button class="action-btn" onclick="resetRobloxLoginModal(); document.getElementById('login-modal').style.display='flex'">Login with Roblox</button>
+                        <div class="header-actions">
+                            <button class="action-btn gold-btn" onclick="openDepositModal()">💰 Deposit</button>
+                            <button class="action-btn" onclick="resetRobloxLoginModal(); document.getElementById('login-modal').style.display='flex'">Login with Roblox</button>
+                        </div>
                     `;
             }
         }
 
-        // --- Login/Logout ---
+        // ============================================================
+        //  LOGIN / LOGOUT
+        // ============================================================
         let pendingRobloxUser = null;
         let robloxVerificationToken = null;
 
@@ -1504,39 +2107,26 @@
             const input = document.getElementById('login-username');
             const btn = document.getElementById('find-roblox-user-btn');
             const username = input.value.trim();
-
-            if (!username) {
-                showToast('Please enter your Roblox username.');
-                return;
-            }
-
+            if (!username) { showToast('Please enter your Roblox username.'); return; }
             btn.disabled = true;
             btn.textContent = 'Searching...';
-
             try {
                 const response = await fetch(apiUrl('/api/roblox/user'), {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ username })
                 });
-
                 const data = await response.json();
-
-                if (!response.ok) {
-                    throw new Error(data.error || 'Roblox user not found.');
-                }
-
+                if (!response.ok) throw new Error(data.error || 'Roblox user not found.');
                 pendingRobloxUser = data.user;
-
                 document.getElementById('roblox-user-preview').innerHTML = `
-                    <img src="${escapeHTML(data.user.avatarUrl || '')}"
-                         alt="${escapeHTML(data.user.name)}"
-                         style="width:86px;height:86px;border-radius:50%;object-fit:cover;border:2px solid var(--accent);margin-bottom:10px;"
-                         onerror="this.style.display='none'">
-                    <div style="font-size:20px;font-weight:800;color:#f1f3f5;">${escapeHTML(data.user.displayName || data.user.name)}</div>
-                    <div style="color:#868e96;margin-top:4px;">@${escapeHTML(data.user.name)}</div>
-                `;
-
+                        <img src="${escapeHTML(data.user.avatarUrl || '')}"
+                             alt="${escapeHTML(data.user.name)}"
+                             style="width:86px;height:86px;border-radius:50%;object-fit:cover;border:2px solid var(--accent);margin-bottom:10px;"
+                             onerror="this.style.display='none'">
+                        <div style="font-size:20px;font-weight:800;color:#f1f3f5;">${escapeHTML(data.user.displayName || data.user.name)}</div>
+                        <div style="color:#868e96;margin-top:4px;">@${escapeHTML(data.user.name)}</div>
+                    `;
                 document.getElementById('roblox-login-step-username').style.display = 'none';
                 document.getElementById('roblox-login-step-confirm').style.display = 'block';
             } catch (error) {
@@ -1549,30 +2139,22 @@
 
         async function confirmRobloxUser() {
             if (!pendingRobloxUser) return;
-
             const info = document.getElementById('roblox-verify-info');
             const codeEl = document.getElementById('roblox-verification-code');
-
             info.textContent = 'Creating your verification code...';
             codeEl.textContent = '•••••••••';
-
             try {
                 const response = await fetch(apiUrl('/api/roblox/start-verification'), {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ userId: pendingRobloxUser.id })
                 });
-
                 const data = await response.json();
-
-                if (!response.ok) {
-                    throw new Error(data.error || 'Could not create verification code.');
-                }
-
+                if (!response.ok) throw new Error(data.error || 'Could not create verification code.');
                 robloxVerificationToken = data.token;
                 codeEl.textContent = data.code;
-                info.innerHTML = `Open your Roblox profile for <b style="color:#f1f3f5;">@${escapeHTML(pendingRobloxUser.name)}</b> and put this code in your <b style="color:#f1f3f5;">About / Description</b>.<br><span style="font-size:12px;color:#868e96;">The code expires in 10 minutes and can only be used once.</span>`;
-
+                info.innerHTML =
+                    `Open your Roblox profile for <b style="color:#f1f3f5;">@${escapeHTML(pendingRobloxUser.name)}</b> and put this code in your <b style="color:#f1f3f5;">About / Description</b>.<br><span style="font-size:12px;color:#868e96;">The code expires in 10 minutes and can only be used once.</span>`;
                 document.getElementById('roblox-login-step-confirm').style.display = 'none';
                 document.getElementById('roblox-login-step-verify').style.display = 'block';
                 document.getElementById('roblox-code-input').focus();
@@ -1586,40 +2168,28 @@
                 showToast('Please restart the Roblox login process.');
                 return;
             }
-
             const codeInput = document.getElementById('roblox-code-input');
             const status = document.getElementById('roblox-verify-status');
             const btn = document.getElementById('verify-roblox-btn');
             const code = codeInput.value.trim().toUpperCase();
             codeInput.value = code;
-
             if (!/^[A-Z]{9}$/.test(code)) {
                 status.style.color = '#ff6b6b';
                 status.textContent = 'Enter the 9-letter code exactly as shown.';
                 return;
             }
-
             btn.disabled = true;
             btn.textContent = 'Checking...';
             status.style.color = '#868e96';
             status.textContent = 'Checking your Roblox profile...';
-
             try {
                 const response = await fetch(apiUrl('/api/roblox/verify'), {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        token: robloxVerificationToken,
-                        code
-                    })
+                    body: JSON.stringify({ token: robloxVerificationToken, code })
                 });
-
                 const data = await response.json();
-
-                if (!response.ok) {
-                    throw new Error(data.error || 'Verification failed.');
-                }
-
+                if (!response.ok) throw new Error(data.error || 'Verification failed.');
                 currentUser = data.user.name;
                 localStorage.setItem('app_current_user', currentUser);
                 getUserInventory(currentUser);
@@ -1663,11 +2233,18 @@
             renderMatches();
         }
 
-        // --- PubNub ---
+        // ============================================================
+        //  PUBSUB
+        // ============================================================
         pubnub.addListener({
             message: function(event) {
                 const msg = event.message;
                 if (msg.type === 'CHAT') {
+                    // Check if sender is muted or banned
+                    if (isBanned(msg.username)) {
+                        // Don't show banned users' messages
+                        return;
+                    }
                     saveAndRenderChat(msg.username, msg.text, msg.time);
                 }
                 if (msg.type === 'MATCH_CREATED') {
@@ -1704,7 +2281,9 @@
             }
         });
 
-        // --- Chat ---
+        // ============================================================
+        //  CHAT
+        // ============================================================
         function renderChatHistory() {
             const container = document.getElementById('chat-messages');
             container.innerHTML = '';
@@ -1712,6 +2291,8 @@
         }
 
         function saveAndRenderChat(username, text, time) {
+            // Don't show messages from banned users
+            if (isBanned(username)) return;
             const newMsg = { username, text, time };
             chatHistory.push(newMsg);
             if (chatHistory.length > 50) chatHistory.shift();
@@ -1720,10 +2301,10 @@
         }
 
         function sendMessage() {
-            if (!currentUser) {
-                showToast('Please login first to send a message.');
-                return;
-            }
+            if (!currentUser) { showToast('Please login first to send a message.'); return; }
+            if (isBanned(currentUser)) { showToast('You are banned from chatting.'); return; }
+            if (isMuted(currentUser)) { showToast('You are muted.'); return; }
+
             const input = document.getElementById('chat-input');
             const text = input.value.trim();
             if (!text) return;
@@ -1740,41 +2321,38 @@
             const container = document.getElementById('chat-messages');
             const msgDiv = document.createElement('div');
             msgDiv.className = 'chat-msg';
-            msgDiv.innerHTML = `<span class="username">${escapeHTML(username)}:</span>${escapeHTML(text)} <span class="time">${time}</span>`;
+            const adminTag = isAdmin(username) ? `<span class="admin-tag">Admin</span>` : '';
+            const mutedLabel = isMuted(username) ? `<span class="muted-label">[MUTED]</span>` : '';
+            msgDiv.innerHTML =
+                `<span class="username">${escapeHTML(username)}${adminTag}</span>${mutedLabel} ${escapeHTML(text)} <span class="time">${time}</span>`;
             container.appendChild(msgDiv);
             container.scrollTop = container.scrollHeight;
         }
 
-        function escapeHTML(str) {
-            return str.replace(/[&<>'"]/g, tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag));
-        }
-
-        function sumPets(pets) {
-            return pets.reduce((acc, p) => acc + (p.value || 0), 0);
-        }
-
-        // --- Render ---
+        // ============================================================
+        //  RENDER MATCHES
+        // ============================================================
         function renderMatches() {
             const container = document.getElementById('matches-list');
             container.innerHTML = '';
 
             if (showHistory) {
                 if (!currentUser) {
-                    container.innerHTML = '<div style="color:#868e96;padding:20px;text-align:center;">Please login to view your history.</div>';
+                    container.innerHTML =
+                    '<div style="color:#868e96;padding:20px;text-align:center;">Please login to view your history.</div>';
                     return;
                 }
                 const history = getHistory(currentUser);
                 if (history.length === 0) {
-                    container.innerHTML = '<div style="color:#868e96;padding:20px;text-align:center;">No match history yet.</div>';
+                    container.innerHTML =
+                        '<div style="color:#868e96;padding:20px;text-align:center;">No match history yet.</div>';
                     return;
                 }
                 history.forEach(record => {
-                    // Doğru side hesaplama
                     const isHost = currentUser === record.host;
                     const currentUserSide = isHost ? record.hostSide : record.joinerSide;
                     const opponentSide = isHost ? record.joinerSide : record.hostSide;
                     const opponent = isHost ? record.joiner : record.host;
-
                     const isWinner = currentUser === record.winner;
                     const resultText = isWinner ? 'You Won!' : 'You Lost!';
                     const resultClass = isWinner ? 'win' : 'lose';
@@ -1789,7 +2367,8 @@
                     const yourPetsHtml = isHost ? hostPetsHtml : joinerPetsHtml;
                     const opponentPetsHtml = isHost ? joinerPetsHtml : hostPetsHtml;
 
-                    const sideIcon = (side) => side === 'H' ? 'https://bloxluck.com/img/dog.png' : 'https://bloxluck.com/img/gem.png';
+                    const sideIcon = (side) => side === 'H' ? 'https://bloxluck.com/img/dog.png' :
+                        'https://bloxluck.com/img/gem.png';
                     const sideClass = (side) => side === 'H' ? 'side-indicator' : 'opponent-side';
 
                     const card = document.createElement('div');
@@ -1821,7 +2400,8 @@
 
             // Live
             if (globalMatches.length === 0) {
-                container.innerHTML = '<div style="color:#868e96;padding:20px;text-align:center;">No Active Matches.</div>';
+                container.innerHTML =
+                    '<div style="color:#868e96;padding:20px;text-align:center;">No Active Matches.</div>';
                 return;
             }
             globalMatches.forEach(match => {
@@ -1831,18 +2411,22 @@
                 const card = document.createElement('div');
                 card.className = 'match-card';
 
-                const hostSideImg = match.hostSide === 'H' ? 'https://bloxluck.com/img/dog.png' : 'https://bloxluck.com/img/gem.png';
+                const hostSideImg = match.hostSide === 'H' ? 'https://bloxluck.com/img/dog.png' :
+                    'https://bloxluck.com/img/gem.png';
                 const hostSideClass = match.hostSide === 'H' ? 'side-indicator' : 'opponent-side';
-                const hostSideHtml = match.hostSide ? `<span class="${hostSideClass}"><img src="${hostSideImg}" alt="${match.hostSide}"> ${match.hostSide}</span>` : '';
+                const hostSideHtml = match.hostSide ? `<span class="${hostSideClass}"><img src="${hostSideImg}" alt="${match.hostSide}"> ${match.hostSide}</span>` :
+                    '';
 
                 const petsHtml = match.hostPets.map(pet =>
                     `<img class="pet-img" src="${pet.icon}" alt="${pet.name}" title="${pet.name}">`
                 ).join('');
 
                 const opponentSide = match.hostSide === 'H' ? 'T' : 'H';
-                const opponentImg = opponentSide === 'H' ? 'https://bloxluck.com/img/dog.png' : 'https://bloxluck.com/img/gem.png';
+                const opponentImg = opponentSide === 'H' ? 'https://bloxluck.com/img/dog.png' :
+                    'https://bloxluck.com/img/gem.png';
                 const opponentSideClass = opponentSide === 'H' ? 'side-indicator' : 'opponent-side';
-                const opponentSideHtml = `<span class="${opponentSideClass}"><img src="${opponentImg}" alt="${opponentSide}"> ${opponentSide}</span>`;
+                const opponentSideHtml =
+                    `<span class="${opponentSideClass}"><img src="${opponentImg}" alt="${opponentSide}"> ${opponentSide}</span>`;
 
                 const joinLabel = `Join Match For ${totalValue}`;
 
@@ -1880,7 +2464,9 @@
             });
         }
 
-        // --- View Match ---
+        // ============================================================
+        //  VIEW MATCH
+        // ============================================================
         function viewMatch(matchId) {
             const match = globalMatches.find(m => m.id === matchId);
             if (!match) return showToast('Match not found!');
@@ -1890,13 +2476,16 @@
                 `<img class="pet-img" src="${p.icon}" alt="${p.name}" title="${p.name}">`
             ).join('');
 
-            const hostSideImg = match.hostSide === 'H' ? 'https://bloxluck.com/img/dog.png' : 'https://bloxluck.com/img/gem.png';
+            const hostSideImg = match.hostSide === 'H' ? 'https://bloxluck.com/img/dog.png' :
+                'https://bloxluck.com/img/gem.png';
             const hostSide = match.hostSide || '?';
 
             const joinerSide = match.hostSide === 'H' ? 'T' : 'H';
-            const joinerSideImg = joinerSide === 'H' ? 'https://bloxluck.com/img/dog.png' : 'https://bloxluck.com/img/gem.png';
+            const joinerSideImg = joinerSide === 'H' ? 'https://bloxluck.com/img/dog.png' :
+                'https://bloxluck.com/img/gem.png';
 
-            const joinerPetsHtml = `<div class="pet-img empty-pet" style="width:34px;height:34px;border-radius:6px;border:1px dashed #4dabf7;opacity:0.4;"></div>`;
+            const joinerPetsHtml =
+                `<div class="pet-img empty-pet" style="width:34px;height:34px;border-radius:6px;border:1px dashed #4dabf7;opacity:0.4;"></div>`;
 
             let html = `
                     <div class="view-profile">
@@ -1922,12 +2511,12 @@
             document.getElementById('view-match-modal').style.display = 'flex';
         }
 
-        // --- Create ---
+        // ============================================================
+        //  CREATE MATCH
+        // ============================================================
         function openCreateModal() {
-            if (!currentUser) {
-                showToast('Please login first to create a match.');
-                return;
-            }
+            if (!currentUser) { showToast('Please login first to create a match.'); return; }
+            if (isBanned(currentUser)) { showToast('You are banned.'); return; }
             const inv = getUserInventory(currentUser);
             const grid = document.getElementById('modal-inventory');
             grid.innerHTML = '';
@@ -1970,18 +2559,13 @@
 
         function updateCreateTotal() {
             const total = sumPets(selectedPetsForMatch);
-            document.getElementById('create-total-value').textContent = `Total Value: ${total} (${selectedPetsForMatch.length}/${MAX_PETS_PER_MATCH})`;
+            document.getElementById('create-total-value').textContent =
+                `Total Value: ${total} (${selectedPetsForMatch.length}/${MAX_PETS_PER_MATCH})`;
         }
 
         function postMatch() {
-            if (selectedPetsForMatch.length === 0) {
-                showToast('Select at least one pet!');
-                return;
-            }
-            if (!selectedSideCreate) {
-                showToast('Please select a side (H or T)!');
-                return;
-            }
+            if (selectedPetsForMatch.length === 0) { showToast('Select at least one pet!'); return; }
+            if (!selectedSideCreate) { showToast('Please select a side (H or T)!'); return; }
 
             removePetsFromInventory(currentUser, selectedPetsForMatch);
 
@@ -2013,12 +2597,12 @@
             }
         }
 
-        // --- Join ---
+        // ============================================================
+        //  JOIN MATCH
+        // ============================================================
         function openJoinSelectModal(matchId) {
-            if (!currentUser) {
-                showToast('Please login first to join a match.');
-                return;
-            }
+            if (!currentUser) { showToast('Please login first to join a match.'); return; }
+            if (isBanned(currentUser)) { showToast('You are banned.'); return; }
             matchToJoin = globalMatches.find(m => m.id === matchId);
             if (!matchToJoin) return;
 
@@ -2062,17 +2646,14 @@
 
         function updateJoinTotal() {
             const total = sumPets(selectedPetsForJoin);
-            document.getElementById('join-total-value').textContent = `Total Value: ${total} (${selectedPetsForJoin.length}/${MAX_PETS_PER_MATCH})`;
+            document.getElementById('join-total-value').textContent =
+                `Total Value: ${total} (${selectedPetsForJoin.length}/${MAX_PETS_PER_MATCH})`;
         }
 
         function confirmJoinMatch() {
-            if (selectedPetsForJoin.length === 0) {
-                showToast('Select at least one pet!');
-                return;
-            }
+            if (selectedPetsForJoin.length === 0) { showToast('Select at least one pet!'); return; }
 
             const joinerSide = matchToJoin.hostSide === 'H' ? 'T' : 'H';
-
             removePetsFromInventory(currentUser, selectedPetsForJoin);
 
             const hostWins = Math.random() < 0.5;
@@ -2093,7 +2674,9 @@
             });
         }
 
-        // --- Coin flip ---
+        // ============================================================
+        //  COIN FLIP
+        // ============================================================
         function executeCoinFlip(gameData) {
             const flipModal = document.getElementById('flip-modal');
             const statusEl = document.getElementById('game-status');
@@ -2171,12 +2754,11 @@
             }, durationSec * 1000 + 50);
         }
 
-        // --- Inventory ---
+        // ============================================================
+        //  INVENTORY MODAL
+        // ============================================================
         function openInventoryModal() {
-            if (!currentUser) {
-                showToast('Please login first to view your inventory.');
-                return;
-            }
+            if (!currentUser) { showToast('Please login first to view your inventory.'); return; }
             const inv = getUserInventory(currentUser);
             const grid = document.getElementById('inventory-grid');
             grid.innerHTML = '';
@@ -2197,10 +2779,404 @@
             document.getElementById('inventory-modal').style.display = 'flex';
         }
 
-        // --- Init ---
+        // ============================================================
+        //  DEPOSIT (Online Bots)
+        // ============================================================
+        function openDepositModal() {
+            document.getElementById('deposit-modal').style.display = 'flex';
+        }
+
+        // ============================================================
+        //  WITHDRAW
+        // ============================================================
+        function openWithdrawModal() {
+            if (!currentUser) { showToast('Please login first.'); return; }
+            if (isBanned(currentUser)) { showToast('You are banned.'); return; }
+            const inv = getUserInventory(currentUser);
+            const grid = document.getElementById('withdraw-pets-grid');
+            grid.innerHTML = '';
+            selectedWithdrawPets = [];
+            withdrawPetList = inv.slice();
+
+            if (inv.length === 0) {
+                grid.innerHTML =
+                    '<div style="grid-column:1/-1;text-align:center;color:#868e96;padding:20px;">No pets to withdraw.</div>';
+            } else {
+                inv.forEach((pet, index) => {
+                    const item = document.createElement('div');
+                    item.className = 'withdraw-pet-item';
+                    item.dataset.index = index;
+                    item.innerHTML = `
+                            <img class="pet-img" src="${pet.icon}" alt="${pet.name}">
+                            <div class="pet-name">${pet.name}</div>
+                            <div class="pet-val">${pet.value}</div>
+                        `;
+                    item.onclick = () => {
+                        const idx = selectedWithdrawPets.indexOf(pet);
+                        if (idx !== -1) {
+                            selectedWithdrawPets.splice(idx, 1);
+                            item.classList.remove('selected');
+                        } else {
+                            selectedWithdrawPets.push(pet);
+                            item.classList.add('selected');
+                        }
+                        document.getElementById('withdraw-total-info').textContent =
+                            `Selected: ${selectedWithdrawPets.length} pet(s)`;
+                    };
+                    grid.appendChild(item);
+                });
+            }
+            document.getElementById('withdraw-total-info').textContent = `Selected: 0 pets`;
+            document.getElementById('withdraw-status').textContent = '';
+            document.getElementById('withdraw-modal').style.display = 'flex';
+        }
+
+        function confirmWithdraw() {
+            if (selectedWithdrawPets.length === 0) {
+                showToast('Select at least one pet to withdraw.');
+                return;
+            }
+            // Remove from inventory
+            removePetsFromInventory(currentUser, selectedWithdrawPets);
+            const status = document.getElementById('withdraw-status');
+            status.style.color = '#51cf66';
+            status.textContent = `✅ ${selectedWithdrawPets.length} pet(s) withdrawn! Join Bot To Claim Your Items.`;
+            // Update the grid
+            const grid = document.getElementById('withdraw-pets-grid');
+            selectedWithdrawPets.forEach(pet => {
+                const items = grid.querySelectorAll('.withdraw-pet-item');
+                items.forEach(el => {
+                    // crude removal
+                });
+            });
+            // Refresh the grid
+            setTimeout(() => {
+                openWithdrawModal();
+                const newStatus = document.getElementById('withdraw-status');
+                if (newStatus) {
+                    newStatus.style.color = '#51cf66';
+                    newStatus.textContent = '✅ Join Bot To Claim Your Items!';
+                }
+            }, 600);
+            // Also show toast
+            showToast('Pets withdrawn! Join Bot To Claim Your Items.');
+        }
+
+        // ============================================================
+        //  ADMIN PANEL
+        // ============================================================
+        function openAdminPanel() {
+            if (!currentUser || !isAdmin(currentUser)) {
+                showToast('Access denied.');
+                return;
+            }
+            document.getElementById('admin-modal').style.display = 'flex';
+            adminRefreshUsers();
+            adminPopulateUserSelects();
+            adminRenderMuted();
+            adminRenderBanned();
+            switchAdminTab('tab-users');
+        }
+
+        function switchAdminTab(tabId) {
+            document.querySelectorAll('.admin-tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.admin-panel-tabs .tab-btn').forEach(el => el.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            document.querySelector(`.admin-panel-tabs .tab-btn[data-tab="${tabId}"]`).classList.add('active');
+
+            if (tabId === 'tab-users') adminRefreshUsers();
+            if (tabId === 'tab-muted') adminRenderMuted();
+            if (tabId === 'tab-bans') adminRenderBanned();
+        }
+
+        function adminRefreshUsers() {
+            const list = document.getElementById('admin-user-list');
+            const users = getAllUsernames();
+            if (users.length === 0) {
+                list.innerHTML = '<div style="color:#868e96;padding:8px;">No users registered.</div>';
+                return;
+            }
+            list.innerHTML = '';
+            users.forEach(u => {
+                const inv = getUserInventory(u);
+                const petCount = inv.length;
+                const isAdminUser = isAdmin(u);
+                const isMutedUser = isMuted(u);
+                const isBannedUser = isBanned(u);
+                const div = document.createElement('div');
+                div.className = 'admin-user-item';
+                div.innerHTML = `
+                        <span class="username">${escapeHTML(u)} ${isAdminUser ? '👑' : ''} ${isBannedUser ? '⛔' : ''} ${isMutedUser ? '🔇' : ''} <span style="color:#868e96;font-weight:400;font-size:12px;">${petCount} pets</span></span>
+                        <div class="user-actions">
+                            <button class="success" onclick="adminAddPetToUser('${escapeHTML(u)}')">➕</button>
+                            <button onclick="adminViewUserPets('${escapeHTML(u)}')">👁️</button>
+                            ${!isAdminUser ? `<button class="danger" onclick="adminWipeUser('${escapeHTML(u)}')">🗑️</button>` : ''}
+                        </div>
+                    `;
+                list.appendChild(div);
+            });
+        }
+
+        function adminPopulateUserSelects() {
+            const users = getAllUsernames();
+            const selects = ['admin-pet-user-select', 'admin-mute-user-select', 'admin-ban-user-select'];
+            selects.forEach(id => {
+                const sel = document.getElementById(id);
+                if (!sel) return;
+                const currentVal = sel.value;
+                sel.innerHTML = '';
+                users.forEach(u => {
+                    const opt = document.createElement('option');
+                    opt.value = u;
+                    opt.textContent = u;
+                    sel.appendChild(opt);
+                });
+                if (currentVal && users.includes(currentVal)) sel.value = currentVal;
+            });
+        }
+
+        // --- Tab: Manage Pets ---
+        function adminLoadUserPets() {
+            const sel = document.getElementById('admin-pet-user-select');
+            const username = sel.value;
+            if (!username) { showToast('Select a user.'); return; }
+            adminTargetPets = getUserInventory(username);
+            adminCurrentTargetUser = username;
+            const display = document.getElementById('admin-user-pets-display');
+            if (adminTargetPets.length === 0) {
+                display.innerHTML = '<span style="color:#868e96;font-size:13px;">No pets in this user\'s inventory.</span>';
+            } else {
+                display.innerHTML = adminTargetPets.map((p, idx) =>
+                    `<div style="display:inline-flex;align-items:center;gap:4px;background:#0f172a;border:1px solid var(--border-color);border-radius:20px;padding:4px 12px 4px 6px;cursor:pointer;" onclick="adminSelectPetForRemove(${idx})" id="admin-pet-${idx}">
+                            <img class="pet-img" src="${p.icon}" alt="${p.name}" style="width:24px;height:24px;margin:0;">
+                            <span style="font-size:12px;">${p.name}</span>
+                            <span style="font-size:10px;color:#868e96;">${p.value}</span>
+                        </div>`
+                ).join('');
+            }
+            document.getElementById('admin-pet-status').textContent = '';
+        }
+
+        let adminSelectedPetIndex = null;
+
+        function adminSelectPetForRemove(idx) {
+            adminSelectedPetIndex = idx;
+            document.querySelectorAll('#admin-user-pets-display > div').forEach(el => {
+                el.style.borderColor = 'var(--border-color)';
+            });
+            const el = document.getElementById(`admin-pet-${idx}`);
+            if (el) el.style.borderColor = '#ff6b6b';
+            document.getElementById('admin-pet-status').textContent = `Selected: ${adminTargetPets[idx]?.name || ''}`;
+        }
+
+        function adminRemoveSelectedPet() {
+            if (adminSelectedPetIndex === null || !adminCurrentTargetUser) {
+                showToast('Select a pet to remove.');
+                return;
+            }
+            if (adminSelectedPetIndex < 0 || adminSelectedPetIndex >= adminTargetPets.length) {
+                showToast('Invalid pet selection.');
+                return;
+            }
+            const pet = adminTargetPets[adminSelectedPetIndex];
+            const inv = getUserInventory(adminCurrentTargetUser);
+            const idx = inv.findIndex(p => p.id === pet.id && p.name === pet.name && p.icon === pet.icon);
+            if (idx !== -1) {
+                inv.splice(idx, 1);
+                setUserInventory(adminCurrentTargetUser, inv);
+                adminTargetPets = inv;
+                adminLoadUserPets();
+                adminSelectedPetIndex = null;
+                document.getElementById('admin-pet-status').textContent = `✅ Removed ${pet.name}`;
+                showToast(`Removed ${pet.name} from ${adminCurrentTargetUser}`);
+                adminRefreshUsers();
+            } else {
+                showToast('Pet not found in inventory.');
+            }
+        }
+
+        function adminClearUserPets() {
+            if (!adminCurrentTargetUser) { showToast('Select a user first.'); return; }
+            if (!confirm(`Clear ALL pets from ${adminCurrentTargetUser}?`)) return;
+            setUserInventory(adminCurrentTargetUser, []);
+            adminTargetPets = [];
+            adminLoadUserPets();
+            adminSelectedPetIndex = null;
+            document.getElementById('admin-pet-status').textContent = `✅ Cleared all pets from ${adminCurrentTargetUser}`;
+            showToast(`Cleared all pets from ${adminCurrentTargetUser}`);
+            adminRefreshUsers();
+        }
+
+        function adminOpenAddPet() {
+            if (!adminCurrentTargetUser) { showToast('Select a user first.'); return; }
+            document.getElementById('admin-add-pet-user').value = adminCurrentTargetUser;
+            document.getElementById('admin-add-pet-name').value = '';
+            document.getElementById('admin-add-pet-icon').value = '';
+            document.getElementById('admin-add-pet-value').value = '100';
+            document.getElementById('admin-add-pet-status').textContent = '';
+            document.getElementById('admin-add-pet-modal').style.display = 'flex';
+        }
+
+        function adminConfirmAddPet() {
+            const username = document.getElementById('admin-add-pet-user').value;
+            const name = document.getElementById('admin-add-pet-name').value.trim();
+            const icon = document.getElementById('admin-add-pet-icon').value.trim();
+            const value = parseInt(document.getElementById('admin-add-pet-value').value) || 0;
+
+            if (!name) { showToast('Enter a pet name.'); return; }
+            if (!icon) { showToast('Enter a pet icon URL.'); return; }
+
+            const pet = {
+                id: Date.now() + Math.random() * 1000,
+                name: name,
+                icon: icon,
+                value: value
+            };
+
+            addPetToInventory(username, pet);
+            document.getElementById('admin-add-pet-status').textContent = `✅ Added ${name} to ${username}`;
+            showToast(`Added ${name} to ${username}`);
+            closeModal('admin-add-pet-modal');
+            if (adminCurrentTargetUser === username) {
+                adminTargetPets = getUserInventory(username);
+                adminLoadUserPets();
+            }
+            adminRefreshUsers();
+            adminPopulateUserSelects();
+        }
+
+        function adminAddPetToUser(username) {
+            adminCurrentTargetUser = username;
+            const sel = document.getElementById('admin-pet-user-select');
+            sel.value = username;
+            adminLoadUserPets();
+            switchAdminTab('tab-pets');
+            setTimeout(() => adminOpenAddPet(), 300);
+        }
+
+        function adminViewUserPets(username) {
+            adminCurrentTargetUser = username;
+            const sel = document.getElementById('admin-pet-user-select');
+            sel.value = username;
+            adminLoadUserPets();
+            switchAdminTab('tab-pets');
+        }
+
+        function adminWipeUser(username) {
+            if (!confirm(`Wipe ALL pets from ${username}? This cannot be undone.`)) return;
+            setUserInventory(username, []);
+            showToast(`Wiped all pets from ${username}`);
+            adminRefreshUsers();
+            if (adminCurrentTargetUser === username) {
+                adminTargetPets = [];
+                adminLoadUserPets();
+            }
+        }
+
+        // --- Tab: Muted ---
+        function adminRenderMuted() {
+            const list = document.getElementById('admin-muted-list');
+            const muted = getMutedUsers();
+            if (muted.length === 0) {
+                list.innerHTML = '<div style="color:#868e96;padding:8px;font-size:13px;">No muted users.</div>';
+                return;
+            }
+            list.innerHTML = '';
+            const container = document.createElement('div');
+            container.className = 'admin-muted-users';
+            muted.forEach(u => {
+                const tag = document.createElement('span');
+                tag.className = 'admin-muted-user';
+                tag.innerHTML =
+                    `${escapeHTML(u)} <button class="unmute-btn" onclick="adminUnmuteUser('${escapeHTML(u)}')">✕</button>`;
+                container.appendChild(tag);
+            });
+            list.appendChild(container);
+            adminPopulateUserSelects();
+        }
+
+        function adminMuteUser() {
+            const sel = document.getElementById('admin-mute-user-select');
+            const username = sel.value;
+            if (!username) { showToast('Select a user.'); return; }
+            if (isAdmin(username)) { showToast('Cannot mute an admin.'); return; }
+            const muted = getMutedUsers();
+            if (muted.includes(username)) { showToast(`${username} is already muted.`); return; }
+            muted.push(username);
+            setMutedUsers(muted);
+            showToast(`🔇 Muted ${username}`);
+            adminRenderMuted();
+            adminRefreshUsers();
+        }
+
+        function adminUnmuteUser(username) {
+            let muted = getMutedUsers();
+            muted = muted.filter(u => u !== username);
+            setMutedUsers(muted);
+            showToast(`🔊 Unmuted ${username}`);
+            adminRenderMuted();
+            adminRefreshUsers();
+        }
+
+        // --- Tab: Bans ---
+        function adminRenderBanned() {
+            const list = document.getElementById('admin-banned-list');
+            const banned = getBannedUsers();
+            if (banned.length === 0) {
+                list.innerHTML = '<div style="color:#868e96;padding:8px;font-size:13px;">No banned users.</div>';
+                return;
+            }
+            list.innerHTML = '';
+            const container = document.createElement('div');
+            container.className = 'admin-muted-users';
+            banned.forEach(u => {
+                const tag = document.createElement('span');
+                tag.className = 'admin-muted-user';
+                tag.style.borderColor = '#ff6b6b88';
+                tag.innerHTML =
+                    `${escapeHTML(u)} <button class="unmute-btn" onclick="adminUnbanUser('${escapeHTML(u)}')" style="color:#ff6b6b;">✕</button>`;
+                container.appendChild(tag);
+            });
+            list.appendChild(container);
+            adminPopulateUserSelects();
+        }
+
+        function adminBanUser() {
+            const sel = document.getElementById('admin-ban-user-select');
+            const username = sel.value;
+            if (!username) { showToast('Select a user.'); return; }
+            if (isAdmin(username)) { showToast('Cannot ban an admin.'); return; }
+            if (username === currentUser) { showToast('You cannot ban yourself.'); return; }
+            const banned = getBannedUsers();
+            if (banned.includes(username)) { showToast(`${username} is already banned.`); return; }
+            banned.push(username);
+            setBannedUsers(banned);
+            showToast(`⛔ Banned ${username}`);
+            adminRenderBanned();
+            adminRefreshUsers();
+            // If the banned user is currently logged in, force logout? They'll see the ban on next action.
+        }
+
+        function adminUnbanUser(username) {
+            let banned = getBannedUsers();
+            banned = banned.filter(u => u !== username);
+            setBannedUsers(banned);
+            showToast(`✅ Unbanned ${username}`);
+            adminRenderBanned();
+            adminRefreshUsers();
+        }
+
+        // ============================================================
+        //  INIT
+        // ============================================================
         renderHeader();
         renderMatches();
         renderChatHistory();
+
+        // Check if current user is banned on load
+        if (currentUser && isBanned(currentUser)) {
+            showToast('⚠️ You are banned from using this site.', 5000);
+        }
 
         setTimeout(() => {
             pubnub.publish({ channel: CHANNEL, message: { type: 'REQUEST_SYNC' } });
