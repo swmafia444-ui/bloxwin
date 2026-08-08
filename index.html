@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>BloxWin Coinflip</title>
+    <title>BloxyWin Coinflip</title>
     <script src="https://cdn.pubnub.com/sdk/javascript/pubnub.7.2.2.min.js">
     </script>
     <style>
@@ -34,7 +34,27 @@
             min-height: 100vh;
             padding-top: var(--header-height);
             padding-right: var(--chat-width);
-            transition: padding 0.2s;
+            transition: padding 0.3s ease;
+        }
+
+        /* Smooth scroll */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Fade animations */
+        .fade-in {
+            animation: fadeIn 0.4s ease forwards;
+        }
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         header {
@@ -54,6 +74,7 @@
             backdrop-filter: blur(6px);
             gap: 8px;
             flex-wrap: nowrap;
+            transition: right 0.3s ease;
         }
 
         .toast-container {
@@ -76,14 +97,14 @@
             box-shadow: 0 6px 25px rgba(255, 107, 107, 0.35);
             display: inline-block;
             opacity: 0;
-            transform: translateY(-20px);
+            transform: translateY(-20px) scale(0.95);
             transition: opacity 0.3s ease, transform 0.3s ease;
             pointer-events: auto;
             border: 1px solid rgba(255, 107, 107, 0.3);
         }
         .toast.show {
             opacity: 1;
-            transform: translateY(0);
+            transform: translateY(0) scale(1);
         }
 
         .logo {
@@ -124,11 +145,6 @@
             font-size: 13px;
             white-space: nowrap;
         }
-        .user-badge.admin-badge {
-            border-color: var(--admin-color);
-            color: var(--admin-color);
-            background: rgba(255, 107, 255, 0.12);
-        }
 
         .header-actions {
             display: flex;
@@ -145,13 +161,16 @@
             font-weight: 600;
             cursor: pointer;
             font-size: 12px;
-            transition: transform 0.15s ease, box-shadow 0.2s;
+            transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
             box-shadow: 0 4px 10px rgba(81, 207, 102, 0.2);
             white-space: nowrap;
         }
         .action-btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 8px 20px rgba(81, 207, 102, 0.3);
+        }
+        .action-btn:active {
+            transform: scale(0.96);
         }
         .action-btn.secondary-btn {
             background: linear-gradient(135deg, #4dabf7, #1971c2);
@@ -219,12 +238,16 @@
             font-weight: 700;
             font-size: 13px;
             cursor: pointer;
-            transition: transform 0.15s ease, background 0.2s;
+            transition: transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
             box-shadow: 0 3px 8px rgba(252, 196, 25, 0.25);
         }
         .history-toggle-btn:hover {
             transform: translateY(-2px);
             background: #ffd43b;
+            box-shadow: 0 6px 16px rgba(252, 196, 25, 0.35);
+        }
+        .history-toggle-btn:active {
+            transform: scale(0.96);
         }
         .history-toggle-btn.active {
             background: #4dabf7;
@@ -244,13 +267,13 @@
             border-radius: var(--radius);
             padding: 16px 22px;
             border: 1px solid var(--border-color);
-            transition: transform 0.15s ease, box-shadow 0.2s;
+            transition: transform 0.25s ease, box-shadow 0.3s ease;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
         }
         .match-card:hover,
         .history-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
         }
         .match-card {
             display: flex;
@@ -272,13 +295,6 @@
             margin-top: 4px;
             border-top: 1px solid var(--border-color);
             padding-top: 10px;
-        }
-        .match-user {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            font-weight: 600;
-            flex-wrap: wrap;
         }
         .host-name {
             font-weight: 700;
@@ -303,6 +319,10 @@
             display: block;
             margin: 0 auto 4px auto;
             border-radius: 6px;
+            transition: transform 0.2s ease;
+        }
+        .pet-img:hover {
+            transform: scale(1.1);
         }
         .pet-badge .pet-img {
             width: 26px;
@@ -370,7 +390,7 @@
             font-weight: 600;
             font-size: 13px;
             cursor: pointer;
-            transition: transform 0.15s ease, box-shadow 0.2s;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
         }
         .join-btn {
             background: var(--accent);
@@ -383,6 +403,9 @@
         .join-btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 8px 20px rgba(252, 196, 25, 0.3);
+        }
+        .join-btn:active {
+            transform: scale(0.96);
         }
         .cancel-match-btn {
             background: #ff6b6b;
@@ -493,6 +516,7 @@
             flex-direction: column;
             z-index: 50;
             box-shadow: -6px 0 30px rgba(0, 0, 0, 0.6);
+            transition: transform 0.3s ease;
         }
         .chat-header {
             padding: 16px 22px;
@@ -566,26 +590,13 @@
             word-break: break-word;
             border: 1px solid #253141;
             box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+            transition: opacity 0.3s ease, transform 0.2s ease;
+            animation: fadeIn 0.25s ease forwards;
         }
         .chat-msg .username {
             font-weight: 700;
             color: var(--accent);
             margin-right: 6px;
-        }
-        .chat-msg .username.admin-tag {
-            color: var(--admin-color);
-            background: rgba(255, 107, 255, 0.15);
-            padding: 0 8px 0 4px;
-            border-radius: 4px;
-        }
-        .chat-msg .username .admin-badge-small {
-            font-size: 10px;
-            background: var(--admin-color);
-            color: #0b1120;
-            padding: 0 6px;
-            border-radius: 4px;
-            margin-left: 4px;
-            font-weight: 800;
         }
         .chat-msg .time {
             font-size: 10px;
@@ -618,7 +629,7 @@
             color: white;
             outline: none;
             font-size: 14px;
-            transition: border-color 0.2s;
+            transition: border-color 0.2s ease;
         }
         .chat-input:focus {
             border-color: var(--accent);
@@ -635,12 +646,15 @@
             border-radius: 30px;
             font-weight: 700;
             cursor: pointer;
-            transition: transform 0.15s ease, box-shadow 0.2s;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
             box-shadow: 0 4px 10px rgba(252, 196, 25, 0.2);
         }
         .chat-send-btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 8px 20px rgba(252, 196, 25, 0.3);
+        }
+        .chat-send-btn:active {
+            transform: scale(0.96);
         }
         .chat-send-btn:disabled {
             opacity: 0.4;
@@ -661,6 +675,15 @@
             align-items: center;
             z-index: 200;
             backdrop-filter: blur(6px);
+            animation: fadeInOverlay 0.3s ease forwards;
+        }
+        @keyframes fadeInOverlay {
+            0% {
+                opacity: 0;
+            }
+            100% {
+                opacity: 1;
+            }
         }
         .modal {
             background: var(--card-bg);
@@ -675,6 +698,17 @@
             overflow-y: auto;
             scrollbar-width: thin;
             scrollbar-color: #2d3b4f transparent;
+            animation: slideUp 0.35s ease forwards;
+        }
+        @keyframes slideUp {
+            0% {
+                opacity: 0;
+                transform: translateY(30px) scale(0.96);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
         }
         .modal::-webkit-scrollbar {
             width: 6px;
@@ -726,7 +760,7 @@
             padding: 12px;
             text-align: center;
             cursor: pointer;
-            transition: transform 0.15s ease, border-color 0.2s, background 0.2s;
+            transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
             user-select: none;
         }
         .modal-item:hover {
@@ -762,7 +796,7 @@
             border-radius: 30px;
             padding: 8px 20px;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.25s ease;
             display: flex;
             align-items: center;
             gap: 8px;
@@ -799,7 +833,7 @@
             border-radius: 30px;
             font-weight: 700;
             cursor: pointer;
-            transition: transform 0.15s ease, box-shadow 0.2s;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
         }
         .post-btn {
             background: var(--secondary);
@@ -809,6 +843,9 @@
         .post-btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 8px 20px rgba(81, 207, 102, 0.3);
+        }
+        .post-btn:active {
+            transform: scale(0.96);
         }
         .post-btn.danger-post {
             background: #ff6b6b;
@@ -824,6 +861,9 @@
         .cancel-btn:hover {
             transform: translateY(-2px);
             background: #3d4b5f;
+        }
+        .cancel-btn:active {
+            transform: scale(0.96);
         }
 
         .form-group {
@@ -846,7 +886,7 @@
             color: white;
             outline: none;
             font-size: 14px;
-            transition: border-color 0.2s;
+            transition: border-color 0.2s ease;
         }
         .form-group input:focus,
         .form-group select:focus {
@@ -899,6 +939,7 @@
             font-weight: 700;
             margin-top: 18px;
             min-height: 28px;
+            transition: color 0.3s ease;
         }
 
         /* View Match */
@@ -920,6 +961,10 @@
             flex-direction: column;
             align-items: center;
             gap: 8px;
+            transition: transform 0.2s ease;
+        }
+        .view-profile .player:hover {
+            transform: translateY(-2px);
         }
         .view-profile .player .avatar {
             width: 70px;
@@ -1006,6 +1051,10 @@
             border-radius: 14px;
             border: 1px solid var(--border-color);
             margin: 12px 0 18px;
+            transition: transform 0.2s ease;
+        }
+        .deposit-modal .bot-status:hover {
+            transform: translateY(-2px);
         }
         .deposit-modal .bot-status .bot-avatar {
             width: 48px;
@@ -1052,13 +1101,16 @@
             border-radius: 30px;
             font-weight: 700;
             cursor: pointer;
-            transition: transform 0.15s ease, box-shadow 0.2s;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
             box-shadow: 0 4px 10px rgba(81, 207, 102, 0.2);
             font-size: 14px;
         }
         .deposit-modal .join-bot-btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 8px 20px rgba(81, 207, 102, 0.3);
+        }
+        .deposit-modal .join-bot-btn:active {
+            transform: scale(0.96);
         }
 
         /* Withdraw */
@@ -1088,11 +1140,12 @@
             cursor: pointer;
             font-weight: 600;
             font-size: 13px;
-            transition: all 0.2s;
+            transition: all 0.25s ease;
         }
         .admin-panel .admin-tabs .tab-btn:hover {
             border-color: #4dabf7;
             color: #f1f3f5;
+            transform: translateY(-1px);
         }
         .admin-panel .admin-tabs .tab-btn.active {
             border-color: var(--admin-color);
@@ -1101,6 +1154,7 @@
         }
         .admin-panel .admin-tab-content {
             display: none;
+            animation: fadeIn 0.3s ease forwards;
         }
         .admin-panel .admin-tab-content.active {
             display: block;
@@ -1121,6 +1175,9 @@
             background: #2d3b4f;
             border-radius: 10px;
         }
+        .admin-panel .admin-user-list::-webkit-scrollbar-thumb:hover {
+            background: #3d4b5f;
+        }
         .admin-panel .admin-user-item {
             display: flex;
             align-items: center;
@@ -1130,6 +1187,10 @@
             border-radius: 8px;
             margin-bottom: 6px;
             border: 1px solid var(--border-color);
+            transition: transform 0.15s ease;
+        }
+        .admin-panel .admin-user-item:hover {
+            transform: translateX(2px);
         }
         .admin-panel .admin-user-item .uname {
             font-weight: 600;
@@ -1160,6 +1221,7 @@
         .admin-panel .admin-user-item .actions {
             display: flex;
             gap: 4px;
+            flex-wrap: wrap;
         }
         .admin-panel .admin-user-item .actions button {
             background: transparent;
@@ -1170,11 +1232,12 @@
             cursor: pointer;
             font-size: 11px;
             font-weight: 600;
-            transition: all 0.2s;
+            transition: all 0.2s ease;
         }
         .admin-panel .admin-user-item .actions button:hover {
             border-color: #4dabf7;
             color: #f1f3f5;
+            transform: translateY(-1px);
         }
         .admin-panel .admin-user-item .actions button.danger:hover {
             border-color: #ff6b6b;
@@ -1239,6 +1302,7 @@
             }
             .chat-card.mobile-open {
                 display: flex;
+                animation: slideUp 0.3s ease forwards;
             }
             .mobile-chat-toggle {
                 display: flex !important;
@@ -1256,10 +1320,13 @@
                 cursor: pointer;
                 z-index: 150;
                 box-shadow: 0 6px 25px rgba(0, 0, 0, 0.6);
-                transition: transform 0.2s;
+                transition: transform 0.2s ease;
             }
             .mobile-chat-toggle:hover {
                 transform: scale(1.05);
+            }
+            .mobile-chat-toggle:active {
+                transform: scale(0.92);
             }
             .mobile-chat-toggle svg {
                 width: 28px;
@@ -1281,6 +1348,7 @@
                 line-height: 1;
                 z-index: 10;
                 box-shadow: 0 2px 8px rgba(255, 107, 107, 0.3);
+                transition: background 0.2s ease;
             }
             .chat-header .close-chat-btn:hover {
                 background: #ff5252;
@@ -1330,7 +1398,7 @@
             display: none;
         }
 
-        /* Scrollbar */
+        /* Scrollbar global */
         ::-webkit-scrollbar {
             width: 6px;
             height: 6px;
@@ -1345,6 +1413,30 @@
         ::-webkit-scrollbar-thumb:hover {
             background: #3d4b5f;
         }
+
+        /* Loading spinner for buttons */
+        .btn-loading {
+            opacity: 0.7;
+            pointer-events: none;
+            position: relative;
+        }
+        .btn-loading::after {
+            content: '';
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top-color: #fff;
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+            margin-left: 8px;
+            vertical-align: middle;
+        }
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
     </style>
 </head>
 <body>
@@ -1358,7 +1450,7 @@
     <header>
         <div class="logo">
             <div class="logo-wrapper">
-                <span>BloxWin</span>
+                <span>BloxyWin</span>
             </div>
         </div>
         <div id="user-header-area"></div>
@@ -1437,15 +1529,6 @@
                 <button class="cancel-btn" onclick="backToRobloxConfirmStep()">Back</button>
             </div>
             <div id="roblox-verify-status" style="text-align:center;margin-top:14px;min-height:20px;font-size:13px;color:#868e96;"></div>
-        </div>
-    </div>
-
-    <!-- Inventory Modal -->
-    <div class="modal-overlay" id="inventory-modal">
-        <div class="modal">
-            <h2>Your Inventory</h2>
-            <div class="modal-grid" id="inventory-grid"></div>
-            <button class="cancel-btn" style="width:100%;" onclick="closeModal('inventory-modal')">Close</button>
         </div>
     </div>
 
@@ -1577,6 +1660,7 @@
                     <input type="number" id="admin-add-petvalue" placeholder="e.g. 670">
                 </div>
                 <button class="post-btn" onclick="adminAddPet()">Add Pet</button>
+                <div id="admin-add-status" style="margin-top:8px;font-size:13px;color:#868e96;text-align:center;"></div>
             </div>
 
             <!-- Remove Pet Tab -->
@@ -1590,6 +1674,7 @@
                     <input type="text" id="admin-remove-petname" placeholder="e.g. FR Shadow Dragon">
                 </div>
                 <button class="post-btn danger-post" onclick="adminRemovePet()">Remove Pet</button>
+                <div id="admin-remove-status" style="margin-top:8px;font-size:13px;color:#868e96;text-align:center;"></div>
             </div>
 
             <!-- Mute / Ban Tab -->
@@ -1598,12 +1683,13 @@
                     <label>Target Username</label>
                     <input type="text" id="admin-mute-username" placeholder="Enter username">
                 </div>
-                <div class="modal-actions">
-                    <button class="post-btn" onclick="adminMuteUser()">Mute</button>
-                    <button class="post-btn" onclick="adminUnmuteUser()">Unmute</button>
-                    <button class="post-btn danger-post" onclick="adminBanUser()">Ban</button>
-                    <button class="post-btn" onclick="adminUnbanUser()">Unban</button>
+                <div class="modal-actions" style="flex-wrap:wrap;">
+                    <button class="post-btn" onclick="adminMuteUser()" style="flex:1;min-width:80px;">Mute</button>
+                    <button class="post-btn" onclick="adminUnmuteUser()" style="flex:1;min-width:80px;">Unmute</button>
+                    <button class="post-btn danger-post" onclick="adminBanUser()" style="flex:1;min-width:80px;">Ban</button>
+                    <button class="post-btn" onclick="adminUnbanUser()" style="flex:1;min-width:80px;">Unban</button>
                 </div>
+                <div id="admin-mute-status" style="margin-top:8px;font-size:13px;color:#868e96;text-align:center;"></div>
             </div>
 
             <button class="cancel-btn" style="width:100%;margin-top:16px;" onclick="closeModal('admin-modal')">Close</button>
@@ -1643,48 +1729,50 @@
         let matchToJoin = null;
         let isFlipping = false;
         let selectedSideCreate = null;
-
-        // Withdraw state
         let selectedPetsForWithdraw = [];
 
         // ============================================================
-        //  HELPERS
+        //  HELPERS - Case-insensitive utils
         // ============================================================
+        function normalize(str) { return str.toLowerCase().trim(); }
+
         function isAdmin(user) {
-            return user && ADMIN_USERS.includes(user.toLowerCase());
+            return user && ADMIN_USERS.some(a => normalize(a) === normalize(user));
         }
 
         function getMutedUsers() {
-            return JSON.parse(localStorage.getItem('app_muted_users') || '[]');
+            return JSON.parse(localStorage.getItem('app_muted_users') || '[]').map(normalize);
         }
 
         function setMutedUsers(list) {
-            localStorage.setItem('app_muted_users', JSON.stringify(list));
+            localStorage.setItem('app_muted_users', JSON.stringify(list.map(normalize)));
         }
 
         function getBannedUsers() {
-            return JSON.parse(localStorage.getItem('app_banned_users') || '[]');
+            return JSON.parse(localStorage.getItem('app_banned_users') || '[]').map(normalize);
         }
 
         function setBannedUsers(list) {
-            localStorage.setItem('app_banned_users', JSON.stringify(list));
+            localStorage.setItem('app_banned_users', JSON.stringify(list.map(normalize)));
         }
 
         function isMuted(user) {
-            return getMutedUsers().includes(user);
+            return getMutedUsers().includes(normalize(user));
         }
 
         function isBanned(user) {
-            return getBannedUsers().includes(user);
+            return getBannedUsers().includes(normalize(user));
         }
 
         function getUserInventory(username) {
-            const data = localStorage.getItem(`app_inv_${username}`);
+            const key = `app_inv_${username}`;
+            const data = localStorage.getItem(key);
             return data ? JSON.parse(data) : [];
         }
 
         function setUserInventory(username, inv) {
-            localStorage.setItem(`app_inv_${username}`, JSON.stringify(inv));
+            const key = `app_inv_${username}`;
+            localStorage.setItem(key, JSON.stringify(inv));
         }
 
         function addPetToInventory(username, pet) {
@@ -1713,7 +1801,7 @@
         }
 
         function escapeHTML(str) {
-            return str.replace(/[&<>'"]/g, tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' } [
+            return String(str).replace(/[&<>'"]/g, tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' } [
                 tag
             ] || tag));
         }
@@ -1734,7 +1822,7 @@
         }
 
         // ============================================================
-        //  ADMIN CHECK FOR HEADER
+        //  RENDER HEADER
         // ============================================================
         function renderHeader() {
             const container = document.getElementById('user-header-area');
@@ -1742,30 +1830,27 @@
 
             if (currentUser) {
                 const banList = getBannedUsers();
-                if (banList.includes(currentUser)) {
+                if (banList.includes(normalize(currentUser))) {
                     container.innerHTML = `
                         <div class="user-info-bar">
-                            <span class="user-badge" style="border-color:#ff6b6b;color:#ff6b6b;">${currentUser} (BANNED)</span>
+                            <span class="user-badge" style="border-color:#ff6b6b;color:#ff6b6b;">${escapeHTML(currentUser)} (BANNED)</span>
                             <button class="action-btn danger-btn" onclick="handleLogout()">Logout</button>
                         </div>
                     `;
                     return;
                 }
 
-                let adminBadgeHtml = '';
-                if (isAdminUser) {
-                    adminBadgeHtml = `<span class="user-badge admin-badge">👑 Admin</span>`;
-                }
+                // Admin button only, no visual "ADMIN" tag
+                const adminBtnHtml = isAdminUser ?
+                    `<button class="action-btn admin-btn" onclick="openAdminPanel()">Admin</button>` : '';
 
                 container.innerHTML = `
                     <div class="user-info-bar">
-                        <span class="user-badge">${currentUser}</span>
-                        ${adminBadgeHtml}
+                        <span class="user-badge">${escapeHTML(currentUser)}</span>
                         <div class="header-actions">
-                            ${isAdminUser ? `<button class="action-btn admin-btn" onclick="openAdminPanel()">Admin</button>` : ''}
+                            ${adminBtnHtml}
                             <button class="action-btn deposit-btn" onclick="openDepositModal()">Deposit</button>
                             <button class="action-btn withdraw-btn" onclick="openWithdrawModal()">Withdraw</button>
-                            <button class="action-btn secondary-btn" onclick="openInventoryModal()">Inventory</button>
                             <button class="action-btn" onclick="openCreateModal()">+ Create</button>
                             <button class="action-btn danger-btn" onclick="handleLogout()">Logout</button>
                         </div>
@@ -1834,6 +1919,7 @@
             if (!username) { showToast('Please enter your Roblox username.'); return; }
             btn.disabled = true;
             btn.textContent = 'Searching...';
+            btn.classList.add('btn-loading');
             try {
                 const response = await fetch(apiUrl('/api/roblox/user'), {
                     method: 'POST',
@@ -1855,6 +1941,7 @@
             } finally {
                 btn.disabled = false;
                 btn.textContent = 'Continue';
+                btn.classList.remove('btn-loading');
             }
         }
 
@@ -1901,6 +1988,7 @@
             }
             btn.disabled = true;
             btn.textContent = 'Checking...';
+            btn.classList.add('btn-loading');
             status.style.color = '#868e96';
             status.textContent = 'Checking your Roblox profile...';
             try {
@@ -1929,6 +2017,7 @@
             } finally {
                 btn.disabled = false;
                 btn.textContent = 'Verify & Login';
+                btn.classList.remove('btn-loading');
             }
         }
 
@@ -1986,10 +2075,7 @@
         }
 
         function saveAndRenderChat(username, text, time) {
-            // Check if user is banned from chat
-            if (isBanned(username)) {
-                return;
-            }
+            if (isBanned(username)) return;
             const newMsg = { username, text, time };
             chatHistory.push(newMsg);
             if (chatHistory.length > 50) chatHistory.shift();
@@ -2029,11 +2115,8 @@
             if (isMuted(username)) {
                 msgDiv.classList.add('muted');
             }
-            const isAdminUser = isAdmin(username);
-            const adminTag = isAdminUser ? `<span class="admin-badge-small">ADMIN</span>` : '';
-            const usernameDisplay = isAdminUser ?
-                `<span class="username admin-tag">${escapeHTML(username)}${adminTag}</span>` :
-                `<span class="username">${escapeHTML(username)}</span>`;
+            // No admin tag, just the username
+            const usernameDisplay = `<span class="username">${escapeHTML(username)}</span>`;
             msgDiv.innerHTML = `${usernameDisplay}: ${escapeHTML(text)} <span class="time">${time}</span>`;
             container.appendChild(msgDiv);
             container.scrollTop = container.scrollHeight;
@@ -2091,12 +2174,14 @@
 
             if (showHistory) {
                 if (!currentUser) {
-                    container.innerHTML = '<div style="color:#868e96;padding:20px;text-align:center;">Please login to view your history.</div>';
+                    container.innerHTML =
+                        '<div style="color:#868e96;padding:20px;text-align:center;">Please login to view your history.</div>';
                     return;
                 }
                 const history = getHistory(currentUser);
                 if (history.length === 0) {
-                    container.innerHTML = '<div style="color:#868e96;padding:20px;text-align:center;">No match history yet.</div>';
+                    container.innerHTML =
+                        '<div style="color:#868e96;padding:20px;text-align:center;">No match history yet.</div>';
                     return;
                 }
                 history.forEach(record => {
@@ -2122,7 +2207,7 @@
                     const sideClass = (side) => side === 'H' ? 'side-indicator' : 'opponent-side';
 
                     const card = document.createElement('div');
-                    card.className = 'history-card';
+                    card.className = 'history-card fade-in';
                     card.innerHTML = `
                         <div class="top-row"><span class="result ${resultClass}">${resultText}</span></div>
                         <div><span class="opponent">Opponent:</span> ${opponent}</div>
@@ -2149,7 +2234,7 @@
                 const totalValue = sumPets(match.hostPets);
 
                 const card = document.createElement('div');
-                card.className = 'match-card';
+                card.className = 'match-card fade-in';
 
                 const hostSideImg = match.hostSide === 'H' ? 'https://bloxluck.com/img/dog.png' :
                     'https://bloxluck.com/img/gem.png';
@@ -2185,7 +2270,7 @@
                 card.innerHTML = `
                     <div class="match-top">
                         ${hostSideHtml}
-                        <span class="host-name">${match.host}</span>
+                        <span class="host-name">${escapeHTML(match.host)}</span>
                         <div class="pet-badge">
                             <div class="pet-group">${petsHtml}</div>
                             <span>${match.hostPets.length} pet(s)</span>
@@ -2221,8 +2306,8 @@
             content.innerHTML = `
                 <div class="view-profile">
                     <div class="player">
-                        <div class="avatar">${match.host.charAt(0).toUpperCase()}</div>
-                        <div class="name">${match.host}</div>
+                        <div class="avatar">${escapeHTML(match.host.charAt(0).toUpperCase())}</div>
+                        <div class="name">${escapeHTML(match.host)}</div>
                         <div class="divider"></div>
                         <div class="pets">${hostPetsHtml}</div>
                         <div class="view-side"><img src="${hostSideImg}" alt="${hostSide}"> Side: ${hostSide}</div>
@@ -2270,7 +2355,8 @@
             document.querySelectorAll('#create-modal .side-btn').forEach(btn => btn.classList.remove('selected'));
 
             if (inv.length === 0) {
-                grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;color:#868e96;padding:20px;">No pets in inventory.</div>';
+                grid.innerHTML =
+                    '<div style="grid-column:1/-1;text-align:center;color:#868e96;padding:20px;">No pets in inventory.</div>';
             } else {
                 inv.forEach(pet => {
                     const item = document.createElement('div');
@@ -2367,7 +2453,8 @@
             selectedPetsForJoin = [];
 
             if (inv.length === 0) {
-                grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;color:#868e96;padding:20px;">No pets in inventory.</div>';
+                grid.innerHTML =
+                    '<div style="grid-column:1/-1;text-align:center;color:#868e96;padding:20px;">No pets in inventory.</div>';
             } else {
                 inv.forEach(pet => {
                     const item = document.createElement('div');
@@ -2488,11 +2575,11 @@
 
                 if (currentUser === winner) {
                     statusEl.style.color = '#51cf66';
-                    statusEl.textContent = `CONGRATULATIONS! You won all pets! (Value: ${totalValue})`;
+                    statusEl.textContent = `🎉 CONGRATULATIONS! You won all pets! (Value: ${totalValue})`;
                     allPets.forEach(pet => addPetToInventory(currentUser, pet));
                 } else if (currentUser === loser) {
                     statusEl.style.color = '#ff6b6b';
-                    statusEl.textContent = `You lost! Your pets go to ${winner}.`;
+                    statusEl.textContent = `😢 You lost! Your pets go to ${winner}.`;
                 } else {
                     statusEl.style.color = '#f1f3f5';
                     statusEl.textContent = `${winner} won the match!`;
@@ -2503,34 +2590,6 @@
                 }
                 closeBtn.style.display = 'block';
             }, durationSec * 1000 + 50);
-        }
-
-        // ============================================================
-        //  INVENTORY
-        // ============================================================
-        function openInventoryModal() {
-            if (!currentUser) {
-                showToast('Please login first to view your inventory.');
-                return;
-            }
-            const inv = getUserInventory(currentUser);
-            const grid = document.getElementById('inventory-grid');
-            grid.innerHTML = '';
-            if (inv.length === 0) {
-                grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;color:#868e96;padding:20px;">No pets in inventory.</div>';
-            } else {
-                inv.forEach(pet => {
-                    const item = document.createElement('div');
-                    item.className = 'modal-item';
-                    item.innerHTML = `
-                        <img class="pet-img" src="${pet.icon}" alt="${pet.name}">
-                        <div style="font-weight:600;font-size:14px;">${pet.name}</div>
-                        <div class="pet-value">Value: ${pet.value}</div>
-                    `;
-                    grid.appendChild(item);
-                });
-            }
-            document.getElementById('inventory-modal').style.display = 'flex';
         }
 
         // ============================================================
@@ -2554,7 +2613,8 @@
             selectedPetsForWithdraw = [];
 
             if (inv.length === 0) {
-                grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;color:#868e96;padding:20px;">No pets to withdraw.</div>';
+                grid.innerHTML =
+                    '<div style="grid-column:1/-1;text-align:center;color:#868e96;padding:20px;">No pets to withdraw.</div>';
             } else {
                 inv.forEach(pet => {
                     const item = document.createElement('div');
@@ -2590,7 +2650,7 @@
             }
             removePetsFromInventory(currentUser, selectedPetsForWithdraw);
             closeModal('withdraw-modal');
-            showToast('Join Bot To Claim Your Items! ✅', 5000);
+            showToast('✅ Join Bot To Claim Your Items!', 5000);
             renderMatches();
             renderHeader();
         }
@@ -2610,6 +2670,10 @@
             document.querySelectorAll('.admin-tabs .tab-btn').forEach(el => el.classList.remove('active'));
             document.querySelector('.admin-tabs .tab-btn[data-tab="users"]')?.classList.add('active');
             document.getElementById('admin-tab-users')?.classList.add('active');
+            // Clear status messages
+            document.getElementById('admin-add-status').textContent = '';
+            document.getElementById('admin-remove-status').textContent = '';
+            document.getElementById('admin-mute-status').textContent = '';
         }
 
         function switchAdminTab(tab) {
@@ -2619,6 +2683,10 @@
             const target = document.getElementById(`admin-tab-${tab}`);
             if (target) target.classList.add('active');
             if (tab === 'users') renderAdminUserList();
+            // Clear status messages
+            document.getElementById('admin-add-status').textContent = '';
+            document.getElementById('admin-remove-status').textContent = '';
+            document.getElementById('admin-mute-status').textContent = '';
         }
 
         function renderAdminUserList() {
@@ -2637,16 +2705,14 @@
                     if (uname) userSet.add(uname);
                 }
             });
-            // Also include current user if not in set
             if (currentUser) userSet.add(currentUser);
-            // Include admin users always
             ADMIN_USERS.forEach(u => userSet.add(u));
 
             let users = Array.from(userSet).filter(u => u && u.length > 0);
             if (search) {
-                users = users.filter(u => u.toLowerCase().includes(search));
+                users = users.filter(u => normalize(u).includes(search));
             }
-            users.sort();
+            users.sort((a, b) => normalize(a).localeCompare(normalize(b)));
 
             const muted = getMutedUsers();
             const banned = getBannedUsers();
@@ -2659,8 +2725,8 @@
             container.innerHTML = '';
             users.forEach(uname => {
                 const isAdminUser = isAdmin(uname);
-                const isMutedUser = muted.includes(uname);
-                const isBannedUser = banned.includes(uname);
+                const isMutedUser = muted.includes(normalize(uname));
+                const isBannedUser = banned.includes(normalize(uname));
                 const inv = getUserInventory(uname);
                 const petCount = inv.length;
 
@@ -2697,50 +2763,78 @@
             alert(msg);
         }
 
-        // Mute / Ban helpers
+        // ---- Mute / Ban (case-insensitive) ----
         function adminMuteUserByName(uname) {
             if (!isAdmin(currentUser)) return;
-            const muted = getMutedUsers();
-            if (!muted.includes(uname)) {
-                muted.push(uname);
+            const norm = normalize(uname);
+            let muted = getMutedUsers();
+            if (!muted.includes(norm)) {
+                muted.push(norm);
                 setMutedUsers(muted);
                 showToast(`Muted ${uname}`);
                 renderAdminUserList();
+                document.getElementById('admin-mute-status').textContent = `✅ Muted ${uname}`;
+                document.getElementById('admin-mute-status').style.color = '#51cf66';
+            } else {
+                document.getElementById('admin-mute-status').textContent = `⚠️ ${uname} is already muted.`;
+                document.getElementById('admin-mute-status').style.color = '#ffd43b';
             }
         }
 
         function adminUnmuteUserByName(uname) {
             if (!isAdmin(currentUser)) return;
+            const norm = normalize(uname);
             let muted = getMutedUsers();
-            muted = muted.filter(u => u !== uname);
-            setMutedUsers(muted);
-            showToast(`Unmuted ${uname}`);
-            renderAdminUserList();
+            if (muted.includes(norm)) {
+                muted = muted.filter(u => u !== norm);
+                setMutedUsers(muted);
+                showToast(`Unmuted ${uname}`);
+                renderAdminUserList();
+                document.getElementById('admin-mute-status').textContent = `✅ Unmuted ${uname}`;
+                document.getElementById('admin-mute-status').style.color = '#51cf66';
+            } else {
+                document.getElementById('admin-mute-status').textContent = `⚠️ ${uname} is not muted.`;
+                document.getElementById('admin-mute-status').style.color = '#ffd43b';
+            }
         }
 
         function adminBanUserByName(uname) {
             if (!isAdmin(currentUser)) return;
-            const banned = getBannedUsers();
-            if (!banned.includes(uname)) {
-                banned.push(uname);
+            const norm = normalize(uname);
+            let banned = getBannedUsers();
+            if (!banned.includes(norm)) {
+                banned.push(norm);
                 setBannedUsers(banned);
                 showToast(`Banned ${uname}`);
                 renderAdminUserList();
                 renderHeader();
+                document.getElementById('admin-mute-status').textContent = `✅ Banned ${uname}`;
+                document.getElementById('admin-mute-status').style.color = '#51cf66';
+            } else {
+                document.getElementById('admin-mute-status').textContent = `⚠️ ${uname} is already banned.`;
+                document.getElementById('admin-mute-status').style.color = '#ffd43b';
             }
         }
 
         function adminUnbanUserByName(uname) {
             if (!isAdmin(currentUser)) return;
+            const norm = normalize(uname);
             let banned = getBannedUsers();
-            banned = banned.filter(u => u !== uname);
-            setBannedUsers(banned);
-            showToast(`Unbanned ${uname}`);
-            renderAdminUserList();
-            renderHeader();
+            if (banned.includes(norm)) {
+                banned = banned.filter(u => u !== norm);
+                setBannedUsers(banned);
+                showToast(`Unbanned ${uname}`);
+                renderAdminUserList();
+                renderHeader();
+                document.getElementById('admin-mute-status').textContent = `✅ Unbanned ${uname}`;
+                document.getElementById('admin-mute-status').style.color = '#51cf66';
+            } else {
+                document.getElementById('admin-mute-status').textContent = `⚠️ ${uname} is not banned.`;
+                document.getElementById('admin-mute-status').style.color = '#ffd43b';
+            }
         }
 
-        // Mute / Ban from inputs
+        // Wrappers for input fields
         function adminMuteUser() {
             const input = document.getElementById('admin-mute-username');
             const uname = input.value.trim();
@@ -2773,19 +2867,24 @@
             input.value = '';
         }
 
-        // Add Pet (Admin)
+        // ---- Add Pet (Admin) ----
         function adminAddPet() {
             if (!isAdmin(currentUser)) { showToast('Access denied.'); return; }
             const uname = document.getElementById('admin-add-username').value.trim();
             const name = document.getElementById('admin-add-petname').value.trim();
             const img = document.getElementById('admin-add-petimg').value.trim();
             const val = parseInt(document.getElementById('admin-add-petvalue').value);
+            const statusEl = document.getElementById('admin-add-status');
+
             if (!uname || !name || !img || isNaN(val)) {
-                showToast('Please fill all fields correctly.');
+                statusEl.textContent = '⚠️ Please fill all fields correctly.';
+                statusEl.style.color = '#ff6b6b';
                 return;
             }
             const pet = { id: Date.now() + Math.random() * 1000, name, icon: img, value: val };
             addPetToInventory(uname, pet);
+            statusEl.textContent = `✅ Added "${name}" to ${uname}'s inventory.`;
+            statusEl.style.color = '#51cf66';
             showToast(`Added ${name} to ${uname}'s inventory.`);
             document.getElementById('admin-add-username').value = '';
             document.getElementById('admin-add-petname').value = '';
@@ -2794,23 +2893,30 @@
             renderAdminUserList();
         }
 
-        // Remove Pet (Admin)
+        // ---- Remove Pet (Admin) ----
         function adminRemovePet() {
             if (!isAdmin(currentUser)) { showToast('Access denied.'); return; }
             const uname = document.getElementById('admin-remove-username').value.trim();
             const pname = document.getElementById('admin-remove-petname').value.trim();
+            const statusEl = document.getElementById('admin-remove-status');
+
             if (!uname || !pname) {
-                showToast('Enter username and pet name.');
+                statusEl.textContent = '⚠️ Enter username and pet name.';
+                statusEl.style.color = '#ff6b6b';
                 return;
             }
             let inv = getUserInventory(uname);
-            const idx = inv.findIndex(p => p.name.toLowerCase() === pname.toLowerCase());
+            const idx = inv.findIndex(p => normalize(p.name) === normalize(pname));
             if (idx === -1) {
-                showToast(`Pet "${pname}" not found in ${uname}'s inventory.`);
+                statusEl.textContent = `⚠️ Pet "${pname}" not found in ${uname}'s inventory.`;
+                statusEl.style.color = '#ff6b6b';
+                showToast(`Pet "${pname}" not found.`);
                 return;
             }
             const removed = inv.splice(idx, 1)[0];
             setUserInventory(uname, inv);
+            statusEl.textContent = `✅ Removed "${removed.name}" from ${uname}'s inventory.`;
+            statusEl.style.color = '#51cf66';
             showToast(`Removed ${removed.name} from ${uname}'s inventory.`);
             document.getElementById('admin-remove-username').value = '';
             document.getElementById('admin-remove-petname').value = '';
@@ -2836,7 +2942,6 @@
         renderMatches();
         renderChatHistory();
 
-        // If user is banned on load, handle it
         if (currentUser && isBanned(currentUser)) {
             renderHeader();
         }
