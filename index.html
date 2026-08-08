@@ -1203,19 +1203,43 @@
 
     <!-- Modals -->
     <div class="modal-overlay" id="login-modal">
-        <div class="modal">
-            <h2>Login / Register</h2>
+        <div class="modal" id="roblox-login-step-username">
+            <h2>Login with Roblox</h2>
             <div class="form-group">
-                <label>Username</label>
-                <input type="text" id="login-username" placeholder="Enter your username">
-            </div>
-            <div class="form-group">
-                <label>Password</label>
-                <input type="password" id="login-password" placeholder="Enter your password">
+                <label>Roblox Username</label>
+                <input type="text" id="login-username" placeholder="Enter your Roblox username" autocomplete="off">
             </div>
             <div class="modal-actions">
-                <button class="post-btn" onclick="handleLogin()">Login / Register</button>
+                <button class="post-btn" id="find-roblox-user-btn" onclick="findRobloxUser()">Continue</button>
+                <button class="cancel-btn" onclick="closeModal('login-modal')">Cancel</button>
             </div>
+        </div>
+
+        <div class="modal" id="roblox-login-step-confirm" style="display:none;">
+            <h2>Is this you?</h2>
+            <div id="roblox-user-preview" style="text-align:center;margin:8px 0 20px;"></div>
+            <div class="modal-actions">
+                <button class="post-btn" onclick="confirmRobloxUser()">Yes, this is me</button>
+                <button class="cancel-btn" onclick="backToRobloxUsernameStep()">No</button>
+            </div>
+        </div>
+
+        <div class="modal" id="roblox-login-step-verify" style="display:none;">
+            <h2>Verify your Roblox account</h2>
+            <div id="roblox-verify-info" style="text-align:center;color:#adb5bd;line-height:1.6;margin-bottom:18px;"></div>
+            <div style="background:#0f172a;border:1px solid var(--accent);border-radius:14px;padding:18px;text-align:center;margin-bottom:18px;">
+                <div style="font-size:12px;color:#868e96;margin-bottom:6px;">YOUR 9-LETTER CODE</div>
+                <div id="roblox-verification-code" style="font-size:30px;font-weight:800;letter-spacing:5px;color:var(--accent);"></div>
+            </div>
+            <div class="form-group">
+                <label>Verification Code</label>
+                <input type="text" id="roblox-code-input" maxlength="9" autocomplete="off" autocapitalize="characters" placeholder="Enter the 9-letter code from your Roblox profile">
+            </div>
+            <div class="modal-actions">
+                <button class="post-btn" id="verify-roblox-btn" onclick="verifyRobloxAccount()">Verify & Login</button>
+                <button class="cancel-btn" onclick="backToRobloxConfirmStep()">Back</button>
+            </div>
+            <div id="roblox-verify-status" style="text-align:center;margin-top:14px;min-height:20px;font-size:13px;color:#868e96;"></div>
         </div>
     </div>
 
@@ -1286,7 +1310,11 @@
         </div>
     </div>
 
+    <script src="./config.js"></script>
     <script>
+        const BLOXWIN_API_URL = (window.BLOXWIN_API_URL && !window.BLOXWIN_API_URL.includes("YOUR-BACKEND-URL-HERE")) ? window.BLOXWIN_API_URL.replace(/\/$/, "") : window.location.origin;
+        const apiUrl = (path) => BLOXWIN_API_URL + path;
+
         const pubnub = new PubNub({
             publishKey: "demo",
             subscribeKey: "demo",
@@ -1415,6 +1443,7 @@
 
         function closeModal(modalId) {
             document.getElementById(modalId).style.display = 'none';
+            if (modalId === 'login-modal') resetRobloxLoginModal();
         }
 
         // --- History ---
@@ -1450,37 +1479,173 @@
                     `;
             } else {
                 container.innerHTML = `
-                        <button class="action-btn" onclick="document.getElementById('login-modal').style.display='flex'">Login / Register</button>
+                        <button class="action-btn" onclick="resetRobloxLoginModal(); document.getElementById('login-modal').style.display='flex'">Login with Roblox</button>
                     `;
             }
         }
 
         // --- Login/Logout ---
-        function handleLogin() {
-            const userInp = document.getElementById('login-username').value.trim();
-            const passInp = document.getElementById('login-password').value.trim();
-            if (!userInp || !passInp) {
-                showToast('Please enter username and password!');
+        let pendingRobloxUser = null;
+        let robloxVerificationToken = null;
+
+        function resetRobloxLoginModal() {
+            pendingRobloxUser = null;
+            robloxVerificationToken = null;
+            document.getElementById('roblox-login-step-username').style.display = 'block';
+            document.getElementById('roblox-login-step-confirm').style.display = 'none';
+            document.getElementById('roblox-login-step-verify').style.display = 'none';
+            document.getElementById('login-username').value = '';
+            document.getElementById('roblox-code-input').value = '';
+            document.getElementById('roblox-verification-code').textContent = '';
+            document.getElementById('roblox-verify-status').textContent = '';
+        }
+
+        async function findRobloxUser() {
+            const input = document.getElementById('login-username');
+            const btn = document.getElementById('find-roblox-user-btn');
+            const username = input.value.trim();
+
+            if (!username) {
+                showToast('Please enter your Roblox username.');
                 return;
             }
-            const registeredUsers = JSON.parse(localStorage.getItem('app_registered_users') || '{}');
-            if (registeredUsers[userInp]) {
-                if (registeredUsers[userInp] !== passInp) {
-                    showToast('Wrong password!');
-                    return;
+
+            btn.disabled = true;
+            btn.textContent = 'Searching...';
+
+            try {
+                const response = await fetch(apiUrl('/api/roblox/user'), {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error || 'Roblox user not found.');
                 }
-            } else {
-                registeredUsers[userInp] = passInp;
-                localStorage.setItem('app_registered_users', JSON.stringify(registeredUsers));
-                showToast('New account created!');
+
+                pendingRobloxUser = data.user;
+
+                document.getElementById('roblox-user-preview').innerHTML = `
+                    <img src="${escapeHTML(data.user.avatarUrl || '')}"
+                         alt="${escapeHTML(data.user.name)}"
+                         style="width:86px;height:86px;border-radius:50%;object-fit:cover;border:2px solid var(--accent);margin-bottom:10px;"
+                         onerror="this.style.display='none'">
+                    <div style="font-size:20px;font-weight:800;color:#f1f3f5;">${escapeHTML(data.user.displayName || data.user.name)}</div>
+                    <div style="color:#868e96;margin-top:4px;">@${escapeHTML(data.user.name)}</div>
+                `;
+
+                document.getElementById('roblox-login-step-username').style.display = 'none';
+                document.getElementById('roblox-login-step-confirm').style.display = 'block';
+            } catch (error) {
+                showToast(error.message || 'Could not find that Roblox account.');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Continue';
             }
-            currentUser = userInp;
-            localStorage.setItem('app_current_user', currentUser);
-            getUserInventory(currentUser);
-            closeModal('login-modal');
-            renderHeader();
-            renderMatches();
-            pubnub.publish({ channel: CHANNEL, message: { type: 'REQUEST_SYNC' } });
+        }
+
+        async function confirmRobloxUser() {
+            if (!pendingRobloxUser) return;
+
+            const info = document.getElementById('roblox-verify-info');
+            const codeEl = document.getElementById('roblox-verification-code');
+
+            info.textContent = 'Creating your verification code...';
+            codeEl.textContent = '•••••••••';
+
+            try {
+                const response = await fetch(apiUrl('/api/roblox/start-verification'), {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ userId: pendingRobloxUser.id })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error || 'Could not create verification code.');
+                }
+
+                robloxVerificationToken = data.token;
+                codeEl.textContent = data.code;
+                info.innerHTML = `Open your Roblox profile for <b style="color:#f1f3f5;">@${escapeHTML(pendingRobloxUser.name)}</b> and put this code in your <b style="color:#f1f3f5;">About / Description</b>.<br><span style="font-size:12px;color:#868e96;">The code expires in 10 minutes and can only be used once.</span>`;
+
+                document.getElementById('roblox-login-step-confirm').style.display = 'none';
+                document.getElementById('roblox-login-step-verify').style.display = 'block';
+                document.getElementById('roblox-code-input').focus();
+            } catch (error) {
+                showToast(error.message || 'Could not create verification code.');
+            }
+        }
+
+        async function verifyRobloxAccount() {
+            if (!pendingRobloxUser || !robloxVerificationToken) {
+                showToast('Please restart the Roblox login process.');
+                return;
+            }
+
+            const codeInput = document.getElementById('roblox-code-input');
+            const status = document.getElementById('roblox-verify-status');
+            const btn = document.getElementById('verify-roblox-btn');
+            const code = codeInput.value.trim().toUpperCase();
+            codeInput.value = code;
+
+            if (!/^[A-Z]{9}$/.test(code)) {
+                status.style.color = '#ff6b6b';
+                status.textContent = 'Enter the 9-letter code exactly as shown.';
+                return;
+            }
+
+            btn.disabled = true;
+            btn.textContent = 'Checking...';
+            status.style.color = '#868e96';
+            status.textContent = 'Checking your Roblox profile...';
+
+            try {
+                const response = await fetch(apiUrl('/api/roblox/verify'), {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        token: robloxVerificationToken,
+                        code
+                    })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error || 'Verification failed.');
+                }
+
+                currentUser = data.user.name;
+                localStorage.setItem('app_current_user', currentUser);
+                getUserInventory(currentUser);
+                closeModal('login-modal');
+                resetRobloxLoginModal();
+                renderHeader();
+                renderMatches();
+                pubnub.publish({ channel: CHANNEL, message: { type: 'REQUEST_SYNC' } });
+                showToast(`Logged in as @${currentUser}!`);
+            } catch (error) {
+                status.style.color = '#ff6b6b';
+                status.textContent = error.message || 'Verification failed.';
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Verify & Login';
+            }
+        }
+
+        function backToRobloxUsernameStep() {
+            document.getElementById('roblox-login-step-confirm').style.display = 'none';
+            document.getElementById('roblox-login-step-username').style.display = 'block';
+        }
+
+        function backToRobloxConfirmStep() {
+            document.getElementById('roblox-login-step-verify').style.display = 'none';
+            document.getElementById('roblox-login-step-confirm').style.display = 'block';
         }
 
         function handleLogout() {

@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: bloxwin-roblox-api
+    runtime: node
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: FRONTEND_URL
+        sync: false
