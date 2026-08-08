@@ -143,6 +143,23 @@
             text-transform: uppercase;
         }
 
+        .deposit-avatar {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--accent);
+            background: #1a2332;
+            flex-shrink: 0;
+            cursor: pointer;
+            transition: transform 0.15s ease, box-shadow 0.2s ease;
+        }
+
+        .deposit-avatar:hover {
+            transform: scale(1.06);
+            box-shadow: 0 0 12px rgba(252, 196, 25, 0.25);
+        }
+
         .header-actions {
             display: flex;
             gap: 8px;
@@ -322,6 +339,15 @@
         .host-name:hover {
             color: #4dabf7;
         }
+        .host-name {
+            font-weight: 700;
+            color: #f1f3f5;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
         .host-name .avatar-thumb {
             width: 26px;
             height: 26px;
@@ -1598,6 +1624,10 @@
                 gap: 4px;
                 justify-content: flex-end;
             }
+            .deposit-avatar {
+                width: 22px;
+                height: 22px;
+            }
             .action-btn {
                 font-size: 10px;
                 padding: 5px 10px;
@@ -2392,7 +2422,7 @@
                 const msg = event.message;
                 if (msg.type === 'CHAT') {
                     if (isBanned(msg.username)) return;
-                    saveAndRenderChat(msg.username, msg.text, msg.time);
+                    saveAndRenderChat(msg.username, msg.text, msg.time, msg.avatar);
                 }
                 if (msg.type === 'MATCH_CREATED') {
                     if (!globalMatches.some(m => m.id === msg.match.id)) {
@@ -2434,16 +2464,40 @@
         function renderChatHistory() {
             const container = document.getElementById('chat-messages');
             container.innerHTML = '';
-            chatHistory.forEach(msg => appendChatMessageDOM(msg.username, msg.text, msg.time));
+            chatHistory.forEach(msg =>
+                appendChatMessageDOM(msg.username, msg.text, msg.time, msg.avatar)
+            );
         }
 
-        function saveAndRenderChat(username, text, time) {
+        function saveAndRenderChat(username, text, time, avatar) {
             if (isBanned(username)) return;
-            const newMsg = { username, text, time };
+
+            const avatarUrl =
+                avatar ||
+                getAvatarUrl(username) ||
+                (username === currentUser ? currentUserAvatar : null) ||
+                getDefaultAvatar();
+
+            if (avatar) {
+                storeAvatarForUser(username, avatar, getUserId(username));
+            }
+
+            const newMsg = {
+                username,
+                text,
+                time,
+                avatar: avatarUrl
+            };
+
             chatHistory.push(newMsg);
             if (chatHistory.length > 50) chatHistory.shift();
-            localStorage.setItem('app_chat_history', JSON.stringify(chatHistory));
-            appendChatMessageDOM(username, text, time);
+
+            localStorage.setItem(
+                'app_chat_history',
+                JSON.stringify(chatHistory)
+            );
+
+            appendChatMessageDOM(username, text, time, avatarUrl);
         }
 
         function sendMessage() {
@@ -2466,16 +2520,28 @@
             const timeStr = now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
             pubnub.publish({
                 channel: CHANNEL,
-                message: { type: 'CHAT', username: currentUser, text: text, time: timeStr }
+                message: {
+                    type: 'CHAT',
+                    username: currentUser,
+                    text: text,
+                    time: timeStr,
+                    avatar: currentUserAvatar || getAvatarUrl(currentUser) || getDefaultAvatar(),
+                    userId: currentUserId || getUserId(currentUser) || null
+                }
             });
             input.value = '';
         }
 
-        function appendChatMessageDOM(username, text, time) {
+        function appendChatMessageDOM(username, text, time, avatar) {
             const container = document.getElementById('chat-messages');
             const msgDiv = document.createElement('div');
             msgDiv.className = 'chat-msg';
-            const avatarUrl = getAvatarUrl(username) || getDefaultAvatar();
+
+            const avatarUrl =
+                avatar ||
+                getAvatarUrl(username) ||
+                (username === currentUser ? currentUserAvatar : null) ||
+                getDefaultAvatar();
             const adminTag = isAdmin(username) ? `<span class="admin-tag">Admin</span>` : '';
             const mutedLabel = isMuted(username) ? `<span class="muted-label">[MUTED]</span>` : '';
             const isMutedNow = isMuted(username);
@@ -2507,6 +2573,10 @@
                                 ${escapeHTML(currentUser)} ${adminTag}
                             </span>
                             <div class="header-actions">
+                                <img class="deposit-avatar" src="${avatarUrl}" alt="${escapeHTML(currentUser)}"
+                                     title="${escapeHTML(currentUser)}"
+                                     onclick="openProfile('${escapeHTML(currentUser)}')"
+                                     onerror="this.src='${getDefaultAvatar()}'">
                                 <button class="action-btn gold-btn" onclick="openDepositModal()">Deposit</button>
                                 <button class="action-btn purple-btn" onclick="openWithdrawModal()">Withdraw</button>
                                 <button class="action-btn" onclick="openCreateModal()">Create</button>
@@ -2766,7 +2836,11 @@
             globalMatches.forEach(match => {
                 const isMyMatch = currentUser && match.host === currentUser;
                 const totalValue = sumPets(match.hostPets);
-                const hostAvatar = getAvatarUrl(match.host) || getDefaultAvatar();
+                const hostAvatar =
+                    match.hostAvatar ||
+                    getAvatarUrl(match.host) ||
+                    (match.hostId ? getRobloxAvatarUrl(match.hostId) : null) ||
+                    getDefaultAvatar();
 
                 const card = document.createElement('div');
                 card.className = 'match-card';
@@ -2805,10 +2879,11 @@
 
                 card.innerHTML = `
                         <div class="match-top">
-                            ${hostSideHtml}
                             <span class="host-name" onclick="openProfile('${escapeHTML(match.host)}')">
-                                <img class="avatar-thumb" src="${hostAvatar}" alt="${escapeHTML(match.host)}" onerror="this.src='${getDefaultAvatar()}'">
-                                ${match.host}
+                                <img class="avatar-thumb" src="${hostAvatar}" alt="${escapeHTML(match.host)}"
+                                     onerror="this.src='${getDefaultAvatar()}'">
+                                ${hostSideHtml}
+                                ${escapeHTML(match.host)}
                             </span>
                             <div class="pet-badge">
                                 <div class="pet-group">${petsHtml}</div>
@@ -2850,7 +2925,11 @@
             const joinerPetsHtml =
                 `<div class="pet-img empty-pet" style="width:34px;height:34px;border-radius:6px;border:1px dashed #4dabf7;opacity:0.4;"></div>`;
 
-            const hostAvatar = getAvatarUrl(match.host) || getDefaultAvatar();
+            const hostAvatar =
+                match.hostAvatar ||
+                getAvatarUrl(match.host) ||
+                (match.hostId ? getRobloxAvatarUrl(match.hostId) : null) ||
+                getDefaultAvatar();
 
             let html = `
                     <div class="view-profile">
@@ -2943,6 +3022,8 @@
             const newMatch = {
                 id: Date.now(),
                 host: currentUser,
+                hostId: currentUserId || getUserId(currentUser) || null,
+                hostAvatar: currentUserAvatar || getAvatarUrl(currentUser) || getDefaultAvatar(),
                 hostPets: selectedPetsForMatch.slice(),
                 hostSide: selectedSideCreate
             };
