@@ -988,6 +988,35 @@
             min-height: 28px;
         }
 
+        /* --- Mini Coin Widget (for ongoing matches) --- */
+        .mini-coin-wrapper {
+            perspective: 600px;
+            width: 60px;
+            height: 60px;
+            margin: 0 auto 6px;
+            display: inline-block;
+        }
+        .mini-coin-wrapper .coin {
+            width: 100%;
+            height: 100%;
+        }
+        .mini-coin-wrapper .coin .side {
+            border-width: 2px;
+        }
+
+        .ongoing-match {
+            background: #1a2a3a;
+            border-color: #fcc419;
+            box-shadow: 0 0 20px rgba(252, 196, 25, 0.15);
+        }
+        .ongoing-match .match-status {
+            color: var(--accent);
+            font-weight: 700;
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+
+        /* Profile */
         .view-profile {
             display: flex;
             gap: 30px;
@@ -1020,26 +1049,6 @@
             height: 1px;
             background: var(--border-color);
             margin: 4px 0;
-        }
-
-        .view-profile .player .pets {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 6px;
-            justify-content: center;
-            margin-top: 4px;
-        }
-
-        .view-profile .player .pets .pet-img {
-            width: 34px;
-            height: 34px;
-            border-radius: 6px;
-            border: 1px solid #2d3b4f;
-        }
-
-        .view-profile .player .pets .pet-img.empty-pet {
-            border: 1px dashed #4dabf7;
-            opacity: 0.4;
         }
 
         .view-profile .vs {
@@ -1384,12 +1393,6 @@
             margin-top: 4px;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-        }
-        .profile-stat.win .stat-number {
-            color: var(--secondary);
-        }
-        .profile-stat.lose .stat-number {
-            color: #ff6b6b;
         }
 
         .profile-username {
@@ -1746,7 +1749,7 @@
         </div>
     </div>
 
-    <!-- Coin Flip -->
+    <!-- Coin Flip (fullscreen, only for players) -->
     <div class="modal-overlay" id="flip-modal">
         <div class="modal coin-modal">
             <h2 id="match-versus">Match Starting...</h2>
@@ -1809,7 +1812,6 @@
                 <button class="tab-btn active" data-tab="tab-users" onclick="switchAdminTab('tab-users')">Users</button>
                 <button class="tab-btn" data-tab="tab-pets" onclick="switchAdminTab('tab-pets')">Manage Pets</button>
                 <button class="tab-btn" data-tab="tab-muted" onclick="switchAdminTab('tab-muted')">Muted</button>
-                <button class="tab-btn" data-tab="tab-bans" onclick="switchAdminTab('tab-bans')">Bans</button>
             </div>
 
             <!-- Tab: Users -->
@@ -1821,7 +1823,7 @@
                 </div>
             </div>
 
-            <!-- Tab: Manage Pets (manuel kullanıcı girişi) -->
+            <!-- Tab: Manage Pets -->
             <div class="admin-tab-content" id="tab-pets">
                 <div style="font-weight:600;color:#ced4da;font-size:14px;margin-bottom:8px;">Add / Remove Pets</div>
                 <div class="admin-panel-user-select">
@@ -1847,20 +1849,8 @@
                     <div style="font-weight:500;color:#868e96;font-size:13px;margin-bottom:4px;">Mute a user:</div>
                     <div class="admin-manual-input">
                         <input type="text" id="admin-mute-input" placeholder="Enter username to mute" autocomplete="off">
+                        <input type="number" id="admin-mute-hours" placeholder="Hours" min="1" value="1" style="width:70px;padding:8px;background:#0f172a;border:1px solid var(--border-color);border-radius:30px;color:white;">
                         <button class="action-btn danger-btn" style="font-size:12px;padding:6px 18px;" onclick="adminMuteUser()">Mute</button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Tab: Bans -->
-            <div class="admin-tab-content" id="tab-bans">
-                <div style="font-weight:600;color:#ced4da;font-size:14px;margin-bottom:8px;">Banned Users</div>
-                <div id="admin-banned-list" style="min-height:40px;"></div>
-                <div style="margin-top:10px;">
-                    <div style="font-weight:500;color:#868e96;font-size:13px;margin-bottom:4px;">Ban a user:</div>
-                    <div class="admin-manual-input">
-                        <input type="text" id="admin-ban-input" placeholder="Enter username to ban" autocomplete="off">
-                        <button class="action-btn danger-btn" style="font-size:12px;padding:6px 18px;" onclick="adminBanUser()">Ban</button>
                     </div>
                 </div>
             </div>
@@ -1904,7 +1894,7 @@
                 <div id="profile-username" class="profile-username"></div>
                 <div id="profile-admin-badge" style="display:none;margin-top:4px;"><span class="admin-tag" style="background:#ff6b6b;color:#fff;font-size:11px;font-weight:800;padding:2px 12px;border-radius:20px;">Admin</span></div>
                 <div class="profile-stats" id="profile-stats"></div>
-                <div id="profile-pets" style="margin-top:12px;display:flex;flex-wrap:wrap;gap:6px;justify-content:center;"></div>
+                <!-- pets section removed -->
                 <button class="cancel-btn" style="width:100%;margin-top:16px;" onclick="closeModal('profile-modal')">Close</button>
             </div>
         </div>
@@ -2004,12 +1994,12 @@
         }
 
         // ============================================================
-        //  STATS
+        //  STATS (new: totalWager, totalProfit, totalLost)
         // ============================================================
         function getUserStats(username) {
             const data = localStorage.getItem(`app_stats_${username}`);
             if (data) return JSON.parse(data);
-            return { wins: 0, losses: 0, matches: 0, totalWon: 0, totalLost: 0 };
+            return { totalWager: 0, totalProfit: 0, totalLost: 0 };
         }
 
         function setUserStats(username, stats) {
@@ -2018,12 +2008,10 @@
 
         function updateStatsAfterMatch(username, won, value) {
             const stats = getUserStats(username);
-            stats.matches += 1;
+            stats.totalWager += value;
             if (won) {
-                stats.wins += 1;
-                stats.totalWon += value;
+                stats.totalProfit += value;
             } else {
-                stats.losses += 1;
                 stats.totalLost += value;
             }
             setUserStats(username, stats);
@@ -2399,33 +2387,42 @@
         }
 
         // ============================================================
-        //  MUTED / BANNED
+        //  MUTED (with expiry)
         // ============================================================
         function getMutedUsers() {
             const data = localStorage.getItem('app_muted_users');
-            return data ? JSON.parse(data) : [];
+            return data ? JSON.parse(data) : {};
         }
 
-        function setMutedUsers(list) {
-            localStorage.setItem('app_muted_users', JSON.stringify(list));
-        }
-
-        function getBannedUsers() {
-            const data = localStorage.getItem('app_banned_users');
-            return data ? JSON.parse(data) : [];
-        }
-
-        function setBannedUsers(list) {
-            localStorage.setItem('app_banned_users', JSON.stringify(list));
+        function setMutedUsers(obj) {
+            localStorage.setItem('app_muted_users', JSON.stringify(obj));
         }
 
         function isMuted(username) {
-            return getMutedUsers().includes(username);
+            const muted = getMutedUsers();
+            if (muted[username]) {
+                if (muted[username] > Date.now()) {
+                    return true;
+                } else {
+                    // expired, remove
+                    delete muted[username];
+                    setMutedUsers(muted);
+                    return false;
+                }
+            }
+            return false;
         }
 
-        function isBanned(username) {
-            return getBannedUsers().includes(username);
+        function getMuteRemaining(username) {
+            const muted = getMutedUsers();
+            if (muted[username]) {
+                const remaining = Math.ceil((muted[username] - Date.now()) / 3600000);
+                return remaining > 0 ? remaining : 0;
+            }
+            return 0;
         }
+
+        // BAN completely removed
 
         // ============================================================
         //  PUBSUB
@@ -2434,12 +2431,13 @@
             message: function(event) {
                 const msg = event.message;
                 if (msg.type === 'CHAT') {
-                    if (isBanned(msg.username)) return;
+                    // ban removed, only mute check
                     saveAndRenderChat(msg.username, msg.text, msg.time);
                 }
                 if (msg.type === 'MATCH_CREATED') {
                     if (!globalMatches.some(m => m.id === msg.match.id)) {
-                        globalMatches.unshift(msg.match);
+                        const newMatch = { ...msg.match, status: 'waiting' };
+                        globalMatches.unshift(newMatch);
                         renderMatches();
                     }
                 }
@@ -2448,10 +2446,30 @@
                     renderMatches();
                 }
                 if (msg.type === 'GAME_START') {
-                    globalMatches = globalMatches.filter(m => m.id !== msg.matchId);
-                    renderMatches();
-                    if (currentUser === msg.host || currentUser === msg.joiner) {
-                        executeCoinFlip(msg);
+                    const match = globalMatches.find(m => m.id === msg.matchId);
+                    if (match) {
+                        match.status = 'ongoing';
+                        match.joiner = msg.joiner;
+                        match.joinerPets = msg.joinerPets;
+                        match.joinerSide = msg.joinerSide;
+                        match.hostWins = msg.hostWins;
+                        match.winner = msg.hostWins ? msg.host : msg.joiner;
+                        match.winnerSide = msg.hostWins ? match.hostSide : msg.joinerSide;
+                        // Remove after 70 seconds
+                        setTimeout(() => {
+                            const idx = globalMatches.findIndex(m => m.id === msg.matchId);
+                            if (idx !== -1) {
+                                globalMatches.splice(idx, 1);
+                                renderMatches();
+                            }
+                        }, 70000);
+                        renderMatches();
+
+                        // Show fullscreen flip only for host/joiner
+                        if (currentUser === msg.host || currentUser === msg.joiner) {
+                            executeCoinFlip(msg);
+                        }
+                        // For others, the ongoing match card will show the mini animation
                     }
                 }
                 if (msg.type === 'REQUEST_SYNC' && globalMatches.length > 0) {
@@ -2481,7 +2499,7 @@
         }
 
         function saveAndRenderChat(username, text, time) {
-            if (isBanned(username)) return;
+            // mute check only (ban removed)
             const newMsg = { username, text, time };
             chatHistory.push(newMsg);
             if (chatHistory.length > 50) chatHistory.shift();
@@ -2491,8 +2509,11 @@
 
         function sendMessage() {
             if (!currentUser) { showToast('Please login first to send a message.'); return; }
-            if (isBanned(currentUser)) { showToast('You are banned from chatting.'); return; }
-            if (isMuted(currentUser)) { showToast('You are muted.'); return; }
+            if (isMuted(currentUser)) {
+                const hours = getMuteRemaining(currentUser);
+                showToast(`You are muted for ${hours} hour(s).`, 5000);
+                return;
+            }
 
             const input = document.getElementById('chat-input');
             const text = input.value.trim();
@@ -2522,7 +2543,7 @@
         }
 
         // ============================================================
-        //  RENDER MATCHES
+        //  RENDER MATCHES (supports waiting & ongoing)
         // ============================================================
         function renderMatches() {
             const container = document.getElementById('matches-list');
@@ -2595,7 +2616,13 @@
                     '<div style="color:#868e96;padding:20px;text-align:center;">No Active Matches.</div>';
                 return;
             }
-            globalMatches.forEach(match => {
+
+            // Separate waiting and ongoing
+            const waiting = globalMatches.filter(m => m.status === 'waiting');
+            const ongoing = globalMatches.filter(m => m.status === 'ongoing');
+
+            // Render waiting matches
+            waiting.forEach(match => {
                 const isMyMatch = currentUser && match.host === currentUser;
                 const totalValue = sumPets(match.hostPets);
 
@@ -2655,6 +2682,73 @@
                     `;
                 container.appendChild(card);
             });
+
+            // Render ongoing matches (mini coin flip)
+            ongoing.forEach(match => {
+                const totalValue = sumPets(match.hostPets) + sumPets(match.joinerPets);
+                const winnerSide = match.winnerSide || (match.hostWins ? match.hostSide : match.joinerSide);
+                const winnerName = match.winner || '...';
+
+                const hostSideImg = match.hostSide === 'H' ? 'https://bloxluck.com/img/dog.png' :
+                    'https://bloxluck.com/img/gem.png';
+                const joinerSideImg = match.joinerSide === 'H' ? 'https://bloxluck.com/img/dog.png' :
+                    'https://bloxluck.com/img/gem.png';
+
+                const card = document.createElement('div');
+                card.className = 'match-card ongoing-match';
+
+                // Mini coin animation
+                const coinHtml = `
+                        <div class="mini-coin-wrapper">
+                            <div class="coin" id="mini-coin-${match.id}">
+                                <div class="side heads"></div>
+                                <div class="side tails"></div>
+                            </div>
+                        </div>
+                    `;
+
+                card.innerHTML = `
+                        <div class="match-status">⚡ Match in progress ⚡</div>
+                        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:center;">
+                            <span><img src="${hostSideImg}" style="width:24px;height:24px;"> ${match.host}</span>
+                            <span style="color:var(--accent);font-weight:700;">VS</span>
+                            <span><img src="${joinerSideImg}" style="width:24px;height:24px;"> ${match.joiner}</span>
+                        </div>
+                        <div style="display:flex;justify-content:center;align-items:center;gap:16px;flex-wrap:wrap;">
+                            <div>Host side: <span class="side-indicator" style="font-size:12px;padding:2px 10px;"><img src="${hostSideImg}" alt="${match.hostSide}"> ${match.hostSide}</span></div>
+                            <div>Joiner side: <span class="opponent-side" style="font-size:12px;padding:2px 10px;"><img src="${joinerSideImg}" alt="${match.joinerSide}"> ${match.joinerSide}</span></div>
+                        </div>
+                        <div style="text-align:center;margin:6px 0;">
+                            ${coinHtml}
+                            <div id="mini-result-${match.id}" style="font-weight:700;font-size:14px;color:var(--accent);">Flipping...</div>
+                        </div>
+                        <div style="text-align:center;color:#868e96;font-size:13px;">Total Wager: ${totalValue}</div>
+                    `;
+
+                container.appendChild(card);
+
+                // Trigger mini coin flip animation after a short delay
+                setTimeout(() => {
+                    const miniCoin = document.getElementById(`mini-coin-${match.id}`);
+                    const resultDiv = document.getElementById(`mini-result-${match.id}`);
+                    if (!miniCoin) return;
+
+                    const endDegree = (10 * 360) + (winnerSide === 'H' ? 0 : 180);
+                    const styleSheet = document.createElement('style');
+                    const keyframeName = `mini_flip_${match.id}`;
+                    styleSheet.innerHTML =
+                        `@keyframes ${keyframeName} { 0% { transform: rotateY(0deg); } 100% { transform: rotateY(${endDegree}deg); } }`;
+                    document.head.appendChild(styleSheet);
+                    miniCoin.style.animation = `${keyframeName} 2.2s cubic-bezier(0.15, 0.85, 0.35, 1) forwards`;
+
+                    setTimeout(() => {
+                        miniCoin.style.animation = 'none';
+                        miniCoin.style.transform = `rotateY(${endDegree}deg)`;
+                        if (styleSheet.parentNode) document.head.removeChild(styleSheet);
+                        resultDiv.textContent = `🏆 ${winnerName} wins! (Side: ${winnerSide})`;
+                    }, 2300);
+                }, 300);
+            });
         }
 
         // ============================================================
@@ -2707,7 +2801,7 @@
         // ============================================================
         function openCreateModal() {
             if (!currentUser) { showToast('Please login first to create a match.'); return; }
-            if (isBanned(currentUser)) { showToast('You are banned.'); return; }
+            // ban removed
             const inv = getUserInventory(currentUser);
             const grid = document.getElementById('modal-inventory');
             grid.innerHTML = '';
@@ -2764,7 +2858,8 @@
                 id: Date.now(),
                 host: currentUser,
                 hostPets: selectedPetsForMatch.slice(),
-                hostSide: selectedSideCreate
+                hostSide: selectedSideCreate,
+                status: 'waiting'
             };
             globalMatches.unshift(newMatch);
             renderMatches();
@@ -2793,7 +2888,7 @@
         // ============================================================
         function openJoinSelectModal(matchId) {
             if (!currentUser) { showToast('Please login first to join a match.'); return; }
-            if (isBanned(currentUser)) { showToast('You are banned.'); return; }
+            // ban removed
             matchToJoin = globalMatches.find(m => m.id === matchId);
             if (!matchToJoin) return;
 
@@ -2866,7 +2961,7 @@
         }
 
         // ============================================================
-        //  COIN FLIP
+        //  COIN FLIP (fullscreen for players)
         // ============================================================
         function executeCoinFlip(gameData) {
             const flipModal = document.getElementById('flip-modal');
@@ -2970,7 +3065,7 @@
         // ============================================================
         function openWithdrawModal() {
             if (!currentUser) { showToast('Please login first.'); return; }
-            if (isBanned(currentUser)) { showToast('You are banned.'); return; }
+            // ban removed
             const inv = getUserInventory(currentUser);
             const grid = document.getElementById('withdraw-pets-grid');
             grid.innerHTML = '';
@@ -3032,44 +3127,32 @@
         }
 
         // ============================================================
-        //  PROFILE
+        //  PROFILE (stats only, no pets)
         // ============================================================
         function openProfile(username) {
             if (!username) return;
             const stats = getUserStats(username);
-            const inv = getUserInventory(username);
 
             const adminTag = isAdmin(username) ? `<span class="admin-tag">Admin</span>` : '';
             document.getElementById('profile-username').innerHTML = `${escapeHTML(username)} ${adminTag}`;
 
             const statsHtml = `
-                    <div class="profile-stat win">
-                        <div class="stat-number">${stats.wins}</div>
-                        <div class="stat-label">Wins</div>
-                    </div>
-                    <div class="profile-stat lose">
-                        <div class="stat-number">${stats.losses}</div>
-                        <div class="stat-label">Losses</div>
-                    </div>
                     <div class="profile-stat">
-                        <div class="stat-number">${stats.matches}</div>
-                        <div class="stat-label">Matches</div>
+                        <div class="stat-number">${stats.totalWager}</div>
+                        <div class="stat-label">Total Wager</div>
+                    </div>
+                    <div class="profile-stat" style="border-color:var(--secondary);">
+                        <div class="stat-number" style="color:var(--secondary);">${stats.totalProfit}</div>
+                        <div class="stat-label">Total Profit</div>
+                    </div>
+                    <div class="profile-stat" style="border-color:#ff6b6b;">
+                        <div class="stat-number" style="color:#ff6b6b;">${stats.totalLost}</div>
+                        <div class="stat-label">Total Lost</div>
                     </div>
                 `;
             document.getElementById('profile-stats').innerHTML = statsHtml;
 
-            const petsContainer = document.getElementById('profile-pets');
-            if (inv.length === 0) {
-                petsContainer.innerHTML = '<div style="color:#868e96;font-size:13px;padding:8px;">No pets in inventory.</div>';
-            } else {
-                petsContainer.innerHTML = inv.map(p =>
-                    `<div style="display:flex;flex-direction:column;align-items:center;background:#0f172a;padding:6px 10px;border-radius:12px;border:1px solid var(--border-color);">
-                            <img class="pet-img" src="${p.icon}" alt="${p.name}" style="width:40px;height:40px;">
-                            <span style="font-size:10px;color:#868e96;margin-top:2px;">${p.value}</span>
-                        </div>`
-                ).join('');
-            }
-
+            // pets removed
             document.getElementById('profile-modal').style.display = 'flex';
         }
 
@@ -3084,7 +3167,6 @@
             document.getElementById('admin-modal').style.display = 'flex';
             adminRefreshUsers();
             adminRenderMuted();
-            adminRenderBanned();
             switchAdminTab('tab-users');
         }
 
@@ -3096,7 +3178,6 @@
 
             if (tabId === 'tab-users') adminRefreshUsers();
             if (tabId === 'tab-muted') adminRenderMuted();
-            if (tabId === 'tab-bans') adminRenderBanned();
         }
 
         function adminRefreshUsers() {
@@ -3112,12 +3193,11 @@
                 const petCount = inv.length;
                 const isAdminUser = isAdmin(u);
                 const isMutedUser = isMuted(u);
-                const isBannedUser = isBanned(u);
                 const div = document.createElement('div');
                 div.className = 'admin-user-item';
                 div.innerHTML = `
                         <span class="username">
-                            ${escapeHTML(u)} ${isAdminUser ? '👑' : ''} ${isBannedUser ? '⛔' : ''} ${isMutedUser ? '🔇' : ''}
+                            ${escapeHTML(u)} ${isAdminUser ? '👑' : ''} ${isMutedUser ? '🔇' : ''}
                             <span style="color:#868e96;font-weight:400;font-size:12px;">${petCount} pets</span>
                         </span>
                         <div class="user-actions">
@@ -3130,7 +3210,7 @@
             });
         }
 
-        // ===== Manage Pets (manuel input) =====
+        // ===== Manage Pets =====
         function adminLoadUserPets() {
             const input = document.getElementById('admin-pet-username-input');
             const username = input.value.trim();
@@ -3238,7 +3318,6 @@
             adminRefreshUsers();
         }
 
-        // Users tabındaki + ve göz butonları için yardımcı
         function adminAddPetToUser(username) {
             adminCurrentTargetUser = username;
             document.getElementById('admin-pet-username-input').value = username;
@@ -3265,22 +3344,26 @@
             }
         }
 
-        // --- Muted ---
+        // --- Muted with expiry ---
         function adminRenderMuted() {
             const list = document.getElementById('admin-muted-list');
             const muted = getMutedUsers();
-            if (muted.length === 0) {
+            const keys = Object.keys(muted);
+            if (keys.length === 0) {
                 list.innerHTML = '<div style="color:#868e96;padding:8px;font-size:13px;">No muted users.</div>';
                 return;
             }
             list.innerHTML = '';
             const container = document.createElement('div');
             container.className = 'admin-muted-users';
-            muted.forEach(u => {
+            keys.forEach(u => {
+                const expiry = muted[u];
+                const remaining = Math.ceil((expiry - Date.now()) / 3600000);
+                const label = remaining > 0 ? `${remaining}h` : 'expired';
                 const tag = document.createElement('span');
                 tag.className = 'admin-muted-user';
                 tag.innerHTML =
-                    `${escapeHTML(u)} <button class="unmute-btn" onclick="adminUnmuteUser('${escapeHTML(u)}')">✕</button>`;
+                    `${escapeHTML(u)} (${label}) <button class="unmute-btn" onclick="adminUnmuteUser('${escapeHTML(u)}')">✕</button>`;
                 container.appendChild(tag);
             });
             list.appendChild(container);
@@ -3288,73 +3371,30 @@
 
         function adminMuteUser() {
             const input = document.getElementById('admin-mute-input');
+            const hoursInput = document.getElementById('admin-mute-hours');
             const username = input.value.trim();
+            const hours = parseInt(hoursInput.value) || 1;
             if (!username) { showToast('Enter a username to mute.'); return; }
             if (isAdmin(username)) { showToast('Cannot mute an admin.'); return; }
             const muted = getMutedUsers();
-            if (muted.includes(username)) { showToast(`${username} is already muted.`); return; }
-            muted.push(username);
+            if (muted[username]) { showToast(`${username} is already muted.`); return; }
+            muted[username] = Date.now() + hours * 3600000;
             setMutedUsers(muted);
             input.value = '';
-            showToast(`🔇 Muted ${username}`);
+            showToast(`🔇 Muted ${username} for ${hours} hour(s).`);
             adminRenderMuted();
             adminRefreshUsers();
         }
 
         function adminUnmuteUser(username) {
             let muted = getMutedUsers();
-            muted = muted.filter(u => u !== username);
-            setMutedUsers(muted);
-            showToast(`🔊 Unmuted ${username}`);
-            adminRenderMuted();
-            adminRefreshUsers();
-        }
-
-        // --- Bans ---
-        function adminRenderBanned() {
-            const list = document.getElementById('admin-banned-list');
-            const banned = getBannedUsers();
-            if (banned.length === 0) {
-                list.innerHTML = '<div style="color:#868e96;padding:8px;font-size:13px;">No banned users.</div>';
-                return;
+            if (muted[username]) {
+                delete muted[username];
+                setMutedUsers(muted);
+                showToast(`🔊 Unmuted ${username}`);
+                adminRenderMuted();
+                adminRefreshUsers();
             }
-            list.innerHTML = '';
-            const container = document.createElement('div');
-            container.className = 'admin-muted-users';
-            banned.forEach(u => {
-                const tag = document.createElement('span');
-                tag.className = 'admin-muted-user';
-                tag.style.borderColor = '#ff6b6b88';
-                tag.innerHTML =
-                    `${escapeHTML(u)} <button class="unmute-btn" onclick="adminUnbanUser('${escapeHTML(u)}')" style="color:#ff6b6b;">✕</button>`;
-                container.appendChild(tag);
-            });
-            list.appendChild(container);
-        }
-
-        function adminBanUser() {
-            const input = document.getElementById('admin-ban-input');
-            const username = input.value.trim();
-            if (!username) { showToast('Enter a username to ban.'); return; }
-            if (isAdmin(username)) { showToast('Cannot ban an admin.'); return; }
-            if (username === currentUser) { showToast('You cannot ban yourself.'); return; }
-            const banned = getBannedUsers();
-            if (banned.includes(username)) { showToast(`${username} is already banned.`); return; }
-            banned.push(username);
-            setBannedUsers(banned);
-            input.value = '';
-            showToast(`⛔ Banned ${username}`);
-            adminRenderBanned();
-            adminRefreshUsers();
-        }
-
-        function adminUnbanUser(username) {
-            let banned = getBannedUsers();
-            banned = banned.filter(u => u !== username);
-            setBannedUsers(banned);
-            showToast(`✅ Unbanned ${username}`);
-            adminRenderBanned();
-            adminRefreshUsers();
         }
 
         // ============================================================
@@ -3371,9 +3411,27 @@
             }
         }
 
-        if (currentUser && isBanned(currentUser)) {
-            showToast('⚠️ You are banned from using this site.', 5000);
-        }
+        // Load chat history from PubNub (optional, fallback to localStorage)
+        pubnub.history({ channel: CHANNEL, count: 50 }, function(status, response) {
+            if (!status.error && response.messages) {
+                const messages = response.messages.map(m => m.entry);
+                let newChats = 0;
+                messages.forEach(msg => {
+                    if (msg.type === 'CHAT') {
+                        const exists = chatHistory.some(ch => ch.time === msg.time && ch.username === msg.username && ch
+                            .text === msg.text);
+                        if (!exists) {
+                            chatHistory.push({ username: msg.username, text: msg.text, time: msg.time });
+                            newChats++;
+                        }
+                    }
+                });
+                if (newChats > 0) {
+                    localStorage.setItem('app_chat_history', JSON.stringify(chatHistory));
+                    renderChatHistory();
+                }
+            }
+        });
 
         setTimeout(() => {
             pubnub.publish({ channel: CHANNEL, message: { type: 'REQUEST_SYNC' } });
