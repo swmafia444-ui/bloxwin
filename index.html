@@ -90,12 +90,6 @@
             align-items: center;
             gap: 10px;
         }
-        .logo-wrapper {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 2px;
-        }
         .logo-wrapper span {
             font-size: 28px;
             font-weight: 800;
@@ -313,14 +307,6 @@
             margin-top: 4px;
             border-top: 1px solid var(--border-color);
             padding-top: 10px;
-        }
-
-        .match-user {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            font-weight: 600;
-            flex-wrap: wrap;
         }
 
         .host-name {
@@ -1417,13 +1403,20 @@
             font-size: 12px;
             padding: 6px 16px;
         }
+        .admin-manual-input .action-btn.small {
+            font-size: 11px;
+            padding: 5px 12px;
+        }
 
         /* Profile Modal */
         .profile-stats {
             display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
+            grid-template-columns: 1fr 1fr;
             gap: 12px;
             margin: 16px 0 20px;
+            max-width: 340px;
+            margin-left: auto;
+            margin-right: auto;
         }
         .profile-stat {
             background: #0f172a;
@@ -1433,12 +1426,12 @@
             border: 1px solid var(--border-color);
         }
         .profile-stat .stat-number {
-            font-size: 24px;
+            font-size: 22px;
             font-weight: 800;
             color: var(--accent);
         }
         .profile-stat .stat-label {
-            font-size: 12px;
+            font-size: 11px;
             color: #868e96;
             margin-top: 4px;
             text-transform: uppercase;
@@ -1477,6 +1470,20 @@
             border-radius: 20px;
             margin-left: 8px;
             letter-spacing: 0.5px;
+        }
+
+        .profile-pets-container {
+            margin-top: 12px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            justify-content: center;
+            min-height: 30px;
+        }
+        .profile-pets-container .no-pets {
+            color: #868e96;
+            font-size: 13px;
+            padding: 8px;
         }
 
         /* Mobile */
@@ -1633,8 +1640,9 @@
                 font-size: 18px;
             }
             .profile-stats {
-                grid-template-columns: 1fr 1fr 1fr;
+                grid-template-columns: 1fr 1fr;
                 gap: 8px;
+                max-width: 100%;
             }
             .profile-stat .stat-number {
                 font-size: 18px;
@@ -1773,9 +1781,8 @@
                 <div style="font-size:12px;color:#868e96;margin-bottom:6px;">YOUR 9-LETTER CODE</div>
                 <div id="roblox-verification-code" style="font-size:30px;font-weight:800;letter-spacing:5px;color:var(--accent);"></div>
             </div>
-            <div class="form-group">
-                <label>Verification Code</label>
-                <input type="text" id="roblox-code-input" maxlength="9" autocomplete="off" autocapitalize="characters" placeholder="Enter the 9-letter code from your Roblox profile">
+            <div style="font-size:13px;color:#868e96;text-align:center;margin-bottom:12px;">
+                Copy this code and paste it into your Roblox profile's <b style="color:#f1f3f5;">About / Description</b> section, then click Verify.
             </div>
             <div class="modal-actions">
                 <button class="post-btn" id="verify-roblox-btn" onclick="verifyRobloxAccount()">Verify & Login</button>
@@ -1784,8 +1791,6 @@
             <div id="roblox-verify-status" style="text-align:center;margin-top:14px;min-height:20px;font-size:13px;color:#868e96;"></div>
         </div>
     </div>
-
-    <!-- Inventory (removed from UI but kept for admin) -->
 
     <!-- Create Match -->
     <div class="modal-overlay" id="create-modal">
@@ -1845,7 +1850,7 @@
         </div>
     </div>
 
-    <!-- Deposit Modal (Online Bots) -->
+    <!-- Deposit Modal -->
     <div class="modal-overlay" id="deposit-modal">
         <div class="modal">
             <h2>Online Bots</h2>
@@ -1908,12 +1913,12 @@
             <!-- Tab: Manage Pets -->
             <div class="admin-tab-content" id="tab-pets">
                 <div style="font-weight:600;color:#ced4da;font-size:14px;margin-bottom:8px;">Add / Remove Pets</div>
-                <div class="admin-panel-user-select">
-                    <select id="admin-pet-user-select"></select>
-                    <button class="action-btn secondary-btn" style="font-size:12px;padding:4px 14px;" onclick="adminLoadUserPets()">Load</button>
+                <div class="admin-manual-input">
+                    <input type="text" id="admin-pet-username-input" placeholder="Enter username" autocomplete="off">
+                    <button class="action-btn secondary-btn" style="font-size:12px;padding:6px 16px;" onclick="adminLoadUserPetsManual()">Load</button>
                 </div>
                 <div id="admin-user-pets-display" style="background:#0f172a;border-radius:12px;padding:12px;min-height:60px;border:1px solid var(--border-color);margin-bottom:10px;display:flex;flex-wrap:wrap;gap:6px;align-items:center;">
-                    <span style="color:#868e96;font-size:13px;">Select a user and load their pets.</span>
+                    <span style="color:#868e96;font-size:13px;">Enter a username and click Load.</span>
                 </div>
                 <div style="display:flex;gap:8px;flex-wrap:wrap;">
                     <button class="action-btn gold-btn" style="font-size:12px;padding:4px 14px;" onclick="adminOpenAddPet()">Add Pet</button>
@@ -1930,7 +1935,8 @@
                 <div style="margin-top:10px;">
                     <div style="font-weight:500;color:#868e96;font-size:13px;margin-bottom:4px;">Mute a user:</div>
                     <div class="admin-manual-input">
-                        <input type="text" id="admin-mute-input" placeholder="Enter username to mute" autocomplete="off">
+                        <input type="text" id="admin-mute-input" placeholder="Username" autocomplete="off" style="flex:0.8;">
+                        <input type="number" id="admin-mute-hours" placeholder="Hours" min="1" value="1" style="flex:0.4;min-width:80px;padding:8px 12px;background:#0f172a;border:1px solid var(--border-color);border-radius:30px;color:white;outline:none;font-size:13px;">
                         <button class="action-btn danger-btn" style="font-size:12px;padding:6px 18px;" onclick="adminMuteUser()">Mute</button>
                     </div>
                 </div>
@@ -1943,7 +1949,7 @@
                 <div style="margin-top:10px;">
                     <div style="font-weight:500;color:#868e96;font-size:13px;margin-bottom:4px;">Ban a user:</div>
                     <div class="admin-manual-input">
-                        <input type="text" id="admin-ban-input" placeholder="Enter username to ban" autocomplete="off">
+                        <input type="text" id="admin-ban-input" placeholder="Username" autocomplete="off">
                         <button class="action-btn danger-btn" style="font-size:12px;padding:6px 18px;" onclick="adminBanUser()">Ban</button>
                     </div>
                 </div>
@@ -1989,7 +1995,7 @@
                 <div id="profile-username" class="profile-username"></div>
                 <div id="profile-admin-badge" style="display:none;margin-top:4px;"><span class="admin-tag" style="background:#ff6b6b;color:#fff;font-size:11px;font-weight:800;padding:2px 12px;border-radius:20px;">Admin</span></div>
                 <div class="profile-stats" id="profile-stats"></div>
-                <div id="profile-pets" style="margin-top:12px;display:flex;flex-wrap:wrap;gap:6px;justify-content:center;"></div>
+                <div id="profile-pets" class="profile-pets-container"></div>
                 <button class="cancel-btn" style="width:100%;margin-top:16px;" onclick="closeModal('profile-modal')">Close</button>
             </div>
         </div>
@@ -2063,7 +2069,6 @@
         function getAvatarUrl(username) {
             const data = getUserData(username);
             if (data && data.avatar) return data.avatar;
-            // Try to fetch from Roblox API
             return null;
         }
 
@@ -2090,12 +2095,12 @@
         }
 
         // ============================================================
-        //  STATS
+        //  STATS (value won / lost only)
         // ============================================================
         function getUserStats(username) {
             const data = localStorage.getItem(`app_stats_${username}`);
             if (data) return JSON.parse(data);
-            return { wins: 0, losses: 0, matches: 0, totalWon: 0, totalLost: 0 };
+            return { valueWon: 0, valueLost: 0, matches: 0 };
         }
 
         function setUserStats(username, stats) {
@@ -2106,11 +2111,9 @@
             const stats = getUserStats(username);
             stats.matches += 1;
             if (won) {
-                stats.wins += 1;
-                stats.totalWon += value;
+                stats.valueWon += value;
             } else {
-                stats.losses += 1;
-                stats.totalLost += value;
+                stats.valueLost += value;
             }
             setUserStats(username, stats);
         }
@@ -2256,200 +2259,92 @@
         }
 
         // ============================================================
-        //  RENDER HEADER
+        //  MUTED (with expiry)
         // ============================================================
-        function renderHeader() {
-            const container = document.getElementById('user-header-area');
-            if (currentUser) {
-                const avatarUrl = currentUserAvatar || getAvatarUrl(currentUser) || getDefaultAvatar();
-                const adminTag = isAdmin(currentUser) ? `<span class="admin-tag">Admin</span>` : '';
-                const adminPanelBtn = isAdmin(currentUser) ?
-                    `<button class="action-btn admin-btn" onclick="openAdminPanel()">Admin</button>` : '';
+        function getMutedUsers() {
+            const data = localStorage.getItem('app_muted_users');
+            if (data) return JSON.parse(data);
+            return {};
+        }
 
-                container.innerHTML = `
-                        <div class="user-info-bar">
-                            <span class="user-badge" onclick="openProfile('${escapeHTML(currentUser)}')">
-                                <img class="avatar-thumb" src="${avatarUrl}" alt="${escapeHTML(currentUser)}" onerror="this.src='${getDefaultAvatar()}'">
-                                ${escapeHTML(currentUser)} ${adminTag}
-                            </span>
-                            <div class="header-actions">
-                                <button class="action-btn gold-btn" onclick="openDepositModal()">Deposit</button>
-                                <button class="action-btn purple-btn" onclick="openWithdrawModal()">Withdraw</button>
-                                <button class="action-btn" onclick="openCreateModal()">Create</button>
-                                ${adminPanelBtn}
-                                <button class="action-btn danger-btn" onclick="handleLogout()">Logout</button>
-                            </div>
-                        </div>
-                    `;
-            } else {
-                container.innerHTML = `
-                        <div class="header-actions">
-                            <button class="action-btn" onclick="resetRobloxLoginModal(); document.getElementById('login-modal').style.display='flex'">Login with Roblox</button>
-                        </div>
-                    `;
+        function setMutedUsers(obj) {
+            localStorage.setItem('app_muted_users', JSON.stringify(obj));
+        }
+
+        function isMuted(username) {
+            const muted = getMutedUsers();
+            if (!muted[username]) return false;
+            const expiry = muted[username];
+            if (expiry && Date.now() > expiry) {
+                // Auto-unmute
+                delete muted[username];
+                setMutedUsers(muted);
+                return false;
             }
+            return true;
+        }
+
+        function getMuteExpiry(username) {
+            const muted = getMutedUsers();
+            return muted[username] || null;
+        }
+
+        function getMutedUserList() {
+            const muted = getMutedUsers();
+            const now = Date.now();
+            let list = [];
+            for (const [user, expiry] of Object.entries(muted)) {
+                if (expiry && now > expiry) {
+                    delete muted[user];
+                    continue;
+                }
+                list.push({ user, expiry });
+            }
+            setMutedUsers(muted);
+            return list;
+        }
+
+        function muteUser(username, hours) {
+            const muted = getMutedUsers();
+            const expiry = Date.now() + (hours * 3600 * 1000);
+            muted[username] = expiry;
+            setMutedUsers(muted);
+        }
+
+        function unmuteUser(username) {
+            const muted = getMutedUsers();
+            delete muted[username];
+            setMutedUsers(muted);
         }
 
         // ============================================================
-        //  LOGIN / LOGOUT
+        //  BANNED
         // ============================================================
-        let pendingRobloxUser = null;
-        let robloxVerificationToken = null;
-
-        function resetRobloxLoginModal() {
-            pendingRobloxUser = null;
-            robloxVerificationToken = null;
-            document.getElementById('roblox-login-step-username').style.display = 'block';
-            document.getElementById('roblox-login-step-confirm').style.display = 'none';
-            document.getElementById('roblox-login-step-verify').style.display = 'none';
-            document.getElementById('login-username').value = '';
-            document.getElementById('roblox-code-input').value = '';
-            document.getElementById('roblox-verification-code').textContent = '';
-            document.getElementById('roblox-verify-status').textContent = '';
+        function getBannedUsers() {
+            const data = localStorage.getItem('app_banned_users');
+            return data ? JSON.parse(data) : [];
         }
 
-        async function findRobloxUser() {
-            const input = document.getElementById('login-username');
-            const btn = document.getElementById('find-roblox-user-btn');
-            const username = input.value.trim();
-            if (!username) { showToast('Please enter your Roblox username.'); return; }
-            btn.disabled = true;
-            btn.textContent = 'Searching...';
-            try {
-                const response = await fetch(apiUrl('/api/roblox/user'), {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ username })
-                });
-                const data = await response.json();
-                if (!response.ok) throw new Error(data.error || 'Roblox user not found.');
-                pendingRobloxUser = data.user;
-                const avatarUrl = data.user.avatarUrl || getRobloxAvatarUrl(data.user.id);
-                document.getElementById('roblox-user-preview').innerHTML = `
-                        <img src="${escapeHTML(avatarUrl)}"
-                             alt="${escapeHTML(data.user.name)}"
-                             style="width:86px;height:86px;border-radius:50%;object-fit:cover;border:2px solid var(--accent);margin-bottom:10px;"
-                             onerror="this.src='${getDefaultAvatar()}'">
-                        <div style="font-size:20px;font-weight:800;color:#f1f3f5;">${escapeHTML(data.user.displayName || data.user.name)}</div>
-                        <div style="color:#868e96;margin-top:4px;">@${escapeHTML(data.user.name)}</div>
-                    `;
-                document.getElementById('roblox-login-step-username').style.display = 'none';
-                document.getElementById('roblox-login-step-confirm').style.display = 'block';
-            } catch (error) {
-                showToast(error.message || 'Could not find that Roblox account.');
-            } finally {
-                btn.disabled = false;
-                btn.textContent = 'Continue';
+        function setBannedUsers(list) {
+            localStorage.setItem('app_banned_users', JSON.stringify(list));
+        }
+
+        function isBanned(username) {
+            return getBannedUsers().includes(username);
+        }
+
+        function banUser(username) {
+            const banned = getBannedUsers();
+            if (!banned.includes(username)) {
+                banned.push(username);
+                setBannedUsers(banned);
             }
         }
 
-        async function confirmRobloxUser() {
-            if (!pendingRobloxUser) return;
-            const info = document.getElementById('roblox-verify-info');
-            const codeEl = document.getElementById('roblox-verification-code');
-            info.textContent = 'Creating your verification code...';
-            codeEl.textContent = '•••••••••';
-            try {
-                const response = await fetch(apiUrl('/api/roblox/start-verification'), {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ userId: pendingRobloxUser.id })
-                });
-                const data = await response.json();
-                if (!response.ok) throw new Error(data.error || 'Could not create verification code.');
-                robloxVerificationToken = data.token;
-                codeEl.textContent = data.code;
-                info.innerHTML =
-                    `Open your Roblox profile for <b style="color:#f1f3f5;">@${escapeHTML(pendingRobloxUser.name)}</b> and put this code in your <b style="color:#f1f3f5;">About / Description</b>.<br><span style="font-size:12px;color:#868e96;">The code expires in 10 minutes and can only be used once.</span>`;
-                document.getElementById('roblox-login-step-confirm').style.display = 'none';
-                document.getElementById('roblox-login-step-verify').style.display = 'block';
-                document.getElementById('roblox-code-input').focus();
-            } catch (error) {
-                showToast(error.message || 'Could not create verification code.');
-            }
-        }
-
-        async function verifyRobloxAccount() {
-            if (!pendingRobloxUser || !robloxVerificationToken) {
-                showToast('Please restart the Roblox login process.');
-                return;
-            }
-            const codeInput = document.getElementById('roblox-code-input');
-            const status = document.getElementById('roblox-verify-status');
-            const btn = document.getElementById('verify-roblox-btn');
-            const code = codeInput.value.trim().toUpperCase();
-            codeInput.value = code;
-            if (!/^[A-Z]{9}$/.test(code)) {
-                status.style.color = '#ff6b6b';
-                status.textContent = 'Enter the 9-letter code exactly as shown.';
-                return;
-            }
-            btn.disabled = true;
-            btn.textContent = 'Checking...';
-            status.style.color = '#868e96';
-            status.textContent = 'Checking your Roblox profile...';
-            try {
-                const response = await fetch(apiUrl('/api/roblox/verify'), {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ token: robloxVerificationToken, code })
-                });
-                const data = await response.json();
-                if (!response.ok) throw new Error(data.error || 'Verification failed.');
-                currentUser = data.user.name;
-                currentUserId = data.user.id;
-                currentUserAvatar = data.user.avatarUrl || getRobloxAvatarUrl(data.user.id);
-                localStorage.setItem('app_current_user', currentUser);
-                localStorage.setItem('app_current_user_id', currentUserId);
-                localStorage.setItem('app_current_user_avatar', currentUserAvatar);
-                // Store user data
-                storeAvatarForUser(currentUser, currentUserAvatar, currentUserId);
-                // Register user
-                addRegisteredUser(currentUser);
-                // Ensure empty inventory
-                getUserInventory(currentUser);
-                closeModal('login-modal');
-                resetRobloxLoginModal();
-                renderHeader();
-                renderMatches();
-                pubnub.publish({ channel: CHANNEL, message: { type: 'REQUEST_SYNC' } });
-                showToast(`Logged in as @${currentUser}!`);
-            } catch (error) {
-                status.style.color = '#ff6b6b';
-                status.textContent = error.message || 'Verification failed.';
-            } finally {
-                btn.disabled = false;
-                btn.textContent = 'Verify & Login';
-            }
-        }
-
-        function backToRobloxUsernameStep() {
-            document.getElementById('roblox-login-step-confirm').style.display = 'none';
-            document.getElementById('roblox-login-step-username').style.display = 'block';
-        }
-
-        function backToRobloxConfirmStep() {
-            document.getElementById('roblox-login-step-verify').style.display = 'none';
-            document.getElementById('roblox-login-step-confirm').style.display = 'block';
-        }
-
-        function handleLogout() {
-            currentUser = null;
-            currentUserId = null;
-            currentUserAvatar = null;
-            localStorage.removeItem('app_current_user');
-            localStorage.removeItem('app_current_user_id');
-            localStorage.removeItem('app_current_user_avatar');
-            if (showHistory) {
-                showHistory = false;
-                const btn = document.getElementById('history-toggle-btn');
-                const title = document.getElementById('section-title-text');
-                btn.textContent = 'History';
-                btn.classList.remove('active');
-                title.textContent = 'Live Matches';
-            }
-            renderHeader();
-            renderMatches();
+        function unbanUser(username) {
+            let banned = getBannedUsers();
+            banned = banned.filter(u => u !== username);
+            setBannedUsers(banned);
         }
 
         // ============================================================
@@ -2487,35 +2382,6 @@
                 }
             });
             setUserInventory(username, inv);
-        }
-
-        // ============================================================
-        //  MUTED / BANNED
-        // ============================================================
-        function getMutedUsers() {
-            const data = localStorage.getItem('app_muted_users');
-            return data ? JSON.parse(data) : [];
-        }
-
-        function setMutedUsers(list) {
-            localStorage.setItem('app_muted_users', JSON.stringify(list));
-        }
-
-        function getBannedUsers() {
-            const data = localStorage.getItem('app_banned_users');
-            return data ? JSON.parse(data) : [];
-        }
-
-        function setBannedUsers(list) {
-            localStorage.setItem('app_banned_users', JSON.stringify(list));
-        }
-
-        function isMuted(username) {
-            return getMutedUsers().includes(username);
-        }
-
-        function isBanned(username) {
-            return getBannedUsers().includes(username);
         }
 
         // ============================================================
@@ -2582,8 +2448,16 @@
 
         function sendMessage() {
             if (!currentUser) { showToast('Please login first to send a message.'); return; }
-            if (isBanned(currentUser)) { showToast('You are banned from chatting.'); return; }
-            if (isMuted(currentUser)) { showToast('You are muted.'); return; }
+            if (isBanned(currentUser)) {
+                showToast('⛔ You are banned from this site.', 5000);
+                return;
+            }
+            if (isMuted(currentUser)) {
+                const expiry = getMuteExpiry(currentUser);
+                const remaining = expiry ? Math.ceil((expiry - Date.now()) / (3600 * 1000)) : 0;
+                showToast(`🔇 You are muted for ${remaining} more hour(s).`, 4000);
+                return;
+            }
 
             const input = document.getElementById('chat-input');
             const text = input.value.trim();
@@ -2604,6 +2478,7 @@
             const avatarUrl = getAvatarUrl(username) || getDefaultAvatar();
             const adminTag = isAdmin(username) ? `<span class="admin-tag">Admin</span>` : '';
             const mutedLabel = isMuted(username) ? `<span class="muted-label">[MUTED]</span>` : '';
+            const isMutedNow = isMuted(username);
             msgDiv.innerHTML = `
                     <img class="msg-avatar" src="${avatarUrl}" alt="${escapeHTML(username)}" onerror="this.src='${getDefaultAvatar()}'">
                     <div class="msg-content">
@@ -2612,6 +2487,206 @@
                 `;
             container.appendChild(msgDiv);
             container.scrollTop = container.scrollHeight;
+        }
+
+        // ============================================================
+        //  RENDER HEADER
+        // ============================================================
+        function renderHeader() {
+            const container = document.getElementById('user-header-area');
+            if (currentUser) {
+                const avatarUrl = currentUserAvatar || getAvatarUrl(currentUser) || getDefaultAvatar();
+                const adminTag = isAdmin(currentUser) ? `<span class="admin-tag">Admin</span>` : '';
+                const adminPanelBtn = isAdmin(currentUser) ?
+                    `<button class="action-btn admin-btn" onclick="openAdminPanel()">Admin</button>` : '';
+
+                container.innerHTML = `
+                        <div class="user-info-bar">
+                            <span class="user-badge" onclick="openProfile('${escapeHTML(currentUser)}')">
+                                <img class="avatar-thumb" src="${avatarUrl}" alt="${escapeHTML(currentUser)}" onerror="this.src='${getDefaultAvatar()}'">
+                                ${escapeHTML(currentUser)} ${adminTag}
+                            </span>
+                            <div class="header-actions">
+                                <button class="action-btn gold-btn" onclick="openDepositModal()">Deposit</button>
+                                <button class="action-btn purple-btn" onclick="openWithdrawModal()">Withdraw</button>
+                                <button class="action-btn" onclick="openCreateModal()">Create</button>
+                                ${adminPanelBtn}
+                                <button class="action-btn danger-btn" onclick="handleLogout()">Logout</button>
+                            </div>
+                        </div>
+                    `;
+            } else {
+                container.innerHTML = `
+                        <div class="header-actions">
+                            <button class="action-btn" onclick="resetRobloxLoginModal(); document.getElementById('login-modal').style.display='flex'">Login with Roblox</button>
+                        </div>
+                    `;
+            }
+        }
+
+        // ============================================================
+        //  LOGIN / LOGOUT
+        // ============================================================
+        let pendingRobloxUser = null;
+        let robloxVerificationToken = null;
+
+        function resetRobloxLoginModal() {
+            pendingRobloxUser = null;
+            robloxVerificationToken = null;
+            document.getElementById('roblox-login-step-username').style.display = 'block';
+            document.getElementById('roblox-login-step-confirm').style.display = 'none';
+            document.getElementById('roblox-login-step-verify').style.display = 'none';
+            document.getElementById('login-username').value = '';
+            document.getElementById('roblox-verification-code').textContent = '';
+            document.getElementById('roblox-verify-status').textContent = '';
+        }
+
+        async function findRobloxUser() {
+            const input = document.getElementById('login-username');
+            const btn = document.getElementById('find-roblox-user-btn');
+            const username = input.value.trim();
+            if (!username) { showToast('Please enter your Roblox username.'); return; }
+            btn.disabled = true;
+            btn.textContent = 'Searching...';
+            try {
+                const response = await fetch(apiUrl('/api/roblox/user'), {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username })
+                });
+                const data = await response.json();
+                if (!response.ok) throw new Error(data.error || 'Roblox user not found.');
+                pendingRobloxUser = data.user;
+                const avatarUrl = data.user.avatarUrl || getRobloxAvatarUrl(data.user.id);
+                document.getElementById('roblox-user-preview').innerHTML = `
+                        <img src="${escapeHTML(avatarUrl)}"
+                             alt="${escapeHTML(data.user.name)}"
+                             style="width:86px;height:86px;border-radius:50%;object-fit:cover;border:2px solid var(--accent);margin-bottom:10px;"
+                             onerror="this.src='${getDefaultAvatar()}'">
+                        <div style="font-size:20px;font-weight:800;color:#f1f3f5;">${escapeHTML(data.user.displayName || data.user.name)}</div>
+                        <div style="color:#868e96;margin-top:4px;">@${escapeHTML(data.user.name)}</div>
+                    `;
+                document.getElementById('roblox-login-step-username').style.display = 'none';
+                document.getElementById('roblox-login-step-confirm').style.display = 'block';
+            } catch (error) {
+                showToast(error.message || 'Could not find that Roblox account.');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Continue';
+            }
+        }
+
+        async function confirmRobloxUser() {
+            if (!pendingRobloxUser) return;
+            const info = document.getElementById('roblox-verify-info');
+            const codeEl = document.getElementById('roblox-verification-code');
+            info.textContent = 'Creating your verification code...';
+            codeEl.textContent = '•••••••••';
+            try {
+                const response = await fetch(apiUrl('/api/roblox/start-verification'), {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ userId: pendingRobloxUser.id })
+                });
+                const data = await response.json();
+                if (!response.ok) throw new Error(data.error || 'Could not create verification code.');
+                robloxVerificationToken = data.token;
+                codeEl.textContent = data.code;
+                info.innerHTML =
+                    `Open your Roblox profile for <b style="color:#f1f3f5;">@${escapeHTML(pendingRobloxUser.name)}</b> and put this code in your <b style="color:#f1f3f5;">About / Description</b>.<br><span style="font-size:12px;color:#868e96;">The code expires in 10 minutes and can only be used once.</span>`;
+                document.getElementById('roblox-login-step-confirm').style.display = 'none';
+                document.getElementById('roblox-login-step-verify').style.display = 'block';
+            } catch (error) {
+                showToast(error.message || 'Could not create verification code.');
+            }
+        }
+
+        async function verifyRobloxAccount() {
+            if (!pendingRobloxUser || !robloxVerificationToken) {
+                showToast('Please restart the Roblox login process.');
+                return;
+            }
+            const status = document.getElementById('roblox-verify-status');
+            const btn = document.getElementById('verify-roblox-btn');
+
+            btn.disabled = true;
+            btn.textContent = 'Checking...';
+            status.style.color = '#868e96';
+            status.textContent = 'Checking your Roblox profile...';
+
+            // We no longer have a code input; we just verify using the token
+            try {
+                const response = await fetch(apiUrl('/api/roblox/verify'), {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        token: robloxVerificationToken,
+                        code: '' // empty because we already sent the code via the token
+                    })
+                });
+                const data = await response.json();
+                if (!response.ok) throw new Error(data.error || 'Verification failed.');
+
+                // Check if user is banned
+                if (isBanned(data.user.name)) {
+                    status.style.color = '#ff6b6b';
+                    status.textContent = '⛔ You have been banned from this site.';
+                    btn.disabled = false;
+                    btn.textContent = 'Verify & Login';
+                    return;
+                }
+
+                currentUser = data.user.name;
+                currentUserId = data.user.id;
+                currentUserAvatar = data.user.avatarUrl || getRobloxAvatarUrl(data.user.id);
+                localStorage.setItem('app_current_user', currentUser);
+                localStorage.setItem('app_current_user_id', currentUserId);
+                localStorage.setItem('app_current_user_avatar', currentUserAvatar);
+                storeAvatarForUser(currentUser, currentUserAvatar, currentUserId);
+                addRegisteredUser(currentUser);
+                getUserInventory(currentUser);
+                closeModal('login-modal');
+                resetRobloxLoginModal();
+                renderHeader();
+                renderMatches();
+                pubnub.publish({ channel: CHANNEL, message: { type: 'REQUEST_SYNC' } });
+                showToast(`Logged in as @${currentUser}!`);
+            } catch (error) {
+                status.style.color = '#ff6b6b';
+                status.textContent = error.message || 'Verification failed.';
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Verify & Login';
+            }
+        }
+
+        function backToRobloxUsernameStep() {
+            document.getElementById('roblox-login-step-confirm').style.display = 'none';
+            document.getElementById('roblox-login-step-username').style.display = 'block';
+        }
+
+        function backToRobloxConfirmStep() {
+            document.getElementById('roblox-login-step-verify').style.display = 'none';
+            document.getElementById('roblox-login-step-confirm').style.display = 'block';
+        }
+
+        function handleLogout() {
+            currentUser = null;
+            currentUserId = null;
+            currentUserAvatar = null;
+            localStorage.removeItem('app_current_user');
+            localStorage.removeItem('app_current_user_id');
+            localStorage.removeItem('app_current_user_avatar');
+            if (showHistory) {
+                showHistory = false;
+                const btn = document.getElementById('history-toggle-btn');
+                const title = document.getElementById('section-title-text');
+                btn.textContent = 'History';
+                btn.classList.remove('active');
+                title.textContent = 'Live Matches';
+            }
+            renderHeader();
+            renderMatches();
         }
 
         // ============================================================
@@ -2806,7 +2881,13 @@
         // ============================================================
         function openCreateModal() {
             if (!currentUser) { showToast('Please login first to create a match.'); return; }
-            if (isBanned(currentUser)) { showToast('You are banned.'); return; }
+            if (isBanned(currentUser)) { showToast('⛔ You are banned.'); return; }
+            if (isMuted(currentUser)) {
+                const expiry = getMuteExpiry(currentUser);
+                const remaining = expiry ? Math.ceil((expiry - Date.now()) / (3600 * 1000)) : 0;
+                showToast(`🔇 You are muted for ${remaining} more hour(s).`, 4000);
+                return;
+            }
             const inv = getUserInventory(currentUser);
             const grid = document.getElementById('modal-inventory');
             grid.innerHTML = '';
@@ -2892,7 +2973,13 @@
         // ============================================================
         function openJoinSelectModal(matchId) {
             if (!currentUser) { showToast('Please login first to join a match.'); return; }
-            if (isBanned(currentUser)) { showToast('You are banned.'); return; }
+            if (isBanned(currentUser)) { showToast('⛔ You are banned.'); return; }
+            if (isMuted(currentUser)) {
+                const expiry = getMuteExpiry(currentUser);
+                const remaining = expiry ? Math.ceil((expiry - Date.now()) / (3600 * 1000)) : 0;
+                showToast(`🔇 You are muted for ${remaining} more hour(s).`, 4000);
+                return;
+            }
             matchToJoin = globalMatches.find(m => m.id === matchId);
             if (!matchToJoin) return;
 
@@ -3024,7 +3111,7 @@
                     totalValue: totalValue
                 };
 
-                // Update stats for both players
+                // Update stats
                 if (gameData.host) {
                     const hostWon = winner === gameData.host;
                     updateStatsAfterMatch(gameData.host, hostWon, totalValue);
@@ -3070,7 +3157,7 @@
         // ============================================================
         function openWithdrawModal() {
             if (!currentUser) { showToast('Please login first.'); return; }
-            if (isBanned(currentUser)) { showToast('You are banned.'); return; }
+            if (isBanned(currentUser)) { showToast('⛔ You are banned.'); return; }
             const inv = getUserInventory(currentUser);
             const grid = document.getElementById('withdraw-pets-grid');
             grid.innerHTML = '';
@@ -3115,18 +3202,12 @@
                 showToast('Select at least one pet to withdraw.');
                 return;
             }
-            // Send Discord webhook
             sendDiscordWebhook(currentUser, selectedWithdrawPets);
-
-            // Remove from inventory
             removePetsFromInventory(currentUser, selectedWithdrawPets);
             const status = document.getElementById('withdraw-status');
             status.style.color = '#51cf66';
             status.textContent = `✅ ${selectedWithdrawPets.length} pet(s) withdrawn! Join Bot To Claim Your Items.`;
-
             showToast('Pets withdrawn! Join Bot To Claim Your Items.');
-
-            // Refresh the grid after a moment
             setTimeout(() => {
                 openWithdrawModal();
                 const newStatus = document.getElementById('withdraw-status');
@@ -3152,34 +3233,21 @@
             const adminTag = isAdmin(username) ? `<span class="admin-tag">Admin</span>` : '';
             document.getElementById('profile-username').innerHTML = `${escapeHTML(username)} ${adminTag}`;
 
+            // Only show value won / lost
             const statsHtml = `
                     <div class="profile-stat win">
-                        <div class="stat-number">${stats.wins}</div>
-                        <div class="stat-label">Wins</div>
+                        <div class="stat-number">${stats.valueWon}</div>
+                        <div class="stat-label">Value Won</div>
                     </div>
                     <div class="profile-stat lose">
-                        <div class="stat-number">${stats.losses}</div>
-                        <div class="stat-label">Losses</div>
-                    </div>
-                    <div class="profile-stat">
-                        <div class="stat-number">${stats.matches}</div>
-                        <div class="stat-label">Matches</div>
+                        <div class="stat-number">${stats.valueLost}</div>
+                        <div class="stat-label">Value Lost</div>
                     </div>
                 `;
             document.getElementById('profile-stats').innerHTML = statsHtml;
 
-            // Pets
-            const petsContainer = document.getElementById('profile-pets');
-            if (inv.length === 0) {
-                petsContainer.innerHTML = '<div style="color:#868e96;font-size:13px;padding:8px;">No pets in inventory.</div>';
-            } else {
-                petsContainer.innerHTML = inv.map(p =>
-                    `<div style="display:flex;flex-direction:column;align-items:center;background:#0f172a;padding:6px 10px;border-radius:12px;border:1px solid var(--border-color);">
-                            <img class="pet-img" src="${p.icon}" alt="${p.name}" style="width:40px;height:40px;">
-                            <span style="font-size:10px;color:#868e96;margin-top:2px;">${p.value}</span>
-                        </div>`
-                ).join('');
-            }
+            // Don't show pets in profile
+            document.getElementById('profile-pets').innerHTML = '';
 
             document.getElementById('profile-modal').style.display = 'flex';
         }
@@ -3245,27 +3313,16 @@
         }
 
         function adminPopulateUserSelects() {
-            const users = getAllUsernames();
-            const sel = document.getElementById('admin-pet-user-select');
-            if (!sel) return;
-            const currentVal = sel.value;
-            sel.innerHTML = '';
-            users.forEach(u => {
-                const opt = document.createElement('option');
-                opt.value = u;
-                opt.textContent = u;
-                sel.appendChild(opt);
-            });
-            if (currentVal && users.includes(currentVal)) sel.value = currentVal;
+            // Not needed for manual input
         }
 
-        // --- Manage Pets ---
-        function adminLoadUserPets() {
-            const sel = document.getElementById('admin-pet-user-select');
-            const username = sel.value;
-            if (!username) { showToast('Select a user.'); return; }
-            adminTargetPets = getUserInventory(username);
+        // --- Manage Pets (manual username) ---
+        function adminLoadUserPetsManual() {
+            const input = document.getElementById('admin-pet-username-input');
+            const username = input.value.trim();
+            if (!username) { showToast('Enter a username.'); return; }
             adminCurrentTargetUser = username;
+            adminTargetPets = getUserInventory(username);
             const display = document.getElementById('admin-user-pets-display');
             if (adminTargetPets.length === 0) {
                 display.innerHTML = '<span style="color:#868e96;font-size:13px;">No pets in this user\'s inventory.</span>';
@@ -3278,7 +3335,7 @@
                         </div>`
                 ).join('');
             }
-            document.getElementById('admin-pet-status').textContent = '';
+            document.getElementById('admin-pet-status').textContent = `Loaded ${username}'s inventory.`;
         }
 
         function adminSelectPetForRemove(idx) {
@@ -3307,7 +3364,7 @@
                 inv.splice(idx, 1);
                 setUserInventory(adminCurrentTargetUser, inv);
                 adminTargetPets = inv;
-                adminLoadUserPets();
+                adminLoadUserPetsManual();
                 adminSelectedPetIndex = null;
                 document.getElementById('admin-pet-status').textContent = `✅ Removed ${pet.name}`;
                 showToast(`Removed ${pet.name} from ${adminCurrentTargetUser}`);
@@ -3322,7 +3379,7 @@
             if (!confirm(`Clear ALL pets from ${adminCurrentTargetUser}?`)) return;
             setUserInventory(adminCurrentTargetUser, []);
             adminTargetPets = [];
-            adminLoadUserPets();
+            adminLoadUserPetsManual();
             adminSelectedPetIndex = null;
             document.getElementById('admin-pet-status').textContent = `✅ Cleared all pets from ${adminCurrentTargetUser}`;
             showToast(`Cleared all pets from ${adminCurrentTargetUser}`);
@@ -3330,7 +3387,7 @@
         }
 
         function adminOpenAddPet() {
-            if (!adminCurrentTargetUser) { showToast('Select a user first.'); return; }
+            if (!adminCurrentTargetUser) { showToast('Load a user first.'); return; }
             document.getElementById('admin-add-pet-user').value = adminCurrentTargetUser;
             document.getElementById('admin-add-pet-name').value = '';
             document.getElementById('admin-add-pet-icon').value = '';
@@ -3361,26 +3418,23 @@
             closeModal('admin-add-pet-modal');
             if (adminCurrentTargetUser === username) {
                 adminTargetPets = getUserInventory(username);
-                adminLoadUserPets();
+                adminLoadUserPetsManual();
             }
             adminRefreshUsers();
-            adminPopulateUserSelects();
         }
 
         function adminAddPetToUser(username) {
             adminCurrentTargetUser = username;
-            const sel = document.getElementById('admin-pet-user-select');
-            sel.value = username;
-            adminLoadUserPets();
+            document.getElementById('admin-pet-username-input').value = username;
+            adminLoadUserPetsManual();
             switchAdminTab('tab-pets');
             setTimeout(() => adminOpenAddPet(), 300);
         }
 
         function adminViewUserPets(username) {
             adminCurrentTargetUser = username;
-            const sel = document.getElementById('admin-pet-user-select');
-            sel.value = username;
-            adminLoadUserPets();
+            document.getElementById('admin-pet-username-input').value = username;
+            adminLoadUserPetsManual();
             switchAdminTab('tab-pets');
         }
 
@@ -3391,14 +3445,14 @@
             adminRefreshUsers();
             if (adminCurrentTargetUser === username) {
                 adminTargetPets = [];
-                adminLoadUserPets();
+                adminLoadUserPetsManual();
             }
         }
 
         // --- Muted ---
         function adminRenderMuted() {
             const list = document.getElementById('admin-muted-list');
-            const muted = getMutedUsers();
+            const muted = getMutedUserList();
             if (muted.length === 0) {
                 list.innerHTML = '<div style="color:#868e96;padding:8px;font-size:13px;">No muted users.</div>';
                 return;
@@ -3406,11 +3460,12 @@
             list.innerHTML = '';
             const container = document.createElement('div');
             container.className = 'admin-muted-users';
-            muted.forEach(u => {
+            muted.forEach(({ user, expiry }) => {
+                const remaining = Math.ceil((expiry - Date.now()) / (3600 * 1000));
                 const tag = document.createElement('span');
                 tag.className = 'admin-muted-user';
                 tag.innerHTML =
-                    `${escapeHTML(u)} <button class="unmute-btn" onclick="adminUnmuteUser('${escapeHTML(u)}')">✕</button>`;
+                    `${escapeHTML(user)} (${remaining}h) <button class="unmute-btn" onclick="adminUnmuteUser('${escapeHTML(user)}')">✕</button>`;
                 container.appendChild(tag);
             });
             list.appendChild(container);
@@ -3418,23 +3473,21 @@
 
         function adminMuteUser() {
             const input = document.getElementById('admin-mute-input');
+            const hoursInput = document.getElementById('admin-mute-hours');
             const username = input.value.trim();
+            const hours = parseInt(hoursInput.value) || 1;
             if (!username) { showToast('Enter a username to mute.'); return; }
             if (isAdmin(username)) { showToast('Cannot mute an admin.'); return; }
-            const muted = getMutedUsers();
-            if (muted.includes(username)) { showToast(`${username} is already muted.`); return; }
-            muted.push(username);
-            setMutedUsers(muted);
+            if (isMuted(username)) { showToast(`${username} is already muted.`); return; }
+            muteUser(username, hours);
             input.value = '';
-            showToast(`🔇 Muted ${username}`);
+            showToast(`🔇 Muted ${username} for ${hours} hour(s).`);
             adminRenderMuted();
             adminRefreshUsers();
         }
 
         function adminUnmuteUser(username) {
-            let muted = getMutedUsers();
-            muted = muted.filter(u => u !== username);
-            setMutedUsers(muted);
+            unmuteUser(username);
             showToast(`🔊 Unmuted ${username}`);
             adminRenderMuted();
             adminRefreshUsers();
@@ -3468,20 +3521,21 @@
             if (!username) { showToast('Enter a username to ban.'); return; }
             if (isAdmin(username)) { showToast('Cannot ban an admin.'); return; }
             if (username === currentUser) { showToast('You cannot ban yourself.'); return; }
-            const banned = getBannedUsers();
-            if (banned.includes(username)) { showToast(`${username} is already banned.`); return; }
-            banned.push(username);
-            setBannedUsers(banned);
+            if (isBanned(username)) { showToast(`${username} is already banned.`); return; }
+            banUser(username);
             input.value = '';
             showToast(`⛔ Banned ${username}`);
             adminRenderBanned();
             adminRefreshUsers();
+            // If the banned user is currently logged in, force logout
+            if (username === currentUser) {
+                handleLogout();
+                showToast('You have been banned.', 5000);
+            }
         }
 
         function adminUnbanUser(username) {
-            let banned = getBannedUsers();
-            banned = banned.filter(u => u !== username);
-            setBannedUsers(banned);
+            unbanUser(username);
             showToast(`✅ Unbanned ${username}`);
             adminRenderBanned();
             adminRefreshUsers();
@@ -3494,17 +3548,22 @@
         renderMatches();
         renderChatHistory();
 
-        // Ensure current user is registered
         if (currentUser) {
             addRegisteredUser(currentUser);
-            // Ensure avatar is stored
             if (!getAvatarUrl(currentUser) && currentUserAvatar) {
                 storeAvatarForUser(currentUser, currentUserAvatar, currentUserId);
             }
-        }
-
-        if (currentUser && isBanned(currentUser)) {
-            showToast('⚠️ You are banned from using this site.', 5000);
+            // Check if banned on load
+            if (isBanned(currentUser)) {
+                showToast('⛔ You have been banned from this site.', 5000);
+                // Optionally force logout after a moment
+                setTimeout(() => {
+                    if (isBanned(currentUser)) {
+                        handleLogout();
+                        showToast('You have been banned. Logging out.', 4000);
+                    }
+                }, 2000);
+            }
         }
 
         setTimeout(() => {
