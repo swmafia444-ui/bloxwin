@@ -230,6 +230,11 @@
             color: #4dabf7 !important;
         }
 
+        /* Chat - username pointer */
+        .chat-username {
+            cursor: pointer !important;
+        }
+
         .header-actions {
             display: flex;
             gap: 8px;
@@ -841,10 +846,8 @@
 
         .chat-msg {
             background: #141f2f;
-            padding: 8px 14px;
+            padding: 10px 16px;
             border-radius: 12px;
-            font-size: 14px;
-            word-break: break-word;
             border: 1px solid #253141;
             box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
             animation: fadeInUp 0.2s ease;
@@ -861,10 +864,21 @@
             }
         }
 
+        .chat-msg .msg-content {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .chat-msg .msg-top {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
         .chat-msg .username {
             font-weight: 700;
-            margin-right: 6px;
-            cursor: pointer;
+            cursor: pointer !important;
             transition: color 0.2s;
         }
         .chat-msg .username:hover {
@@ -875,14 +889,13 @@
             width: 16px;
             height: 16px;
             object-fit: contain;
-            vertical-align: middle;
-            margin-right: 4px;
+            display: inline-block;
         }
 
         .chat-msg .time {
             font-size: 10px;
             color: #6c7a8a;
-            margin-left: 10px;
+            margin-left: 4px;
         }
         .chat-msg .muted-label {
             color: #ff6b6b;
@@ -1251,28 +1264,6 @@
             font-weight: 700;
             font-size: 16px;
             color: #e9ecef;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .view-profile .player .name .rank-icon {
-            width: 22px;
-            height: 22px;
-            object-fit: contain;
-        }
-
-        .view-profile .player .rank-label {
-            font-size: 13px;
-            font-weight: 600;
-            color: var(--accent);
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-        .view-profile .player .rank-label .rank-icon {
-            width: 18px;
-            height: 18px;
-            object-fit: contain;
         }
 
         .view-profile .player .divider {
@@ -1310,6 +1301,87 @@
             width: 22px;
             height: 22px;
             border-radius: 50%;
+        }
+
+        /* Profile Modal */
+        .profile-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin: 16px 0 12px;
+        }
+        .profile-stat {
+            background: #0f172a;
+            border-radius: 12px;
+            padding: 12px 8px;
+            text-align: center;
+            border: 1px solid var(--border-color);
+        }
+        .profile-stat .stat-number {
+            font-size: 22px;
+            font-weight: 800;
+            color: var(--accent);
+        }
+        .profile-stat .stat-label {
+            font-size: 11px;
+            color: #868e96;
+            margin-top: 2px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .profile-stat.profit .stat-number {
+            color: var(--secondary);
+        }
+        .profile-stat.loss .stat-number {
+            color: #ff6b6b;
+        }
+
+        .profile-username {
+            text-align: center;
+            font-size: 22px;
+            font-weight: 700;
+            color: #f1f3f5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .profile-rank-label {
+            text-align: center;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 4px;
+        }
+        .profile-rank-label .rank-icon {
+            width: 22px;
+            height: 22px;
+            object-fit: contain;
+            display: inline-block;
+        }
+
+        .profile-tip-btn {
+            margin-top: 12px;
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 30px;
+            font-weight: 700;
+            font-size: 14px;
+            cursor: pointer;
+            background: linear-gradient(135deg, #ffd43b, #f59f00);
+            color: #0b1120;
+            box-shadow: 0 4px 10px rgba(255, 212, 59, 0.25);
+            transition: transform 0.15s ease, box-shadow 0.2s;
+        }
+        .profile-tip-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(255, 212, 59, 0.4);
         }
 
         /* Tip modal */
@@ -1668,92 +1740,35 @@
             padding: 6px 16px;
         }
 
-        /* Profile Modal - yeni düzen */
-        .profile-stats {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin: 16px 0 12px;
-        }
-        .profile-stat {
-            background: #0f172a;
-            border-radius: 12px;
-            padding: 12px 8px;
-            text-align: center;
-            border: 1px solid var(--border-color);
-        }
-        .profile-stat .stat-number {
-            font-size: 22px;
-            font-weight: 800;
-            color: var(--accent);
-        }
-        .profile-stat .stat-label {
-            font-size: 11px;
-            color: #868e96;
-            margin-top: 2px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        .profile-stat.profit .stat-number {
-            color: var(--secondary);
-        }
-        .profile-stat.loss .stat-number {
-            color: #ff6b6b;
-        }
-
-        .profile-username {
-            text-align: center;
-            font-size: 22px;
-            font-weight: 700;
-            color: #f1f3f5;
+        /* Leaderboard sekme butonları */
+        .leaderboard-tabs {
             display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-        .profile-username .rank-icon {
-            width: 28px;
-            height: 28px;
-            object-fit: contain;
-        }
-
-        .profile-rank-label {
-            text-align: center;
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--accent);
-            display: flex;
-            align-items: center;
-            justify-content: center;
             gap: 6px;
-            margin-bottom: 4px;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+            justify-content: center;
         }
-        .profile-rank-label .rank-icon {
-            width: 22px;
-            height: 22px;
-            object-fit: contain;
-        }
-
-        .profile-tip-btn {
-            margin-top: 12px;
-            width: 100%;
-            padding: 10px;
-            border: none;
+        .leaderboard-tabs .lb-tab {
+            background: #0f172a;
+            border: 1px solid var(--border-color);
+            color: #868e96;
+            padding: 4px 14px;
             border-radius: 30px;
-            font-weight: 700;
-            font-size: 14px;
             cursor: pointer;
-            background: linear-gradient(135deg, #ffd43b, #f59f00);
-            color: #0b1120;
-            box-shadow: 0 4px 10px rgba(255, 212, 59, 0.25);
-            transition: transform 0.15s ease, box-shadow 0.2s;
+            font-weight: 600;
+            font-size: 12px;
+            transition: all 0.2s;
         }
-        .profile-tip-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(255, 212, 59, 0.4);
+        .leaderboard-tabs .lb-tab:hover {
+            border-color: #4dabf7;
+            color: #f1f3f5;
+        }
+        .leaderboard-tabs .lb-tab.active {
+            background: var(--accent);
+            color: #0b1120;
+            border-color: var(--accent);
         }
 
-        /* Leaderboard Modal */
         .leaderboard-list {
             display: flex;
             flex-direction: column;
@@ -1807,7 +1822,7 @@
             height: 20px;
             object-fit: contain;
         }
-        .leaderboard-item .profit {
+        .leaderboard-item .stat-value {
             font-weight: 700;
             color: var(--secondary);
         }
@@ -2048,6 +2063,10 @@
             }
             .tip-pets-grid {
                 grid-template-columns: repeat(2, 1fr);
+            }
+            .leaderboard-tabs .lb-tab {
+                font-size: 10px;
+                padding: 3px 10px;
             }
         }
 
@@ -2432,7 +2451,11 @@
     <div class="modal-overlay" id="leaderboard-modal">
         <div class="modal" style="max-width:500px;">
             <h2>Leaderboard</h2>
-            <p style="color:#868e96;font-size:14px;margin-bottom:12px;">Top players by total profit</p>
+            <div class="leaderboard-tabs" id="leaderboard-tabs">
+                <button class="lb-tab active" data-sort="profit" onclick="setLeaderboardSort('profit')">Top Profit</button>
+                <button class="lb-tab" data-sort="wager" onclick="setLeaderboardSort('wager')">Top Wager</button>
+                <button class="lb-tab" data-sort="least" onclick="setLeaderboardSort('least')">Least Profit</button>
+            </div>
             <div class="leaderboard-list" id="leaderboard-list"></div>
             <button class="cancel-btn" style="width:100%;margin-top:12px;" onclick="closeModal('leaderboard-modal')">Close</button>
         </div>
@@ -2571,6 +2594,7 @@
         let globalMatches = [];
         let chatHistory = JSON.parse(localStorage.getItem('app_chat_history') || '[]');
         let showHistory = false;
+        let leaderboardSort = 'profit';
 
         const MAX_PETS_PER_MATCH = 15;
         let selectedPetsForMatch = [];
@@ -2811,6 +2835,14 @@
             openModal('leaderboard-modal');
         }
 
+        function setLeaderboardSort(sort) {
+            leaderboardSort = sort;
+            document.querySelectorAll('.lb-tab').forEach(el => {
+                el.classList.toggle('active', el.dataset.sort === sort);
+            });
+            renderLeaderboard();
+        }
+
         document.querySelectorAll('.modal-overlay').forEach(overlay => {
             overlay.addEventListener('click', function(e) {
                 if (e.target === this) {
@@ -2832,6 +2864,24 @@
         function getInitial(username) {
             if (!username) return '?';
             return username.charAt(0).toUpperCase();
+        }
+
+        // ============================================================
+        //  MAÇ SÜRE KONTROLÜ (70 saniye)
+        // ============================================================
+        function isMatchExpired(match) {
+            // match.id timestamp olarak kullanılıyor
+            return (Date.now() - match.id) > 70000;
+        }
+
+        function addMatchIfNotExpired(match) {
+            if (!isMatchExpired(match)) {
+                if (!globalMatches.some(m => m.id === match.id)) {
+                    globalMatches.push(match);
+                    return true;
+                }
+            }
+            return false;
         }
 
         // ============================================================
@@ -2992,21 +3042,35 @@
         // ============================================================
         function renderLeaderboard() {
             const list = document.getElementById('leaderboard-list');
-            const users = getAllUsernames();
+            let users = getAllUsernames();
+
+            // Filtre: her şeyi 0 olanları çıkar
+            users = users.filter(u => {
+                const s = getUserStats(u);
+                return !(s.totalWager === 0 && s.totalProfit === 0 && s.totalLost === 0);
+            });
+
             if (users.length === 0) {
-                list.innerHTML = '<div style="color:#868e96;text-align:center;padding:20px;">No users yet.</div>';
+                list.innerHTML = '<div style="color:#868e96;text-align:center;padding:20px;">No users with stats yet.</div>';
                 return;
             }
 
             const stats = users.map(u => {
                 const s = getUserStats(u);
-                return { username: u, profit: s.totalProfit };
+                return { username: u, ...s };
             });
 
-            stats.sort((a, b) => b.profit - a.profit);
+            let sorted = [];
+            if (leaderboardSort === 'profit') {
+                sorted = stats.sort((a, b) => b.totalProfit - a.totalProfit);
+            } else if (leaderboardSort === 'wager') {
+                sorted = stats.sort((a, b) => b.totalWager - a.totalWager);
+            } else if (leaderboardSort === 'least') {
+                sorted = stats.sort((a, b) => a.totalProfit - b.totalProfit);
+            }
 
             list.innerHTML = '';
-            stats.forEach((item, index) => {
+            sorted.forEach((item, index) => {
                 const rank = index + 1;
                 let rankClass = '';
                 if (rank === 1) rankClass = 'top1';
@@ -3019,6 +3083,16 @@
                     `<img class="rank-icon" src="${rankIcon}" alt="${rankLabel}" title="${rankLabel}">` :
                     '';
 
+                let statValue = item.totalProfit;
+                let statLabel = 'Profit';
+                if (leaderboardSort === 'wager') {
+                    statValue = item.totalWager;
+                    statLabel = 'Wager';
+                } else if (leaderboardSort === 'least') {
+                    statValue = item.totalProfit;
+                    statLabel = 'Profit';
+                }
+
                 const div = document.createElement('div');
                 div.className = `leaderboard-item ${rankClass}`;
                 div.innerHTML = `
@@ -3027,7 +3101,7 @@
                             ${escapeHTML(item.username)}
                             ${rankHtml}
                         </span>
-                        <span class="profit">${item.profit}</span>
+                        <span class="stat-value">${statValue}</span>
                     `;
                 list.appendChild(div);
             });
@@ -3315,10 +3389,10 @@
                 }
                 if (msg.type === 'MATCH_CREATED') {
                     if (!globalMatches.some(m => m.id === msg.match.id)) {
-                        const newMatch = { ...msg.match, status: 'waiting' };
-                        globalMatches.unshift(newMatch);
-                        renderMatches();
-                        sendMatchCreatedWebhook(newMatch);
+                        if (addMatchIfNotExpired(msg.match)) {
+                            renderMatches();
+                            sendMatchCreatedWebhook(msg.match);
+                        }
                     }
                 }
                 if (msg.type === 'MATCH_CANCELED') {
@@ -3369,9 +3443,7 @@
                 }
                 if (msg.type === 'SYNC_MATCHES') {
                     msg.matches.forEach(m => {
-                        if (!globalMatches.some(existing => existing.id === m.id)) {
-                            globalMatches.push(m);
-                        }
+                        addMatchIfNotExpired(m);
                     });
                     renderMatches();
                 }
@@ -3434,11 +3506,15 @@
 
             msgDiv.innerHTML = `
                     <div class="msg-content">
-                        <span class="${colorClass}" onclick="openProfile('${escapeHTML(username)}')">
-                            ${rankHtml}
-                            ${escapeHTML(username)}
-                        </span>
-                        ${mutedLabel} ${escapeHTML(text)} <span class="time">${time}</span>
+                        <div class="msg-top">
+                            <span class="${colorClass}" onclick="openProfile('${escapeHTML(username)}')">
+                                ${rankHtml}
+                                ${escapeHTML(username)}
+                            </span>
+                            <span class="time">${time}</span>
+                            ${mutedLabel}
+                        </div>
+                        <div class="msg-text">${escapeHTML(text)}</div>
                     </div>
                 `;
             container.appendChild(msgDiv);
@@ -4075,15 +4151,17 @@
                 `<img class="rank-icon" src="${rankIcon}" alt="${rankLabel}" title="${rankLabel}">` :
                 '';
             const rankLabelHtml = rankLabel ?
-                `<span class="rank-label">${rankLabel} <img class="rank-icon" src="${rankIcon}" alt="${rankLabel}"></span>` :
+                `<span>${rankLabel}</span> ${rankHtml}` :
                 '';
 
-            document.getElementById('profile-username').innerHTML =
-                `${escapeHTML(username)} ${rankHtml}`;
+            // Profile username - sadece isim, rank ikonu yok
+            document.getElementById('profile-username').innerHTML = `${escapeHTML(username)}`;
+            // Rank label (ismin altı)
             document.getElementById('profile-rank-label').innerHTML = rankLabelHtml;
 
-            // Total Bet ve Total Profit
-            // Total Won ve Total Lost
+            // Stats: Total Bet ve Total Profit (üst satır), Total Won ve Total Lost (alt satır)
+            // Total Won = totalWager (çünkü her maçta wager eklenir, ama won olan kazançtır)
+            // Aslında Total Won = totalProfit (kazandığı toplam), Total Lost = totalLost
             const statsHtml = `
                     <div class="profile-stat">
                         <div class="stat-number">${stats.totalWager}</div>
@@ -4094,7 +4172,7 @@
                         <div class="stat-label">Total Profit</div>
                     </div>
                     <div class="profile-stat">
-                        <div class="stat-number">${stats.totalWager}</div>
+                        <div class="stat-number">${stats.totalProfit}</div>
                         <div class="stat-label">Total Won</div>
                     </div>
                     <div class="profile-stat loss">
