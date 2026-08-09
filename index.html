@@ -2825,11 +2825,16 @@
         </div>
     </div>
 
-    <script src="./config.js"></script>
     <script>
         // ============================================================
-        //  CONFIG & CONSTANTS (aynı)
+        //  CONFIG (kendi backend URL’ni buraya yaz)
         // ============================================================
+        window.BLOXWIN_API_URL = "https://bloxwin-backend.onrender.com"; // değiştir!
+
+        // ============================================================
+        //  MAIN SCRIPT – TÜM DEĞİŞİKLİKLER UYGULANDI
+        // ============================================================
+
         const BLOXWIN_API_URL = (window.BLOXWIN_API_URL && !window.BLOXWIN_API_URL.includes("YOUR-BACKEND-URL-HERE")) ? window.BLOXWIN_API_URL.replace(/\/$/, "") : window.location.origin;
         const apiUrl = (path) => BLOXWIN_API_URL + path;
 
@@ -2967,11 +2972,9 @@
                 const data = localStorage.getItem('app_jackpot_state');
                 if (data) {
                     const parsed = JSON.parse(data);
-                    // spinning veya finished durumları sıfırlansın (çünkü bu durumlar geçici)
                     if (parsed.status === 'spinning' || parsed.status === 'finished') {
                         return null;
                     }
-                    // timer negatif veya 0 ise geçersiz say (ama 0 olabilir, spin anında)
                     if (parsed.timer !== undefined && parsed.timer < 0) {
                         return null;
                     }
@@ -3930,15 +3933,14 @@
 
                 // Eğer active ise timer'ı başlat, ANCAK broadcast yapma (sayfa yeniden yüklendi)
                 if (jackpotState.status === 'active') {
-                    if (jackpotState.timer > 0) {
-                        startJackpotTimer(false);   // <-- broadcast: false
-                    } else {
-                        jackpotState.timer = jackpotState.maxTimer || 90;
+                    if (jackpotState.timer > 0 && !jackpotState.timerInterval) {
                         startJackpotTimer(false);
+                    } else if (jackpotState.timer <= 0) {
+                        jackpotState.timer = jackpotState.maxTimer || 90;
+                        if (!jackpotState.timerInterval) {
+                            startJackpotTimer(false);
+                        }
                     }
-                } else if (jackpotState.status === 'waiting' && jackpotState.playerCount >= 2) {
-                    // waiting'den active'e geçişte broadcast yapılmalı, ama burada da false verip UI'ı güncellemek yeterli
-                    startJackpotTimer(false);
                 }
                 updateJackpotUI();
                 return true;
@@ -4172,8 +4174,8 @@
             broadcastJackpotState();
 
             // Eğer 2+ oyuncu olduysa ve waiting ise timer'ı başlat
-            if (jackpotState.playerCount >= 2 && jackpotState.status === 'waiting') {
-                startJackpotTimer(); // broadcast true (varsayılan)
+            if (jackpotState.playerCount >= 2 && jackpotState.status === 'waiting' && !jackpotState.timerInterval) {
+                startJackpotTimer(); // broadcast true
                 broadcastJackpotState();
             }
 
@@ -4309,65 +4311,69 @@
         function drawJackpotWheel() {
             const canvas = document.getElementById('jp-wheel-canvas');
             if (!canvas) return;
-            const ctx = canvas.getContext('2d');
-            const width = canvas.width;
-            const height = canvas.height;
-            const centerX = width / 2;
-            const centerY = height / 2;
-            const radius = Math.min(width, height) / 2 - 10;
+            try {
+                const ctx = canvas.getContext('2d');
+                const width = canvas.width;
+                const height = canvas.height;
+                const centerX = width / 2;
+                const centerY = height / 2;
+                const radius = Math.min(width, height) / 2 - 10;
 
-            ctx.clearRect(0, 0, width, height);
+                ctx.clearRect(0, 0, width, height);
 
-            const players = Object.keys(jackpotState.players);
-            const totalPrize = jackpotState.prizePool;
+                const players = Object.keys(jackpotState.players);
+                const totalPrize = jackpotState.prizePool;
 
-            if (players.length === 0 || totalPrize === 0) {
-                ctx.beginPath();
-                ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
-                ctx.fillStyle = '#2d3b4f';
-                ctx.fill();
-                ctx.fillStyle = '#868e96';
-                ctx.font = '14px sans-serif';
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'middle';
-                ctx.fillText('No bets', centerX, centerY);
-                return;
+                if (players.length === 0 || totalPrize === 0) {
+                    ctx.beginPath();
+                    ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
+                    ctx.fillStyle = '#2d3b4f';
+                    ctx.fill();
+                    ctx.fillStyle = '#868e96';
+                    ctx.font = '14px sans-serif';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillText('No bets', centerX, centerY);
+                    return;
+                }
+
+                let startAngle = -Math.PI / 2;
+                const colors = [
+                    '#ff6b6b', '#4dabf7', '#51cf66', '#fcc419', '#da77f2',
+                    '#ff922b', '#20c997', '#845ef7', '#f06595', '#5c7cfa'
+                ];
+
+                players.forEach((username, index) => {
+                    const playerData = jackpotState.players[username];
+                    const sliceAngle = (playerData.total / totalPrize) * 2 * Math.PI;
+                    const color = colors[index % colors.length];
+
+                    ctx.beginPath();
+                    ctx.moveTo(centerX, centerY);
+                    ctx.arc(centerX, centerY, radius, startAngle, startAngle + sliceAngle);
+                    ctx.closePath();
+                    ctx.fillStyle = color;
+                    ctx.fill();
+                    ctx.strokeStyle = '#0f172a';
+                    ctx.lineWidth = 2;
+                    ctx.stroke();
+
+                    const midAngle = startAngle + sliceAngle / 2;
+                    const textRadius = radius * 0.65;
+                    const x = centerX + Math.cos(midAngle) * textRadius;
+                    const y = centerY + Math.sin(midAngle) * textRadius;
+                    const percent = ((playerData.total / totalPrize) * 100).toFixed(1);
+                    ctx.fillStyle = '#fff';
+                    ctx.font = 'bold 10px sans-serif';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillText(`${username} ${percent}%`, x, y);
+
+                    startAngle += sliceAngle;
+                });
+            } catch (e) {
+                console.warn('drawJackpotWheel error:', e);
             }
-
-            let startAngle = -Math.PI / 2;
-            const colors = [
-                '#ff6b6b', '#4dabf7', '#51cf66', '#fcc419', '#da77f2',
-                '#ff922b', '#20c997', '#845ef7', '#f06595', '#5c7cfa'
-            ];
-
-            players.forEach((username, index) => {
-                const playerData = jackpotState.players[username];
-                const sliceAngle = (playerData.total / totalPrize) * 2 * Math.PI;
-                const color = colors[index % colors.length];
-
-                ctx.beginPath();
-                ctx.moveTo(centerX, centerY);
-                ctx.arc(centerX, centerY, radius, startAngle, startAngle + sliceAngle);
-                ctx.closePath();
-                ctx.fillStyle = color;
-                ctx.fill();
-                ctx.strokeStyle = '#0f172a';
-                ctx.lineWidth = 2;
-                ctx.stroke();
-
-                const midAngle = startAngle + sliceAngle / 2;
-                const textRadius = radius * 0.65;
-                const x = centerX + Math.cos(midAngle) * textRadius;
-                const y = centerY + Math.sin(midAngle) * textRadius;
-                const percent = ((playerData.total / totalPrize) * 100).toFixed(1);
-                ctx.fillStyle = '#fff';
-                ctx.font = 'bold 10px sans-serif';
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'middle';
-                ctx.fillText(`${username} ${percent}%`, x, y);
-
-                startAngle += sliceAngle;
-            });
         }
 
         function updateJackpotUI() {
@@ -4502,27 +4508,39 @@
 
             if (msg.type === 'JACKPOT_FULL_STATE' && msg.state) {
                 const incoming = msg.state;
-                // Geçerli bir state mi kontrol et
                 if (!incoming.status) return;
 
-                // Eğer gelen state 'waiting' ama oyuncu sayısı 2+ ise timer'ı başlat
-                if (incoming.status === 'waiting' && Object.keys(incoming.players || {}).length >= 2) {
-                    // Timer'ı başlatmak için state'i uygun hale getir
-                    jackpotState.status = 'active';
-                    jackpotState.timer = incoming.timer !== undefined ? incoming.timer : 90;
-                    jackpotState.maxTimer = incoming.maxTimer || 90;
+                // Eğer kendi timer'ımız çalışıyorsa, gelen timer'ı IGNORE et, sadece diğer bilgileri al
+                if (jackpotState.timerInterval) {
+                    // Sadece players, prizePool, status gibi bilgileri güncelle, timer'ı değiştirme
+                    if (incoming.status === 'spinning' || incoming.status === 'finished') {
+                        // Spin veya finish durumunda timer'ı durdur ve state'i güncelle
+                        if (jackpotState.timerInterval) {
+                            clearInterval(jackpotState.timerInterval);
+                            jackpotState.timerInterval = null;
+                        }
+                        jackpotState.status = incoming.status;
+                        jackpotState.players = incoming.players || {};
+                        jackpotState.prizePool = incoming.prizePool || 0;
+                        jackpotState.winner = incoming.winner || null;
+                        jackpotState.winnerPets = incoming.winnerPets || [];
+                        jackpotState.playerCount = Object.keys(jackpotState.players).length;
+                        saveJackpotState();
+                        updateJackpotUI();
+                        return;
+                    }
+                    // Diğer durumlarda timer'ı koru, sadece players ve prizePool'u güncelle
                     jackpotState.players = incoming.players || {};
                     jackpotState.prizePool = incoming.prizePool || 0;
+                    jackpotState.playerCount = Object.keys(jackpotState.players).length;
                     jackpotState.winner = incoming.winner || null;
                     jackpotState.winnerPets = incoming.winnerPets || [];
-                    jackpotState.playerCount = Object.keys(jackpotState.players).length;
                     saveJackpotState();
-                    startJackpotTimer(); // broadcast true (varsayılan)
                     updateJackpotUI();
                     return;
                 }
 
-                // Diğer durumlar
+                // Eğer kendi timer'ımız çalışmıyorsa, gelen state'i tamamen uygula
                 jackpotState.status = incoming.status;
                 jackpotState.timer = incoming.timer !== undefined ? incoming.timer : 90;
                 jackpotState.maxTimer = incoming.maxTimer || 90;
@@ -4532,8 +4550,8 @@
                 jackpotState.winnerPets = incoming.winnerPets || [];
                 jackpotState.playerCount = Object.keys(jackpotState.players).length;
 
-                if (jackpotState.status === 'active' && jackpotState.timer > 0) {
-                    startJackpotTimer(); // broadcast true
+                if (jackpotState.status === 'active' && jackpotState.timer > 0 && !jackpotState.timerInterval) {
+                    startJackpotTimer();
                 }
                 saveJackpotState();
                 updateJackpotUI();
@@ -4553,8 +4571,8 @@
                     jackpotState.prizePool += jackpotState.players[msg.username].total;
                 }
 
-                if (jackpotState.playerCount >= 2 && jackpotState.status === 'waiting') {
-                    startJackpotTimer(); // broadcast true
+                if (jackpotState.playerCount >= 2 && jackpotState.status === 'waiting' && !jackpotState.timerInterval) {
+                    startJackpotTimer();
                 }
                 saveJackpotState();
                 updateJackpotUI();
