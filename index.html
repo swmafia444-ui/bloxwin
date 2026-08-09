@@ -7,6 +7,7 @@
     <script src="https://cdn.pubnub.com/sdk/javascript/pubnub.7.2.2.min.js">
     </script>
     <style>
+        /* ... tüm stiller aynen korunmuştur ... */
         :root {
             --primary: #ff6b6b;
             --secondary: #51cf66;
@@ -1675,6 +1676,35 @@
             padding: 6px 16px;
         }
 
+        /* Admin Jackpot tab */
+        .admin-jackpot-info {
+            background: #0f172a;
+            border-radius: 12px;
+            padding: 16px;
+            border: 1px solid var(--border-color);
+            margin-bottom: 16px;
+        }
+        .admin-jackpot-info .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 4px 0;
+            border-bottom: 1px solid #1a2332;
+            font-size: 14px;
+        }
+        .admin-jackpot-info .info-row:last-child {
+            border-bottom: none;
+        }
+        .admin-jackpot-info .info-label {
+            color: #868e96;
+        }
+        .admin-jackpot-info .info-value {
+            font-weight: 600;
+            color: #f1f3f5;
+        }
+        .admin-jackpot-info .info-value.accent {
+            color: var(--accent);
+        }
+
         .leaderboard-tabs {
             display: flex;
             gap: 6px;
@@ -2603,6 +2633,8 @@
                 <button class="tab-btn active" data-tab="tab-users" onclick="switchAdminTab('tab-users')">Users</button>
                 <button class="tab-btn" data-tab="tab-pets" onclick="switchAdminTab('tab-pets')">Manage Pets</button>
                 <button class="tab-btn" data-tab="tab-muted" onclick="switchAdminTab('tab-muted')">Muted</button>
+                <!-- YENİ JACKPOT SEKMESİ -->
+                <button class="tab-btn" data-tab="tab-jackpot" onclick="switchAdminTab('tab-jackpot')">Jackpot</button>
             </div>
 
             <div class="admin-tab-content active" id="tab-users">
@@ -2641,6 +2673,19 @@
                         <button class="action-btn danger-btn" style="font-size:12px;padding:6px 18px;" onclick="adminMuteUser()">Mute</button>
                     </div>
                 </div>
+            </div>
+
+            <!-- YENİ JACKPOT TAB İÇERİĞİ -->
+            <div class="admin-tab-content" id="tab-jackpot">
+                <div style="font-weight:600;color:#ced4da;font-size:14px;margin-bottom:8px;">Jackpot Management</div>
+                <div class="admin-jackpot-info" id="admin-jackpot-info">
+                    <div class="info-row"><span class="info-label">Status</span><span class="info-value" id="admin-jp-status">-</span></div>
+                    <div class="info-row"><span class="info-label">Timer</span><span class="info-value" id="admin-jp-timer">-</span></div>
+                    <div class="info-row"><span class="info-label">Players</span><span class="info-value" id="admin-jp-players">-</span></div>
+                    <div class="info-row"><span class="info-label">Prize Pool</span><span class="info-value accent" id="admin-jp-prize">-</span></div>
+                </div>
+                <button class="action-btn danger-btn" style="font-size:13px;padding:8px 20px;" onclick="adminResetJackpot()">Reset Jackpot</button>
+                <div id="admin-jp-message" style="margin-top:10px;font-size:13px;color:#868e96;min-height:20px;"></div>
             </div>
 
             <button class="cancel-btn" style="width:100%;margin-top:16px;" onclick="closeModal('admin-modal')">Close</button>
@@ -2781,7 +2826,7 @@
     <script src="./config.js"></script>
     <script>
         // ============================================================
-        //  CONFIG & CONSTANTS
+        //  CONFIG & CONSTANTS (aynı, değişiklik yok)
         // ============================================================
         const BLOXWIN_API_URL = (window.BLOXWIN_API_URL && !window.BLOXWIN_API_URL.includes("YOUR-BACKEND-URL-HERE")) ? window.BLOXWIN_API_URL.replace(/\/$/, "") : window.location.origin;
         const apiUrl = (path) => BLOXWIN_API_URL + path;
@@ -4203,6 +4248,10 @@
                 });
             }
             updateJackpotUI();
+            // Admin jackpot bilgilerini güncelle (eğer açık ise)
+            if (document.getElementById('admin-modal').classList.contains('active')) {
+                updateAdminJackpotInfo();
+            }
         }
 
         function drawJackpotWheel() {
@@ -4347,6 +4396,57 @@
             }
 
             drawJackpotWheel();
+
+            // Admin paneli açık ise bilgileri güncelle
+            if (document.getElementById('admin-modal').classList.contains('active')) {
+                updateAdminJackpotInfo();
+            }
+        }
+
+        // ============================================================
+        //  ADMIN JACKPOT RESET
+        // ============================================================
+        function updateAdminJackpotInfo() {
+            const statusEl = document.getElementById('admin-jp-status');
+            const timerEl = document.getElementById('admin-jp-timer');
+            const playersEl = document.getElementById('admin-jp-players');
+            const prizeEl = document.getElementById('admin-jp-prize');
+
+            if (statusEl) {
+                const statusMap = {
+                    'waiting': '⏳ Waiting',
+                    'active': '🔄 Active',
+                    'spinning': '🎡 Spinning',
+                    'finished': '🏁 Finished'
+                };
+                statusEl.textContent = statusMap[jackpotState.status] || jackpotState.status;
+                statusEl.style.color = jackpotState.status === 'active' ? '#51cf66' : '#f1f3f5';
+            }
+            if (timerEl) {
+                if (jackpotState.status === 'spinning') timerEl.textContent = 'Spinning...';
+                else if (jackpotState.status === 'finished') timerEl.textContent = 'Done';
+                else timerEl.textContent = jackpotState.timer + 's';
+            }
+            if (playersEl) playersEl.textContent = Object.keys(jackpotState.players).length;
+            if (prizeEl) prizeEl.textContent = jackpotState.prizePool;
+        }
+
+        function adminResetJackpot() {
+            if (!currentUser || !isAdmin(currentUser)) {
+                showToast('Access denied.');
+                return;
+            }
+            if (!confirm('Are you sure you want to reset the current Jackpot? All bets will be cleared.')) return;
+
+            // Mevcut jackpot'u sıfırla (tüm oyuncuların petlerini geri vermeden direkt temizle)
+            // Fakat kullanıcıların petlerini geri vermek daha adil olur, ama istenen "jackpot maçlarını silme" olduğu için
+            // sadece sıfırlayıp tüm verileri atıyoruz. Oyuncuların envanterlerine geri vermek isterseniz ekleyebiliriz.
+            // Burada direkt resetJackpot(true) çağırıyoruz, bu da tüm state'i temizler.
+            resetJackpot(true);
+            showToast('Jackpot has been reset successfully.');
+            document.getElementById('admin-jp-message').textContent = '✅ Jackpot reset at ' + new Date().toLocaleTimeString();
+            // Admin info'yu güncelle
+            updateAdminJackpotInfo();
         }
 
         // ============================================================
@@ -5452,6 +5552,7 @@
             openModal('admin-modal');
             adminRefreshUsers();
             adminRenderMuted();
+            updateAdminJackpotInfo(); // jackpot bilgilerini güncelle
             switchAdminTab('tab-users');
         }
 
@@ -5463,6 +5564,7 @@
 
             if (tabId === 'tab-users') adminRefreshUsers();
             if (tabId === 'tab-muted') adminRenderMuted();
+            if (tabId === 'tab-jackpot') updateAdminJackpotInfo();
         }
 
         function adminRefreshUsers() {
