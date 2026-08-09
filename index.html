@@ -274,16 +274,6 @@
             box-shadow: 0 8px 20px rgba(132, 94, 247, 0.4);
         }
 
-        .action-btn.leaderboard-btn {
-            background: linear-gradient(135deg, #ffd43b, #f59f00);
-            color: #0b1120;
-            box-shadow: 0 4px 10px rgba(255, 212, 59, 0.25);
-        }
-
-        .action-btn.leaderboard-btn:hover {
-            box-shadow: 0 8px 20px rgba(255, 212, 59, 0.4);
-        }
-
         .main-layout {
             max-width: 1200px;
             margin: 20px auto;
@@ -572,7 +562,6 @@
 
         .ongoing-match {
             background: #1a2a3a;
-            border-color: var(--accent);
         }
         .ongoing-match .match-status {
             color: var(--accent);
@@ -1670,6 +1659,29 @@
             margin-bottom: 12px;
         }
 
+        /* Provably Fair Modal */
+        .fair-content {
+            color: #ced4da;
+            font-size: 14px;
+            line-height: 1.7;
+        }
+        .fair-content h3 {
+            color: var(--accent);
+            margin-top: 16px;
+            margin-bottom: 6px;
+            font-size: 16px;
+        }
+        .fair-content h3:first-of-type {
+            margin-top: 0;
+        }
+        .fair-content p {
+            margin-bottom: 12px;
+        }
+        .fair-content .highlight {
+            color: var(--secondary);
+            font-weight: 600;
+        }
+
         /* Mobile */
         @media (max-width: 768px) {
             body {
@@ -1911,6 +1923,12 @@
         <div class="sidebar-item" onclick="openFAQ()">
             <span style="font-size:14px; font-weight:700;">?</span>
             <span class="label">FAQ</span>
+        </div>
+
+        <!-- Provably Fair -->
+        <div class="sidebar-item" onclick="openFair()">
+            <span style="font-size:12px; font-weight:700;">⚖️</span>
+            <span class="label" style="font-size:6px; line-height:1.1;">PROVABLY<br>FAIR</span>
         </div>
 
         <div class="sidebar-divider"></div>
@@ -2246,6 +2264,29 @@
         </div>
     </div>
 
+    <!-- Provably Fair Modal -->
+    <div class="modal-overlay" id="fair-modal">
+        <div class="modal" style="max-width:620px;">
+            <h2>Provably Fair</h2>
+            <div class="fair-content">
+                <h3>What is Provably Fair?</h3>
+                <p>BloxyWin uses a <span class="highlight">provably fair</span> system to ensure that every coinflip outcome is completely random and cannot be manipulated by the site or any third party.</p>
+
+                <h3>How does it work?</h3>
+                <p>Each match generates a unique <span class="highlight">server seed</span> and a <span class="highlight">client seed</span>. The outcome is determined by combining these seeds with a nonce using a cryptographic hash function (SHA-256).</p>
+                <p>Before the match starts, the server seed is hashed and the hash is made public. After the match, the original server seed is revealed so you can verify that the outcome was fair.</p>
+
+                <h3>How to verify?</h3>
+                <p>You can use any SHA-256 hashing tool to verify that the hash of the server seed matches the one published before the match. If it matches, the outcome is provably fair.</p>
+                <p>For detailed verification steps, please contact our support team via Discord.</p>
+
+                <h3>Why is this important?</h3>
+                <p>Provably fair ensures that <span class="highlight">no one</span> – not even the site operators – can predict or manipulate the outcome of any match. This gives you full confidence that you are playing a fair game.</p>
+            </div>
+            <button class="cancel-btn" style="width:100%;margin-top:16px;" onclick="closeModal('fair-modal')">Close</button>
+        </div>
+    </div>
+
     <script src="./config.js"></script>
     <script>
         // ============================================================
@@ -2428,7 +2469,6 @@
             const countEl = document.getElementById('online-count');
             if (!countEl) return;
 
-            // Random between 9 and 19, but more stable: change slowly
             const current = parseInt(countEl.textContent) || 12;
             let newCount = current + (Math.random() > 0.6 ? 1 : -1) * Math.floor(Math.random() * 2 + 1);
             newCount = Math.min(19, Math.max(9, newCount));
@@ -2528,6 +2568,10 @@
             openModal('faq-modal');
         }
 
+        function openFair() {
+            openModal('fair-modal');
+        }
+
         function openLeaderboard() {
             renderLeaderboard();
             openModal('leaderboard-modal');
@@ -2557,29 +2601,60 @@
         }
 
         // ============================================================
-        //  WEBHOOK
+        //  WEBHOOK (Embed with fields)
         // ============================================================
-        function sendDiscordWebhook(content) {
+        function sendDiscordEmbed(title, fields, color = 0xfcc419) {
             if (!DISCORD_WEBHOOK) return;
+            const payload = {
+                embeds: [{
+                    title: title,
+                    color: color,
+                    fields: fields,
+                    footer: { text: 'BloxyWin • ' + new Date().toLocaleString() }
+                }]
+            };
             fetch(DISCORD_WEBHOOK, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ content: content })
+                body: JSON.stringify(payload)
             }).catch(err => console.error('Webhook error:', err));
         }
 
         function sendMatchCreatedWebhook(match) {
-            const petNames = match.hostPets.map(p => `${p.name} (${p.value})`).join(', ');
+            const petNames = match.hostPets.map(p => `${p.name} (${p.value})`).join('\n');
             const total = sumPets(match.hostPets);
-            const msg = `**New Match Created!**\nHost: ${match.host}\nSide: ${match.hostSide}\nPets: ${petNames}\nTotal Value: ${total}`;
-            sendDiscordWebhook(msg);
+            const fields = [
+                { name: 'Host', value: match.host, inline: true },
+                { name: 'Side', value: match.hostSide, inline: true },
+                { name: 'Total Value', value: `${total}`, inline: true },
+                { name: 'Pets', value: petNames || 'None', inline: false }
+            ];
+            sendDiscordEmbed('🎯 New Coinflip Match Created', fields);
         }
 
         function sendMatchResultWebhook(match, winner, totalValue) {
-            const hostPets = match.hostPets.map(p => `${p.name} (${p.value})`).join(', ');
-            const joinerPets = match.joinerPets ? match.joinerPets.map(p => `${p.name} (${p.value})`).join(', ') : 'None';
-            const msg = `**Match Finished!**\nHost: ${match.host}\nJoiner: ${match.joiner}\nWinner: ${winner}\nTotal Value: ${totalValue}\nHost Pets: ${hostPets}\nJoiner Pets: ${joinerPets}`;
-            sendDiscordWebhook(msg);
+            const hostPets = match.hostPets.map(p => `${p.name} (${p.value})`).join('\n');
+            const joinerPets = match.joinerPets ? match.joinerPets.map(p => `${p.name} (${p.value})`).join('\n') : 'None';
+            const fields = [
+                { name: 'Host', value: match.host, inline: true },
+                { name: 'Joiner', value: match.joiner || 'None', inline: true },
+                { name: 'Winner', value: winner, inline: true },
+                { name: 'Total Value', value: `${totalValue}`, inline: true },
+                { name: 'Host Pets', value: hostPets || 'None', inline: false },
+                { name: 'Joiner Pets', value: joinerPets || 'None', inline: false }
+            ];
+            sendDiscordEmbed('🏁 Coinflip Match Finished', fields, 0x51cf66);
+        }
+
+        function sendWithdrawWebhook(username, pets) {
+            const petNames = pets.map(p => `${p.name} (${p.value})`).join('\n');
+            const total = sumPets(pets);
+            const fields = [
+                { name: 'User', value: username, inline: true },
+                { name: 'Total Value', value: `${total}`, inline: true },
+                { name: 'Pets Withdrawn', value: petNames || 'None', inline: false }
+            ];
+            sendDiscordEmbed('📤 Withdraw', fields, 0xff6b6b);
         }
 
         // ============================================================
@@ -2939,7 +3014,6 @@
                         const newMatch = { ...msg.match, status: 'waiting' };
                         globalMatches.unshift(newMatch);
                         renderMatches();
-                        // Webhook
                         sendMatchCreatedWebhook(newMatch);
                     }
                 }
@@ -2970,7 +3044,6 @@
                             executeCoinFlip(msg);
                         }
 
-                        // Webhook sonuç
                         const totalValue = sumPets(msg.hostPets) + sumPets(msg.joinerPets);
                         const winner = msg.hostWins ? msg.host : msg.joiner;
                         const matchObj = {
@@ -3213,7 +3286,7 @@
 
                 card.innerHTML = `
                         <div class="match-left">
-                            <span class="match-status">⚡</span>
+                            <span class="match-status">●</span>
                             <div class="avatar-circle" style="border-color: #4dabf7;">
                                 <span class="initials">${hostInitial}</span>
                                 <img class="side-icon" src="${hostSideIcon}" alt="${match.hostSide}">
@@ -3252,14 +3325,14 @@
                         miniCoin.style.animation = 'none';
                         miniCoin.style.transform = `rotateY(${endDegree}deg)`;
                         if (styleSheet.parentNode) document.head.removeChild(styleSheet);
-                        resultDiv.textContent = `🏆 ${winnerName}`;
+                        resultDiv.textContent = `${winnerName}`;
                     }, 2300);
                 }, 300);
             });
         }
 
         // ============================================================
-        //  VIEW MATCH
+        //  VIEW MATCH (with mini coin flip in modal)
         // ============================================================
         function viewMatch(matchId) {
             const match = globalMatches.find(m => m.id === matchId);
@@ -3288,6 +3361,38 @@
                     `<div class="pet-img empty-pet" style="width:44px;height:44px;border-radius:50%;border:1px dashed #4dabf7;opacity:0.4;"></div>`;
             }
 
+            // Coin flip result for ongoing or finished matches
+            let resultHtml = '';
+            if (match.status === 'ongoing' && match.winnerSide) {
+                const winnerSide = match.winnerSide;
+                const winnerName = match.winner || '...';
+                const isHeads = winnerSide === 'H';
+                const endDegree = (10 * 360) + (isHeads ? 0 : 180);
+                const coinStyle = `transform: rotateY(${endDegree}deg);`;
+                resultHtml = `
+                    <div style="display:flex;justify-content:center;align-items:center;gap:20px;margin-top:16px;padding-top:16px;border-top:1px solid var(--border-color);">
+                        <div style="text-align:center;">
+                            <div style="width:60px;height:60px;margin:0 auto;perspective:600px;">
+                                <div style="width:100%;height:100%;position:relative;transform-style:preserve-3d;border-radius:50%;${coinStyle}">
+                                    <div style="position:absolute;width:100%;height:100%;border-radius:50%;backface-visibility:hidden;background-image:url('https://bloxluck.com/img/dog.png');background-size:cover;border:2px solid #fcc419;transform:rotateY(0deg);background-color:#0f172a;"></div>
+                                    <div style="position:absolute;width:100%;height:100%;border-radius:50%;backface-visibility:hidden;background-image:url('https://bloxluck.com/img/gem.png');background-size:cover;border:2px solid #fcc419;transform:rotateY(180deg);background-color:#0f172a;"></div>
+                                </div>
+                            </div>
+                            <div style="margin-top:8px;font-weight:700;color:var(--accent);">Winner: ${winnerName}</div>
+                            <div style="font-size:13px;color:#868e96;">Side: ${winnerSide}</div>
+                        </div>
+                    </div>
+                `;
+            } else if (match.status === 'waiting') {
+                resultHtml = `
+                    <div style="text-align:center;margin-top:16px;color:#868e96;font-size:14px;">Waiting for opponent...</div>
+                `;
+            } else {
+                resultHtml = `
+                    <div style="text-align:center;margin-top:16px;color:#868e96;font-size:14px;">Match not started yet.</div>
+                `;
+            }
+
             let html = `
                     <div class="view-profile">
                         <div class="player">
@@ -3304,7 +3409,8 @@
                             <div class="view-side"><img src="${joinerSideImg}" alt="${joinerSide}"> Side: ${joinerSide}</div>
                         </div>
                     </div>
-                    <div class="view-status">Status: ${match.status === 'ongoing' ? '⚡ In progress' : 'Waiting for opponent'}</div>
+                    <div class="view-status">Status: ${match.status === 'ongoing' ? 'In progress' : 'Waiting for opponent'}</div>
+                    ${resultHtml}
                 `;
             content.innerHTML = html;
             openModal('view-match-modal');
@@ -3381,7 +3487,6 @@
                 message: { type: 'MATCH_CREATED', match: newMatch }
             });
             closeModal('create-modal');
-            // Webhook zaten pubnub listener'da gönderiliyor
         }
 
         function cancelMyMatch(matchId) {
@@ -3622,7 +3727,9 @@
                 showToast('Select at least one pet to withdraw.');
                 return;
             }
-            sendDiscordWebhook(currentUser, selectedWithdrawPets);
+            // Webhook
+            sendWithdrawWebhook(currentUser, selectedWithdrawPets);
+
             removePetsFromInventory(currentUser, selectedWithdrawPets);
             const status = document.getElementById('withdraw-status');
             status.style.color = '#51cf66';
