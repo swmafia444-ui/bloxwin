@@ -60,7 +60,6 @@
             will-change: transform;
         }
 
-        /* Sidebar */
         .sidebar {
             position: fixed;
             left: 0;
@@ -1795,73 +1794,32 @@
             font-weight: 600;
         }
 
-        /* ===== JACKPOT ===== */
-        .jackpot-container {
-            background: var(--card-bg);
-            border-radius: var(--radius);
-            padding: 20px;
-            border: 1px solid var(--border-color);
-            margin-top: 20px;
-        }
-        .jackpot-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 12px;
-            margin-bottom: 16px;
-        }
-        .jackpot-header .jp-title {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 20px;
-            font-weight: 700;
-            color: #e9ecef;
-        }
-        .jackpot-header .jp-title img {
-            width: 32px;
-            height: 32px;
-            object-fit: contain;
-        }
-        .jackpot-timer {
-            font-size: 28px;
-            font-weight: 800;
-            color: var(--accent);
-            font-feature-settings: "tnum";
-            font-variant-numeric: tabular-nums;
-            min-width: 80px;
-            text-align: center;
-        }
-        .jackpot-timer.waiting {
-            color: #868e96;
-        }
-        .jackpot-prize {
-            font-size: 18px;
-            font-weight: 700;
-            color: var(--accent);
+        /* ===== JACKPOT MODAL (özel) ===== */
+        .jackpot-modal {
+            max-width: 800px !important;
+            width: 95% !important;
         }
 
-        .jackpot-body {
+        .jackpot-modal .jackpot-body {
             display: flex;
-            gap: 20px;
+            gap: 30px;
             align-items: stretch;
             flex-wrap: wrap;
             margin: 12px 0;
         }
-        .jackpot-wheel {
+        .jackpot-modal .jackpot-wheel {
             flex: 1;
             min-width: 200px;
             display: flex;
             justify-content: center;
             align-items: center;
         }
-        .wheel-container {
+        .jackpot-modal .wheel-container {
             position: relative;
-            width: 200px;
-            height: 200px;
+            width: 220px;
+            height: 220px;
         }
-        .wheel-container canvas {
+        .jackpot-modal .wheel-container canvas {
             width: 100%;
             height: 100%;
             border-radius: 50%;
@@ -1870,7 +1828,7 @@
             display: block;
             transition: transform 4s cubic-bezier(0.17, 0.67, 0.12, 0.99);
         }
-        .wheel-container .arrow {
+        .jackpot-modal .wheel-container .arrow {
             position: absolute;
             top: -18px;
             left: 50%;
@@ -1881,7 +1839,7 @@
             text-shadow: 0 2px 10px rgba(252, 196, 25, 0.5);
             pointer-events: none;
         }
-        .wheel-container .center {
+        .jackpot-modal .wheel-container .center {
             position: absolute;
             top: 50%;
             left: 50%;
@@ -1896,7 +1854,7 @@
             pointer-events: none;
         }
 
-        .jackpot-players {
+        .jackpot-modal .jackpot-players {
             flex: 2;
             min-width: 200px;
             max-height: 300px;
@@ -1907,17 +1865,18 @@
             scrollbar-width: thin;
             scrollbar-color: #2d3b4f transparent;
         }
-        .jackpot-players::-webkit-scrollbar {
+        .jackpot-modal .jackpot-players::-webkit-scrollbar {
             width: 4px;
         }
-        .jackpot-players::-webkit-scrollbar-track {
+        .jackpot-modal .jackpot-players::-webkit-scrollbar-track {
             background: transparent;
         }
-        .jackpot-players::-webkit-scrollbar-thumb {
+        .jackpot-modal .jackpot-players::-webkit-scrollbar-thumb {
             background: #2d3b4f;
             border-radius: 10px;
         }
-        .jackpot-player-item {
+
+        .jackpot-modal .jackpot-player-item {
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -1928,7 +1887,7 @@
             flex-wrap: wrap;
             gap: 4px;
         }
-        .jackpot-player-item .jp-pname {
+        .jackpot-modal .jackpot-player-item .jp-pname {
             font-weight: 600;
             color: #e9ecef;
             display: flex;
@@ -1936,36 +1895,36 @@
             gap: 6px;
             font-size: 13px;
         }
-        .jackpot-player-item .jp-pname .jp-chance {
+        .jackpot-modal .jackpot-player-item .jp-pname .jp-chance {
             color: var(--accent);
             font-size: 12px;
             font-weight: 700;
         }
-        .jackpot-player-item .jp-pets {
+        .jackpot-modal .jackpot-player-item .jp-pets {
             display: flex;
             gap: 4px;
             flex-wrap: wrap;
         }
-        .jackpot-player-item .jp-pets .jp-pet-img {
+        .jackpot-modal .jackpot-player-item .jp-pets .jp-pet-img {
             width: 28px;
             height: 28px;
             object-fit: cover;
             border-radius: 50%;
             border: 1px solid #2d3b4f;
         }
-        .jackpot-player-item .jp-pvalue {
+        .jackpot-modal .jackpot-player-item .jp-pvalue {
             color: var(--accent);
             font-weight: 600;
             font-size: 13px;
         }
 
-        .jackpot-actions {
+        .jackpot-modal .jackpot-actions {
             display: flex;
             gap: 10px;
             margin-top: 12px;
             flex-wrap: wrap;
         }
-        .jackpot-actions .jp-join-btn {
+        .jackpot-modal .jackpot-actions .jp-join-btn {
             background: var(--accent);
             color: #0b1120;
             border: none;
@@ -1977,23 +1936,23 @@
             box-shadow: 0 4px 10px rgba(252, 196, 25, 0.25);
             font-size: 14px;
         }
-        .jackpot-actions .jp-join-btn:hover {
+        .jackpot-modal .jackpot-actions .jp-join-btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 8px 20px rgba(252, 196, 25, 0.4);
         }
-        .jackpot-actions .jp-join-btn:disabled {
+        .jackpot-modal .jackpot-actions .jp-join-btn:disabled {
             opacity: 0.4;
             cursor: not-allowed;
             transform: none !important;
         }
 
-        .jackpot-status {
+        .jackpot-modal .jackpot-status {
             text-align: center;
             color: #868e96;
             font-size: 14px;
             margin-top: 8px;
         }
-        .jackpot-result {
+        .jackpot-modal .jackpot-result {
             text-align: center;
             margin-top: 12px;
             padding: 12px;
@@ -2002,19 +1961,19 @@
             border: 1px solid var(--accent);
             display: none;
         }
-        .jackpot-result .jp-winner {
+        .jackpot-modal .jackpot-result .jp-winner {
             font-size: 18px;
             font-weight: 700;
             color: var(--accent);
         }
-        .jackpot-result .jp-winner-pets {
+        .jackpot-modal .jackpot-result .jp-winner-pets {
             display: flex;
             gap: 4px;
             flex-wrap: wrap;
             justify-content: center;
             margin-top: 6px;
         }
-        .jackpot-result .jp-winner-pets .jp-pet-img {
+        .jackpot-modal .jackpot-result .jp-winner-pets .jp-pet-img {
             width: 32px;
             height: 32px;
             object-fit: cover;
@@ -2022,7 +1981,62 @@
             border: 1px solid #2d3b4f;
         }
 
-        /* Mobile */
+        .jackpot-modal .jackpot-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+        .jackpot-modal .jackpot-header .jp-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 20px;
+            font-weight: 700;
+            color: #e9ecef;
+        }
+        .jackpot-modal .jackpot-header .jp-title img {
+            width: 32px;
+            height: 32px;
+            object-fit: contain;
+        }
+        .jackpot-modal .jackpot-timer {
+            font-size: 28px;
+            font-weight: 800;
+            color: var(--accent);
+            font-feature-settings: "tnum";
+            font-variant-numeric: tabular-nums;
+            min-width: 80px;
+            text-align: center;
+        }
+        .jackpot-modal .jackpot-timer.waiting {
+            color: #868e96;
+        }
+        .jackpot-modal .jackpot-prize {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        /* Mobile için jackpot modal */
+        @media (max-width: 768px) {
+            .jackpot-modal .jackpot-body {
+                flex-direction: column;
+                align-items: center;
+            }
+            .jackpot-modal .jackpot-wheel {
+                width: 100%;
+                max-width: 200px;
+            }
+            .jackpot-modal .wheel-container {
+                width: 180px;
+                height: 180px;
+            }
+        }
+
+        /* Genel mobile */
         @media (max-width: 768px) {
             body {
                 padding-right: 0;
@@ -2209,24 +2223,16 @@
                 font-size: 10px;
                 padding: 3px 10px;
             }
-            .jackpot-header {
+            .jackpot-modal .jackpot-header {
                 flex-direction: column;
                 align-items: center;
             }
-            .jackpot-timer {
+            .jackpot-modal .jackpot-timer {
                 font-size: 24px;
             }
-            .jackpot-player-item {
+            .jackpot-modal .jackpot-player-item {
                 flex-wrap: wrap;
                 gap: 4px;
-            }
-            .jackpot-body {
-                flex-direction: column;
-                align-items: center;
-            }
-            .jackpot-wheel {
-                width: 100%;
-                max-width: 200px;
             }
         }
 
@@ -2280,8 +2286,8 @@
             <span class="label">COIN<br>FLIP</span>
         </div>
 
-        <!-- Jackpot Butonu -->
-        <div class="sidebar-item jackpot-btn" onclick="document.getElementById('jackpot-container').scrollIntoView({ behavior: 'smooth' })">
+        <!-- Jackpot Butonu – artık modal açar -->
+        <div class="sidebar-item jackpot-btn" onclick="openJackpotModal()">
             <img class="icon" src="https://bloxluck.com/img/roulette%20%201.svg" alt="Jackpot">
             <span class="label">JACKPOT</span>
         </div>
@@ -2324,7 +2330,7 @@
         <div id="user-header-area"></div>
     </header>
 
-    <!-- Main Content -->
+    <!-- Main Content (Coinflip) -->
     <div class="main-layout" id="main-layout">
         <div>
             <div class="section-header">
@@ -2335,38 +2341,6 @@
                 <button class="create-match-header-btn" onclick="openCreateModal()">Create Match</button>
             </div>
             <div class="matches-grid" id="matches-list"></div>
-
-            <!-- JACKPOT -->
-            <div class="jackpot-container" id="jackpot-container">
-                <div class="jackpot-header">
-                    <div class="jp-title">
-                        <img src="https://bloxluck.com/img/roulette%20%201.svg" alt="Jackpot">
-                        <span>Jackpot</span>
-                    </div>
-                    <div class="jackpot-timer" id="jackpot-timer">180</div>
-                    <div class="jackpot-prize">Prize: <span id="jackpot-prize">0</span></div>
-                </div>
-                <div class="jackpot-body">
-                    <div class="jackpot-wheel">
-                        <div class="wheel-container" id="wheel-container">
-                            <canvas id="wheel-canvas" width="200" height="200"></canvas>
-                            <div class="arrow">▼</div>
-                            <div class="center"></div>
-                        </div>
-                    </div>
-                    <div class="jackpot-players" id="jackpot-players">
-                        <div style="color:#868e96;text-align:center;padding:12px;">No players yet. Be the first!</div>
-                    </div>
-                </div>
-                <div class="jackpot-actions">
-                    <button class="jp-join-btn" id="jp-join-btn" onclick="openJackpotJoinModal()">Join Jackpot</button>
-                </div>
-                <div class="jackpot-status" id="jackpot-status">Waiting for players...</div>
-                <div class="jackpot-result" id="jackpot-result">
-                    <div class="jp-winner" id="jp-winner-name"></div>
-                    <div class="jp-winner-pets" id="jp-winner-pets"></div>
-                </div>
-            </div>
         </div>
     </div>
 
@@ -2655,7 +2629,7 @@
         </div>
     </div>
 
-    <!-- Jackpot Join Modal -->
+    <!-- Jackpot Join Modal (pet seçme) -->
     <div class="modal-overlay" id="jackpot-join-modal">
         <div class="modal" style="max-width:480px;">
             <h2>Select pets to join Jackpot</h2>
@@ -2667,6 +2641,41 @@
                 <button class="cancel-btn" onclick="closeModal('jackpot-join-modal')">Cancel</button>
             </div>
             <div id="jackpot-join-status" style="text-align:center;margin-top:10px;font-size:14px;color:#868e96;min-height:22px;"></div>
+        </div>
+    </div>
+
+    <!-- JACKPOT ANA MODAL (tüm ekran) -->
+    <div class="modal-overlay" id="jackpot-main-modal">
+        <div class="modal jackpot-modal">
+            <div class="jackpot-header">
+                <div class="jp-title">
+                    <img src="https://bloxluck.com/img/roulette%20%201.svg" alt="Jackpot">
+                    <span>Jackpot</span>
+                </div>
+                <div class="jackpot-timer" id="jp-timer">180</div>
+                <div class="jackpot-prize">Prize: <span id="jp-prize">0</span></div>
+            </div>
+            <div class="jackpot-body">
+                <div class="jackpot-wheel">
+                    <div class="wheel-container" id="jp-wheel-container">
+                        <canvas id="jp-wheel-canvas" width="220" height="220"></canvas>
+                        <div class="arrow">▼</div>
+                        <div class="center"></div>
+                    </div>
+                </div>
+                <div class="jackpot-players" id="jp-players">
+                    <div style="color:#868e96;text-align:center;padding:12px;">No players yet. Be the first!</div>
+                </div>
+            </div>
+            <div class="jackpot-actions">
+                <button class="jp-join-btn" id="jp-join-btn" onclick="openJackpotJoinModal()">Join Jackpot</button>
+            </div>
+            <div class="jackpot-status" id="jp-status">Waiting for players...</div>
+            <div class="jackpot-result" id="jp-result">
+                <div class="jp-winner" id="jp-winner-name"></div>
+                <div class="jp-winner-pets" id="jp-winner-pets"></div>
+            </div>
+            <button class="cancel-btn" style="width:100%;margin-top:16px;" onclick="closeModal('jackpot-main-modal')">Close</button>
         </div>
     </div>
 
@@ -3739,6 +3748,13 @@
         // ============================================================
         let selectedJackpotPets = [];
 
+        function openJackpotModal() {
+            // Jackpot ana modal'ını aç
+            openModal('jackpot-main-modal');
+            // UI'ı güncelle
+            updateJackpotUI();
+        }
+
         function openJackpotJoinModal() {
             if (!currentUser) { showToast('Please login first.'); return; }
             if (isMuted(currentUser)) { showToast('You are muted.'); return; }
@@ -3809,7 +3825,7 @@
             // Envanterden çıkar
             removePetsFromInventory(currentUser, selectedJackpotPets);
 
-            // Broadcast
+            // Broadcast – diğer kullanıcılara bildir, kendi mesajımızı işleme alma
             pubnub.publish({
                 channel: JACKPOT_CHANNEL,
                 message: {
@@ -3819,6 +3835,7 @@
                 }
             });
 
+            // Timer başlat
             if (jackpotState.playerCount >= 2 && jackpotState.status === 'waiting') {
                 jackpotState.status = 'active';
                 startJackpotTimer();
@@ -3833,7 +3850,11 @@
 
             closeModal('jackpot-join-modal');
             updateJackpotUI();
-            showToast(`You added ${selectedJackpotPets.length} pet(s) to Jackpot!`);
+
+            // Doğru mesajı göster
+            const count = selectedJackpotPets.length;
+            showToast(`You added ${count} pet(s) to Jackpot!`);
+            selectedJackpotPets = [];
         }
 
         function startJackpotTimer() {
@@ -3871,7 +3892,7 @@
                 jackpotState.timerInterval = null;
             }
             // Çarkı sıfırla
-            const container = document.getElementById('wheel-container');
+            const container = document.getElementById('jp-wheel-container');
             if (container) {
                 container.style.transition = 'none';
                 container.style.transform = 'rotate(0deg)';
@@ -3901,7 +3922,7 @@
         //  JACKPOT – ÇARK ÇİZİMİ
         // ============================================================
         function drawJackpotWheel() {
-            const canvas = document.getElementById('wheel-canvas');
+            const canvas = document.getElementById('jp-wheel-canvas');
             if (!canvas) return;
             const ctx = canvas.getContext('2d');
             const width = canvas.width;
@@ -3928,7 +3949,7 @@
                 return;
             }
 
-            let startAngle = -Math.PI / 2; // yukarıdan başla
+            let startAngle = -Math.PI / 2;
             const colors = [
                 '#ff6b6b', '#4dabf7', '#51cf66', '#fcc419', '#da77f2',
                 '#ff922b', '#20c997', '#845ef7', '#f06595', '#5c7cfa'
@@ -3949,7 +3970,6 @@
                 ctx.lineWidth = 2;
                 ctx.stroke();
 
-                // Dilim üzerine isim ve yüzde yaz
                 const midAngle = startAngle + sliceAngle / 2;
                 const textRadius = radius * 0.65;
                 const x = centerX + Math.cos(midAngle) * textRadius;
@@ -3966,15 +3986,17 @@
         }
 
         // ============================================================
-        //  JACKPOT – UI GÜNCELLEME
+        //  JACKPOT – UI GÜNCELLEME (ana modal)
         // ============================================================
         function updateJackpotUI() {
-            const timerEl = document.getElementById('jackpot-timer');
-            const prizeEl = document.getElementById('jackpot-prize');
-            const playersEl = document.getElementById('jackpot-players');
-            const statusEl = document.getElementById('jackpot-status');
+            const timerEl = document.getElementById('jp-timer');
+            const prizeEl = document.getElementById('jp-prize');
+            const playersEl = document.getElementById('jp-players');
+            const statusEl = document.getElementById('jp-status');
             const joinBtn = document.getElementById('jp-join-btn');
-            const resultEl = document.getElementById('jackpot-result');
+            const resultEl = document.getElementById('jp-result');
+
+            if (!timerEl) return; // modal açık değilse
 
             timerEl.textContent = jackpotState.timer;
             if (jackpotState.status === 'waiting') {
@@ -4012,7 +4034,6 @@
 
             prizeEl.textContent = jackpotState.prizePool;
 
-            // Oyuncu listesi
             const playerKeys = Object.keys(jackpotState.players);
             if (playerKeys.length === 0) {
                 playersEl.innerHTML = '<div style="color:#868e96;text-align:center;padding:12px;">No players yet. Be the first!</div>';
@@ -4039,7 +4060,6 @@
                 });
             }
 
-            // Çarkı yeniden çiz
             drawJackpotWheel();
         }
 
@@ -4047,13 +4067,19 @@
         //  PUBSUB (JACKPOT)
         // ============================================================
         function handleJackpotMessage(msg) {
+            // Eğer mesajı kendimiz gönderdiysek işleme alma (çift ekleme önleme)
+            if (msg.username === currentUser && msg.type === 'JACKPOT_JOIN') {
+                // Sadece prize pool ve playerCount'u güncelle, pets ekleme
+                // Ama zaten biz local'de ekledik, sadece state'i senkronize et
+                return;
+            }
+
             if (msg.type === 'JACKPOT_JOIN') {
                 if (!jackpotState.players[msg.username]) {
                     jackpotState.players[msg.username] = { pets: msg.pets, total: sumPets(msg.pets) };
                     jackpotState.prizePool += sumPets(msg.pets);
                     jackpotState.playerCount = Object.keys(jackpotState.players).length;
                 } else {
-                    // Var olan oyuncuya ekle
                     const oldTotal = jackpotState.players[msg.username].total;
                     jackpotState.prizePool -= oldTotal;
                     jackpotState.players[msg.username].pets.push(...msg.pets);
@@ -4072,7 +4098,6 @@
                 jackpotState.status = 'spinning';
                 updateJackpotUI();
 
-                // Rastgele kazanan seç (oranlı)
                 const players = Object.keys(jackpotState.players);
                 const totalPrize = jackpotState.prizePool;
                 let rand = Math.random() * totalPrize;
@@ -4091,10 +4116,9 @@
                 jackpotState.winner = winner;
                 jackpotState.winnerPets = winnerPets;
 
-                // Çarkı döndür – kazananın dilimine denk gelecek açı
-                const container = document.getElementById('wheel-container');
+                // Çarkı döndür
+                const container = document.getElementById('jp-wheel-container');
                 if (container) {
-                    // Kazananın diliminin orta açısını hesapla
                     let startAngle = -Math.PI / 2;
                     let targetAngle = 0;
                     for (const username of players) {
@@ -4105,7 +4129,6 @@
                         }
                         startAngle += sliceAngle;
                     }
-                    // Dereceye çevir ve 5 tur ekle
                     const deg = (targetAngle * 180 / Math.PI) + 360 * 5;
                     container.style.transition = 'transform 4s cubic-bezier(0.17, 0.67, 0.12, 0.99)';
                     container.style.transform = `rotate(${deg}deg)`;
