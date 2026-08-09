@@ -2428,7 +2428,6 @@
                 <div class="jackpot-prize">
                     Prize: <span id="jp-prize">0</span>
                     <button class="jp-join-btn" id="jp-join-btn" onclick="openJackpotJoinModal()">Join Jackpot</button>
-                    <!-- Reset butonu kaldırıldı, artık sadece admin panelinde -->
                 </div>
             </div>
             <div class="jackpot-body">
@@ -3929,17 +3928,17 @@
                 jackpotState.winnerPets = stored.winnerPets || [];
                 jackpotState.playerCount = Object.keys(jackpotState.players).length;
 
-                // Eğer active ise ve timer > 0 ise interval başlat, aksi halde timer’ı maxTimer’a setle
+                // Eğer active ise timer'ı başlat, ANCAK broadcast yapma (sayfa yeniden yüklendi)
                 if (jackpotState.status === 'active') {
                     if (jackpotState.timer > 0) {
-                        startJackpotTimer();
+                        startJackpotTimer(false);   // <-- broadcast: false
                     } else {
-                        // Timer 0 veya negatifse maxTimer ile yeniden başlat
                         jackpotState.timer = jackpotState.maxTimer || 90;
-                        startJackpotTimer();
+                        startJackpotTimer(false);
                     }
                 } else if (jackpotState.status === 'waiting' && jackpotState.playerCount >= 2) {
-                    startJackpotTimer();
+                    // waiting'den active'e geçişte broadcast yapılmalı, ama burada da false verip UI'ı güncellemek yeterli
+                    startJackpotTimer(false);
                 }
                 updateJackpotUI();
                 return true;
@@ -4174,7 +4173,7 @@
 
             // Eğer 2+ oyuncu olduysa ve waiting ise timer'ı başlat
             if (jackpotState.playerCount >= 2 && jackpotState.status === 'waiting') {
-                startJackpotTimer();
+                startJackpotTimer(); // broadcast true (varsayılan)
                 broadcastJackpotState();
             }
 
@@ -4185,18 +4184,20 @@
             if (btn) btn.disabled = false;
         }
 
-        function startJackpotTimer() {
+        function startJackpotTimer(broadcast = true) {
             if (jackpotState.timerInterval) {
                 clearInterval(jackpotState.timerInterval);
                 jackpotState.timerInterval = null;
             }
-            // Eğer timer zaten 0 veya negatifse maxTimer'dan al
+            // Timer 0 veya negatifse maxTimer'dan al
             if (jackpotState.timer <= 0) {
                 jackpotState.timer = jackpotState.maxTimer || 90;
             }
             jackpotState.status = 'active';
             updateJackpotUI();
-            broadcastJackpotState();
+            if (broadcast) {
+                broadcastJackpotState();   // Sadece kullanıcı işlemiyle başlatıldığında yayınla
+            }
 
             jackpotState.timerInterval = setInterval(() => {
                 if (jackpotState.status !== 'active') {
@@ -4205,7 +4206,6 @@
                     return;
                 }
                 jackpotState.timer -= 1;
-                // 🔥 Her saniye state’i kaydet
                 saveJackpotState();
                 if (jackpotState.timer <= 0) {
                     clearInterval(jackpotState.timerInterval);
@@ -4214,7 +4214,7 @@
                     return;
                 }
                 updateJackpotUI();
-                broadcastJackpotState();
+                broadcastJackpotState();   // Her saniye normalde yayınla
             }, 1000);
         }
 
@@ -4517,7 +4517,7 @@
                     jackpotState.winnerPets = incoming.winnerPets || [];
                     jackpotState.playerCount = Object.keys(jackpotState.players).length;
                     saveJackpotState();
-                    startJackpotTimer();
+                    startJackpotTimer(); // broadcast true (varsayılan)
                     updateJackpotUI();
                     return;
                 }
@@ -4533,7 +4533,7 @@
                 jackpotState.playerCount = Object.keys(jackpotState.players).length;
 
                 if (jackpotState.status === 'active' && jackpotState.timer > 0) {
-                    startJackpotTimer();
+                    startJackpotTimer(); // broadcast true
                 }
                 saveJackpotState();
                 updateJackpotUI();
@@ -4554,7 +4554,7 @@
                 }
 
                 if (jackpotState.playerCount >= 2 && jackpotState.status === 'waiting') {
-                    startJackpotTimer();
+                    startJackpotTimer(); // broadcast true
                 }
                 saveJackpotState();
                 updateJackpotUI();
