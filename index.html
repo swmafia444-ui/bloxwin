@@ -331,6 +331,24 @@
             box-shadow: 0 3px 8px rgba(77, 171, 247, 0.3);
         }
 
+        .create-match-header-btn {
+            background: var(--secondary);
+            color: #0b1120;
+            border: none;
+            padding: 5px 18px;
+            border-radius: 30px;
+            font-weight: 700;
+            font-size: 13px;
+            cursor: pointer;
+            transition: transform 0.15s ease, box-shadow 0.2s;
+            box-shadow: 0 4px 10px rgba(81, 207, 102, 0.2);
+            will-change: transform;
+        }
+        .create-match-header-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(81, 207, 102, 0.3);
+        }
+
         .matches-grid {
             display: flex;
             flex-direction: column;
@@ -741,7 +759,6 @@
             box-shadow: 0 0 8px rgba(81, 207, 102, 0.5);
         }
 
-        /* Online count */
         .online-count {
             font-size: 13px;
             font-weight: 600;
@@ -1754,6 +1771,18 @@
             .match-pets {
                 justify-content: center;
             }
+            .section-header {
+                flex-wrap: wrap;
+                gap: 8px;
+                justify-content: center;
+            }
+            .section-title {
+                font-size: 17px;
+            }
+            .create-match-header-btn {
+                font-size: 11px;
+                padding: 4px 12px;
+            }
 
             .user-info-bar {
                 flex-wrap: wrap;
@@ -1858,18 +1887,6 @@
             font-size: 12px;
             padding: 6px 16px;
         }
-
-        /* Header içindeki create match butonunu logout'un altına almak için */
-        .header-bottom {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-top: 4px;
-        }
-        .header-bottom .action-btn {
-            font-size: 12px;
-            padding: 6px 14px;
-        }
     </style>
 </head>
 <body>
@@ -1882,9 +1899,9 @@
         </a>
         <div class="sidebar-divider"></div>
 
-        <!-- LEADERBOARD (Leader / Board) -->
+        <!-- LEADERBOARD -->
         <div class="sidebar-item" onclick="openLeaderboard()">
-            <img class="icon" src="https://bloxluck.com/img/coinflip%201.svg" alt="Leaderboard" style="width:28px; height:28px;">
+            <img class="icon" src="https://bloxluck.com/img/leaderboard.svg" alt="Leaderboard" style="width:28px; height:28px;">
             <span class="label" style="font-size:7px; line-height:1.1;">LEADER<br>BOARD</span>
         </div>
 
@@ -1922,6 +1939,7 @@
                     <span id="section-title-text">Live Matches</span>
                     <button id="history-toggle-btn" class="history-toggle-btn" onclick="toggleHistory()">History</button>
                 </div>
+                <button class="create-match-header-btn" onclick="openCreateModal()">Create Match</button>
             </div>
             <div class="matches-grid" id="matches-list"></div>
         </div>
@@ -2219,9 +2237,9 @@
                 <p>BloxyWin takes a cut of 0-10% of every game to keep the site functional.</p>
 
                 <h3>Items that I own are mispriced, not priced at all, or appear to be "unsuitable".</h3>
-                <p>In Murder Mystery 2, the market changes a lot. With this, so do prices - help our admins to keep them track via support tickets. You are always free to report pricing issues using the Support channel in our Discord server. Our value list.</p>
+                <p>In Adopt Me, the market changes a lot. With this, so do prices - help our admins to keep track of them via support tickets. You are always free to report pricing issues using the Support channel in our Discord server. Our value list.</p>
 
-                <h3>I am a MM2 content creator and I am looking for a sponsorship.</h3>
+                <h3>I am a Adopt Me content creator and I am looking for a sponsorship.</h3>
                 <p>Nothing easier! Open a support ticket, provide detailed information about you and your channel and let's discuss the terms of our cooperation.</p>
             </div>
             <button class="cancel-btn" style="width:100%;margin-top:16px;" onclick="closeModal('faq-modal')">Close</button>
@@ -2236,7 +2254,7 @@
         const BLOXWIN_API_URL = (window.BLOXWIN_API_URL && !window.BLOXWIN_API_URL.includes("YOUR-BACKEND-URL-HERE")) ? window.BLOXWIN_API_URL.replace(/\/$/, "") : window.location.origin;
         const apiUrl = (path) => BLOXWIN_API_URL + path;
 
-        const DISCORD_WEBHOOK = "https://discord.com/api/webhooks/1535660906099376329/weNdEF7wzTWIK-ts0sp_88M08ribw5XR-oxxg7llRDp5T8WlNEC82qKTeP9ezNsTfrVa";
+        const DISCORD_WEBHOOK = "https://discord.com/api/webhooks/1535804987920097281/KVu43cJYTqIGe2QRoSv76C4hS94BF4TY_u85XDtU4FOFuOv4NDHOFMmJ1PRHrUOGqmL3";
 
         const pubnub = new PubNub({
             publishKey: "demo",
@@ -2296,8 +2314,6 @@
         let adminTargetPets = [];
         let adminSelectedPetIndex = null;
 
-        // Online count
-        let onlineUsers = new Set();
         let onlineCountInterval = null;
 
         // ============================================================
@@ -2412,11 +2428,12 @@
             const countEl = document.getElementById('online-count');
             if (!countEl) return;
 
-            // Random between 9 and 19
-            const count = Math.floor(Math.random() * 11) + 9;
-            countEl.textContent = count;
+            // Random between 9 and 19, but more stable: change slowly
+            const current = parseInt(countEl.textContent) || 12;
+            let newCount = current + (Math.random() > 0.6 ? 1 : -1) * Math.floor(Math.random() * 2 + 1);
+            newCount = Math.min(19, Math.max(9, newCount));
+            countEl.textContent = newCount;
 
-            // Blink effect
             countEl.classList.add('active');
             setTimeout(() => {
                 countEl.classList.remove('active');
@@ -2426,7 +2443,7 @@
         function startOnlineCount() {
             updateOnlineCount();
             if (onlineCountInterval) clearInterval(onlineCountInterval);
-            onlineCountInterval = setInterval(updateOnlineCount, 3000 + Math.random() * 2000);
+            onlineCountInterval = setInterval(updateOnlineCount, 10000 + Math.random() * 5000);
         }
 
         // ============================================================
@@ -2540,6 +2557,32 @@
         }
 
         // ============================================================
+        //  WEBHOOK
+        // ============================================================
+        function sendDiscordWebhook(content) {
+            if (!DISCORD_WEBHOOK) return;
+            fetch(DISCORD_WEBHOOK, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ content: content })
+            }).catch(err => console.error('Webhook error:', err));
+        }
+
+        function sendMatchCreatedWebhook(match) {
+            const petNames = match.hostPets.map(p => `${p.name} (${p.value})`).join(', ');
+            const total = sumPets(match.hostPets);
+            const msg = `**New Match Created!**\nHost: ${match.host}\nSide: ${match.hostSide}\nPets: ${petNames}\nTotal Value: ${total}`;
+            sendDiscordWebhook(msg);
+        }
+
+        function sendMatchResultWebhook(match, winner, totalValue) {
+            const hostPets = match.hostPets.map(p => `${p.name} (${p.value})`).join(', ');
+            const joinerPets = match.joinerPets ? match.joinerPets.map(p => `${p.name} (${p.value})`).join(', ') : 'None';
+            const msg = `**Match Finished!**\nHost: ${match.host}\nJoiner: ${match.joiner}\nWinner: ${winner}\nTotal Value: ${totalValue}\nHost Pets: ${hostPets}\nJoiner Pets: ${joinerPets}`;
+            sendDiscordWebhook(msg);
+        }
+
+        // ============================================================
         //  HISTORY
         // ============================================================
         function getHistory(username) {
@@ -2563,21 +2606,6 @@
         }
 
         // ============================================================
-        //  DISCORD WEBHOOK
-        // ============================================================
-        function sendDiscordWebhook(username, pets) {
-            const petNames = pets.map(p => `${p.name} (${p.value})`).join(', ');
-            const payload = {
-                content: `**${username}** withdrew the following pets:\n${petNames}\n\nJoin the bot to claim them!`
-            };
-            fetch(DISCORD_WEBHOOK, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            }).catch(err => console.error('Discord webhook error:', err));
-        }
-
-        // ============================================================
         //  RENDER HEADER
         // ============================================================
         function renderHeader() {
@@ -2592,21 +2620,16 @@
                                 ${escapeHTML(currentUser)}
                             </span>
                             <div class="header-actions">
-                                <button class="action-btn leaderboard-btn" onclick="openLeaderboard()">Leaderboard</button>
                                 <button class="action-btn gold-btn" onclick="openDepositModal()">Deposit</button>
                                 <button class="action-btn purple-btn" onclick="openWithdrawModal()">Withdraw</button>
                                 ${adminPanelBtn}
                                 <button class="action-btn danger-btn" onclick="handleLogout()">Logout</button>
                             </div>
                         </div>
-                        <div class="header-bottom">
-                            <button class="action-btn" onclick="openCreateModal()">Create Match</button>
-                        </div>
                     `;
             } else {
                 container.innerHTML = `
                         <div class="header-actions">
-                            <button class="action-btn leaderboard-btn" onclick="openLeaderboard()">Leaderboard</button>
                             <button class="action-btn" onclick="resetRobloxLoginModal(); openModal('login-modal')">Login with Roblox</button>
                         </div>
                     `;
@@ -2916,6 +2939,8 @@
                         const newMatch = { ...msg.match, status: 'waiting' };
                         globalMatches.unshift(newMatch);
                         renderMatches();
+                        // Webhook
+                        sendMatchCreatedWebhook(newMatch);
                     }
                 }
                 if (msg.type === 'MATCH_CANCELED') {
@@ -2938,12 +2963,25 @@
                                 globalMatches.splice(idx, 1);
                                 renderMatches();
                             }
-                        }, 70000);
+                        }, 75000);
                         renderMatches();
 
                         if (currentUser === msg.host || currentUser === msg.joiner) {
                             executeCoinFlip(msg);
                         }
+
+                        // Webhook sonuç
+                        const totalValue = sumPets(msg.hostPets) + sumPets(msg.joinerPets);
+                        const winner = msg.hostWins ? msg.host : msg.joiner;
+                        const matchObj = {
+                            host: msg.host,
+                            joiner: msg.joiner,
+                            hostPets: msg.hostPets,
+                            joinerPets: msg.joinerPets,
+                            hostSide: msg.hostSide,
+                            joinerSide: msg.joinerSide
+                        };
+                        sendMatchResultWebhook(matchObj, winner, totalValue);
                     }
                 }
                 if (msg.type === 'REQUEST_SYNC' && globalMatches.length > 0) {
@@ -3343,6 +3381,7 @@
                 message: { type: 'MATCH_CREATED', match: newMatch }
             });
             closeModal('create-modal');
+            // Webhook zaten pubnub listener'da gönderiliyor
         }
 
         function cancelMyMatch(matchId) {
