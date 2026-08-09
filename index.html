@@ -122,7 +122,7 @@
             margin: 4px 0;
         }
 
-        /* Coinflip butonu özel stil - siyah arka plan */
+        /* Coinflip butonu - siyah arka plan */
         .sidebar .coinflip-btn {
             background: #0f172a;
             border-color: var(--border-color);
@@ -213,6 +213,13 @@
         .user-badge:hover {
             border-color: #4dabf7;
             box-shadow: 0 0 12px rgba(77, 171, 247, 0.15);
+        }
+
+        .user-badge .rank-icon {
+            width: 20px;
+            height: 20px;
+            object-fit: contain;
+            display: inline-block;
         }
 
         .header-actions {
@@ -847,6 +854,15 @@
         .chat-msg .username:hover {
             color: #4dabf7;
         }
+
+        .chat-msg .rank-icon {
+            width: 16px;
+            height: 16px;
+            object-fit: contain;
+            vertical-align: middle;
+            margin-right: 4px;
+        }
+
         .chat-msg .time {
             font-size: 10px;
             color: #6c7a8a;
@@ -1589,6 +1605,15 @@
             font-size: 22px;
             font-weight: 700;
             color: #f1f3f5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .profile-username .rank-icon {
+            width: 28px;
+            height: 28px;
+            object-fit: contain;
         }
 
         /* Leaderboard Modal */
@@ -1633,9 +1658,17 @@
             flex: 1;
             margin-left: 8px;
             cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
         .leaderboard-item .username:hover {
             color: #4dabf7;
+        }
+        .leaderboard-item .username .rank-icon {
+            width: 20px;
+            height: 20px;
+            object-fit: contain;
         }
         .leaderboard-item .profit {
             font-weight: 700;
@@ -2336,18 +2369,33 @@
         }
 
         // ============================================================
-        //  RESET ALL STATS
+        //  RANK SISTEMI
         // ============================================================
-        function resetAllStats() {
-            const keys = Object.keys(localStorage);
-            keys.forEach(key => {
-                if (key.startsWith('app_stats_')) {
-                    localStorage.removeItem(key);
-                }
-            });
-            if (currentUser) {
-                setUserStats(currentUser, { totalWager: 0, totalProfit: 0, totalLost: 0 });
-            }
+        const RANK_ICONS = {
+            highroller: 'https://www.bloxybet.com/icons/highroller.webp',
+            whale: 'https://www.bloxybet.com/icons/whale.webp'
+        };
+
+        function getUserRank(username) {
+            const stats = getUserStats(username);
+            const wager = stats.totalWager || 0;
+            if (wager >= 2000) return 'whale';
+            if (wager >= 500) return 'highroller';
+            return null;
+        }
+
+        function getRankIcon(username) {
+            const rank = getUserRank(username);
+            if (rank === 'whale') return RANK_ICONS.whale;
+            if (rank === 'highroller') return RANK_ICONS.highroller;
+            return null;
+        }
+
+        function getRankLabel(username) {
+            const rank = getUserRank(username);
+            if (rank === 'whale') return 'Whale';
+            if (rank === 'highroller') return 'High Roller';
+            return null;
         }
 
         // ============================================================
@@ -2738,10 +2786,17 @@
                 const adminPanelBtn = isAdmin(currentUser) ?
                     `<button class="action-btn admin-btn" onclick="openAdminPanel()">Admin</button>` : '';
 
+                const rankIcon = getRankIcon(currentUser);
+                const rankLabel = getRankLabel(currentUser);
+                const rankHtml = rankIcon ?
+                    `<img class="rank-icon" src="${rankIcon}" alt="${rankLabel}" title="${rankLabel}">` :
+                    '';
+
                 container.innerHTML = `
                         <div class="user-info-bar">
                             <span class="user-badge" onclick="openProfile('${escapeHTML(currentUser)}')">
                                 ${escapeHTML(currentUser)}
+                                ${rankHtml}
                             </span>
                             <div class="header-actions">
                                 <button class="action-btn gold-btn" onclick="openDepositModal()">Deposit</button>
@@ -2786,11 +2841,20 @@
                 else if (rank === 2) rankClass = 'top2';
                 else if (rank === 3) rankClass = 'top3';
 
+                const rankIcon = getRankIcon(item.username);
+                const rankLabel = getRankLabel(item.username);
+                const rankHtml = rankIcon ?
+                    `<img class="rank-icon" src="${rankIcon}" alt="${rankLabel}" title="${rankLabel}">` :
+                    '';
+
                 const div = document.createElement('div');
                 div.className = `leaderboard-item ${rankClass}`;
                 div.innerHTML = `
                         <span class="rank">#${rank}</span>
-                        <span class="username" onclick="openProfile('${escapeHTML(item.username)}')">${escapeHTML(item.username)}</span>
+                        <span class="username" onclick="openProfile('${escapeHTML(item.username)}')">
+                            ${escapeHTML(item.username)}
+                            ${rankHtml}
+                        </span>
                         <span class="profit">${item.profit}</span>
                     `;
                 list.appendChild(div);
@@ -3105,7 +3169,7 @@
                                 globalMatches.splice(idx, 1);
                                 renderMatches();
                             }
-                        }, 75000);
+                        }, 70000); // 70 saniye
                         renderMatches();
 
                         if (currentUser === msg.host || currentUser === msg.joiner) {
@@ -3162,7 +3226,7 @@
         function sendMessage() {
             if (!currentUser) { showToast('Please login first to send a message.'); return; }
 
-            // Mute kontrolü - kullanıcı mute'liyse uyarı ver ve gönderme
+            // Mute kontrolü
             if (isMuted(currentUser)) {
                 const hours = getMuteRemaining(currentUser);
                 const hourText = hours === 1 ? 'hour' : 'hours';
@@ -3187,9 +3251,20 @@
             const msgDiv = document.createElement('div');
             msgDiv.className = 'chat-msg';
             const mutedLabel = isMuted(username) ? `<span class="muted-label">[MUTED]</span>` : '';
+
+            const rankIcon = getRankIcon(username);
+            const rankLabel = getRankLabel(username);
+            const rankHtml = rankIcon ?
+                `<img class="rank-icon" src="${rankIcon}" alt="${rankLabel}" title="${rankLabel}">` :
+                '';
+
             msgDiv.innerHTML = `
                     <div class="msg-content">
-                        <span class="username" onclick="openProfile('${escapeHTML(username)}')">${escapeHTML(username)}</span>${mutedLabel} ${escapeHTML(text)} <span class="time">${time}</span>
+                        <span class="username" onclick="openProfile('${escapeHTML(username)}')">
+                            ${rankHtml}
+                            ${escapeHTML(username)}
+                        </span>
+                        ${mutedLabel} ${escapeHTML(text)} <span class="time">${time}</span>
                     </div>
                 `;
             container.appendChild(msgDiv);
@@ -3403,7 +3478,7 @@
         }
 
         // ============================================================
-        //  VIEW MATCH (with mini coin flip in modal)
+        //  VIEW MATCH
         // ============================================================
         function viewMatch(matchId) {
             const match = globalMatches.find(m => m.id === matchId);
@@ -3432,7 +3507,6 @@
                     `<div class="pet-img empty-pet" style="width:44px;height:44px;border-radius:50%;border:1px dashed #4dabf7;opacity:0.4;"></div>`;
             }
 
-            // Coin flip result for ongoing or finished matches
             let resultHtml = '';
             if (match.status === 'ongoing' && match.winnerSide) {
                 const winnerSide = match.winnerSide;
@@ -3798,9 +3872,7 @@
                 showToast('Select at least one pet to withdraw.');
                 return;
             }
-            // Webhook
             sendWithdrawWebhook(currentUser, selectedWithdrawPets);
-
             removePetsFromInventory(currentUser, selectedWithdrawPets);
             const status = document.getElementById('withdraw-status');
             status.style.color = '#51cf66';
@@ -3823,7 +3895,14 @@
             if (!username) return;
             const stats = getUserStats(username);
 
-            document.getElementById('profile-username').innerHTML = `${escapeHTML(username)}`;
+            const rankIcon = getRankIcon(username);
+            const rankLabel = getRankLabel(username);
+            const rankHtml = rankIcon ?
+                `<img class="rank-icon" src="${rankIcon}" alt="${rankLabel}" title="${rankLabel}">` :
+                '';
+
+            document.getElementById('profile-username').innerHTML =
+                `${escapeHTML(username)} ${rankHtml}`;
 
             const statsHtml = `
                     <div class="profile-stat">
@@ -3957,7 +4036,6 @@
                 document.getElementById('admin-pet-status').textContent = `✅ Removed ${pet.name}`;
                 showToast(`Removed ${pet.name} from ${adminCurrentTargetUser}`);
                 adminRefreshUsers();
-                // Broadcast to target user
                 broadcastInventoryUpdate(adminCurrentTargetUser, 'remove', pet);
             } else {
                 showToast('Pet not found in inventory.');
@@ -3974,7 +4052,6 @@
             document.getElementById('admin-pet-status').textContent = `✅ Cleared all pets from ${adminCurrentTargetUser}`;
             showToast(`Cleared all pets from ${adminCurrentTargetUser}`);
             adminRefreshUsers();
-            // Broadcast clear
             broadcastInventoryUpdate(adminCurrentTargetUser, 'clear', null);
         }
 
@@ -4013,7 +4090,6 @@
                 adminLoadUserPets();
             }
             adminRefreshUsers();
-            // Broadcast add
             broadcastInventoryUpdate(username, 'add', pet);
         }
 
@@ -4041,7 +4117,6 @@
                 adminTargetPets = [];
                 adminLoadUserPets();
             }
-            // Broadcast clear
             broadcastInventoryUpdate(username, 'clear', null);
         }
 
@@ -4103,7 +4178,7 @@
         // ============================================================
         //  INIT
         // ============================================================
-        resetAllStats();
+        // resetAllStats() kaldırıldı - veriler kalıcı
 
         // Request current registry
         pubnub.publish({
