@@ -139,15 +139,16 @@
             height: 28px;
         }
 
-        /* Jackpot butonu - özel renk */
+        /* Jackpot butonu - siyah arka plan (pembe kaldırıldı) */
         .sidebar .jackpot-btn {
-            background: linear-gradient(135deg, #da77f2, #9c36b5);
-            border-color: #da77f2;
-            color: #fff;
+            background: #0f172a;
+            border-color: var(--border-color);
+            color: #868e96;
         }
         .sidebar .jackpot-btn:hover {
-            border-color: #fcc419;
-            background: linear-gradient(135deg, #e599f7, #b36bcf);
+            border-color: var(--accent);
+            background: #1a2332;
+            color: #f1f3f5;
         }
         .sidebar .jackpot-btn .icon {
             width: 28px;
@@ -495,7 +496,7 @@
             height: 18px;
             border-radius: 50%;
             border: 2px solid var(--bg-dark);
-            box-shadow: 0 0 4px rgba(0,0,0,0.5);
+            box-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
             object-fit: contain;
             background: #0f172a;
             padding: 1px;
@@ -1985,18 +1986,70 @@
         .jackpot-timer.waiting {
             color: #868e96;
         }
-        .jackpot-prizepool {
+        .jackpot-prize {
             font-size: 18px;
             font-weight: 700;
             color: var(--accent);
         }
+        .jackpot-body {
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+            flex-wrap: wrap;
+            margin: 12px 0;
+        }
+        .jackpot-wheel {
+            flex: 1;
+            min-width: 200px;
+            display: flex;
+            justify-content: center;
+        }
+        .wheel-container {
+            position: relative;
+            width: 200px;
+            height: 200px;
+        }
+        .wheel {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 4px solid var(--accent);
+            background: #0f172a;
+            position: relative;
+            transition: transform 4s cubic-bezier(0.17, 0.67, 0.12, 0.99);
+            background: radial-gradient(circle at 30% 30%, #2d3b4f, #0f172a);
+        }
+        .wheel .arrow {
+            position: absolute;
+            top: -18px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 32px;
+            color: var(--accent);
+            z-index: 10;
+            text-shadow: 0 2px 10px rgba(252, 196, 25, 0.5);
+        }
+        .wheel .center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 30px;
+            height: 30px;
+            background: var(--accent);
+            border-radius: 50%;
+            border: 3px solid #0f172a;
+            z-index: 5;
+            box-shadow: 0 0 15px rgba(252, 196, 25, 0.3);
+        }
         .jackpot-players {
+            flex: 2;
+            min-width: 200px;
+            max-height: 300px;
+            overflow-y: auto;
             display: flex;
             flex-direction: column;
-            gap: 8px;
-            margin: 12px 0;
-            max-height: 200px;
-            overflow-y: auto;
+            gap: 6px;
             scrollbar-width: thin;
             scrollbar-color: #2d3b4f transparent;
         }
@@ -2014,10 +2067,12 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 8px 14px;
+            padding: 6px 12px;
             background: #0f172a;
             border-radius: 10px;
             border: 1px solid var(--border-color);
+            flex-wrap: wrap;
+            gap: 4px;
         }
         .jackpot-player-item .jp-pname {
             font-weight: 600;
@@ -2025,6 +2080,7 @@
             display: flex;
             align-items: center;
             gap: 6px;
+            font-size: 13px;
         }
         .jackpot-player-item .jp-pets {
             display: flex;
@@ -2050,20 +2106,20 @@
             flex-wrap: wrap;
         }
         .jackpot-actions .jp-join-btn {
-            background: linear-gradient(135deg, #da77f2, #9c36b5);
-            color: #fff;
+            background: var(--accent);
+            color: #0b1120;
             border: none;
             padding: 10px 28px;
             border-radius: 30px;
             font-weight: 700;
             cursor: pointer;
             transition: transform 0.15s ease, box-shadow 0.2s;
-            box-shadow: 0 4px 10px rgba(218, 119, 242, 0.25);
+            box-shadow: 0 4px 10px rgba(252, 196, 25, 0.25);
             font-size: 14px;
         }
         .jackpot-actions .jp-join-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(218, 119, 242, 0.4);
+            box-shadow: 0 8px 20px rgba(252, 196, 25, 0.4);
         }
         .jackpot-actions .jp-join-btn:disabled {
             opacity: 0.4;
@@ -2306,6 +2362,14 @@
                 flex-wrap: wrap;
                 gap: 4px;
             }
+            .jackpot-body {
+                flex-direction: column;
+                align-items: center;
+            }
+            .jackpot-wheel {
+                width: 100%;
+                max-width: 200px;
+            }
         }
 
         .mobile-chat-toggle {
@@ -2352,14 +2416,14 @@
         </a>
         <div class="sidebar-divider"></div>
 
-        <!-- Coinflip Butonu - siteyi yeniler -->
-        <div class="sidebar-item coinflip-btn" onclick="location.reload()">
+        <!-- Coinflip Butonu - sayfayı yenilemez, coinflip alanına kaydırır -->
+        <div class="sidebar-item coinflip-btn" onclick="scrollToCoinflip()">
             <img class="icon" src="https://bloxluck.com/img/coinflip%201.svg" alt="Coinflip" style="width:28px; height:28px;">
             <span class="label">COIN<br>FLIP</span>
         </div>
 
-        <!-- Jackpot Butonu -->
-        <div class="sidebar-item jackpot-btn" onclick="openJackpotModal()">
+        <!-- Jackpot Butonu - jackpot alanına kaydırır -->
+        <div class="sidebar-item jackpot-btn" onclick="scrollToJackpot()">
             <img class="icon" src="https://bloxluck.com/img/roulette%20%201.svg" alt="Jackpot" style="width:28px; height:28px;">
             <span class="label">JACKPOT</span>
         </div>
@@ -2403,7 +2467,7 @@
     </header>
 
     <!-- Main Content -->
-    <div class="main-layout">
+    <div class="main-layout" id="main-layout">
         <div>
             <div class="section-header">
                 <div class="section-title">
@@ -2422,13 +2486,23 @@
                         <span>Jackpot</span>
                     </div>
                     <div class="jackpot-timer" id="jackpot-timer">180</div>
-                    <div class="jackpot-prizepool">💰 <span id="jackpot-prize">0</span></div>
+                    <div class="jackpot-prize">Prize: <span id="jackpot-prize">0</span></div>
                 </div>
-                <div class="jackpot-players" id="jackpot-players">
-                    <div style="color:#868e96;text-align:center;padding:12px;">No players yet. Be the first!</div>
+                <div class="jackpot-body">
+                    <div class="jackpot-wheel">
+                        <div class="wheel-container">
+                            <div class="wheel" id="wheel">
+                                <div class="arrow">▼</div>
+                                <div class="center"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="jackpot-players" id="jackpot-players">
+                        <div style="color:#868e96;text-align:center;padding:12px;">No players yet. Be the first!</div>
+                    </div>
                 </div>
                 <div class="jackpot-actions">
-                    <button class="jp-join-btn" id="jp-join-btn" onclick="joinJackpot()">Join Jackpot</button>
+                    <button class="jp-join-btn" id="jp-join-btn" onclick="openJackpotJoinModal()">Join Jackpot</button>
                 </div>
                 <div class="jackpot-status" id="jackpot-status">Waiting for players...</div>
                 <div class="jackpot-result" id="jackpot-result">
@@ -2721,6 +2795,21 @@
                 <button class="cancel-btn" onclick="closeModal('tip-modal')">Cancel</button>
             </div>
             <div id="tip-status" style="text-align:center;margin-top:10px;font-size:14px;color:#868e96;min-height:22px;"></div>
+        </div>
+    </div>
+
+    <!-- Jackpot Join Modal -->
+    <div class="modal-overlay" id="jackpot-join-modal">
+        <div class="modal" style="max-width:480px;">
+            <h2>Select pets to join Jackpot</h2>
+            <p style="color:#868e96;font-size:14px;margin-bottom:6px;">Select pets from your inventory:</p>
+            <div class="tip-pets-grid" id="jackpot-join-pets-grid"></div>
+            <div id="jackpot-join-total" style="text-align:center;font-weight:600;margin:8px 0 12px;color:var(--accent);">Selected: 0 pets</div>
+            <div class="modal-actions">
+                <button class="post-btn" onclick="confirmJackpotJoin()">Join Jackpot</button>
+                <button class="cancel-btn" onclick="closeModal('jackpot-join-modal')">Cancel</button>
+            </div>
+            <div id="jackpot-join-status" style="text-align:center;margin-top:10px;font-size:14px;color:#868e96;min-height:22px;"></div>
         </div>
     </div>
 
@@ -3136,6 +3225,14 @@
         // ============================================================
         //  UI HELPERS
         // ============================================================
+        function scrollToCoinflip() {
+            document.getElementById('main-layout').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function scrollToJackpot() {
+            document.getElementById('jackpot-container').scrollIntoView({ behavior: 'smooth' });
+        }
+
         function selectSide(side, context) {
             if (context === 'create') {
                 selectedSideCreate = side;
@@ -3200,6 +3297,10 @@
                 document.getElementById('tip-status').textContent = '';
                 selectedTipPets = [];
             }
+            if (modalId === 'jackpot-join-modal') {
+                document.getElementById('jackpot-join-status').textContent = '';
+                selectedJackpotPets = [];
+            }
         }
 
         function openFAQ() {
@@ -3252,12 +3353,10 @@
             return { min: Math.min(...values), max: Math.max(...values) };
         }
 
-        // RANGE HESAPLAMA: pet değerine göre %5-10 düşük başlangıç
         function getPetRange(pets) {
             if (!pets || pets.length === 0) return { min: 0, max: 0 };
             let total = sumPets(pets);
             if (total === 0) return { min: 0, max: 0 };
-            // %6 düşük (308 için 290 civarı)
             const min = Math.floor(total * 0.94);
             const max = total;
             return { min, max };
@@ -3810,7 +3909,6 @@
                     jackpotState.players[msg.username] = { pets: msg.pets, total: sumPets(msg.pets) };
                     jackpotState.prizePool += sumPets(msg.pets);
                     jackpotState.playerCount = Object.keys(jackpotState.players).length;
-                    // Timer başlat (sadece 2. kişi geldiğinde)
                     if (jackpotState.playerCount === 2 && jackpotState.status === 'waiting') {
                         jackpotState.status = 'active';
                         startJackpotTimer();
@@ -3819,37 +3917,42 @@
                 }
             }
             if (msg.type === 'JACKPOT_SPIN') {
-                // Çark dönüyor
                 jackpotState.status = 'spinning';
                 updateJackpotUI();
-                // Rastgele kazanan seç
                 const players = Object.keys(jackpotState.players);
                 const winner = players[Math.floor(Math.random() * players.length)];
                 const winnerPets = jackpotState.players[winner].pets;
                 jackpotState.winner = winner;
                 jackpotState.winnerPets = winnerPets;
-                jackpotState.status = 'finished';
-                // Kazananın envanterine ekle
-                winnerPets.forEach(pet => addPetToInventory(winner, pet));
-                // Webhook
-                const total = jackpotState.prizePool;
-                const fields = [
-                    { name: 'Winner', value: winner, inline: true },
-                    { name: 'Total Prize', value: `${total}`, inline: true },
-                    { name: 'Pets', value: winnerPets.map(p => `${p.name} (${p.value})`).join('\n') || 'None', inline: false }
-                ];
-                sendDiscordEmbed(DISCORD_WEBHOOK_MATCH, '🎰 Jackpot Winner!', fields, 0xda77f2);
-                // Reset after 10 seconds
+
+                const wheel = document.getElementById('wheel');
+                if (wheel) {
+                    const randomDeg = 360 * 5 + Math.random() * 360;
+                    wheel.style.transition = 'transform 4s cubic-bezier(0.17, 0.67, 0.12, 0.99)';
+                    wheel.style.transform = `rotate(${randomDeg}deg)`;
+                }
+
                 setTimeout(() => {
-                    resetJackpot();
-                }, 10000);
-                updateJackpotUI();
+                    jackpotState.status = 'finished';
+                    winnerPets.forEach(pet => addPetToInventory(winner, pet));
+                    const total = jackpotState.prizePool;
+                    const fields = [
+                        { name: 'Winner', value: winner, inline: true },
+                        { name: 'Total Prize', value: `${total}`, inline: true },
+                        { name: 'Pets', value: winnerPets.map(p => `${p.name} (${p.value})`).join('\n') || 'None',
+                            inline: false }
+                    ];
+                    sendDiscordEmbed(DISCORD_WEBHOOK_MATCH, '🎰 Jackpot Winner!', fields, 0xda77f2);
+                    setTimeout(() => {
+                        resetJackpot();
+                    }, 10000);
+                    updateJackpotUI();
+                }, 4000);
             }
             if (msg.type === 'JACKPOT_RESET') {
                 resetJackpot();
             }
             if (msg.type === 'JACKPOT_STATE') {
-                // Sync state
                 jackpotState = msg.state;
                 updateJackpotUI();
                 if (jackpotState.status === 'active' && jackpotState.timer > 0) {
@@ -3861,21 +3964,11 @@
         // ============================================================
         //  JACKPOT FUNCTIONS
         // ============================================================
-        function openJackpotModal() {
-            // Jackpot doğrudan ana sayfada gösteriliyor, modal açmaya gerek yok
-            // Sadece scroll yap
-            document.getElementById('jackpot-container').scrollIntoView({ behavior: 'smooth' });
-        }
+        let selectedJackpotPets = [];
 
-        function joinJackpot() {
-            if (!currentUser) {
-                showToast('Please login first to join Jackpot.');
-                return;
-            }
-            if (isMuted(currentUser)) {
-                showToast('You are muted.');
-                return;
-            }
+        function openJackpotJoinModal() {
+            if (!currentUser) { showToast('Please login first.'); return; }
+            if (isMuted(currentUser)) { showToast('You are muted.'); return; }
             if (jackpotState.status === 'finished' || jackpotState.status === 'spinning') {
                 showToast('Jackpot is currently finishing.');
                 return;
@@ -3884,33 +3977,62 @@
                 showToast('You already joined this Jackpot.');
                 return;
             }
-            // Kullanıcının envanterinden tüm petleri al
             const inv = getUserInventory(currentUser);
+            const grid = document.getElementById('jackpot-join-pets-grid');
+            grid.innerHTML = '';
+            selectedJackpotPets = [];
             if (inv.length === 0) {
-                showToast('You have no pets to join Jackpot.');
+                grid.innerHTML =
+                '<div style="grid-column:1/-1;text-align:center;color:#868e96;padding:20px;">No pets in inventory.</div>';
+            } else {
+                inv.forEach(pet => {
+                    const item = document.createElement('div');
+                    item.className = 'tip-pet-item';
+                    item.innerHTML = `
+                            <img class="pet-img" src="${pet.icon}" alt="${pet.name}">
+                            <div class="pet-name">${pet.name}</div>
+                            <div class="pet-val">${pet.value}</div>
+                        `;
+                    item.onclick = () => {
+                        const idx = selectedJackpotPets.indexOf(pet);
+                        if (idx !== -1) {
+                            selectedJackpotPets.splice(idx, 1);
+                            item.classList.remove('selected');
+                        } else {
+                            selectedJackpotPets.push(pet);
+                            item.classList.add('selected');
+                        }
+                        document.getElementById('jackpot-join-total').textContent =
+                            `Selected: ${selectedJackpotPets.length} pet(s)`;
+                    };
+                    grid.appendChild(item);
+                });
+            }
+            document.getElementById('jackpot-join-total').textContent = 'Selected: 0 pets';
+            document.getElementById('jackpot-join-status').textContent = '';
+            openModal('jackpot-join-modal');
+        }
+
+        function confirmJackpotJoin() {
+            if (selectedJackpotPets.length === 0) {
+                showToast('Select at least one pet.');
                 return;
             }
-            // Tüm petleri jackpot'a ekle
-            const petsToAdd = inv.slice();
-            removePetsFromInventory(currentUser, petsToAdd);
-            jackpotState.players[currentUser] = { pets: petsToAdd, total: sumPets(petsToAdd) };
-            jackpotState.prizePool += sumPets(petsToAdd);
+            removePetsFromInventory(currentUser, selectedJackpotPets);
+            jackpotState.players[currentUser] = { pets: selectedJackpotPets.slice(), total: sumPets(selectedJackpotPets) };
+            jackpotState.prizePool += sumPets(selectedJackpotPets);
             jackpotState.playerCount = Object.keys(jackpotState.players).length;
-
-            // Broadcast join
             pubnub.publish({
                 channel: JACKPOT_CHANNEL,
                 message: {
                     type: 'JACKPOT_JOIN',
                     username: currentUser,
-                    pets: petsToAdd
+                    pets: selectedJackpotPets.slice()
                 }
             });
-
             if (jackpotState.playerCount === 2 && jackpotState.status === 'waiting') {
                 jackpotState.status = 'active';
                 startJackpotTimer();
-                // Broadcast timer start
                 pubnub.publish({
                     channel: JACKPOT_CHANNEL,
                     message: {
@@ -3919,9 +4041,9 @@
                     }
                 });
             }
-
+            closeModal('jackpot-join-modal');
             updateJackpotUI();
-            showToast(`You joined Jackpot with ${petsToAdd.length} pet(s)!`);
+            showToast(`You joined Jackpot with ${selectedJackpotPets.length} pet(s)!`);
         }
 
         function startJackpotTimer() {
@@ -3934,7 +4056,6 @@
                 jackpotState.timer -= 1;
                 if (jackpotState.timer <= 0) {
                     clearInterval(jackpotState.timerInterval);
-                    // Spin
                     pubnub.publish({
                         channel: JACKPOT_CHANNEL,
                         message: { type: 'JACKPOT_SPIN' }
@@ -3944,7 +4065,6 @@
                     return;
                 }
                 updateJackpotUI();
-                // Broadcast timer update
                 pubnub.publish({
                     channel: JACKPOT_CHANNEL,
                     message: {
@@ -3960,6 +4080,14 @@
                 clearInterval(jackpotState.timerInterval);
                 jackpotState.timerInterval = null;
             }
+            const wheel = document.getElementById('wheel');
+            if (wheel) {
+                wheel.style.transition = 'none';
+                wheel.style.transform = 'rotate(0deg)';
+                setTimeout(() => {
+                    wheel.style.transition = 'transform 4s cubic-bezier(0.17, 0.67, 0.12, 0.99)';
+                }, 50);
+            }
             jackpotState = {
                 status: 'waiting',
                 timer: 180,
@@ -3971,7 +4099,6 @@
                 timerInterval: null,
                 playerCount: 0
             };
-            // Broadcast reset
             pubnub.publish({
                 channel: JACKPOT_CHANNEL,
                 message: { type: 'JACKPOT_RESET' }
@@ -3993,24 +4120,26 @@
                 statusEl.textContent = 'Waiting for players... (Need 2 players to start)';
                 joinBtn.disabled = false;
                 joinBtn.textContent = 'Join Jackpot';
+                resultEl.style.display = 'none';
             } else if (jackpotState.status === 'active') {
                 timerEl.className = 'jackpot-timer';
                 statusEl.textContent = `Active - ${Object.keys(jackpotState.players).length} players`;
                 joinBtn.disabled = true;
                 joinBtn.textContent = 'In Progress...';
+                resultEl.style.display = 'none';
             } else if (jackpotState.status === 'spinning') {
                 timerEl.className = 'jackpot-timer';
-                timerEl.textContent = '🎰';
+                timerEl.textContent = '🎡';
                 statusEl.textContent = 'Spinning...';
                 joinBtn.disabled = true;
                 joinBtn.textContent = 'Spinning...';
+                resultEl.style.display = 'none';
             } else if (jackpotState.status === 'finished') {
                 timerEl.className = 'jackpot-timer';
                 timerEl.textContent = '🏆';
                 statusEl.textContent = `Finished! Winner: ${jackpotState.winner}`;
                 joinBtn.disabled = true;
                 joinBtn.textContent = 'Finished';
-                // Show result
                 resultEl.style.display = 'block';
                 document.getElementById('jp-winner-name').textContent = `🏆 ${jackpotState.winner} won the Jackpot!`;
                 const petsHtml = jackpotState.winnerPets.map(p =>
@@ -4021,7 +4150,6 @@
 
             prizeEl.textContent = jackpotState.prizePool;
 
-            // Players list
             const playerKeys = Object.keys(jackpotState.players);
             if (playerKeys.length === 0) {
                 playersEl.innerHTML = '<div style="color:#868e96;text-align:center;padding:12px;">No players yet. Be the first!</div>';
@@ -4052,13 +4180,11 @@
                 const msg = event.message;
                 const channel = event.channel;
 
-                // Jackpot channel
                 if (channel === JACKPOT_CHANNEL) {
                     handleJackpotMessage(msg);
                     return;
                 }
 
-                // User Registry channel
                 if (channel === USER_REGISTRY_CHANNEL) {
                     if (msg.type === 'USER_REGISTERED') {
                         const list = getRegisteredUsers();
@@ -4095,7 +4221,6 @@
                     return;
                 }
 
-                // Main channel
                 if (msg.type === 'INVENTORY_UPDATE') {
                     handleInventoryUpdate(msg);
                     return;
@@ -4774,7 +4899,6 @@
                     totalValue: totalValue
                 };
 
-                // STATS: her oyuncu kendi wager'ını ekler
                 const hostTotal = sumPets(gameData.hostPets);
                 const joinerTotal = sumPets(gameData.joinerPets);
 
