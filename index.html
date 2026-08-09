@@ -2912,7 +2912,7 @@
             timerInterval: null,
             playerCount: 0
         };
-        let selectedJackpotPets = [];
+        let selectedJackpotPetIds = []; // sadece ID'leri sakla
 
         // ============================================================
         //  USER DATA
@@ -3211,7 +3211,7 @@
             }
             if (modalId === 'jackpot-join-modal') {
                 document.getElementById('jackpot-join-status').textContent = '';
-                selectedJackpotPets = [];
+                selectedJackpotPetIds = [];
             }
             if (modalId === 'join-select-modal') {
                 document.getElementById('join-range-error').style.display = 'none';
@@ -3531,7 +3531,8 @@
             } else if (leaderboardSort === 'wager') {
                 sorted = stats.sort((a, b) => b.totalWager - a.totalWager);
             } else if (leaderboardSort === 'least') {
-                sorted = stats.sort((a, b) => a.totalLost - b.totalLost);
+                // En yüksek lost en üstte
+                sorted = stats.sort((a, b) => b.totalLost - a.totalLost);
             }
 
             list.innerHTML = '';
@@ -3814,7 +3815,7 @@
         }
 
         // ============================================================
-        //  JACKPOT
+        //  JACKPOT (pet ID ile çalış)
         // ============================================================
         function openJackpotJoinModal() {
             if (!currentUser) { showToast('Please login first.'); return; }
@@ -3827,7 +3828,7 @@
             const inv = getUserInventory(currentUser);
             const grid = document.getElementById('jackpot-join-pets-grid');
             grid.innerHTML = '';
-            selectedJackpotPets = [];
+            selectedJackpotPetIds = [];
 
             const existingPets = jackpotState.players[currentUser] ? jackpotState.players[currentUser].pets : [];
             const existingCount = existingPets.length;
@@ -3845,26 +3846,27 @@
                 inv.forEach(pet => {
                     const item = document.createElement('div');
                     item.className = 'tip-pet-item';
+                    item.dataset.id = pet.id;
                     item.innerHTML = `
                             <img class="pet-img" src="${pet.icon}" alt="${pet.name}">
                             <div class="pet-name">${pet.name}</div>
                             <div class="pet-val">${pet.value}</div>
                         `;
                     item.onclick = () => {
-                        const idx = selectedJackpotPets.indexOf(pet);
+                        const idx = selectedJackpotPetIds.indexOf(pet.id);
                         if (idx !== -1) {
-                            selectedJackpotPets.splice(idx, 1);
+                            selectedJackpotPetIds.splice(idx, 1);
                             item.classList.remove('selected');
                         } else {
-                            if (selectedJackpotPets.length >= remainingSlots) {
+                            if (selectedJackpotPetIds.length >= remainingSlots) {
                                 showToast(`You can select max ${remainingSlots} more pet(s).`);
                                 return;
                             }
-                            selectedJackpotPets.push(pet);
+                            selectedJackpotPetIds.push(pet.id);
                             item.classList.add('selected');
                         }
                         document.getElementById('jackpot-join-total').textContent =
-                            `Selected: ${selectedJackpotPets.length} pet(s) (max ${remainingSlots})`;
+                            `Selected: ${selectedJackpotPetIds.length} pet(s) (max ${remainingSlots})`;
                     };
                     grid.appendChild(item);
                 });
@@ -3872,14 +3874,13 @@
             document.getElementById('jackpot-join-total').textContent =
                 `Selected: 0 pet(s) (max ${remainingSlots})`;
             document.getElementById('jackpot-join-status').textContent = '';
-            // Enable button
             const btn = document.getElementById('jackpot-join-post-btn');
             if (btn) btn.disabled = false;
             openModal('jackpot-join-modal');
         }
 
         function confirmJackpotJoin() {
-            if (selectedJackpotPets.length === 0) {
+            if (selectedJackpotPetIds.length === 0) {
                 showToast('Select at least one pet.');
                 return;
             }
@@ -3887,8 +3888,22 @@
             const btn = document.getElementById('jackpot-join-post-btn');
             if (btn) btn.disabled = true;
 
+            // Seçilen ID'lere göre inventory'den pet'leri bul
+            const inv = getUserInventory(currentUser);
+            const selectedPets = [];
+            selectedJackpotPetIds.forEach(id => {
+                const pet = inv.find(p => p.id === id);
+                if (pet) selectedPets.push(pet);
+            });
+
+            if (selectedPets.length === 0) {
+                showToast('Selected pets not found in inventory.');
+                if (btn) btn.disabled = false;
+                return;
+            }
+
             const existingPets = jackpotState.players[currentUser] ? jackpotState.players[currentUser].pets : [];
-            const totalPets = existingPets.length + selectedJackpotPets.length;
+            const totalPets = existingPets.length + selectedPets.length;
             if (totalPets > MAX_JACKPOT_PETS) {
                 showToast(`You can have at most ${MAX_JACKPOT_PETS} pets in Jackpot.`);
                 if (btn) btn.disabled = false;
@@ -3899,27 +3914,27 @@
             if (jackpotState.players[currentUser]) {
                 const oldTotal = jackpotState.players[currentUser].total;
                 jackpotState.prizePool -= oldTotal;
-                jackpotState.players[currentUser].pets.push(...selectedJackpotPets);
+                jackpotState.players[currentUser].pets.push(...selectedPets);
                 jackpotState.players[currentUser].total = sumPets(jackpotState.players[currentUser].pets);
                 jackpotState.prizePool += jackpotState.players[currentUser].total;
             } else {
                 jackpotState.players[currentUser] = {
-                    pets: selectedJackpotPets.slice(),
-                    total: sumPets(selectedJackpotPets)
+                    pets: selectedPets.slice(),
+                    total: sumPets(selectedPets)
                 };
-                jackpotState.prizePool += sumPets(selectedJackpotPets);
+                jackpotState.prizePool += sumPets(selectedPets);
                 jackpotState.playerCount = Object.keys(jackpotState.players).length;
             }
 
             // Envanterden çıkar
-            removePetsFromInventory(currentUser, selectedJackpotPets);
+            removePetsFromInventory(currentUser, selectedPets);
 
             pubnub.publish({
                 channel: JACKPOT_CHANNEL,
                 message: {
                     type: 'JACKPOT_JOIN',
                     username: currentUser,
-                    pets: selectedJackpotPets.slice(),
+                    pets: selectedPets.slice(),
                     sender: currentUser
                 }
             });
@@ -3939,8 +3954,8 @@
 
             closeModal('jackpot-join-modal');
             updateJackpotUI();
-            showToast(`Added ${selectedJackpotPets.length} pet(s) to Jackpot!`);
-            selectedJackpotPets = [];
+            showToast(`Added ${selectedPets.length} pet(s) to Jackpot!`);
+            selectedJackpotPetIds = [];
             if (btn) btn.disabled = false;
         }
 
@@ -4149,10 +4164,9 @@
         }
 
         // ============================================================
-        //  PUBSUB (JACKPOT) - sender kontrolü eklendi
+        //  PUBSUB (JACKPOT) - sender kontrolü
         // ============================================================
         function handleJackpotMessage(msg) {
-            // Kendi mesajımızı işleme
             if (msg.sender === currentUser) return;
 
             if (msg.type === 'JACKPOT_JOIN') {
@@ -4242,7 +4256,6 @@
             }
 
             if (msg.type === 'JACKPOT_STATE') {
-                // Sadece timer ve status'u güncelle, players'ı koru
                 if (msg.state.timer !== undefined) jackpotState.timer = msg.state.timer;
                 if (msg.state.status) jackpotState.status = msg.state.status;
                 jackpotState.prizePool = Object.values(jackpotState.players).reduce((acc, p) => acc + p.total, 0);
@@ -4325,7 +4338,6 @@
                 if (msg.type === 'GAME_START') {
                     const match = globalMatches.find(m => m.id === msg.matchId);
                     if (match) {
-                        // Eğer maç zaten devam ediyorsa tekrar işleme alma
                         if (match.status === 'ongoing') return;
                         match.status = 'ongoing';
                         match.joiner = msg.joiner;
@@ -4742,7 +4754,7 @@
         }
 
         // ============================================================
-        //  CREATE MATCH (buton disable eklendi)
+        //  CREATE MATCH (buton disable)
         // ============================================================
         function openCreateModal() {
             if (!currentUser) { showToast('Please login first to create a match.'); return; }
@@ -4823,6 +4835,7 @@
             const matchIdx = globalMatches.findIndex(m => m.id === matchId);
             if (matchIdx !== -1) {
                 const canceled = globalMatches.splice(matchIdx, 1)[0];
+                // Petleri sadece bir kez geri ekle
                 canceled.hostPets.forEach(pet => addPetToInventory(currentUser, pet));
                 renderMatches();
                 pubnub.publish({
@@ -4833,7 +4846,7 @@
         }
 
         // ============================================================
-        //  JOIN MATCH (buton disable eklendi)
+        //  JOIN MATCH (buton disable)
         // ============================================================
         function openJoinSelectModal(matchId) {
             if (!currentUser) { showToast('Please login first to join a match.'); return; }
@@ -5100,7 +5113,7 @@
         }
 
         // ============================================================
-        //  PROFILE
+        //  PROFILE (leaderboard'dan açıldığında üstte gözükür)
         // ============================================================
         function openProfile(username) {
             if (!username) return;
@@ -5152,7 +5165,23 @@
                 tipBtn.style.display = 'none';
             }
 
+            // Leaderboard açıkken profil modalını üstte açmak için z-index artışı
+            const lbModal = document.getElementById('leaderboard-modal');
+            if (lbModal && lbModal.classList.contains('active')) {
+                // Profil modalını leaderboard'un üstüne al
+                const profileOverlay = document.getElementById('profile-modal');
+                profileOverlay.style.zIndex = '201';
+            }
+
             openModal('profile-modal');
+
+            // Modal kapandığında z-index'i sıfırla
+            const profileOverlay = document.getElementById('profile-modal');
+            const closeHandler = () => {
+                profileOverlay.style.zIndex = '200';
+                profileOverlay.removeEventListener('transitionend', closeHandler);
+            };
+            profileOverlay.addEventListener('transitionend', closeHandler);
         }
 
         // ============================================================
