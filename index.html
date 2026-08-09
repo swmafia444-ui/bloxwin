@@ -2031,7 +2031,7 @@
         }
 
         .jackpot-page .jackpot-actions {
-            display: none; /* buton prize yanına taşındı */
+            display: none;
         }
 
         /* Mobile */
@@ -2047,7 +2047,7 @@
                 padding: 0 12px;
             }
             .sidebar {
-                display: flex !important; /* mobilde de göster */
+                display: flex !important;
                 width: 60px;
                 padding: 10px 0;
             }
@@ -2367,7 +2367,7 @@
                         <span id="section-title-text">Live Matches</span>
                         <button id="history-toggle-btn" class="history-toggle-btn" onclick="toggleHistory()">History</button>
                     </div>
-                    <button class="create-match-header-btn" onclick="openCreateModal()">Create Match</button>
+                    <button class="create-match-header-btn" id="create-match-btn" onclick="openCreateModal()">Create Match</button>
                 </div>
                 <div class="matches-grid" id="matches-list"></div>
             </div>
@@ -2487,7 +2487,7 @@
                 </button>
             </div>
             <div class="modal-actions">
-                <button class="post-btn" onclick="postMatch()">Create Match</button>
+                <button class="post-btn" id="create-post-btn" onclick="postMatch()">Create Match</button>
                 <button class="cancel-btn" onclick="closeModal('create-modal')">Cancel</button>
             </div>
         </div>
@@ -2502,7 +2502,7 @@
             <div id="join-range-info" style="text-align:center;font-size:13px;color:#868e96;margin-bottom:8px;"></div>
             <div id="join-range-error" style="text-align:center;font-size:14px;color:#ff6b6b;font-weight:600;margin-bottom:8px;display:none;">You Don't Fit The Value</div>
             <div class="modal-actions">
-                <button class="post-btn" onclick="confirmJoinMatch()">Join Match</button>
+                <button class="post-btn" id="join-post-btn" onclick="confirmJoinMatch()">Join Match</button>
                 <button class="cancel-btn" onclick="closeModal('join-select-modal')">Cancel</button>
             </div>
         </div>
@@ -2697,7 +2697,7 @@
             <div class="tip-pets-grid" id="jackpot-join-pets-grid"></div>
             <div id="jackpot-join-total" style="text-align:center;font-weight:600;margin:8px 0 12px;color:var(--accent);">Selected: 0 pets</div>
             <div class="modal-actions">
-                <button class="post-btn" onclick="confirmJackpotJoin()">Join Jackpot</button>
+                <button class="post-btn" id="jackpot-join-post-btn" onclick="confirmJackpotJoin()">Join Jackpot</button>
                 <button class="cancel-btn" onclick="closeModal('jackpot-join-modal')">Cancel</button>
             </div>
             <div id="jackpot-join-status" style="text-align:center;margin-top:10px;font-size:14px;color:#868e96;min-height:22px;"></div>
@@ -3216,6 +3216,13 @@
             if (modalId === 'join-select-modal') {
                 document.getElementById('join-range-error').style.display = 'none';
             }
+            // Re-enable buttons
+            const createBtn = document.getElementById('create-post-btn');
+            if (createBtn) createBtn.disabled = false;
+            const joinBtn = document.getElementById('join-post-btn');
+            if (joinBtn) joinBtn.disabled = false;
+            const jpJoinBtn = document.getElementById('jackpot-join-post-btn');
+            if (jpJoinBtn) jpJoinBtn.disabled = false;
         }
 
         function openFAQ() {
@@ -3865,6 +3872,9 @@
             document.getElementById('jackpot-join-total').textContent =
                 `Selected: 0 pet(s) (max ${remainingSlots})`;
             document.getElementById('jackpot-join-status').textContent = '';
+            // Enable button
+            const btn = document.getElementById('jackpot-join-post-btn');
+            if (btn) btn.disabled = false;
             openModal('jackpot-join-modal');
         }
 
@@ -3874,10 +3884,14 @@
                 return;
             }
 
+            const btn = document.getElementById('jackpot-join-post-btn');
+            if (btn) btn.disabled = true;
+
             const existingPets = jackpotState.players[currentUser] ? jackpotState.players[currentUser].pets : [];
             const totalPets = existingPets.length + selectedJackpotPets.length;
             if (totalPets > MAX_JACKPOT_PETS) {
                 showToast(`You can have at most ${MAX_JACKPOT_PETS} pets in Jackpot.`);
+                if (btn) btn.disabled = false;
                 return;
             }
 
@@ -3905,7 +3919,8 @@
                 message: {
                     type: 'JACKPOT_JOIN',
                     username: currentUser,
-                    pets: selectedJackpotPets.slice()
+                    pets: selectedJackpotPets.slice(),
+                    sender: currentUser
                 }
             });
 
@@ -3916,7 +3931,8 @@
                     channel: JACKPOT_CHANNEL,
                     message: {
                         type: 'JACKPOT_STATE',
-                        state: jackpotState
+                        state: { timer: jackpotState.timer, status: jackpotState.status },
+                        sender: currentUser
                     }
                 });
             }
@@ -3925,13 +3941,11 @@
             updateJackpotUI();
             showToast(`Added ${selectedJackpotPets.length} pet(s) to Jackpot!`);
             selectedJackpotPets = [];
+            if (btn) btn.disabled = false;
         }
 
         function startJackpotTimer() {
-            if (jackpotState.timerInterval) {
-                // Zaten bir timer çalışıyorsa yenisini başlatma
-                return;
-            }
+            if (jackpotState.timerInterval) return;
             jackpotState.timerInterval = setInterval(() => {
                 if (jackpotState.status !== 'active') {
                     clearInterval(jackpotState.timerInterval);
@@ -3944,7 +3958,7 @@
                     jackpotState.timerInterval = null;
                     pubnub.publish({
                         channel: JACKPOT_CHANNEL,
-                        message: { type: 'JACKPOT_SPIN' }
+                        message: { type: 'JACKPOT_SPIN', sender: currentUser }
                     });
                     jackpotState.status = 'spinning';
                     updateJackpotUI();
@@ -3955,7 +3969,8 @@
                     channel: JACKPOT_CHANNEL,
                     message: {
                         type: 'JACKPOT_STATE',
-                        state: jackpotState
+                        state: { timer: jackpotState.timer, status: jackpotState.status },
+                        sender: currentUser
                     }
                 });
             }, 1000);
@@ -3987,7 +4002,7 @@
             };
             pubnub.publish({
                 channel: JACKPOT_CHANNEL,
-                message: { type: 'JACKPOT_RESET' }
+                message: { type: 'JACKPOT_RESET', sender: currentUser }
             });
             updateJackpotUI();
         }
@@ -4101,6 +4116,7 @@
                 document.getElementById('jp-winner-pets').innerHTML = petsHtml;
             }
 
+            jackpotState.prizePool = Object.values(jackpotState.players).reduce((acc, p) => acc + p.total, 0);
             prizeEl.textContent = jackpotState.prizePool;
 
             const playerKeys = Object.keys(jackpotState.players);
@@ -4133,13 +4149,11 @@
         }
 
         // ============================================================
-        //  PUBSUB (JACKPOT)
+        //  PUBSUB (JACKPOT) - sender kontrolü eklendi
         // ============================================================
         function handleJackpotMessage(msg) {
-            // Kendi mesajımızı işleme (çift ekleme önleme)
-            if (msg.username === currentUser && msg.type === 'JACKPOT_JOIN') {
-                return;
-            }
+            // Kendi mesajımızı işleme
+            if (msg.sender === currentUser) return;
 
             if (msg.type === 'JACKPOT_JOIN') {
                 if (!jackpotState.players[msg.username]) {
@@ -4183,7 +4197,6 @@
                     return;
                 }
 
-                // Tüm petleri topla (kazanan tüm havuzu alır)
                 const allPets = [];
                 Object.values(jackpotState.players).forEach(p => allPets.push(...p.pets));
                 jackpotState.winner = winner;
@@ -4229,7 +4242,10 @@
             }
 
             if (msg.type === 'JACKPOT_STATE') {
-                jackpotState = msg.state;
+                // Sadece timer ve status'u güncelle, players'ı koru
+                if (msg.state.timer !== undefined) jackpotState.timer = msg.state.timer;
+                if (msg.state.status) jackpotState.status = msg.state.status;
+                jackpotState.prizePool = Object.values(jackpotState.players).reduce((acc, p) => acc + p.total, 0);
                 updateJackpotUI();
                 if (jackpotState.status === 'active' && jackpotState.timer > 0) {
                     startJackpotTimer();
@@ -4309,6 +4325,8 @@
                 if (msg.type === 'GAME_START') {
                     const match = globalMatches.find(m => m.id === msg.matchId);
                     if (match) {
+                        // Eğer maç zaten devam ediyorsa tekrar işleme alma
+                        if (match.status === 'ongoing') return;
                         match.status = 'ongoing';
                         match.joiner = msg.joiner;
                         match.joinerPets = msg.joinerPets;
@@ -4724,7 +4742,7 @@
         }
 
         // ============================================================
-        //  CREATE MATCH
+        //  CREATE MATCH (buton disable eklendi)
         // ============================================================
         function openCreateModal() {
             if (!currentUser) { showToast('Please login first to create a match.'); return; }
@@ -4765,6 +4783,7 @@
                 });
             }
             updateCreateTotal();
+            document.getElementById('create-post-btn').disabled = false;
             openModal('create-modal');
         }
 
@@ -4775,8 +4794,11 @@
         }
 
         function postMatch() {
-            if (selectedPetsForMatch.length === 0) { showToast('Select at least one pet!'); return; }
-            if (!selectedSideCreate) { showToast('Please select a side (H or T)!'); return; }
+            const btn = document.getElementById('create-post-btn');
+            if (btn) btn.disabled = true;
+
+            if (selectedPetsForMatch.length === 0) { showToast('Select at least one pet!'); if (btn) btn.disabled = false; return; }
+            if (!selectedSideCreate) { showToast('Please select a side (H or T)!'); if (btn) btn.disabled = false; return; }
 
             removePetsFromInventory(currentUser, selectedPetsForMatch);
 
@@ -4794,6 +4816,7 @@
                 message: { type: 'MATCH_CREATED', match: newMatch }
             });
             closeModal('create-modal');
+            if (btn) btn.disabled = false;
         }
 
         function cancelMyMatch(matchId) {
@@ -4810,7 +4833,7 @@
         }
 
         // ============================================================
-        //  JOIN MATCH
+        //  JOIN MATCH (buton disable eklendi)
         // ============================================================
         function openJoinSelectModal(matchId) {
             if (!currentUser) { showToast('Please login first to join a match.'); return; }
@@ -4862,6 +4885,7 @@
                 });
             }
             updateJoinTotal();
+            document.getElementById('join-post-btn').disabled = false;
             openModal('join-select-modal');
         }
 
@@ -4872,13 +4896,17 @@
         }
 
         function confirmJoinMatch() {
-            if (selectedPetsForJoin.length === 0) { showToast('Select at least one pet!'); return; }
+            const btn = document.getElementById('join-post-btn');
+            if (btn) btn.disabled = true;
+
+            if (selectedPetsForJoin.length === 0) { showToast('Select at least one pet!'); if (btn) btn.disabled = false; return; }
 
             const range = getPetRange(matchToJoin.hostPets);
             const totalValue = sumPets(selectedPetsForJoin);
             if (range.min !== 0 || range.max !== 0) {
                 if (totalValue < range.min || totalValue > range.max) {
                     document.getElementById('join-range-error').style.display = 'block';
+                    if (btn) btn.disabled = false;
                     return;
                 }
             }
@@ -4903,6 +4931,7 @@
                     hostWins: hostWins
                 }
             });
+            if (btn) btn.disabled = false;
         }
 
         // ============================================================
@@ -5071,7 +5100,7 @@
         }
 
         // ============================================================
-        //  PROFILE (leaderboard'dan tıklanınca direkt açılır)
+        //  PROFILE
         // ============================================================
         function openProfile(username) {
             if (!username) return;
