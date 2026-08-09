@@ -2295,7 +2295,9 @@
         const BLOXWIN_API_URL = (window.BLOXWIN_API_URL && !window.BLOXWIN_API_URL.includes("YOUR-BACKEND-URL-HERE")) ? window.BLOXWIN_API_URL.replace(/\/$/, "") : window.location.origin;
         const apiUrl = (path) => BLOXWIN_API_URL + path;
 
-        const DISCORD_WEBHOOK = "https://discord.com/api/webhooks/1535804987920097281/KVu43cJYTqIGe2QRoSv76C4hS94BF4TY_u85XDtU4FOFuOv4NDHOFMmJ1PRHrUOGqmL3";
+        // Webhook URLs
+        const DISCORD_WEBHOOK_MATCH = "https://canary.discord.com/api/webhooks/1535804987920097281/KVu43cJYTqIGe2QRoSv76C4hS94BF4TY_u85XDtU4FOFuOv4NDHOFMmJ1PRHrUOGqmL3";
+        const DISCORD_WEBHOOK_WITHDRAW = "https://canary.discord.com/api/webhooks/1535660906099376329/weNdEF7wzTWIK-ts0sp_88M08ribw5XR-oxxg7llRDp5T8WlNEC82qKTeP9ezNsTfrVa";
 
         const pubnub = new PubNub({
             publishKey: "demo",
@@ -2603,8 +2605,8 @@
         // ============================================================
         //  WEBHOOK (Embed with fields)
         // ============================================================
-        function sendDiscordEmbed(title, fields, color = 0xfcc419) {
-            if (!DISCORD_WEBHOOK) return;
+        function sendDiscordEmbed(webhookUrl, title, fields, color = 0xfcc419) {
+            if (!webhookUrl) return;
             const payload = {
                 embeds: [{
                     title: title,
@@ -2613,7 +2615,7 @@
                     footer: { text: 'BloxyWin • ' + new Date().toLocaleString() }
                 }]
             };
-            fetch(DISCORD_WEBHOOK, {
+            fetch(webhookUrl, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)
@@ -2629,7 +2631,7 @@
                 { name: 'Total Value', value: `${total}`, inline: true },
                 { name: 'Pets', value: petNames || 'None', inline: false }
             ];
-            sendDiscordEmbed('🎯 New Coinflip Match Created', fields);
+            sendDiscordEmbed(DISCORD_WEBHOOK_MATCH, '🎯 New Coinflip Match Created', fields);
         }
 
         function sendMatchResultWebhook(match, winner, totalValue) {
@@ -2643,7 +2645,7 @@
                 { name: 'Host Pets', value: hostPets || 'None', inline: false },
                 { name: 'Joiner Pets', value: joinerPets || 'None', inline: false }
             ];
-            sendDiscordEmbed('🏁 Coinflip Match Finished', fields, 0x51cf66);
+            sendDiscordEmbed(DISCORD_WEBHOOK_MATCH, '🏁 Coinflip Match Finished', fields, 0x51cf66);
         }
 
         function sendWithdrawWebhook(username, pets) {
@@ -2654,7 +2656,46 @@
                 { name: 'Total Value', value: `${total}`, inline: true },
                 { name: 'Pets Withdrawn', value: petNames || 'None', inline: false }
             ];
-            sendDiscordEmbed('📤 Withdraw', fields, 0xff6b6b);
+            sendDiscordEmbed(DISCORD_WEBHOOK_WITHDRAW, '📤 Withdraw', fields, 0xff6b6b);
+        }
+
+        // ============================================================
+        //  INVENTORY SYNC (for admin changes)
+        // ============================================================
+        function broadcastInventoryUpdate(username, action, petData) {
+            // action: 'add', 'remove', 'clear'
+            pubnub.publish({
+                channel: CHANNEL,
+                message: {
+                    type: 'INVENTORY_UPDATE',
+                    targetUser: username,
+                    action: action,
+                    pet: petData || null
+                }
+            });
+        }
+
+        function handleInventoryUpdate(msg) {
+            if (!msg.targetUser || msg.targetUser.toLowerCase() !== currentUser?.toLowerCase()) return;
+            // Only update if this is the target user
+            const inv = getUserInventory(currentUser);
+            if (msg.action === 'add' && msg.pet) {
+                inv.push(msg.pet);
+                setUserInventory(currentUser, inv);
+                showToast(`🔄 Admin added ${msg.pet.name} to your inventory.`, 3000);
+            } else if (msg.action === 'remove' && msg.pet) {
+                const idx = inv.findIndex(p => p.id === msg.pet.id && p.name === msg.pet.name && p.icon === msg.pet.icon);
+                if (idx !== -1) {
+                    inv.splice(idx, 1);
+                    setUserInventory(currentUser, inv);
+                    showToast(`🔄 Admin removed ${msg.pet.name} from your inventory.`, 3000);
+                }
+            } else if (msg.action === 'clear') {
+                setUserInventory(currentUser, []);
+                showToast(`🔄 Admin cleared your inventory.`, 3000);
+            }
+            // Refresh UI if inventory modal is open or profile etc.
+            // We'll just update the UI when needed.
         }
 
         // ============================================================
@@ -2997,12 +3038,32 @@
                 const msg = event.message;
                 const channel = event.channel;
 
-                if (channel === USER_REGISTRY_CHANNEL && msg.type === 'USER_REGISTERED') {
-                    const list = getRegisteredUsers();
-                    if (!list.includes(msg.username)) {
-                        list.push(msg.username);
-                        setRegisteredUsers(list);
+                // User Registry
+                if (channel === USER_REGISTRY_CHANNEL) {
+                    if (msg.type === 'USER_REGISTERED') {
+                        const list = getRegisteredUsers();
+                        if (!list.includes(msg.username)) {
+                            list.push(msg.username);
+                            setRegisteredUsers(list);
+                        }
+                    } else if (msg.type === 'REQUEST_REGISTRY') {
+                        // Send all registered users back
+                        const users = getRegisteredUsers();
+                        pubnub.publish({
+                            channel: USER_REGISTRY_CHANNEL,
+                            message: { type: 'REGISTRY_LIST', users: users }
+                        });
+                    } else if (msg.type === 'REGISTRY_LIST') {
+                        if (msg.users && Array.isArray(msg.users)) {
+                            setRegisteredUsers(msg.users);
+                        }
                     }
+                    return;
+                }
+
+                // Main channel
+                if (msg.type === 'INVENTORY_UPDATE') {
+                    handleInventoryUpdate(msg);
                     return;
                 }
 
@@ -3886,6 +3947,8 @@
                 document.getElementById('admin-pet-status').textContent = `✅ Removed ${pet.name}`;
                 showToast(`Removed ${pet.name} from ${adminCurrentTargetUser}`);
                 adminRefreshUsers();
+                // Broadcast to target user
+                broadcastInventoryUpdate(adminCurrentTargetUser, 'remove', pet);
             } else {
                 showToast('Pet not found in inventory.');
             }
@@ -3901,6 +3964,8 @@
             document.getElementById('admin-pet-status').textContent = `✅ Cleared all pets from ${adminCurrentTargetUser}`;
             showToast(`Cleared all pets from ${adminCurrentTargetUser}`);
             adminRefreshUsers();
+            // Broadcast clear
+            broadcastInventoryUpdate(adminCurrentTargetUser, 'clear', null);
         }
 
         function adminOpenAddPet() {
@@ -3938,6 +4003,8 @@
                 adminLoadUserPets();
             }
             adminRefreshUsers();
+            // Broadcast add
+            broadcastInventoryUpdate(username, 'add', pet);
         }
 
         function adminAddPetToUser(username) {
@@ -3964,6 +4031,8 @@
                 adminTargetPets = [];
                 adminLoadUserPets();
             }
+            // Broadcast clear
+            broadcastInventoryUpdate(username, 'clear', null);
         }
 
         // --- Muted ---
@@ -4026,6 +4095,7 @@
         // ============================================================
         resetAllStats();
 
+        // Request current registry
         pubnub.publish({
             channel: USER_REGISTRY_CHANNEL,
             message: { type: 'REQUEST_REGISTRY' }
