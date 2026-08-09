@@ -122,15 +122,16 @@
             margin: 4px 0;
         }
 
-        /* Coinflip butonu için özel stil */
+        /* Coinflip butonu özel stil - siyah arka plan */
         .sidebar .coinflip-btn {
-            background: linear-gradient(135deg, #fcc419, #f59f00);
-            border-color: var(--accent);
-            color: #0b1120;
+            background: #0f172a;
+            border-color: var(--border-color);
+            color: #868e96;
         }
         .sidebar .coinflip-btn:hover {
-            border-color: #fff;
-            background: linear-gradient(135deg, #ffd43b, #fcc419);
+            border-color: var(--accent);
+            background: #1a2332;
+            color: #f1f3f5;
         }
         .sidebar .coinflip-btn .icon {
             width: 28px;
@@ -1921,8 +1922,8 @@
         </a>
         <div class="sidebar-divider"></div>
 
-        <!-- Coinflip Butonu -->
-        <div class="sidebar-item coinflip-btn" onclick="openCreateModal()">
+        <!-- Coinflip Butonu - siteyi yeniler -->
+        <div class="sidebar-item coinflip-btn" onclick="location.reload()">
             <img class="icon" src="https://bloxluck.com/img/coinflip%201.svg" alt="Coinflip" style="width:28px; height:28px;">
             <span class="label" style="font-size:7px; line-height:1.1;">COIN<br>FLIP</span>
         </div>
@@ -2491,7 +2492,6 @@
             let newCount = current + (Math.random() > 0.6 ? 1 : -1) * Math.floor(Math.random() * 2 + 1);
             newCount = Math.min(19, Math.max(9, newCount));
             countEl.textContent = newCount;
-            // Sarı yanıp sönme kaldırıldı
         }
 
         function startOnlineCount() {
@@ -3161,9 +3161,12 @@
 
         function sendMessage() {
             if (!currentUser) { showToast('Please login first to send a message.'); return; }
+
+            // Mute kontrolü - kullanıcı mute'liyse uyarı ver ve gönderme
             if (isMuted(currentUser)) {
                 const hours = getMuteRemaining(currentUser);
-                showToast(`You are muted for ${hours} hour(s).`, 5000);
+                const hourText = hours === 1 ? 'hour' : 'hours';
+                showToast(`You have been muted for ${hours} ${hourText}.`, 5000);
                 return;
             }
 
