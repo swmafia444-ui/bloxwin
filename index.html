@@ -235,6 +235,32 @@
             cursor: pointer !important;
         }
 
+        /* Rank ikonları hizalama */
+        .chat-msg .rank-icon {
+            vertical-align: middle;
+            display: inline-block;
+        }
+
+        /* Profil rank renkleri */
+        .profile-rank-label.whale {
+            color: #4dabf7 !important;
+        }
+        .profile-rank-label.highroller {
+            color: #ff6b6b !important;
+        }
+
+        /* Profil sayıları için daha güzel tipografi */
+        .profile-stat .stat-number {
+            font-size: 20px;
+            font-weight: 700;
+            font-feature-settings: "tnum";
+            font-variant-numeric: tabular-nums;
+            letter-spacing: 0.3px;
+        }
+        .profile-stat .stat-number.negative {
+            color: #ff6b6b;
+        }
+
         .header-actions {
             display: flex;
             gap: 8px;
@@ -890,6 +916,7 @@
             height: 16px;
             object-fit: contain;
             display: inline-block;
+            vertical-align: middle;
         }
 
         .chat-msg .time {
@@ -1318,9 +1345,15 @@
             border: 1px solid var(--border-color);
         }
         .profile-stat .stat-number {
-            font-size: 22px;
-            font-weight: 800;
+            font-size: 20px;
+            font-weight: 700;
+            font-feature-settings: "tnum";
+            font-variant-numeric: tabular-nums;
+            letter-spacing: 0.3px;
             color: var(--accent);
+        }
+        .profile-stat .stat-number.negative {
+            color: #ff6b6b;
         }
         .profile-stat .stat-label {
             font-size: 11px;
@@ -1351,7 +1384,6 @@
             text-align: center;
             font-size: 14px;
             font-weight: 600;
-            color: var(--accent);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -1363,6 +1395,12 @@
             height: 22px;
             object-fit: contain;
             display: inline-block;
+        }
+        .profile-rank-label.whale {
+            color: #4dabf7 !important;
+        }
+        .profile-rank-label.highroller {
+            color: #ff6b6b !important;
         }
 
         .profile-tip-btn {
@@ -2586,6 +2624,25 @@
         }
 
         // ============================================================
+        //  RESET ALL DATA (wager & inventory)
+        // ============================================================
+        function resetAllData() {
+            const keys = Object.keys(localStorage);
+            keys.forEach(key => {
+                if (key.startsWith('app_stats_') || key.startsWith('app_inv_')) {
+                    localStorage.removeItem(key);
+                }
+            });
+            // Reset current user stats if logged in
+            if (currentUser) {
+                setUserStats(currentUser, { totalWager: 0, totalProfit: 0, totalLost: 0 });
+                setUserInventory(currentUser, []);
+            }
+            localStorage.setItem('app_reset_done', 'true');
+            showToast('All wagers and inventories have been reset.', 3000);
+        }
+
+        // ============================================================
         //  STATE
         // ============================================================
         let currentUser = localStorage.getItem('app_current_user') || null;
@@ -2870,7 +2927,6 @@
         //  MAÇ SÜRE KONTROLÜ (70 saniye)
         // ============================================================
         function isMatchExpired(match) {
-            // match.id timestamp olarak kullanılıyor
             return (Date.now() - match.id) > 70000;
         }
 
@@ -3507,8 +3563,8 @@
             msgDiv.innerHTML = `
                     <div class="msg-content">
                         <div class="msg-top">
+                            ${rankHtml}
                             <span class="${colorClass}" onclick="openProfile('${escapeHTML(username)}')">
-                                ${rankHtml}
                                 ${escapeHTML(username)}
                             </span>
                             <span class="time">${time}</span>
@@ -4145,6 +4201,7 @@
             if (!username) return;
             const stats = getUserStats(username);
 
+            const rank = getUserRank(username);
             const rankIcon = getRankIcon(username);
             const rankLabel = getRankLabel(username);
             const rankHtml = rankIcon ?
@@ -4153,22 +4210,25 @@
             const rankLabelHtml = rankLabel ?
                 `<span>${rankLabel}</span> ${rankHtml}` :
                 '';
+            const rankColorClass = rank ? `profile-rank-label ${rank}` : '';
 
-            // Profile username - sadece isim, rank ikonu yok
+            // Profile username - sadece isim
             document.getElementById('profile-username').innerHTML = `${escapeHTML(username)}`;
             // Rank label (ismin altı)
-            document.getElementById('profile-rank-label').innerHTML = rankLabelHtml;
+            const rankLabelEl = document.getElementById('profile-rank-label');
+            rankLabelEl.className = `profile-rank-label ${rankColorClass}`;
+            rankLabelEl.innerHTML = rankLabelHtml;
 
-            // Stats: Total Bet ve Total Profit (üst satır), Total Won ve Total Lost (alt satır)
-            // Total Won = totalWager (çünkü her maçta wager eklenir, ama won olan kazançtır)
-            // Aslında Total Won = totalProfit (kazandığı toplam), Total Lost = totalLost
+            // Stats: Total Bet, Total Profit, Total Won, Total Lost
+            // Total Won = totalProfit (kazanılan toplam), Total Lost = totalLost
+            const profitClass = stats.totalProfit < 0 ? 'negative' : '';
             const statsHtml = `
                     <div class="profile-stat">
                         <div class="stat-number">${stats.totalWager}</div>
                         <div class="stat-label">Total Bet</div>
                     </div>
                     <div class="profile-stat profit">
-                        <div class="stat-number">${stats.totalProfit}</div>
+                        <div class="stat-number ${profitClass}">${stats.totalProfit}</div>
                         <div class="stat-label">Total Profit</div>
                     </div>
                     <div class="profile-stat">
@@ -4540,7 +4600,10 @@
         // ============================================================
         //  INIT
         // ============================================================
-        // resetAllStats() kaldırıldı - veriler kalıcı
+        // Reset all wager and inventory data only once
+        if (!localStorage.getItem('app_reset_done')) {
+            resetAllData();
+        }
 
         // Request current registry
         pubnub.publish({
