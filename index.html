@@ -222,6 +222,14 @@
             display: inline-block;
         }
 
+        /* Rank renkleri - chat */
+        .chat-username.highroller {
+            color: #ff6b6b !important;
+        }
+        .chat-username.whale {
+            color: #4dabf7 !important;
+        }
+
         .header-actions {
             display: flex;
             gap: 8px;
@@ -295,6 +303,15 @@
 
         .action-btn.purple-btn:hover {
             box-shadow: 0 8px 20px rgba(132, 94, 247, 0.4);
+        }
+
+        .action-btn.tip-btn {
+            background: linear-gradient(135deg, #ffd43b, #f59f00);
+            color: #0b1120;
+            box-shadow: 0 4px 10px rgba(255, 212, 59, 0.25);
+        }
+        .action-btn.tip-btn:hover {
+            box-shadow: 0 8px 20px rgba(255, 212, 59, 0.4);
         }
 
         .main-layout {
@@ -846,7 +863,6 @@
 
         .chat-msg .username {
             font-weight: 700;
-            color: var(--accent);
             margin-right: 6px;
             cursor: pointer;
             transition: color 0.2s;
@@ -1235,6 +1251,28 @@
             font-weight: 700;
             font-size: 16px;
             color: #e9ecef;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .view-profile .player .name .rank-icon {
+            width: 22px;
+            height: 22px;
+            object-fit: contain;
+        }
+
+        .view-profile .player .rank-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .view-profile .player .rank-label .rank-icon {
+            width: 18px;
+            height: 18px;
+            object-fit: contain;
         }
 
         .view-profile .player .divider {
@@ -1272,6 +1310,63 @@
             width: 22px;
             height: 22px;
             border-radius: 50%;
+        }
+
+        /* Tip modal */
+        .tip-pets-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin: 12px 0 16px;
+            max-height: 260px;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: #2d3b4f transparent;
+        }
+        .tip-pets-grid::-webkit-scrollbar {
+            width: 4px;
+        }
+        .tip-pets-grid::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .tip-pets-grid::-webkit-scrollbar-thumb {
+            background: #2d3b4f;
+            border-radius: 10px;
+        }
+        .tip-pet-item {
+            background: #0f172a;
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            padding: 10px 6px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .tip-pet-item:hover {
+            transform: translateY(-2px);
+            border-color: #4dabf7;
+        }
+        .tip-pet-item.selected {
+            border-color: var(--accent);
+            background: rgba(252, 196, 25, 0.12);
+            box-shadow: 0 0 0 2px rgba(252, 196, 25, 0.2);
+        }
+        .tip-pet-item .pet-img {
+            width: 44px;
+            height: 44px;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 1px solid #2d3b4f;
+        }
+        .tip-pet-item .pet-name {
+            font-size: 11px;
+            color: #ced4da;
+            margin-top: 4px;
+            font-weight: 500;
+        }
+        .tip-pet-item .pet-val {
+            font-size: 10px;
+            color: #868e96;
         }
 
         /* Deposit */
@@ -1573,31 +1668,37 @@
             padding: 6px 16px;
         }
 
-        /* Profile Modal */
+        /* Profile Modal - yeni düzen */
         .profile-stats {
             display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 12px;
-            margin: 16px 0 20px;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin: 16px 0 12px;
         }
         .profile-stat {
             background: #0f172a;
             border-radius: 12px;
-            padding: 14px 8px;
+            padding: 12px 8px;
             text-align: center;
             border: 1px solid var(--border-color);
         }
         .profile-stat .stat-number {
-            font-size: 24px;
+            font-size: 22px;
             font-weight: 800;
             color: var(--accent);
         }
         .profile-stat .stat-label {
-            font-size: 12px;
+            font-size: 11px;
             color: #868e96;
-            margin-top: 4px;
+            margin-top: 2px;
             text-transform: uppercase;
             letter-spacing: 0.5px;
+        }
+        .profile-stat.profit .stat-number {
+            color: var(--secondary);
+        }
+        .profile-stat.loss .stat-number {
+            color: #ff6b6b;
         }
 
         .profile-username {
@@ -1614,6 +1715,42 @@
             width: 28px;
             height: 28px;
             object-fit: contain;
+        }
+
+        .profile-rank-label {
+            text-align: center;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            margin-bottom: 4px;
+        }
+        .profile-rank-label .rank-icon {
+            width: 22px;
+            height: 22px;
+            object-fit: contain;
+        }
+
+        .profile-tip-btn {
+            margin-top: 12px;
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 30px;
+            font-weight: 700;
+            font-size: 14px;
+            cursor: pointer;
+            background: linear-gradient(135deg, #ffd43b, #f59f00);
+            color: #0b1120;
+            box-shadow: 0 4px 10px rgba(255, 212, 59, 0.25);
+            transition: transform 0.15s ease, box-shadow 0.2s;
+        }
+        .profile-tip-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(255, 212, 59, 0.4);
         }
 
         /* Leaderboard Modal */
@@ -1896,8 +2033,8 @@
                 font-size: 18px;
             }
             .profile-stats {
-                grid-template-columns: 1fr 1fr 1fr;
-                gap: 8px;
+                grid-template-columns: 1fr 1fr;
+                gap: 6px;
             }
             .profile-stat .stat-number {
                 font-size: 18px;
@@ -1908,6 +2045,9 @@
             }
             .admin-manual-input input {
                 min-width: unset;
+            }
+            .tip-pets-grid {
+                grid-template-columns: repeat(2, 1fr);
             }
         }
 
@@ -2265,9 +2405,26 @@
         <div class="modal" style="max-width:480px;">
             <div id="profile-content" style="text-align:center;">
                 <div id="profile-username" class="profile-username"></div>
+                <div id="profile-rank-label" class="profile-rank-label"></div>
                 <div class="profile-stats" id="profile-stats"></div>
-                <button class="cancel-btn" style="width:100%;margin-top:16px;" onclick="closeModal('profile-modal')">Close</button>
+                <button class="profile-tip-btn" id="profile-tip-btn" onclick="openTipModal()">Tip</button>
+                <button class="cancel-btn" style="width:100%;margin-top:10px;" onclick="closeModal('profile-modal')">Close</button>
             </div>
+        </div>
+    </div>
+
+    <!-- Tip Modal -->
+    <div class="modal-overlay" id="tip-modal">
+        <div class="modal" style="max-width:480px;">
+            <h2>Select a pet to tip</h2>
+            <p style="color:#868e96;font-size:14px;margin-bottom:6px;">Select a pet from your inventory to send:</p>
+            <div class="tip-pets-grid" id="tip-pets-grid"></div>
+            <div id="tip-total-info" style="text-align:center;font-weight:600;margin:8px 0 12px;color:var(--accent);">Selected: 0 pets</div>
+            <div class="modal-actions">
+                <button class="post-btn" onclick="confirmTip()">Tip Selected</button>
+                <button class="cancel-btn" onclick="closeModal('tip-modal')">Cancel</button>
+            </div>
+            <div id="tip-status" style="text-align:center;margin-top:10px;font-size:14px;color:#868e96;min-height:22px;"></div>
         </div>
     </div>
 
@@ -2398,6 +2555,13 @@
             return null;
         }
 
+        function getRankColor(username) {
+            const rank = getUserRank(username);
+            if (rank === 'whale') return 'whale';
+            if (rank === 'highroller') return 'highroller';
+            return '';
+        }
+
         // ============================================================
         //  STATE
         // ============================================================
@@ -2423,6 +2587,10 @@
         let adminSelectedPetIndex = null;
 
         let onlineCountInterval = null;
+
+        // Tip sistemi
+        let tipTargetUser = null;
+        let selectedTipPets = [];
 
         // ============================================================
         //  USER DATA STORAGE (normalized to lowercase)
@@ -2623,6 +2791,10 @@
             }
             if (modalId === 'profile-modal') {
                 document.getElementById('profile-content').style.display = 'block';
+            }
+            if (modalId === 'tip-modal') {
+                document.getElementById('tip-status').textContent = '';
+                selectedTipPets = [];
             }
         }
 
@@ -3169,7 +3341,7 @@
                                 globalMatches.splice(idx, 1);
                                 renderMatches();
                             }
-                        }, 70000); // 70 saniye
+                        }, 70000);
                         renderMatches();
 
                         if (currentUser === msg.host || currentUser === msg.joiner) {
@@ -3257,10 +3429,12 @@
             const rankHtml = rankIcon ?
                 `<img class="rank-icon" src="${rankIcon}" alt="${rankLabel}" title="${rankLabel}">` :
                 '';
+            const rankColor = getRankColor(username);
+            const colorClass = rankColor ? `chat-username ${rankColor}` : 'chat-username';
 
             msgDiv.innerHTML = `
                     <div class="msg-content">
-                        <span class="username" onclick="openProfile('${escapeHTML(username)}')">
+                        <span class="${colorClass}" onclick="openProfile('${escapeHTML(username)}')">
                             ${rankHtml}
                             ${escapeHTML(username)}
                         </span>
@@ -3900,27 +4074,137 @@
             const rankHtml = rankIcon ?
                 `<img class="rank-icon" src="${rankIcon}" alt="${rankLabel}" title="${rankLabel}">` :
                 '';
+            const rankLabelHtml = rankLabel ?
+                `<span class="rank-label">${rankLabel} <img class="rank-icon" src="${rankIcon}" alt="${rankLabel}"></span>` :
+                '';
 
             document.getElementById('profile-username').innerHTML =
                 `${escapeHTML(username)} ${rankHtml}`;
+            document.getElementById('profile-rank-label').innerHTML = rankLabelHtml;
 
+            // Total Bet ve Total Profit
+            // Total Won ve Total Lost
             const statsHtml = `
                     <div class="profile-stat">
                         <div class="stat-number">${stats.totalWager}</div>
-                        <div class="stat-label">Total Wager</div>
+                        <div class="stat-label">Total Bet</div>
                     </div>
-                    <div class="profile-stat" style="border-color:var(--secondary);">
-                        <div class="stat-number" style="color:var(--secondary);">${stats.totalProfit}</div>
+                    <div class="profile-stat profit">
+                        <div class="stat-number">${stats.totalProfit}</div>
                         <div class="stat-label">Total Profit</div>
                     </div>
-                    <div class="profile-stat" style="border-color:#ff6b6b;">
-                        <div class="stat-number" style="color:#ff6b6b;">${stats.totalLost}</div>
+                    <div class="profile-stat">
+                        <div class="stat-number">${stats.totalWager}</div>
+                        <div class="stat-label">Total Won</div>
+                    </div>
+                    <div class="profile-stat loss">
+                        <div class="stat-number">${stats.totalLost}</div>
                         <div class="stat-label">Total Lost</div>
                     </div>
                 `;
             document.getElementById('profile-stats').innerHTML = statsHtml;
 
+            // Tip butonunu göster/gizle
+            const tipBtn = document.getElementById('profile-tip-btn');
+            if (currentUser && username.toLowerCase() !== currentUser.toLowerCase()) {
+                tipBtn.style.display = 'block';
+                tipBtn.textContent = `Tip ${escapeHTML(username)}`;
+                tipBtn.onclick = () => openTipModal(username);
+            } else {
+                tipBtn.style.display = 'none';
+            }
+
             openModal('profile-modal');
+        }
+
+        // ============================================================
+        //  TIP SISTEMI
+        // ============================================================
+        function openTipModal(targetUser) {
+            if (!currentUser) { showToast('Please login first.'); return; }
+            if (!targetUser) {
+                const nameEl = document.getElementById('profile-username');
+                const name = nameEl ? nameEl.textContent.trim() : null;
+                if (name) targetUser = name;
+                else return showToast('Target user not found.');
+            }
+            tipTargetUser = targetUser;
+
+            const inv = getUserInventory(currentUser);
+            const grid = document.getElementById('tip-pets-grid');
+            grid.innerHTML = '';
+            selectedTipPets = [];
+
+            if (inv.length === 0) {
+                grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;color:#868e96;padding:20px;">No pets in inventory.</div>';
+            } else {
+                inv.forEach((pet, index) => {
+                    const item = document.createElement('div');
+                    item.className = 'tip-pet-item';
+                    item.dataset.index = index;
+                    item.innerHTML = `
+                            <img class="pet-img" src="${pet.icon}" alt="${pet.name}">
+                            <div class="pet-name">${pet.name}</div>
+                            <div class="pet-val">${pet.value}</div>
+                        `;
+                    item.onclick = () => {
+                        const idx = selectedTipPets.indexOf(pet);
+                        if (idx !== -1) {
+                            selectedTipPets.splice(idx, 1);
+                            item.classList.remove('selected');
+                        } else {
+                            selectedTipPets.push(pet);
+                            item.classList.add('selected');
+                        }
+                        document.getElementById('tip-total-info').textContent =
+                            `Selected: ${selectedTipPets.length} pet(s)`;
+                    };
+                    grid.appendChild(item);
+                });
+            }
+            document.getElementById('tip-total-info').textContent = `Selected: 0 pets`;
+            document.getElementById('tip-status').textContent = '';
+            openModal('tip-modal');
+        }
+
+        function confirmTip() {
+            if (selectedTipPets.length === 0) {
+                showToast('Select at least one pet to tip.');
+                return;
+            }
+            if (!tipTargetUser) {
+                showToast('Target user not found.');
+                return;
+            }
+
+            // Remove from sender
+            removePetsFromInventory(currentUser, selectedTipPets);
+
+            // Add to receiver
+            selectedTipPets.forEach(pet => {
+                addPetToInventory(tipTargetUser, pet);
+            });
+
+            const status = document.getElementById('tip-status');
+            status.style.color = '#51cf66';
+            status.textContent = `✅ ${selectedTipPets.length} pet(s) tipped to ${tipTargetUser}!`;
+            showToast(`Tipped ${selectedTipPets.length} pet(s) to ${tipTargetUser}!`);
+
+            // Broadcast tip to update receiver's inventory
+            selectedTipPets.forEach(pet => {
+                broadcastInventoryUpdate(tipTargetUser, 'add', pet);
+            });
+
+            // Clear selection
+            selectedTipPets = [];
+            document.getElementById('tip-total-info').textContent = `Selected: 0 pets`;
+            // Refresh grid
+            const grid = document.getElementById('tip-pets-grid');
+            grid.querySelectorAll('.tip-pet-item').forEach(el => el.classList.remove('selected'));
+
+            setTimeout(() => {
+                openTipModal(tipTargetUser);
+            }, 1000);
         }
 
         // ============================================================
