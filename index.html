@@ -74,7 +74,7 @@
             flex-direction: column;
             align-items: center;
             padding: 16px 0;
-            gap: 12px;
+            gap: 8px;
             overflow-y: auto;
         }
 
@@ -110,10 +110,11 @@
             object-fit: contain;
         }
         .sidebar .sidebar-item .label {
-            font-size: 8px;
+            font-size: 7px;
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 0.3px;
+            line-height: 1.1;
         }
         .sidebar .sidebar-divider {
             width: 70%;
@@ -134,6 +135,21 @@
             color: #f1f3f5;
         }
         .sidebar .coinflip-btn .icon {
+            width: 28px;
+            height: 28px;
+        }
+
+        /* Jackpot butonu - özel renk */
+        .sidebar .jackpot-btn {
+            background: linear-gradient(135deg, #da77f2, #9c36b5);
+            border-color: #da77f2;
+            color: #fff;
+        }
+        .sidebar .jackpot-btn:hover {
+            border-color: #fcc419;
+            background: linear-gradient(135deg, #e599f7, #b36bcf);
+        }
+        .sidebar .jackpot-btn .icon {
             width: 28px;
             height: 28px;
         }
@@ -1928,6 +1944,167 @@
             font-weight: 600;
         }
 
+        /* ===== JACKPOT ===== */
+        .jackpot-container {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            padding: 20px;
+            border: 1px solid var(--border-color);
+            margin-top: 20px;
+        }
+        .jackpot-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+        .jackpot-header .jp-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 20px;
+            font-weight: 700;
+            color: #e9ecef;
+        }
+        .jackpot-header .jp-title img {
+            width: 32px;
+            height: 32px;
+            object-fit: contain;
+        }
+        .jackpot-timer {
+            font-size: 28px;
+            font-weight: 800;
+            color: var(--accent);
+            font-feature-settings: "tnum";
+            font-variant-numeric: tabular-nums;
+            min-width: 80px;
+            text-align: center;
+        }
+        .jackpot-timer.waiting {
+            color: #868e96;
+        }
+        .jackpot-prizepool {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--accent);
+        }
+        .jackpot-players {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin: 12px 0;
+            max-height: 200px;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: #2d3b4f transparent;
+        }
+        .jackpot-players::-webkit-scrollbar {
+            width: 4px;
+        }
+        .jackpot-players::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .jackpot-players::-webkit-scrollbar-thumb {
+            background: #2d3b4f;
+            border-radius: 10px;
+        }
+        .jackpot-player-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 14px;
+            background: #0f172a;
+            border-radius: 10px;
+            border: 1px solid var(--border-color);
+        }
+        .jackpot-player-item .jp-pname {
+            font-weight: 600;
+            color: #e9ecef;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .jackpot-player-item .jp-pets {
+            display: flex;
+            gap: 4px;
+            flex-wrap: wrap;
+        }
+        .jackpot-player-item .jp-pets .jp-pet-img {
+            width: 28px;
+            height: 28px;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 1px solid #2d3b4f;
+        }
+        .jackpot-player-item .jp-pvalue {
+            color: var(--accent);
+            font-weight: 600;
+            font-size: 13px;
+        }
+        .jackpot-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 12px;
+            flex-wrap: wrap;
+        }
+        .jackpot-actions .jp-join-btn {
+            background: linear-gradient(135deg, #da77f2, #9c36b5);
+            color: #fff;
+            border: none;
+            padding: 10px 28px;
+            border-radius: 30px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: transform 0.15s ease, box-shadow 0.2s;
+            box-shadow: 0 4px 10px rgba(218, 119, 242, 0.25);
+            font-size: 14px;
+        }
+        .jackpot-actions .jp-join-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(218, 119, 242, 0.4);
+        }
+        .jackpot-actions .jp-join-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+        .jackpot-status {
+            text-align: center;
+            color: #868e96;
+            font-size: 14px;
+            margin-top: 8px;
+        }
+        .jackpot-result {
+            text-align: center;
+            margin-top: 12px;
+            padding: 12px;
+            border-radius: 12px;
+            background: #0f172a;
+            border: 1px solid var(--accent);
+            display: none;
+        }
+        .jackpot-result .jp-winner {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--accent);
+        }
+        .jackpot-result .jp-winner-pets {
+            display: flex;
+            gap: 4px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 6px;
+        }
+        .jackpot-result .jp-winner-pets .jp-pet-img {
+            width: 32px;
+            height: 32px;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 1px solid #2d3b4f;
+        }
+
         /* Mobile */
         @media (max-width: 768px) {
             body {
@@ -2118,6 +2295,17 @@
                 font-size: 10px;
                 padding: 3px 10px;
             }
+            .jackpot-header {
+                flex-direction: column;
+                align-items: center;
+            }
+            .jackpot-timer {
+                font-size: 24px;
+            }
+            .jackpot-player-item {
+                flex-wrap: wrap;
+                gap: 4px;
+            }
         }
 
         .mobile-chat-toggle {
@@ -2167,13 +2355,19 @@
         <!-- Coinflip Butonu - siteyi yeniler -->
         <div class="sidebar-item coinflip-btn" onclick="location.reload()">
             <img class="icon" src="https://bloxluck.com/img/coinflip%201.svg" alt="Coinflip" style="width:28px; height:28px;">
-            <span class="label" style="font-size:7px; line-height:1.1;">COIN<br>FLIP</span>
+            <span class="label">COIN<br>FLIP</span>
+        </div>
+
+        <!-- Jackpot Butonu -->
+        <div class="sidebar-item jackpot-btn" onclick="openJackpotModal()">
+            <img class="icon" src="https://bloxluck.com/img/roulette%20%201.svg" alt="Jackpot" style="width:28px; height:28px;">
+            <span class="label">JACKPOT</span>
         </div>
 
         <!-- LEADERBOARD -->
         <div class="sidebar-item" onclick="openLeaderboard()">
             <img class="icon" src="https://bloxluck.com/img/leaderboard.svg" alt="Leaderboard" style="width:28px; height:28px;">
-            <span class="label" style="font-size:7px; line-height:1.1;">LEADER<br>BOARD</span>
+            <span class="label">LEADER<br>BOARD</span>
         </div>
 
         <div class="sidebar-divider"></div>
@@ -2219,6 +2413,29 @@
                 <button class="create-match-header-btn" onclick="openCreateModal()">Create Match</button>
             </div>
             <div class="matches-grid" id="matches-list"></div>
+
+            <!-- JACKPOT -->
+            <div class="jackpot-container" id="jackpot-container">
+                <div class="jackpot-header">
+                    <div class="jp-title">
+                        <img src="https://bloxluck.com/img/roulette%20%201.svg" alt="Jackpot">
+                        <span>Jackpot</span>
+                    </div>
+                    <div class="jackpot-timer" id="jackpot-timer">180</div>
+                    <div class="jackpot-prizepool">💰 <span id="jackpot-prize">0</span></div>
+                </div>
+                <div class="jackpot-players" id="jackpot-players">
+                    <div style="color:#868e96;text-align:center;padding:12px;">No players yet. Be the first!</div>
+                </div>
+                <div class="jackpot-actions">
+                    <button class="jp-join-btn" id="jp-join-btn" onclick="joinJackpot()">Join Jackpot</button>
+                </div>
+                <div class="jackpot-status" id="jackpot-status">Waiting for players...</div>
+                <div class="jackpot-result" id="jackpot-result">
+                    <div class="jp-winner" id="jp-winner-name"></div>
+                    <div class="jp-winner-pets" id="jp-winner-pets"></div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -2597,7 +2814,8 @@
 
         const CHANNEL = "adoptme_coinflip_live_v3";
         const USER_REGISTRY_CHANNEL = "bloxwin_user_registry";
-        pubnub.subscribe({ channels: [CHANNEL, USER_REGISTRY_CHANNEL] });
+        const JACKPOT_CHANNEL = "bloxwin_jackpot";
+        pubnub.subscribe({ channels: [CHANNEL, USER_REGISTRY_CHANNEL, JACKPOT_CHANNEL] });
 
         // ============================================================
         //  ADMINS
@@ -2669,7 +2887,7 @@
         function cleanupHistory() {
             const now = Date.now();
             const lastCleanup = parseInt(localStorage.getItem('app_history_last_cleanup') || '0');
-            if (now - lastCleanup > 7200000) { // 2 hours
+            if (now - lastCleanup > 7200000) {
                 const keys = Object.keys(localStorage);
                 keys.forEach(key => {
                     if (key.startsWith('app_history_')) {
@@ -2690,7 +2908,7 @@
         let chatHistory = JSON.parse(localStorage.getItem('app_chat_history') || '[]');
         let showHistory = false;
         let leaderboardSort = 'profit';
-        let allUserStats = {}; // { username: { totalWager, totalProfit, totalLost } }
+        let allUserStats = {};
 
         const MAX_PETS_PER_MATCH = 15;
         let selectedPetsForMatch = [];
@@ -2711,6 +2929,21 @@
         // Tip sistemi
         let tipTargetUser = null;
         let selectedTipPets = [];
+
+        // ============================================================
+        //  JACKPOT STATE
+        // ============================================================
+        let jackpotState = {
+            status: 'waiting', // waiting, active, spinning, finished
+            timer: 180,
+            maxTimer: 180,
+            players: {}, // { username: { pets: [...], total: 0 } }
+            prizePool: 0,
+            winner: null,
+            winnerPets: [],
+            timerInterval: null,
+            playerCount: 0
+        };
 
         // ============================================================
         //  USER DATA STORAGE (normalized to lowercase)
@@ -2760,7 +2993,6 @@
         //  STATS (with sync)
         // ============================================================
         function getUserStats(username) {
-            // First check local cache
             try {
                 const key = `app_stats_${username.toLowerCase()}`;
                 const data = localStorage.getItem(key);
@@ -2772,7 +3004,6 @@
         function setUserStats(username, stats) {
             const key = `app_stats_${username.toLowerCase()}`;
             localStorage.setItem(key, JSON.stringify(stats));
-            // Update global cache
             allUserStats[username.toLowerCase()] = stats;
         }
 
@@ -2785,7 +3016,6 @@
                 stats.totalLost += value;
             }
             setUserStats(username, stats);
-            // Broadcast stats update
             broadcastStatsUpdate(username, stats);
         }
 
@@ -2830,11 +3060,9 @@
             Object.keys(statsMap).forEach(username => {
                 const u = username.toLowerCase();
                 allUserStats[u] = statsMap[username];
-                // Also save to localStorage
                 const key = `app_stats_${u}`;
                 localStorage.setItem(key, JSON.stringify(statsMap[username]));
             });
-            // Refresh UI if needed
             renderLeaderboard();
             renderHeader();
             renderMatches();
@@ -3022,6 +3250,17 @@
             if (!pets || pets.length === 0) return { min: 0, max: 0 };
             const values = pets.map(p => p.value || 0);
             return { min: Math.min(...values), max: Math.max(...values) };
+        }
+
+        // RANGE HESAPLAMA: pet değerine göre %5-10 düşük başlangıç
+        function getPetRange(pets) {
+            if (!pets || pets.length === 0) return { min: 0, max: 0 };
+            let total = sumPets(pets);
+            if (total === 0) return { min: 0, max: 0 };
+            // %6 düşük (308 için 290 civarı)
+            const min = Math.floor(total * 0.94);
+            const max = total;
+            return { min, max };
         }
 
         // ============================================================
@@ -3259,7 +3498,6 @@
             const list = document.getElementById('leaderboard-list');
             let users = getAllUsernames();
 
-            // Filtre: her şeyi 0 olanları çıkar
             users = users.filter(u => {
                 const s = getUserStats(u);
                 return !(s.totalWager === 0 && s.totalProfit === 0 && s.totalLost === 0);
@@ -3281,7 +3519,7 @@
             } else if (leaderboardSort === 'wager') {
                 sorted = stats.sort((a, b) => b.totalWager - a.totalWager);
             } else if (leaderboardSort === 'least') {
-                sorted = stats.sort((a, b) => a.totalProfit - b.totalProfit);
+                sorted = stats.sort((a, b) => a.totalLost - b.totalLost);
             }
 
             list.innerHTML = '';
@@ -3299,10 +3537,13 @@
                     '';
 
                 let statValue = item.totalProfit;
+                let statLabel = 'Profit';
                 if (leaderboardSort === 'wager') {
                     statValue = item.totalWager;
+                    statLabel = 'Wager';
                 } else if (leaderboardSort === 'least') {
-                    statValue = item.totalProfit;
+                    statValue = item.totalLost;
+                    statLabel = 'Lost';
                 }
 
                 const div = document.createElement('div');
@@ -3561,12 +3802,261 @@
         }
 
         // ============================================================
-        //  PUBSUB
+        //  PUBSUB (JACKPOT)
+        // ============================================================
+        function handleJackpotMessage(msg) {
+            if (msg.type === 'JACKPOT_JOIN') {
+                if (!jackpotState.players[msg.username]) {
+                    jackpotState.players[msg.username] = { pets: msg.pets, total: sumPets(msg.pets) };
+                    jackpotState.prizePool += sumPets(msg.pets);
+                    jackpotState.playerCount = Object.keys(jackpotState.players).length;
+                    // Timer başlat (sadece 2. kişi geldiğinde)
+                    if (jackpotState.playerCount === 2 && jackpotState.status === 'waiting') {
+                        jackpotState.status = 'active';
+                        startJackpotTimer();
+                    }
+                    updateJackpotUI();
+                }
+            }
+            if (msg.type === 'JACKPOT_SPIN') {
+                // Çark dönüyor
+                jackpotState.status = 'spinning';
+                updateJackpotUI();
+                // Rastgele kazanan seç
+                const players = Object.keys(jackpotState.players);
+                const winner = players[Math.floor(Math.random() * players.length)];
+                const winnerPets = jackpotState.players[winner].pets;
+                jackpotState.winner = winner;
+                jackpotState.winnerPets = winnerPets;
+                jackpotState.status = 'finished';
+                // Kazananın envanterine ekle
+                winnerPets.forEach(pet => addPetToInventory(winner, pet));
+                // Webhook
+                const total = jackpotState.prizePool;
+                const fields = [
+                    { name: 'Winner', value: winner, inline: true },
+                    { name: 'Total Prize', value: `${total}`, inline: true },
+                    { name: 'Pets', value: winnerPets.map(p => `${p.name} (${p.value})`).join('\n') || 'None', inline: false }
+                ];
+                sendDiscordEmbed(DISCORD_WEBHOOK_MATCH, '🎰 Jackpot Winner!', fields, 0xda77f2);
+                // Reset after 10 seconds
+                setTimeout(() => {
+                    resetJackpot();
+                }, 10000);
+                updateJackpotUI();
+            }
+            if (msg.type === 'JACKPOT_RESET') {
+                resetJackpot();
+            }
+            if (msg.type === 'JACKPOT_STATE') {
+                // Sync state
+                jackpotState = msg.state;
+                updateJackpotUI();
+                if (jackpotState.status === 'active' && jackpotState.timer > 0) {
+                    startJackpotTimer();
+                }
+            }
+        }
+
+        // ============================================================
+        //  JACKPOT FUNCTIONS
+        // ============================================================
+        function openJackpotModal() {
+            // Jackpot doğrudan ana sayfada gösteriliyor, modal açmaya gerek yok
+            // Sadece scroll yap
+            document.getElementById('jackpot-container').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function joinJackpot() {
+            if (!currentUser) {
+                showToast('Please login first to join Jackpot.');
+                return;
+            }
+            if (isMuted(currentUser)) {
+                showToast('You are muted.');
+                return;
+            }
+            if (jackpotState.status === 'finished' || jackpotState.status === 'spinning') {
+                showToast('Jackpot is currently finishing.');
+                return;
+            }
+            if (jackpotState.players[currentUser]) {
+                showToast('You already joined this Jackpot.');
+                return;
+            }
+            // Kullanıcının envanterinden tüm petleri al
+            const inv = getUserInventory(currentUser);
+            if (inv.length === 0) {
+                showToast('You have no pets to join Jackpot.');
+                return;
+            }
+            // Tüm petleri jackpot'a ekle
+            const petsToAdd = inv.slice();
+            removePetsFromInventory(currentUser, petsToAdd);
+            jackpotState.players[currentUser] = { pets: petsToAdd, total: sumPets(petsToAdd) };
+            jackpotState.prizePool += sumPets(petsToAdd);
+            jackpotState.playerCount = Object.keys(jackpotState.players).length;
+
+            // Broadcast join
+            pubnub.publish({
+                channel: JACKPOT_CHANNEL,
+                message: {
+                    type: 'JACKPOT_JOIN',
+                    username: currentUser,
+                    pets: petsToAdd
+                }
+            });
+
+            if (jackpotState.playerCount === 2 && jackpotState.status === 'waiting') {
+                jackpotState.status = 'active';
+                startJackpotTimer();
+                // Broadcast timer start
+                pubnub.publish({
+                    channel: JACKPOT_CHANNEL,
+                    message: {
+                        type: 'JACKPOT_STATE',
+                        state: jackpotState
+                    }
+                });
+            }
+
+            updateJackpotUI();
+            showToast(`You joined Jackpot with ${petsToAdd.length} pet(s)!`);
+        }
+
+        function startJackpotTimer() {
+            if (jackpotState.timerInterval) clearInterval(jackpotState.timerInterval);
+            jackpotState.timerInterval = setInterval(() => {
+                if (jackpotState.status !== 'active') {
+                    clearInterval(jackpotState.timerInterval);
+                    return;
+                }
+                jackpotState.timer -= 1;
+                if (jackpotState.timer <= 0) {
+                    clearInterval(jackpotState.timerInterval);
+                    // Spin
+                    pubnub.publish({
+                        channel: JACKPOT_CHANNEL,
+                        message: { type: 'JACKPOT_SPIN' }
+                    });
+                    jackpotState.status = 'spinning';
+                    updateJackpotUI();
+                    return;
+                }
+                updateJackpotUI();
+                // Broadcast timer update
+                pubnub.publish({
+                    channel: JACKPOT_CHANNEL,
+                    message: {
+                        type: 'JACKPOT_STATE',
+                        state: jackpotState
+                    }
+                });
+            }, 1000);
+        }
+
+        function resetJackpot() {
+            if (jackpotState.timerInterval) {
+                clearInterval(jackpotState.timerInterval);
+                jackpotState.timerInterval = null;
+            }
+            jackpotState = {
+                status: 'waiting',
+                timer: 180,
+                maxTimer: 180,
+                players: {},
+                prizePool: 0,
+                winner: null,
+                winnerPets: [],
+                timerInterval: null,
+                playerCount: 0
+            };
+            // Broadcast reset
+            pubnub.publish({
+                channel: JACKPOT_CHANNEL,
+                message: { type: 'JACKPOT_RESET' }
+            });
+            updateJackpotUI();
+        }
+
+        function updateJackpotUI() {
+            const timerEl = document.getElementById('jackpot-timer');
+            const prizeEl = document.getElementById('jackpot-prize');
+            const playersEl = document.getElementById('jackpot-players');
+            const statusEl = document.getElementById('jackpot-status');
+            const joinBtn = document.getElementById('jp-join-btn');
+            const resultEl = document.getElementById('jackpot-result');
+
+            timerEl.textContent = jackpotState.timer;
+            if (jackpotState.status === 'waiting') {
+                timerEl.className = 'jackpot-timer waiting';
+                statusEl.textContent = 'Waiting for players... (Need 2 players to start)';
+                joinBtn.disabled = false;
+                joinBtn.textContent = 'Join Jackpot';
+            } else if (jackpotState.status === 'active') {
+                timerEl.className = 'jackpot-timer';
+                statusEl.textContent = `Active - ${Object.keys(jackpotState.players).length} players`;
+                joinBtn.disabled = true;
+                joinBtn.textContent = 'In Progress...';
+            } else if (jackpotState.status === 'spinning') {
+                timerEl.className = 'jackpot-timer';
+                timerEl.textContent = '🎰';
+                statusEl.textContent = 'Spinning...';
+                joinBtn.disabled = true;
+                joinBtn.textContent = 'Spinning...';
+            } else if (jackpotState.status === 'finished') {
+                timerEl.className = 'jackpot-timer';
+                timerEl.textContent = '🏆';
+                statusEl.textContent = `Finished! Winner: ${jackpotState.winner}`;
+                joinBtn.disabled = true;
+                joinBtn.textContent = 'Finished';
+                // Show result
+                resultEl.style.display = 'block';
+                document.getElementById('jp-winner-name').textContent = `🏆 ${jackpotState.winner} won the Jackpot!`;
+                const petsHtml = jackpotState.winnerPets.map(p =>
+                    `<img class="jp-pet-img" src="${p.icon}" alt="${p.name}" title="${p.name} (${p.value})">`
+                ).join('');
+                document.getElementById('jp-winner-pets').innerHTML = petsHtml;
+            }
+
+            prizeEl.textContent = jackpotState.prizePool;
+
+            // Players list
+            const playerKeys = Object.keys(jackpotState.players);
+            if (playerKeys.length === 0) {
+                playersEl.innerHTML = '<div style="color:#868e96;text-align:center;padding:12px;">No players yet. Be the first!</div>';
+            } else {
+                playersEl.innerHTML = '';
+                playerKeys.forEach(username => {
+                    const data = jackpotState.players[username];
+                    const petsHtml = data.pets.map(p =>
+                        `<img class="jp-pet-img" src="${p.icon}" alt="${p.name}" title="${p.name} (${p.value})">`
+                    ).join('');
+                    const div = document.createElement('div');
+                    div.className = 'jackpot-player-item';
+                    div.innerHTML = `
+                            <span class="jp-pname">${escapeHTML(username)}</span>
+                            <span class="jp-pets">${petsHtml}</span>
+                            <span class="jp-pvalue">${data.total}</span>
+                        `;
+                    playersEl.appendChild(div);
+                });
+            }
+        }
+
+        // ============================================================
+        //  PUBSUB MAIN
         // ============================================================
         pubnub.addListener({
             message: function(event) {
                 const msg = event.message;
                 const channel = event.channel;
+
+                // Jackpot channel
+                if (channel === JACKPOT_CHANNEL) {
+                    handleJackpotMessage(msg);
+                    return;
+                }
 
                 // User Registry channel
                 if (channel === USER_REGISTRY_CHANNEL) {
@@ -3592,7 +4082,6 @@
                             allUserStats[u] = msg.stats;
                             const key = `app_stats_${u}`;
                             localStorage.setItem(key, JSON.stringify(msg.stats));
-                            // Refresh UI
                             renderLeaderboard();
                             renderHeader();
                         }
@@ -3637,7 +4126,6 @@
                         match.hostWins = msg.hostWins;
                         match.winner = msg.hostWins ? msg.host : msg.joiner;
                         match.winnerSide = msg.hostWins ? match.hostSide : msg.joinerSide;
-                        // 70 saniye sonra sil
                         setTimeout(() => {
                             const idx = globalMatches.findIndex(m => m.id === msg.matchId);
                             if (idx !== -1) {
@@ -3833,8 +4321,8 @@
             waiting.forEach(match => {
                 const isMyMatch = currentUser && match.host === currentUser;
                 const totalValue = sumPets(match.hostPets);
-                const { min, max } = getPetsMinMax(match.hostPets);
-                const rangeStr = min !== 0 || max !== 0 ? `(Range: ${min} - ${max})` : '';
+                const range = getPetRange(match.hostPets);
+                const rangeStr = range.min !== 0 || range.max !== 0 ? `Range: ${range.min} - ${range.max}` : '';
 
                 const card = document.createElement('div');
                 card.className = 'match-card';
@@ -4144,11 +4632,10 @@
             grid.innerHTML = '';
             selectedPetsForJoin = [];
 
-            // Range bilgisi
-            const { min, max } = getPetsMinMax(matchToJoin.hostPets);
+            const range = getPetRange(matchToJoin.hostPets);
             const rangeInfo = document.getElementById('join-range-info');
-            if (min !== 0 || max !== 0) {
-                rangeInfo.textContent = `Allowed pet value range: ${min} - ${max}`;
+            if (range.min !== 0 || range.max !== 0) {
+                rangeInfo.textContent = `Allowed pet value range: ${range.min} - ${range.max}`;
             } else {
                 rangeInfo.textContent = '';
             }
@@ -4159,12 +4646,12 @@
                 inv.forEach(pet => {
                     const item = document.createElement('div');
                     item.className = 'modal-item';
-                    // Range check - pet değeri aralıkta mı?
-                    const inRange = (min === 0 && max === 0) || (pet.value >= min && pet.value <= max);
+                    const inRange = (range.min === 0 && range.max === 0) || (pet.value >= range.min && pet.value <= range
+                    .max);
                     if (!inRange) {
                         item.style.opacity = '0.4';
                         item.style.cursor = 'not-allowed';
-                        item.title = `Pet value must be between ${min} and ${max}`;
+                        item.title = `Pet value must be between ${range.min} and ${range.max}`;
                     }
                     item.innerHTML = `
                             <img class="pet-img" src="${pet.icon}" alt="${pet.name}" style="width:48px;height:48px;border-radius:50%;">
@@ -4173,7 +4660,7 @@
                         `;
                     item.onclick = () => {
                         if (!inRange) {
-                            showToast(`This pet's value (${pet.value}) is not in the allowed range (${min} - ${max})`);
+                            showToast(`This pet's value (${pet.value}) is not in the allowed range (${range.min} - ${range.max})`);
                             return;
                         }
                         const idx = selectedPetsForJoin.findIndex(p => p === pet);
@@ -4287,13 +4774,17 @@
                     totalValue: totalValue
                 };
 
+                // STATS: her oyuncu kendi wager'ını ekler
+                const hostTotal = sumPets(gameData.hostPets);
+                const joinerTotal = sumPets(gameData.joinerPets);
+
                 if (gameData.host) {
                     const hostWon = winner === gameData.host;
-                    updateStatsAfterMatch(gameData.host, hostWon, totalValue);
+                    updateStatsAfterMatch(gameData.host, hostWon, hostTotal);
                 }
                 if (gameData.joiner) {
                     const joinerWon = winner === gameData.joiner;
-                    updateStatsAfterMatch(gameData.joiner, joinerWon, totalValue);
+                    updateStatsAfterMatch(gameData.joiner, joinerWon, joinerTotal);
                 }
 
                 if (currentUser === winner) {
@@ -4788,15 +5279,15 @@
         // ============================================================
         //  INIT
         // ============================================================
-        // Reset all wager and inventory data only once
         if (!localStorage.getItem('app_reset_done')) {
             resetAllData();
         }
 
-        // Cleanup history every 2 hours
         cleanupHistory();
 
-        // Request current registry and all stats
+        // Jackpot state init
+        updateJackpotUI();
+
         pubnub.publish({
             channel: USER_REGISTRY_CHANNEL,
             message: { type: 'REQUEST_REGISTRY' }
