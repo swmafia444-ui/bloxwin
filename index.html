@@ -2633,7 +2633,6 @@
                 <button class="tab-btn active" data-tab="tab-users" onclick="switchAdminTab('tab-users')">Users</button>
                 <button class="tab-btn" data-tab="tab-pets" onclick="switchAdminTab('tab-pets')">Manage Pets</button>
                 <button class="tab-btn" data-tab="tab-muted" onclick="switchAdminTab('tab-muted')">Muted</button>
-                <!-- YENİ JACKPOT SEKMESİ -->
                 <button class="tab-btn" data-tab="tab-jackpot" onclick="switchAdminTab('tab-jackpot')">Jackpot</button>
             </div>
 
@@ -2684,7 +2683,10 @@
                     <div class="info-row"><span class="info-label">Players</span><span class="info-value" id="admin-jp-players">-</span></div>
                     <div class="info-row"><span class="info-label">Prize Pool</span><span class="info-value accent" id="admin-jp-prize">-</span></div>
                 </div>
-                <button class="action-btn danger-btn" style="font-size:13px;padding:8px 20px;" onclick="adminResetJackpot()">Reset Jackpot</button>
+                <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                    <button class="action-btn danger-btn" style="font-size:13px;padding:8px 20px;" onclick="adminResetJackpot()">Reset Jackpot</button>
+                    <button class="action-btn danger-btn" style="font-size:13px;padding:8px 20px; background: #c92a2a;" onclick="adminHardResetJackpot()">Hard Reset Jackpot</button>
+                </div>
                 <div id="admin-jp-message" style="margin-top:10px;font-size:13px;color:#868e96;min-height:20px;"></div>
             </div>
 
@@ -2826,7 +2828,7 @@
     <script src="./config.js"></script>
     <script>
         // ============================================================
-        //  CONFIG & CONSTANTS (aynı, değişiklik yok)
+        //  CONFIG & CONSTANTS (aynı)
         // ============================================================
         const BLOXWIN_API_URL = (window.BLOXWIN_API_URL && !window.BLOXWIN_API_URL.includes("YOUR-BACKEND-URL-HERE")) ? window.BLOXWIN_API_URL.replace(/\/$/, "") : window.location.origin;
         const apiUrl = (path) => BLOXWIN_API_URL + path;
@@ -2971,6 +2973,10 @@
                     }
                     // timer negatif veya 0 ise geçersiz say
                     if (parsed.timer !== undefined && parsed.timer <= 0) {
+                        return null;
+                    }
+                    // Eğer waiting durumunda ama oyuncu varsa bu geçersizdir (çünkü waiting'de oyuncu olmamalı)
+                    if (parsed.status === 'waiting' && parsed.players && Object.keys(parsed.players).length > 0) {
                         return null;
                     }
                     return parsed;
@@ -3916,21 +3922,8 @@
 
         // Jackpot state'i localStorage'dan yükle veya sıfırla
         function loadJackpotState() {
-            // Önce localStorage'daki eski state'i temizle (kullanıcı "sil" dedi)
-            // Ama sadece geçersiz olanları sıfırla, geçerli waiting/active state'leri koru
             const stored = getJackpotStateFromStorage();
             if (stored) {
-                // Geçerli bir state var, ama timer 0 veya negatifse resetle
-                if (stored.timer !== undefined && stored.timer <= 0) {
-                    resetJackpot(false);
-                    return false;
-                }
-                // Eğer status waiting ama timer 0 ise resetle
-                if (stored.status === 'waiting' && stored.timer === 0) {
-                    resetJackpot(false);
-                    return false;
-                }
-                // Eğer status active ve timer 0 ise, spin başlat (ama bu durum getJackpotStateFromStorage zaten null döndürür)
                 // Geçerli state
                 jackpotState.status = stored.status;
                 jackpotState.timer = stored.timer;
@@ -4192,7 +4185,6 @@
                 clearInterval(jackpotState.timerInterval);
                 jackpotState.timerInterval = null;
             }
-            // Timer'ı 90'a sıfırla
             jackpotState.timer = jackpotState.maxTimer || 90;
             jackpotState.status = 'active';
             updateJackpotUI();
@@ -4248,10 +4240,64 @@
                 });
             }
             updateJackpotUI();
-            // Admin jackpot bilgilerini güncelle (eğer açık ise)
             if (document.getElementById('admin-modal').classList.contains('active')) {
                 updateAdminJackpotInfo();
             }
+        }
+
+        // ============================================================
+        //  HARD RESET - Tüm jackpot verilerini siler
+        // ============================================================
+        function adminHardResetJackpot() {
+            if (!currentUser || !isAdmin(currentUser)) {
+                showToast('Access denied.');
+                return;
+            }
+            if (!confirm('⚠️ This will completely wipe all Jackpot data including localStorage. Are you sure?')) return;
+
+            // 1. Timer'ı durdur
+            if (jackpotState.timerInterval) {
+                clearInterval(jackpotState.timerInterval);
+                jackpotState.timerInterval = null;
+            }
+
+            // 2. Çarkı sıfırla
+            const canvas = document.getElementById('jp-wheel-canvas');
+            if (canvas) {
+                canvas.style.transition = 'none';
+                canvas.style.transform = 'rotate(0deg)';
+            }
+
+            // 3. State'i sıfırla
+            jackpotState = {
+                status: 'waiting',
+                timer: 90,
+                maxTimer: 90,
+                players: {},
+                prizePool: 0,
+                winner: null,
+                winnerPets: [],
+                timerInterval: null,
+                playerCount: 0
+            };
+
+            // 4. LocalStorage'dan tamamen sil
+            localStorage.removeItem('app_jackpot_state');
+
+            // 5. PubNub'a reset mesajı gönder
+            pubnub.publish({
+                channel: JACKPOT_CHANNEL,
+                message: { type: 'JACKPOT_RESET', sender: currentUser || 'system' }
+            });
+
+            // 6. UI'ı güncelle
+            updateJackpotUI();
+            if (document.getElementById('admin-modal').classList.contains('active')) {
+                updateAdminJackpotInfo();
+            }
+
+            document.getElementById('admin-jp-message').textContent = '✅ Hard reset completed. All Jackpot data wiped.';
+            showToast('Jackpot hard reset completed.');
         }
 
         function drawJackpotWheel() {
@@ -4397,14 +4443,13 @@
 
             drawJackpotWheel();
 
-            // Admin paneli açık ise bilgileri güncelle
             if (document.getElementById('admin-modal').classList.contains('active')) {
                 updateAdminJackpotInfo();
             }
         }
 
         // ============================================================
-        //  ADMIN JACKPOT RESET
+        //  ADMIN JACKPOT INFO
         // ============================================================
         function updateAdminJackpotInfo() {
             const statusEl = document.getElementById('admin-jp-status');
@@ -4437,20 +4482,14 @@
                 return;
             }
             if (!confirm('Are you sure you want to reset the current Jackpot? All bets will be cleared.')) return;
-
-            // Mevcut jackpot'u sıfırla (tüm oyuncuların petlerini geri vermeden direkt temizle)
-            // Fakat kullanıcıların petlerini geri vermek daha adil olur, ama istenen "jackpot maçlarını silme" olduğu için
-            // sadece sıfırlayıp tüm verileri atıyoruz. Oyuncuların envanterlerine geri vermek isterseniz ekleyebiliriz.
-            // Burada direkt resetJackpot(true) çağırıyoruz, bu da tüm state'i temizler.
             resetJackpot(true);
             showToast('Jackpot has been reset successfully.');
             document.getElementById('admin-jp-message').textContent = '✅ Jackpot reset at ' + new Date().toLocaleTimeString();
-            // Admin info'yu güncelle
             updateAdminJackpotInfo();
         }
 
         // ============================================================
-        //  PUBSUB – JACKPOT (senkron ve kalıcılık için)
+        //  PUBSUB – JACKPOT
         // ============================================================
         function handleJackpotMessage(msg) {
             if (msg.sender === currentUser) return;
@@ -5552,7 +5591,7 @@
             openModal('admin-modal');
             adminRefreshUsers();
             adminRenderMuted();
-            updateAdminJackpotInfo(); // jackpot bilgilerini güncelle
+            updateAdminJackpotInfo();
             switchAdminTab('tab-users');
         }
 
@@ -5858,7 +5897,6 @@
             pubnub.publish({ channel: CHANNEL, message: { type: 'REQUEST_SYNC' } });
         }, 1000);
 
-        // Jackpot state talep et (başka kullanıcılar varsa)
         setTimeout(() => {
             pubnub.publish({
                 channel: JACKPOT_CHANNEL,
@@ -5869,7 +5907,6 @@
             });
         }, 1500);
 
-        // JACKPOT_REQUEST_STATE handler'ı
         pubnub.addListener({
             message: function(event) {
                 const msg = event.message;
