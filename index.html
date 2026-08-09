@@ -2428,6 +2428,8 @@
                 <div class="jackpot-prize">
                     Prize: <span id="jp-prize">0</span>
                     <button class="jp-join-btn" id="jp-join-btn" onclick="openJackpotJoinModal()">Join Jackpot</button>
+                    <!-- Manuel sıfırlama butonu (herkes görebilir) -->
+                    <button class="action-btn danger-btn" onclick="manualResetJackpot()" style="font-size:12px;padding:4px 12px;">Reset Jackpot</button>
                 </div>
             </div>
             <div class="jackpot-body">
@@ -2960,7 +2962,7 @@
         let selectedTipPets = [];
 
         // ============================================================
-        //  JACKPOT STATE (localStorage ile kalıcı)
+        //  JACKPOT STATE (localStorage ile kalıcı) - DÜZELTİLDİ
         // ============================================================
         function getJackpotStateFromStorage() {
             try {
@@ -2971,14 +2973,12 @@
                     if (parsed.status === 'spinning' || parsed.status === 'finished') {
                         return null;
                     }
-                    // timer negatif veya 0 ise geçersiz say
-                    if (parsed.timer !== undefined && parsed.timer <= 0) {
+                    // timer negatif veya 0 ise geçersiz say (ama 0 olabilir, spin anında)
+                    if (parsed.timer !== undefined && parsed.timer < 0) {
                         return null;
                     }
-                    // Eğer waiting durumunda ama oyuncu varsa bu geçersizdir (çünkü waiting'de oyuncu olmamalı)
-                    if (parsed.status === 'waiting' && parsed.players && Object.keys(parsed.players).length > 0) {
-                        return null;
-                    }
+                    // ARTIK waiting + oyuncu varsa geçersiz sayma, çünkü timer başlatılabilir
+                    // Sadece oyuncu sayısı 0 ve waiting ise geçerli, ama yine de kabul edelim
                     return parsed;
                 }
                 return null;
@@ -3917,14 +3917,12 @@
         }
 
         // ============================================================
-        //  JACKPOT (kalıcı ve senkron) - FIX: eski turları temizle, timer net çalışsın
+        //  JACKPOT (kalıcı ve senkron) - DÜZELTİLDİ
         // ============================================================
 
-        // Jackpot state'i localStorage'dan yükle veya sıfırla
         function loadJackpotState() {
             const stored = getJackpotStateFromStorage();
             if (stored) {
-                // Geçerli state
                 jackpotState.status = stored.status;
                 jackpotState.timer = stored.timer;
                 jackpotState.maxTimer = stored.maxTimer || 90;
@@ -3933,13 +3931,16 @@
                 jackpotState.winner = stored.winner || null;
                 jackpotState.winnerPets = stored.winnerPets || [];
                 jackpotState.playerCount = Object.keys(jackpotState.players).length;
-                if (jackpotState.status === 'active' && jackpotState.timer > 0) {
+
+                // Eğer waiting durumunda ve 2+ oyuncu varsa timer'ı başlat
+                if (jackpotState.status === 'waiting' && jackpotState.playerCount >= 2) {
+                    startJackpotTimer();
+                } else if (jackpotState.status === 'active' && jackpotState.timer > 0) {
                     startJackpotTimer();
                 }
                 updateJackpotUI();
                 return true;
             }
-            // Eğer hiç state yoksa veya geçersizse sıfırla
             resetJackpot(false);
             return false;
         }
@@ -4168,6 +4169,7 @@
 
             broadcastJackpotState();
 
+            // Eğer 2+ oyuncu olduysa ve waiting ise timer'ı başlat
             if (jackpotState.playerCount >= 2 && jackpotState.status === 'waiting') {
                 startJackpotTimer();
                 broadcastJackpotState();
@@ -4185,7 +4187,10 @@
                 clearInterval(jackpotState.timerInterval);
                 jackpotState.timerInterval = null;
             }
-            jackpotState.timer = jackpotState.maxTimer || 90;
+            // Eğer timer zaten 0 veya negatifse maxTimer'dan al
+            if (jackpotState.timer <= 0) {
+                jackpotState.timer = jackpotState.maxTimer || 90;
+            }
             jackpotState.status = 'active';
             updateJackpotUI();
             broadcastJackpotState();
@@ -4245,6 +4250,13 @@
             }
         }
 
+        // Manuel reset (herkes için)
+        function manualResetJackpot() {
+            if (!confirm('Reset the current Jackpot? This will clear all bets.')) return;
+            resetJackpot(true);
+            showToast('Jackpot has been reset.');
+        }
+
         // ============================================================
         //  HARD RESET - Tüm jackpot verilerini siler
         // ============================================================
@@ -4255,20 +4267,17 @@
             }
             if (!confirm('⚠️ This will completely wipe all Jackpot data including localStorage. Are you sure?')) return;
 
-            // 1. Timer'ı durdur
             if (jackpotState.timerInterval) {
                 clearInterval(jackpotState.timerInterval);
                 jackpotState.timerInterval = null;
             }
 
-            // 2. Çarkı sıfırla
             const canvas = document.getElementById('jp-wheel-canvas');
             if (canvas) {
                 canvas.style.transition = 'none';
                 canvas.style.transform = 'rotate(0deg)';
             }
 
-            // 3. State'i sıfırla
             jackpotState = {
                 status: 'waiting',
                 timer: 90,
@@ -4281,16 +4290,13 @@
                 playerCount: 0
             };
 
-            // 4. LocalStorage'dan tamamen sil
             localStorage.removeItem('app_jackpot_state');
 
-            // 5. PubNub'a reset mesajı gönder
             pubnub.publish({
                 channel: JACKPOT_CHANNEL,
                 message: { type: 'JACKPOT_RESET', sender: currentUser || 'system' }
             });
 
-            // 6. UI'ı güncelle
             updateJackpotUI();
             if (document.getElementById('admin-modal').classList.contains('active')) {
                 updateAdminJackpotInfo();
@@ -4489,15 +4495,20 @@
         }
 
         // ============================================================
-        //  PUBSUB – JACKPOT
+        //  PUBSUB – JACKPOT (düzeltilmiş)
         // ============================================================
         function handleJackpotMessage(msg) {
             if (msg.sender === currentUser) return;
 
             if (msg.type === 'JACKPOT_FULL_STATE' && msg.state) {
                 const incoming = msg.state;
-                if (incoming.status === 'waiting' || incoming.status === 'active') {
-                    jackpotState.status = incoming.status;
+                // Geçerli bir state mi kontrol et
+                if (!incoming.status) return;
+
+                // Eğer gelen state 'waiting' ama oyuncu sayısı 2+ ise timer'ı başlat
+                if (incoming.status === 'waiting' && Object.keys(incoming.players || {}).length >= 2) {
+                    // Timer'ı başlatmak için state'i uygun hale getir
+                    jackpotState.status = 'active';
                     jackpotState.timer = incoming.timer !== undefined ? incoming.timer : 90;
                     jackpotState.maxTimer = incoming.maxTimer || 90;
                     jackpotState.players = incoming.players || {};
@@ -4506,51 +4517,26 @@
                     jackpotState.winnerPets = incoming.winnerPets || [];
                     jackpotState.playerCount = Object.keys(jackpotState.players).length;
                     saveJackpotState();
-                    if (jackpotState.status === 'active' && jackpotState.timer > 0) {
-                        startJackpotTimer();
-                    }
+                    startJackpotTimer();
                     updateJackpotUI();
-                } else if (incoming.status === 'spinning' || incoming.status === 'finished') {
-                    if (incoming.status === 'spinning') {
-                        jackpotState.status = 'spinning';
-                        jackpotState.timer = incoming.timer || 0;
-                        jackpotState.players = incoming.players || {};
-                        jackpotState.prizePool = incoming.prizePool || 0;
-                        jackpotState.winner = incoming.winner || null;
-                        jackpotState.winnerPets = incoming.winnerPets || [];
-                        jackpotState.playerCount = Object.keys(jackpotState.players).length;
-                        updateJackpotUI();
-                        const canvas = document.getElementById('jp-wheel-canvas');
-                        if (canvas) {
-                            const totalPrize = jackpotState.prizePool;
-                            const players = Object.keys(jackpotState.players);
-                            let startAngle = -Math.PI / 2;
-                            let targetAngle = 0;
-                            if (jackpotState.winner) {
-                                for (const username of players) {
-                                    const sliceAngle = (jackpotState.players[username].total / totalPrize) * 2 * Math.PI;
-                                    if (username === jackpotState.winner) {
-                                        targetAngle = startAngle + sliceAngle / 2;
-                                        break;
-                                    }
-                                    startAngle += sliceAngle;
-                                }
-                            } else {
-                                targetAngle = Math.random() * 2 * Math.PI;
-                            }
-                            const deg = (targetAngle * 180 / Math.PI) + 360 * 5;
-                            canvas.style.transition = 'transform 4s cubic-bezier(0.17, 0.67, 0.12, 0.99)';
-                            canvas.style.transform = `rotate(${deg}deg)`;
-                        }
-                    } else if (incoming.status === 'finished') {
-                        jackpotState.status = 'finished';
-                        jackpotState.winner = incoming.winner || null;
-                        jackpotState.winnerPets = incoming.winnerPets || [];
-                        jackpotState.players = incoming.players || {};
-                        jackpotState.prizePool = incoming.prizePool || 0;
-                        updateJackpotUI();
-                    }
+                    return;
                 }
+
+                // Diğer durumlar
+                jackpotState.status = incoming.status;
+                jackpotState.timer = incoming.timer !== undefined ? incoming.timer : 90;
+                jackpotState.maxTimer = incoming.maxTimer || 90;
+                jackpotState.players = incoming.players || {};
+                jackpotState.prizePool = incoming.prizePool || 0;
+                jackpotState.winner = incoming.winner || null;
+                jackpotState.winnerPets = incoming.winnerPets || [];
+                jackpotState.playerCount = Object.keys(jackpotState.players).length;
+
+                if (jackpotState.status === 'active' && jackpotState.timer > 0) {
+                    startJackpotTimer();
+                }
+                saveJackpotState();
+                updateJackpotUI();
                 return;
             }
 
