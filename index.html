@@ -1963,6 +1963,20 @@
         .jackpot-page .jackpot-timer.waiting {
             color: #868e96;
         }
+        .jackpot-page .jackpot-timer.spinning {
+            color: #4dabf7;
+            animation: pulse-text 0.8s ease-in-out infinite alternate;
+        }
+        @keyframes pulse-text {
+            0% {
+                opacity: 1;
+                transform: scale(1);
+            }
+            100% {
+                opacity: 0.5;
+                transform: scale(0.95);
+            }
+        }
         .jackpot-page .jackpot-prize {
             font-size: 18px;
             font-weight: 700;
@@ -2899,8 +2913,48 @@
         let selectedTipPets = [];
 
         // ============================================================
-        //  JACKPOT STATE
+        //  JACKPOT STATE (localStorage ile kalıcı)
         // ============================================================
+        function getJackpotStateFromStorage() {
+            try {
+                const data = localStorage.getItem('app_jackpot_state');
+                if (data) {
+                    const parsed = JSON.parse(data);
+                    // eski sürümden gelen 'spinning' durumunu kontrol et
+                    if (parsed.status === 'spinning' || parsed.status === 'finished') {
+                        // Eğer spinning veya finished ise, sıfırla çünkü bu durumlar kalıcı olmamalı
+                        return null;
+                    }
+                    // Timer'ı kontrol et, eğer 0'ın altındaysa sıfırla
+                    if (parsed.timer !== undefined && parsed.timer < 0) {
+                        return null;
+                    }
+                    return parsed;
+                }
+                return null;
+            } catch {
+                return null;
+            }
+        }
+
+        function saveJackpotStateToStorage() {
+            try {
+                const toStore = {
+                    status: jackpotState.status,
+                    timer: jackpotState.timer,
+                    players: jackpotState.players,
+                    prizePool: jackpotState.prizePool,
+                    winner: jackpotState.winner,
+                    winnerPets: jackpotState.winnerPets,
+                    playerCount: jackpotState.playerCount,
+                    maxTimer: jackpotState.maxTimer
+                };
+                localStorage.setItem('app_jackpot_state', JSON.stringify(toStore));
+            } catch (e) {
+                console.warn('Could not save jackpot state:', e);
+            }
+        }
+
         let jackpotState = {
             status: 'waiting',
             timer: 90,
@@ -2912,7 +2966,8 @@
             timerInterval: null,
             playerCount: 0
         };
-        let selectedJackpotPetIds = []; // sadece ID'leri sakla
+
+        let selectedJackpotPetIds = [];
 
         // ============================================================
         //  USER DATA
@@ -3123,6 +3178,8 @@
                 if (window.location.hash !== '#jackpot') {
                     history.pushState(null, '', '#jackpot');
                 }
+                // Jackpot state'i yeniden yükle
+                loadJackpotState();
                 updateJackpotUI();
             }
         }
@@ -3531,7 +3588,6 @@
             } else if (leaderboardSort === 'wager') {
                 sorted = stats.sort((a, b) => b.totalWager - a.totalWager);
             } else if (leaderboardSort === 'least') {
-                // En yüksek lost en üstte
                 sorted = stats.sort((a, b) => b.totalLost - a.totalLost);
             }
 
@@ -3815,8 +3871,179 @@
         }
 
         // ============================================================
-        //  JACKPOT (pet ID ile çalış)
+        //  JACKPOT (kalıcı ve senkron)
         // ============================================================
+
+        // Jackpot state'i localStorage'dan yükle veya sıfırla
+        function loadJackpotState() {
+            const stored = getJackpotStateFromStorage();
+            if (stored && stored.status === 'waiting') {
+                // Sadece 'waiting' durumundaki state'i geri yükle
+                jackpotState.status = stored.status || 'waiting';
+                jackpotState.timer = stored.timer !== undefined ? stored.timer : 90;
+                jackpotState.maxTimer = stored.maxTimer || 90;
+                jackpotState.players = stored.players || {};
+                jackpotState.prizePool = stored.prizePool || 0;
+                jackpotState.winner = stored.winner || null;
+                jackpotState.winnerPets = stored.winnerPets || [];
+                jackpotState.playerCount = Object.keys(jackpotState.players).length;
+                // Timer interval'ı başlat
+                if (jackpotState.status === 'active' && jackpotState.timer > 0) {
+                    startJackpotTimer();
+                }
+                updateJackpotUI();
+                return true;
+            } else if (stored && stored.status === 'active') {
+                // Aktif durumdaki state'i geri yükle
+                jackpotState.status = stored.status || 'waiting';
+                jackpotState.timer = stored.timer !== undefined ? stored.timer : 90;
+                jackpotState.maxTimer = stored.maxTimer || 90;
+                jackpotState.players = stored.players || {};
+                jackpotState.prizePool = stored.prizePool || 0;
+                jackpotState.winner = stored.winner || null;
+                jackpotState.winnerPets = stored.winnerPets || [];
+                jackpotState.playerCount = Object.keys(jackpotState.players).length;
+                if (jackpotState.timer > 0) {
+                    startJackpotTimer();
+                } else {
+                    // Timer 0 ise, spin başlat
+                    jackpotState.status = 'spinning';
+                    updateJackpotUI();
+                    // Spin işlemini otomatik başlat
+                    performJackpotSpin();
+                }
+                updateJackpotUI();
+                return true;
+            }
+            // Yoksa veya geçersizse sıfırla
+            resetJackpot(false); // false = save etme, çünkü reset içinde save var
+            return false;
+        }
+
+        // Jackpot state'ini sakla
+        function saveJackpotState() {
+            try {
+                const toStore = {
+                    status: jackpotState.status,
+                    timer: jackpotState.timer,
+                    players: jackpotState.players,
+                    prizePool: jackpotState.prizePool,
+                    winner: jackpotState.winner,
+                    winnerPets: jackpotState.winnerPets,
+                    playerCount: jackpotState.playerCount,
+                    maxTimer: jackpotState.maxTimer
+                };
+                localStorage.setItem('app_jackpot_state', JSON.stringify(toStore));
+            } catch (e) {
+                console.warn('Could not save jackpot state:', e);
+            }
+        }
+
+        // Jackpot state'ini yayınla (tam senkron)
+        function broadcastJackpotState() {
+            const stateToSend = {
+                status: jackpotState.status,
+                timer: jackpotState.timer,
+                players: jackpotState.players,
+                prizePool: jackpotState.prizePool,
+                winner: jackpotState.winner,
+                winnerPets: jackpotState.winnerPets,
+                playerCount: jackpotState.playerCount,
+                maxTimer: jackpotState.maxTimer
+            };
+            pubnub.publish({
+                channel: JACKPOT_CHANNEL,
+                message: {
+                    type: 'JACKPOT_FULL_STATE',
+                    state: stateToSend,
+                    sender: currentUser || 'system'
+                }
+            });
+            saveJackpotState();
+        }
+
+        // Jackpot spin işlemini gerçekleştir
+        function performJackpotSpin() {
+            if (jackpotState.status === 'spinning') return;
+
+            const players = Object.keys(jackpotState.players);
+            const totalPrize = jackpotState.prizePool;
+
+            if (players.length < 2 || totalPrize === 0) {
+                resetJackpot();
+                return;
+            }
+
+            jackpotState.status = 'spinning';
+            updateJackpotUI();
+            broadcastJackpotState();
+
+            // Rastgele kazanan seç
+            let rand = Math.random() * totalPrize;
+            let winner = null;
+            for (const username of players) {
+                const val = jackpotState.players[username].total;
+                rand -= val;
+                if (rand <= 0) {
+                    winner = username;
+                    break;
+                }
+            }
+            if (!winner && players.length > 0) winner = players[players.length - 1];
+            if (!winner) {
+                resetJackpot();
+                return;
+            }
+
+            const allPets = [];
+            Object.values(jackpotState.players).forEach(p => allPets.push(...p.pets));
+            jackpotState.winner = winner;
+            jackpotState.winnerPets = allPets.slice();
+
+            // Canvas döndürme
+            const canvas = document.getElementById('jp-wheel-canvas');
+            if (canvas) {
+                let startAngle = -Math.PI / 2;
+                let targetAngle = 0;
+                for (const username of players) {
+                    const sliceAngle = (jackpotState.players[username].total / totalPrize) * 2 * Math.PI;
+                    if (username === winner) {
+                        targetAngle = startAngle + sliceAngle / 2;
+                        break;
+                    }
+                    startAngle += sliceAngle;
+                }
+                const deg = (targetAngle * 180 / Math.PI) + 360 * 5;
+                canvas.style.transition = 'transform 4s cubic-bezier(0.17, 0.67, 0.12, 0.99)';
+                canvas.style.transform = `rotate(${deg}deg)`;
+            }
+
+            updateJackpotUI();
+
+            setTimeout(() => {
+                jackpotState.status = 'finished';
+                // Kazananın envanterine tüm petleri ekle
+                allPets.forEach(pet => addPetToInventory(winner, pet));
+
+                const total = jackpotState.prizePool;
+                const fields = [
+                    { name: 'Winner', value: winner, inline: true },
+                    { name: 'Total Prize', value: `${total}`, inline: true },
+                    { name: 'Pets', value: allPets.map(p => `${p.name} (${p.value})`).join('\n') || 'None',
+                        inline: false }
+                ];
+                sendDiscordEmbed(DISCORD_WEBHOOK_MATCH, '🎰 Jackpot Winner!', fields, 0xda77f2);
+
+                updateJackpotUI();
+                broadcastJackpotState();
+
+                // 10 saniye sonra sıfırla
+                setTimeout(() => {
+                    resetJackpot();
+                }, 10000);
+            }, 4000);
+        }
+
         function openJackpotJoinModal() {
             if (!currentUser) { showToast('Please login first.'); return; }
             if (isMuted(currentUser)) { showToast('You are muted.'); return; }
@@ -3888,7 +4115,6 @@
             const btn = document.getElementById('jackpot-join-post-btn');
             if (btn) btn.disabled = true;
 
-            // Seçilen ID'lere göre inventory'den pet'leri bul
             const inv = getUserInventory(currentUser);
             const selectedPets = [];
             selectedJackpotPetIds.forEach(id => {
@@ -3929,6 +4155,7 @@
             // Envanterden çıkar
             removePetsFromInventory(currentUser, selectedPets);
 
+            // Yayınla
             pubnub.publish({
                 channel: JACKPOT_CHANNEL,
                 message: {
@@ -3939,17 +4166,13 @@
                 }
             });
 
+            // Full state'i yayınla
+            broadcastJackpotState();
+
             if (jackpotState.playerCount >= 2 && jackpotState.status === 'waiting') {
                 jackpotState.status = 'active';
                 startJackpotTimer();
-                pubnub.publish({
-                    channel: JACKPOT_CHANNEL,
-                    message: {
-                        type: 'JACKPOT_STATE',
-                        state: { timer: jackpotState.timer, status: jackpotState.status },
-                        sender: currentUser
-                    }
-                });
+                broadcastJackpotState();
             }
 
             closeModal('jackpot-join-modal');
@@ -3960,7 +4183,16 @@
         }
 
         function startJackpotTimer() {
-            if (jackpotState.timerInterval) return;
+            if (jackpotState.timerInterval) {
+                clearInterval(jackpotState.timerInterval);
+                jackpotState.timerInterval = null;
+            }
+            // Timer'ı 90'a sıfırla
+            jackpotState.timer = jackpotState.maxTimer || 90;
+            jackpotState.status = 'active';
+            updateJackpotUI();
+            broadcastJackpotState();
+
             jackpotState.timerInterval = setInterval(() => {
                 if (jackpotState.status !== 'active') {
                     clearInterval(jackpotState.timerInterval);
@@ -3971,27 +4203,16 @@
                 if (jackpotState.timer <= 0) {
                     clearInterval(jackpotState.timerInterval);
                     jackpotState.timerInterval = null;
-                    pubnub.publish({
-                        channel: JACKPOT_CHANNEL,
-                        message: { type: 'JACKPOT_SPIN', sender: currentUser }
-                    });
-                    jackpotState.status = 'spinning';
-                    updateJackpotUI();
+                    // Spin başlat
+                    performJackpotSpin();
                     return;
                 }
                 updateJackpotUI();
-                pubnub.publish({
-                    channel: JACKPOT_CHANNEL,
-                    message: {
-                        type: 'JACKPOT_STATE',
-                        state: { timer: jackpotState.timer, status: jackpotState.status },
-                        sender: currentUser
-                    }
-                });
+                broadcastJackpotState();
             }, 1000);
         }
 
-        function resetJackpot() {
+        function resetJackpot(save = true) {
             if (jackpotState.timerInterval) {
                 clearInterval(jackpotState.timerInterval);
                 jackpotState.timerInterval = null;
@@ -4015,10 +4236,13 @@
                 timerInterval: null,
                 playerCount: 0
             };
-            pubnub.publish({
-                channel: JACKPOT_CHANNEL,
-                message: { type: 'JACKPOT_RESET', sender: currentUser }
-            });
+            if (save) {
+                saveJackpotState();
+                pubnub.publish({
+                    channel: JACKPOT_CHANNEL,
+                    message: { type: 'JACKPOT_RESET', sender: currentUser || 'system' }
+                });
+            }
             updateJackpotUI();
         }
 
@@ -4097,38 +4321,41 @@
             const joinBtn = document.getElementById('jp-join-btn');
             const resultEl = document.getElementById('jp-result');
 
-            timerEl.textContent = jackpotState.timer;
+            // Timer'ı güncelle - emoji kaldır, sayı göster
             if (jackpotState.status === 'waiting') {
+                timerEl.textContent = jackpotState.timer;
                 timerEl.className = 'jackpot-timer waiting';
                 statusEl.textContent = 'Waiting for players... (Need minimum 2 players to start)';
                 joinBtn.disabled = false;
                 joinBtn.textContent = 'Join Jackpot';
                 resultEl.style.display = 'none';
             } else if (jackpotState.status === 'active') {
+                timerEl.textContent = jackpotState.timer;
                 timerEl.className = 'jackpot-timer';
                 statusEl.textContent = `Active - ${Object.keys(jackpotState.players).length} players`;
                 joinBtn.disabled = false;
                 joinBtn.textContent = 'Join Jackpot';
                 resultEl.style.display = 'none';
             } else if (jackpotState.status === 'spinning') {
-                timerEl.className = 'jackpot-timer';
-                timerEl.textContent = '🎡';
-                statusEl.textContent = 'Spinning...';
+                timerEl.textContent = '🔄';
+                timerEl.className = 'jackpot-timer spinning';
+                statusEl.textContent = 'Spinning the wheel...';
                 joinBtn.disabled = true;
                 joinBtn.textContent = 'Spinning...';
                 resultEl.style.display = 'none';
             } else if (jackpotState.status === 'finished') {
-                timerEl.className = 'jackpot-timer';
                 timerEl.textContent = '🏆';
-                statusEl.textContent = `Finished! Winner: ${jackpotState.winner}`;
+                timerEl.className = 'jackpot-timer';
+                statusEl.textContent = `Finished! Winner: ${jackpotState.winner || 'Unknown'}`;
                 joinBtn.disabled = true;
                 joinBtn.textContent = 'Finished';
                 resultEl.style.display = 'block';
-                document.getElementById('jp-winner-name').textContent = `🏆 ${jackpotState.winner} won the Jackpot!`;
-                const petsHtml = jackpotState.winnerPets.map(p =>
+                document.getElementById('jp-winner-name').textContent =
+                    `🏆 ${jackpotState.winner || 'Unknown'} won the Jackpot!`;
+                const petsHtml = (jackpotState.winnerPets || []).map(p =>
                     `<img class="jp-pet-img" src="${p.icon}" alt="${p.name}" title="${p.name} (${p.value})">`
                 ).join('');
-                document.getElementById('jp-winner-pets').innerHTML = petsHtml;
+                document.getElementById('jp-winner-pets').innerHTML = petsHtml || 'No pets';
             }
 
             jackpotState.prizePool = Object.values(jackpotState.players).reduce((acc, p) => acc + p.total, 0);
@@ -4164,10 +4391,75 @@
         }
 
         // ============================================================
-        //  PUBSUB (JACKPOT) - sender kontrolü
+        //  PUBSUB – JACKPOT (senkron ve kalıcılık için)
         // ============================================================
         function handleJackpotMessage(msg) {
+            // Kendi mesajlarını ignore et
             if (msg.sender === currentUser) return;
+
+            if (msg.type === 'JACKPOT_FULL_STATE' && msg.state) {
+                // Tam state'i al, sadece waiting/active ise uygula
+                const incoming = msg.state;
+                if (incoming.status === 'waiting' || incoming.status === 'active') {
+                    jackpotState.status = incoming.status;
+                    jackpotState.timer = incoming.timer !== undefined ? incoming.timer : 90;
+                    jackpotState.maxTimer = incoming.maxTimer || 90;
+                    jackpotState.players = incoming.players || {};
+                    jackpotState.prizePool = incoming.prizePool || 0;
+                    jackpotState.winner = incoming.winner || null;
+                    jackpotState.winnerPets = incoming.winnerPets || [];
+                    jackpotState.playerCount = Object.keys(jackpotState.players).length;
+                    saveJackpotState();
+                    if (jackpotState.status === 'active' && jackpotState.timer > 0) {
+                        startJackpotTimer();
+                    }
+                    updateJackpotUI();
+                } else if (incoming.status === 'spinning' || incoming.status === 'finished') {
+                    // Eğer başka bir kullanıcı spin atıyorsa, onu takip et
+                    if (incoming.status === 'spinning') {
+                        jackpotState.status = 'spinning';
+                        jackpotState.timer = incoming.timer || 0;
+                        jackpotState.players = incoming.players || {};
+                        jackpotState.prizePool = incoming.prizePool || 0;
+                        jackpotState.winner = incoming.winner || null;
+                        jackpotState.winnerPets = incoming.winnerPets || [];
+                        jackpotState.playerCount = Object.keys(jackpotState.players).length;
+                        updateJackpotUI();
+                        // Canvas döndürme
+                        const canvas = document.getElementById('jp-wheel-canvas');
+                        if (canvas) {
+                            const totalPrize = jackpotState.prizePool;
+                            const players = Object.keys(jackpotState.players);
+                            let startAngle = -Math.PI / 2;
+                            let targetAngle = 0;
+                            // Kazanan belli değilse rastgele döndür
+                            if (jackpotState.winner) {
+                                for (const username of players) {
+                                    const sliceAngle = (jackpotState.players[username].total / totalPrize) * 2 * Math.PI;
+                                    if (username === jackpotState.winner) {
+                                        targetAngle = startAngle + sliceAngle / 2;
+                                        break;
+                                    }
+                                    startAngle += sliceAngle;
+                                }
+                            } else {
+                                targetAngle = Math.random() * 2 * Math.PI;
+                            }
+                            const deg = (targetAngle * 180 / Math.PI) + 360 * 5;
+                            canvas.style.transition = 'transform 4s cubic-bezier(0.17, 0.67, 0.12, 0.99)';
+                            canvas.style.transform = `rotate(${deg}deg)`;
+                        }
+                    } else if (incoming.status === 'finished') {
+                        jackpotState.status = 'finished';
+                        jackpotState.winner = incoming.winner || null;
+                        jackpotState.winnerPets = incoming.winnerPets || [];
+                        jackpotState.players = incoming.players || {};
+                        jackpotState.prizePool = incoming.prizePool || 0;
+                        updateJackpotUI();
+                    }
+                }
+                return;
+            }
 
             if (msg.type === 'JACKPOT_JOIN') {
                 if (!jackpotState.players[msg.username]) {
@@ -4186,83 +4478,14 @@
                     jackpotState.status = 'active';
                     startJackpotTimer();
                 }
+                saveJackpotState();
                 updateJackpotUI();
-            }
-
-            if (msg.type === 'JACKPOT_SPIN') {
-                jackpotState.status = 'spinning';
-                updateJackpotUI();
-
-                const players = Object.keys(jackpotState.players);
-                const totalPrize = jackpotState.prizePool;
-                let rand = Math.random() * totalPrize;
-                let winner = null;
-                for (const username of players) {
-                    const val = jackpotState.players[username].total;
-                    rand -= val;
-                    if (rand <= 0) {
-                        winner = username;
-                        break;
-                    }
-                }
-                if (!winner && players.length > 0) winner = players[players.length - 1];
-                if (!winner) {
-                    resetJackpot();
-                    return;
-                }
-
-                const allPets = [];
-                Object.values(jackpotState.players).forEach(p => allPets.push(...p.pets));
-                jackpotState.winner = winner;
-                jackpotState.winnerPets = allPets.slice();
-
-                const canvas = document.getElementById('jp-wheel-canvas');
-                if (canvas) {
-                    let startAngle = -Math.PI / 2;
-                    let targetAngle = 0;
-                    for (const username of players) {
-                        const sliceAngle = (jackpotState.players[username].total / totalPrize) * 2 * Math.PI;
-                        if (username === winner) {
-                            targetAngle = startAngle + sliceAngle / 2;
-                            break;
-                        }
-                        startAngle += sliceAngle;
-                    }
-                    const deg = (targetAngle * 180 / Math.PI) + 360 * 5;
-                    canvas.style.transition = 'transform 4s cubic-bezier(0.17, 0.67, 0.12, 0.99)';
-                    canvas.style.transform = `rotate(${deg}deg)`;
-                }
-
-                setTimeout(() => {
-                    jackpotState.status = 'finished';
-                    allPets.forEach(pet => addPetToInventory(winner, pet));
-                    const total = jackpotState.prizePool;
-                    const fields = [
-                        { name: 'Winner', value: winner, inline: true },
-                        { name: 'Total Prize', value: `${total}`, inline: true },
-                        { name: 'Pets', value: allPets.map(p => `${p.name} (${p.value})`).join('\n') || 'None',
-                            inline: false }
-                    ];
-                    sendDiscordEmbed(DISCORD_WEBHOOK_MATCH, '🎰 Jackpot Winner!', fields, 0xda77f2);
-                    setTimeout(() => {
-                        resetJackpot();
-                    }, 10000);
-                    updateJackpotUI();
-                }, 4000);
+                // State'i yayınla
+                broadcastJackpotState();
             }
 
             if (msg.type === 'JACKPOT_RESET') {
-                resetJackpot();
-            }
-
-            if (msg.type === 'JACKPOT_STATE') {
-                if (msg.state.timer !== undefined) jackpotState.timer = msg.state.timer;
-                if (msg.state.status) jackpotState.status = msg.state.status;
-                jackpotState.prizePool = Object.values(jackpotState.players).reduce((acc, p) => acc + p.total, 0);
-                updateJackpotUI();
-                if (jackpotState.status === 'active' && jackpotState.timer > 0) {
-                    startJackpotTimer();
-                }
+                resetJackpot(true);
             }
         }
 
@@ -4754,7 +4977,7 @@
         }
 
         // ============================================================
-        //  CREATE MATCH (buton disable)
+        //  CREATE MATCH
         // ============================================================
         function openCreateModal() {
             if (!currentUser) { showToast('Please login first to create a match.'); return; }
@@ -4835,7 +5058,6 @@
             const matchIdx = globalMatches.findIndex(m => m.id === matchId);
             if (matchIdx !== -1) {
                 const canceled = globalMatches.splice(matchIdx, 1)[0];
-                // Petleri sadece bir kez geri ekle
                 canceled.hostPets.forEach(pet => addPetToInventory(currentUser, pet));
                 renderMatches();
                 pubnub.publish({
@@ -4846,7 +5068,7 @@
         }
 
         // ============================================================
-        //  JOIN MATCH (buton disable)
+        //  JOIN MATCH
         // ============================================================
         function openJoinSelectModal(matchId) {
             if (!currentUser) { showToast('Please login first to join a match.'); return; }
@@ -5113,7 +5335,7 @@
         }
 
         // ============================================================
-        //  PROFILE (leaderboard'dan açıldığında üstte gözükür)
+        //  PROFILE
         // ============================================================
         function openProfile(username) {
             if (!username) return;
@@ -5165,17 +5387,14 @@
                 tipBtn.style.display = 'none';
             }
 
-            // Leaderboard açıkken profil modalını üstte açmak için z-index artışı
             const lbModal = document.getElementById('leaderboard-modal');
             if (lbModal && lbModal.classList.contains('active')) {
-                // Profil modalını leaderboard'un üstüne al
                 const profileOverlay = document.getElementById('profile-modal');
                 profileOverlay.style.zIndex = '201';
             }
 
             openModal('profile-modal');
 
-            // Modal kapandığında z-index'i sıfırla
             const profileOverlay = document.getElementById('profile-modal');
             const closeHandler = () => {
                 profileOverlay.style.zIndex = '200';
@@ -5528,7 +5747,19 @@
 
         cleanupHistory();
 
-        updateJackpotUI();
+        // Jackpot state'ini yükle
+        loadJackpotState();
+
+        // 2 saniye sonra state talep et
+        setTimeout(() => {
+            pubnub.publish({
+                channel: JACKPOT_CHANNEL,
+                message: {
+                    type: 'JACKPOT_REQUEST_STATE',
+                    sender: currentUser || 'system'
+                }
+            });
+        }, 2000);
 
         pubnub.publish({
             channel: USER_REGISTRY_CHANNEL,
@@ -5572,6 +5803,28 @@
         setTimeout(() => {
             pubnub.publish({ channel: CHANNEL, message: { type: 'REQUEST_SYNC' } });
         }, 1000);
+
+        // Jackpot state talep et (başka kullanıcılar varsa)
+        setTimeout(() => {
+            pubnub.publish({
+                channel: JACKPOT_CHANNEL,
+                message: {
+                    type: 'JACKPOT_REQUEST_STATE',
+                    sender: currentUser || 'system'
+                }
+            });
+        }, 1500);
+
+        // JACKPOT_REQUEST_STATE handler'ı ekle
+        pubnub.addListener({
+            message: function(event) {
+                const msg = event.message;
+                if (event.channel === JACKPOT_CHANNEL && msg.type === 'JACKPOT_REQUEST_STATE') {
+                    // State'i yayınla
+                    broadcastJackpotState();
+                }
+            }
+        });
     </script>
 </body>
 </html>
