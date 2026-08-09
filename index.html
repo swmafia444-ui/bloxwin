@@ -1794,32 +1794,43 @@
             font-weight: 600;
         }
 
-        /* ===== JACKPOT MODAL (özel) ===== */
-        .jackpot-modal {
-            max-width: 800px !important;
-            width: 95% !important;
+        /* JACKPOT SAYFASI STILLERI (coinfilp'ten farkli) */
+        .jackpot-page {
+            display: none;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 10px 0;
+        }
+        .jackpot-page.active {
+            display: block;
+        }
+        .coinflip-page {
+            display: block;
+        }
+        .coinflip-page.hidden {
+            display: none;
         }
 
-        .jackpot-modal .jackpot-body {
+        .jackpot-page .jackpot-body {
             display: flex;
             gap: 30px;
             align-items: stretch;
             flex-wrap: wrap;
             margin: 12px 0;
         }
-        .jackpot-modal .jackpot-wheel {
+        .jackpot-page .jackpot-wheel {
             flex: 1;
             min-width: 200px;
             display: flex;
             justify-content: center;
             align-items: center;
         }
-        .jackpot-modal .wheel-container {
+        .jackpot-page .wheel-container {
             position: relative;
             width: 220px;
             height: 220px;
         }
-        .jackpot-modal .wheel-container canvas {
+        .jackpot-page .wheel-container canvas {
             width: 100%;
             height: 100%;
             border-radius: 50%;
@@ -1828,7 +1839,7 @@
             display: block;
             transition: transform 4s cubic-bezier(0.17, 0.67, 0.12, 0.99);
         }
-        .jackpot-modal .wheel-container .arrow {
+        .jackpot-page .wheel-container .arrow {
             position: absolute;
             top: -18px;
             left: 50%;
@@ -1839,7 +1850,7 @@
             text-shadow: 0 2px 10px rgba(252, 196, 25, 0.5);
             pointer-events: none;
         }
-        .jackpot-modal .wheel-container .center {
+        .jackpot-page .wheel-container .center {
             position: absolute;
             top: 50%;
             left: 50%;
@@ -1854,7 +1865,7 @@
             pointer-events: none;
         }
 
-        .jackpot-modal .jackpot-players {
+        .jackpot-page .jackpot-players {
             flex: 2;
             min-width: 200px;
             max-height: 300px;
@@ -1865,18 +1876,18 @@
             scrollbar-width: thin;
             scrollbar-color: #2d3b4f transparent;
         }
-        .jackpot-modal .jackpot-players::-webkit-scrollbar {
+        .jackpot-page .jackpot-players::-webkit-scrollbar {
             width: 4px;
         }
-        .jackpot-modal .jackpot-players::-webkit-scrollbar-track {
+        .jackpot-page .jackpot-players::-webkit-scrollbar-track {
             background: transparent;
         }
-        .jackpot-modal .jackpot-players::-webkit-scrollbar-thumb {
+        .jackpot-page .jackpot-players::-webkit-scrollbar-thumb {
             background: #2d3b4f;
             border-radius: 10px;
         }
 
-        .jackpot-modal .jackpot-player-item {
+        .jackpot-page .jackpot-player-item {
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -1887,7 +1898,7 @@
             flex-wrap: wrap;
             gap: 4px;
         }
-        .jackpot-modal .jackpot-player-item .jp-pname {
+        .jackpot-page .jackpot-player-item .jp-pname {
             font-weight: 600;
             color: #e9ecef;
             display: flex;
@@ -1895,36 +1906,75 @@
             gap: 6px;
             font-size: 13px;
         }
-        .jackpot-modal .jackpot-player-item .jp-pname .jp-chance {
+        .jackpot-page .jackpot-player-item .jp-pname .jp-chance {
             color: var(--accent);
             font-size: 12px;
             font-weight: 700;
         }
-        .jackpot-modal .jackpot-player-item .jp-pets {
+        .jackpot-page .jackpot-player-item .jp-pets {
             display: flex;
             gap: 4px;
             flex-wrap: wrap;
         }
-        .jackpot-modal .jackpot-player-item .jp-pets .jp-pet-img {
+        .jackpot-page .jackpot-player-item .jp-pets .jp-pet-img {
             width: 28px;
             height: 28px;
             object-fit: cover;
             border-radius: 50%;
             border: 1px solid #2d3b4f;
         }
-        .jackpot-modal .jackpot-player-item .jp-pvalue {
+        .jackpot-page .jackpot-player-item .jp-pvalue {
             color: var(--accent);
             font-weight: 600;
             font-size: 13px;
         }
 
-        .jackpot-modal .jackpot-actions {
+        .jackpot-page .jackpot-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+        .jackpot-page .jackpot-header .jp-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 20px;
+            font-weight: 700;
+            color: #e9ecef;
+        }
+        .jackpot-page .jackpot-header .jp-title img {
+            width: 32px;
+            height: 32px;
+            object-fit: contain;
+        }
+        .jackpot-page .jackpot-timer {
+            font-size: 28px;
+            font-weight: 800;
+            color: var(--accent);
+            font-feature-settings: "tnum";
+            font-variant-numeric: tabular-nums;
+            min-width: 80px;
+            text-align: center;
+        }
+        .jackpot-page .jackpot-timer.waiting {
+            color: #868e96;
+        }
+        .jackpot-page .jackpot-prize {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        .jackpot-page .jackpot-actions {
             display: flex;
             gap: 10px;
             margin-top: 12px;
             flex-wrap: wrap;
         }
-        .jackpot-modal .jackpot-actions .jp-join-btn {
+        .jackpot-page .jackpot-actions .jp-join-btn {
             background: var(--accent);
             color: #0b1120;
             border: none;
@@ -1936,23 +1986,23 @@
             box-shadow: 0 4px 10px rgba(252, 196, 25, 0.25);
             font-size: 14px;
         }
-        .jackpot-modal .jackpot-actions .jp-join-btn:hover {
+        .jackpot-page .jackpot-actions .jp-join-btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 8px 20px rgba(252, 196, 25, 0.4);
         }
-        .jackpot-modal .jackpot-actions .jp-join-btn:disabled {
+        .jackpot-page .jackpot-actions .jp-join-btn:disabled {
             opacity: 0.4;
             cursor: not-allowed;
             transform: none !important;
         }
 
-        .jackpot-modal .jackpot-status {
+        .jackpot-page .jackpot-status {
             text-align: center;
             color: #868e96;
             font-size: 14px;
             margin-top: 8px;
         }
-        .jackpot-modal .jackpot-result {
+        .jackpot-page .jackpot-result {
             text-align: center;
             margin-top: 12px;
             padding: 12px;
@@ -1961,19 +2011,19 @@
             border: 1px solid var(--accent);
             display: none;
         }
-        .jackpot-modal .jackpot-result .jp-winner {
+        .jackpot-page .jackpot-result .jp-winner {
             font-size: 18px;
             font-weight: 700;
             color: var(--accent);
         }
-        .jackpot-modal .jackpot-result .jp-winner-pets {
+        .jackpot-page .jackpot-result .jp-winner-pets {
             display: flex;
             gap: 4px;
             flex-wrap: wrap;
             justify-content: center;
             margin-top: 6px;
         }
-        .jackpot-modal .jackpot-result .jp-winner-pets .jp-pet-img {
+        .jackpot-page .jackpot-result .jp-winner-pets .jp-pet-img {
             width: 32px;
             height: 32px;
             object-fit: cover;
@@ -1981,62 +2031,7 @@
             border: 1px solid #2d3b4f;
         }
 
-        .jackpot-modal .jackpot-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 12px;
-            margin-bottom: 16px;
-        }
-        .jackpot-modal .jackpot-header .jp-title {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 20px;
-            font-weight: 700;
-            color: #e9ecef;
-        }
-        .jackpot-modal .jackpot-header .jp-title img {
-            width: 32px;
-            height: 32px;
-            object-fit: contain;
-        }
-        .jackpot-modal .jackpot-timer {
-            font-size: 28px;
-            font-weight: 800;
-            color: var(--accent);
-            font-feature-settings: "tnum";
-            font-variant-numeric: tabular-nums;
-            min-width: 80px;
-            text-align: center;
-        }
-        .jackpot-modal .jackpot-timer.waiting {
-            color: #868e96;
-        }
-        .jackpot-modal .jackpot-prize {
-            font-size: 18px;
-            font-weight: 700;
-            color: var(--accent);
-        }
-
-        /* Mobile için jackpot modal */
-        @media (max-width: 768px) {
-            .jackpot-modal .jackpot-body {
-                flex-direction: column;
-                align-items: center;
-            }
-            .jackpot-modal .jackpot-wheel {
-                width: 100%;
-                max-width: 200px;
-            }
-            .jackpot-modal .wheel-container {
-                width: 180px;
-                height: 180px;
-            }
-        }
-
-        /* Genel mobile */
+        /* Mobile */
         @media (max-width: 768px) {
             body {
                 padding-right: 0;
@@ -2223,16 +2218,28 @@
                 font-size: 10px;
                 padding: 3px 10px;
             }
-            .jackpot-modal .jackpot-header {
+            .jackpot-page .jackpot-header {
                 flex-direction: column;
                 align-items: center;
             }
-            .jackpot-modal .jackpot-timer {
+            .jackpot-page .jackpot-timer {
                 font-size: 24px;
             }
-            .jackpot-modal .jackpot-player-item {
+            .jackpot-page .jackpot-player-item {
                 flex-wrap: wrap;
                 gap: 4px;
+            }
+            .jackpot-page .jackpot-body {
+                flex-direction: column;
+                align-items: center;
+            }
+            .jackpot-page .jackpot-wheel {
+                width: 100%;
+                max-width: 200px;
+            }
+            .jackpot-page .wheel-container {
+                width: 180px;
+                height: 180px;
             }
         }
 
@@ -2281,13 +2288,13 @@
         <div class="sidebar-divider"></div>
 
         <!-- Coinflip Butonu -->
-        <div class="sidebar-item coinflip-btn" onclick="document.getElementById('main-layout').scrollIntoView({ behavior: 'smooth' })">
+        <div class="sidebar-item coinflip-btn" onclick="navigateTo('coinflip')">
             <img class="icon" src="https://bloxluck.com/img/coinflip%201.svg" alt="Coinflip">
             <span class="label">COIN<br>FLIP</span>
         </div>
 
-        <!-- Jackpot Butonu – artık modal açar -->
-        <div class="sidebar-item jackpot-btn" onclick="openJackpotModal()">
+        <!-- Jackpot Butonu – sayfa geçişi -->
+        <div class="sidebar-item jackpot-btn" onclick="navigateTo('jackpot')">
             <img class="icon" src="https://bloxluck.com/img/roulette%20%201.svg" alt="Jackpot">
             <span class="label">JACKPOT</span>
         </div>
@@ -2332,15 +2339,50 @@
 
     <!-- Main Content (Coinflip) -->
     <div class="main-layout" id="main-layout">
-        <div>
-            <div class="section-header">
-                <div class="section-title">
-                    <span id="section-title-text">Live Matches</span>
-                    <button id="history-toggle-btn" class="history-toggle-btn" onclick="toggleHistory()">History</button>
+        <!-- Coinflip sayfası -->
+        <div class="coinflip-page" id="coinflip-page">
+            <div>
+                <div class="section-header">
+                    <div class="section-title">
+                        <span id="section-title-text">Live Matches</span>
+                        <button id="history-toggle-btn" class="history-toggle-btn" onclick="toggleHistory()">History</button>
+                    </div>
+                    <button class="create-match-header-btn" onclick="openCreateModal()">Create Match</button>
                 </div>
-                <button class="create-match-header-btn" onclick="openCreateModal()">Create Match</button>
+                <div class="matches-grid" id="matches-list"></div>
             </div>
-            <div class="matches-grid" id="matches-list"></div>
+        </div>
+
+        <!-- Jackpot sayfası -->
+        <div class="jackpot-page" id="jackpot-page">
+            <div class="jackpot-header">
+                <div class="jp-title">
+                    <img src="https://bloxluck.com/img/roulette%20%201.svg" alt="Jackpot">
+                    <span>Jackpot</span>
+                </div>
+                <div class="jackpot-timer" id="jp-timer">90</div>
+                <div class="jackpot-prize">Prize: <span id="jp-prize">0</span></div>
+            </div>
+            <div class="jackpot-body">
+                <div class="jackpot-wheel">
+                    <div class="wheel-container" id="jp-wheel-container">
+                        <canvas id="jp-wheel-canvas" width="220" height="220"></canvas>
+                        <div class="arrow">▼</div>
+                        <div class="center"></div>
+                    </div>
+                </div>
+                <div class="jackpot-players" id="jp-players">
+                    <div style="color:#868e96;text-align:center;padding:12px;">No players yet. Be the first!</div>
+                </div>
+            </div>
+            <div class="jackpot-actions">
+                <button class="jp-join-btn" id="jp-join-btn" onclick="openJackpotJoinModal()">Join Jackpot</button>
+            </div>
+            <div class="jackpot-status" id="jp-status">Waiting for players...</div>
+            <div class="jackpot-result" id="jp-result">
+                <div class="jp-winner" id="jp-winner-name"></div>
+                <div class="jp-winner-pets" id="jp-winner-pets"></div>
+            </div>
         </div>
     </div>
 
@@ -2438,6 +2480,7 @@
             <div class="modal-grid" id="join-modal-inventory"></div>
             <div id="join-total-value" style="text-align:center;font-weight:700;margin:10px 0;color:var(--accent);">Total Value: 0</div>
             <div id="join-range-info" style="text-align:center;font-size:13px;color:#868e96;margin-bottom:8px;"></div>
+            <div id="join-range-error" style="text-align:center;font-size:14px;color:#ff6b6b;font-weight:600;margin-bottom:8px;display:none;">You Don't Fit The Value</div>
             <div class="modal-actions">
                 <button class="post-btn" onclick="confirmJoinMatch()">Join Match</button>
                 <button class="cancel-btn" onclick="closeModal('join-select-modal')">Cancel</button>
@@ -2644,41 +2687,6 @@
         </div>
     </div>
 
-    <!-- JACKPOT ANA MODAL (tüm ekran) -->
-    <div class="modal-overlay" id="jackpot-main-modal">
-        <div class="modal jackpot-modal">
-            <div class="jackpot-header">
-                <div class="jp-title">
-                    <img src="https://bloxluck.com/img/roulette%20%201.svg" alt="Jackpot">
-                    <span>Jackpot</span>
-                </div>
-                <div class="jackpot-timer" id="jp-timer">180</div>
-                <div class="jackpot-prize">Prize: <span id="jp-prize">0</span></div>
-            </div>
-            <div class="jackpot-body">
-                <div class="jackpot-wheel">
-                    <div class="wheel-container" id="jp-wheel-container">
-                        <canvas id="jp-wheel-canvas" width="220" height="220"></canvas>
-                        <div class="arrow">▼</div>
-                        <div class="center"></div>
-                    </div>
-                </div>
-                <div class="jackpot-players" id="jp-players">
-                    <div style="color:#868e96;text-align:center;padding:12px;">No players yet. Be the first!</div>
-                </div>
-            </div>
-            <div class="jackpot-actions">
-                <button class="jp-join-btn" id="jp-join-btn" onclick="openJackpotJoinModal()">Join Jackpot</button>
-            </div>
-            <div class="jackpot-status" id="jp-status">Waiting for players...</div>
-            <div class="jackpot-result" id="jp-result">
-                <div class="jp-winner" id="jp-winner-name"></div>
-                <div class="jp-winner-pets" id="jp-winner-pets"></div>
-            </div>
-            <button class="cancel-btn" style="width:100%;margin-top:16px;" onclick="closeModal('jackpot-main-modal')">Close</button>
-        </div>
-    </div>
-
     <!-- Leaderboard Modal -->
     <div class="modal-overlay" id="leaderboard-modal">
         <div class="modal" style="max-width:500px;">
@@ -2861,6 +2869,9 @@
         let leaderboardSort = 'profit';
         let allUserStats = {};
 
+        // Sayfa yönetimi
+        let currentPage = 'coinflip'; // 'coinflip' veya 'jackpot'
+
         const MAX_PETS_PER_MATCH = 15;
         let selectedPetsForMatch = [];
         let selectedPetsForJoin = [];
@@ -2885,8 +2896,8 @@
         // ============================================================
         let jackpotState = {
             status: 'waiting',
-            timer: 180,
-            maxTimer: 180,
+            timer: 90, // 90 saniye
+            maxTimer: 90,
             players: {},
             prizePool: 0,
             winner: null,
@@ -3083,6 +3094,54 @@
         }
 
         // ============================================================
+        //  SAYFA GEÇİŞİ (COINFLIP / JACKPOT)
+        // ============================================================
+        function navigateTo(page) {
+            currentPage = page;
+            const coinflipPage = document.getElementById('coinflip-page');
+            const jackpotPage = document.getElementById('jackpot-page');
+            if (page === 'coinflip') {
+                coinflipPage.classList.remove('hidden');
+                coinflipPage.classList.add('coinflip-page');
+                jackpotPage.classList.remove('active');
+                jackpotPage.style.display = 'none';
+                // URL hash'ini temizle
+                if (window.location.hash) {
+                    history.pushState(null, '', window.location.pathname);
+                }
+                renderMatches();
+            } else if (page === 'jackpot') {
+                coinflipPage.classList.add('hidden');
+                coinflipPage.classList.remove('coinflip-page');
+                jackpotPage.style.display = 'block';
+                jackpotPage.classList.add('active');
+                // URL hash'ini güncelle
+                if (window.location.hash !== '#jackpot') {
+                    history.pushState(null, '', '#jackpot');
+                }
+                updateJackpotUI();
+            }
+        }
+
+        // Hash değişimini dinle (geri/ileri butonları için)
+        window.addEventListener('hashchange', function() {
+            if (window.location.hash === '#jackpot') {
+                if (currentPage !== 'jackpot') navigateTo('jackpot');
+            } else {
+                if (currentPage !== 'coinflip') navigateTo('coinflip');
+            }
+        });
+
+        // Sayfa ilk yüklendiğinde hash'e göre sayfayı ayarla
+        if (window.location.hash === '#jackpot') {
+            currentPage = 'jackpot';
+        } else {
+            currentPage = 'coinflip';
+        }
+        // Navigasyonu uygula (DOM hazır olunca)
+        setTimeout(() => navigateTo(currentPage), 10);
+
+        // ============================================================
         //  UI HELPERS
         // ============================================================
         function selectSide(side, context) {
@@ -3152,6 +3211,10 @@
             if (modalId === 'jackpot-join-modal') {
                 document.getElementById('jackpot-join-status').textContent = '';
                 selectedJackpotPets = [];
+            }
+            // Join modal'daki hata mesajını temizle
+            if (modalId === 'join-select-modal') {
+                document.getElementById('join-range-error').style.display = 'none';
             }
         }
 
@@ -3748,13 +3811,6 @@
         // ============================================================
         let selectedJackpotPets = [];
 
-        function openJackpotModal() {
-            // Jackpot ana modal'ını aç
-            openModal('jackpot-main-modal');
-            // UI'ı güncelle
-            updateJackpotUI();
-        }
-
         function openJackpotJoinModal() {
             if (!currentUser) { showToast('Please login first.'); return; }
             if (isMuted(currentUser)) { showToast('You are muted.'); return; }
@@ -3851,22 +3907,27 @@
             closeModal('jackpot-join-modal');
             updateJackpotUI();
 
-            // Doğru mesajı göster
             const count = selectedJackpotPets.length;
             showToast(`You added ${count} pet(s) to Jackpot!`);
             selectedJackpotPets = [];
         }
 
         function startJackpotTimer() {
-            if (jackpotState.timerInterval) clearInterval(jackpotState.timerInterval);
+            if (jackpotState.timerInterval) {
+                clearInterval(jackpotState.timerInterval);
+                jackpotState.timerInterval = null;
+            }
+            // Timer'ı başlat
             jackpotState.timerInterval = setInterval(() => {
                 if (jackpotState.status !== 'active') {
                     clearInterval(jackpotState.timerInterval);
+                    jackpotState.timerInterval = null;
                     return;
                 }
                 jackpotState.timer -= 1;
                 if (jackpotState.timer <= 0) {
                     clearInterval(jackpotState.timerInterval);
+                    jackpotState.timerInterval = null;
                     pubnub.publish({
                         channel: JACKPOT_CHANNEL,
                         message: { type: 'JACKPOT_SPIN' }
@@ -3902,8 +3963,8 @@
             }
             jackpotState = {
                 status: 'waiting',
-                timer: 180,
-                maxTimer: 180,
+                timer: 90,
+                maxTimer: 90,
                 players: {},
                 prizePool: 0,
                 winner: null,
@@ -3986,17 +4047,19 @@
         }
 
         // ============================================================
-        //  JACKPOT – UI GÜNCELLEME (ana modal)
+        //  JACKPOT – UI GÜNCELLEME (sayfa)
         // ============================================================
         function updateJackpotUI() {
+            // Sayfa görünür değilse güncelleme yapma
+            const jackpotPage = document.getElementById('jackpot-page');
+            if (!jackpotPage || jackpotPage.style.display === 'none') return;
+
             const timerEl = document.getElementById('jp-timer');
             const prizeEl = document.getElementById('jp-prize');
             const playersEl = document.getElementById('jp-players');
             const statusEl = document.getElementById('jp-status');
             const joinBtn = document.getElementById('jp-join-btn');
             const resultEl = document.getElementById('jp-result');
-
-            if (!timerEl) return; // modal açık değilse
 
             timerEl.textContent = jackpotState.timer;
             if (jackpotState.status === 'waiting') {
@@ -4069,8 +4132,6 @@
         function handleJackpotMessage(msg) {
             // Eğer mesajı kendimiz gönderdiysek işleme alma (çift ekleme önleme)
             if (msg.username === currentUser && msg.type === 'JACKPOT_JOIN') {
-                // Sadece prize pool ve playerCount'u güncelle, pets ekleme
-                // Ama zaten biz local'de ekledik, sadece state'i senkronize et
                 return;
             }
 
@@ -4738,7 +4799,7 @@
         }
 
         // ============================================================
-        //  JOIN MATCH
+        //  JOIN MATCH (range kontrolü eklendi)
         // ============================================================
         function openJoinSelectModal(matchId) {
             if (!currentUser) { showToast('Please login first to join a match.'); return; }
@@ -4757,6 +4818,8 @@
             } else {
                 rangeInfo.textContent = '';
             }
+            // Hata mesajını gizle
+            document.getElementById('join-range-error').style.display = 'none';
 
             if (inv.length === 0) {
                 grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;color:#868e96;padding:20px;">No pets in inventory.</div>';
@@ -4764,23 +4827,13 @@
                 inv.forEach(pet => {
                     const item = document.createElement('div');
                     item.className = 'modal-item';
-                    const inRange = (range.min === 0 && range.max === 0) || (pet.value >= range.min && pet.value <= range
-                    .max);
-                    if (!inRange) {
-                        item.style.opacity = '0.4';
-                        item.style.cursor = 'not-allowed';
-                        item.title = `Pet value must be between ${range.min} and ${range.max}`;
-                    }
+                    // Tüm petler seçilebilir, sadece join butonunda kontrol edilecek
                     item.innerHTML = `
                             <img class="pet-img" src="${pet.icon}" alt="${pet.name}" style="width:48px;height:48px;border-radius:50%;">
                             <div style="font-weight:600;font-size:14px;">${pet.name}</div>
                             <div class="pet-value">Value: ${pet.value}</div>
                         `;
                     item.onclick = () => {
-                        if (!inRange) {
-                            showToast(`This pet's value (${pet.value}) is not in the allowed range (${range.min} - ${range.max})`);
-                            return;
-                        }
                         const idx = selectedPetsForJoin.findIndex(p => p === pet);
                         if (idx !== -1) {
                             selectedPetsForJoin.splice(idx, 1);
@@ -4794,6 +4847,8 @@
                             item.classList.add('selected');
                         }
                         updateJoinTotal();
+                        // Hata mesajını gizle
+                        document.getElementById('join-range-error').style.display = 'none';
                     };
                     grid.appendChild(item);
                 });
@@ -4810,6 +4865,18 @@
 
         function confirmJoinMatch() {
             if (selectedPetsForJoin.length === 0) { showToast('Select at least one pet!'); return; }
+
+            // Range kontrolü
+            const range = getPetRange(matchToJoin.hostPets);
+            const totalValue = sumPets(selectedPetsForJoin);
+            if (range.min !== 0 || range.max !== 0) {
+                if (totalValue < range.min || totalValue > range.max) {
+                    document.getElementById('join-range-error').style.display = 'block';
+                    return;
+                }
+            }
+            // Hata mesajını gizle
+            document.getElementById('join-range-error').style.display = 'none';
 
             const joinerSide = matchToJoin.hostSide === 'H' ? 'T' : 'H';
             removePetsFromInventory(currentUser, selectedPetsForJoin);
