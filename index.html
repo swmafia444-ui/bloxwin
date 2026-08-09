@@ -4491,46 +4491,62 @@
             // SADECE JACKPOT_FULL_STATE işleniyor, JACKPOT_JOIN TAMAMEN KALDIRILDI
             if (msg.type === 'JACKPOT_FULL_STATE' && msg.state) {
                 const incoming = msg.state;
-                if (!incoming.status) return;
+                if (!incoming) break;
 
-                // EĞER KENDİ TİMER'IMIZ ÇALIŞIYORSA (AKTİF OYUN VAR):
-                if (jackpotState.timerInterval) {
-                    // Sadece 'spinning' veya 'finished' durumlarında müdahale et
-                    // Aksi halde gelen state'i IGNORE et (players/prizePool değişmez)
-                    if (incoming.status === 'spinning' || incoming.status === 'finished') {
-                        if (jackpotState.timerInterval) {
-                            clearInterval(jackpotState.timerInterval);
-                            jackpotState.timerInterval = null;
-                        }
-                        jackpotState.status = incoming.status;
-                        jackpotState.players = incoming.players || {};
-                        jackpotState.prizePool = incoming.prizePool || 0;
-                        jackpotState.winner = incoming.winner || null;
-                        jackpotState.winnerPets = incoming.winnerPets || [];
-                        jackpotState.playerCount = Object.keys(jackpotState.players).length;
-                        saveJackpotState();
-                        updateJackpotUI();
+                // Mevcut oyuncuları koru
+                if (!jackpotState.players) jackpotState.players = {};
+                if (!incoming.players) incoming.players = {};
+
+                const mergedPlayers = { ...incoming.players };
+
+                // Mevcut state'teki petleri de koru
+                Object.keys(jackpotState.players).forEach(username => {
+                    const currentPlayer = jackpotState.players[username];
+
+                    if (!mergedPlayers[username]) {
+                        mergedPlayers[username] = currentPlayer;
+                        return;
                     }
-                    // Diğer durumlarda (active, waiting) return ile ignore et
-                    return;
-                }
 
-                // Timer çalışmıyorsa (bekleme veya yeni başlatılacak): gelen state'i tamamen uygula
-                jackpotState.status = incoming.status;
-                jackpotState.timer = incoming.timer !== undefined ? incoming.timer : 90;
-                jackpotState.maxTimer = incoming.maxTimer || 90;
-                jackpotState.players = incoming.players || {};
-                jackpotState.prizePool = incoming.prizePool || 0;
-                jackpotState.winner = incoming.winner || null;
-                jackpotState.winnerPets = incoming.winnerPets || [];
-                jackpotState.playerCount = Object.keys(jackpotState.players).length;
+                    const incomingPlayer = mergedPlayers[username];
 
-                if (jackpotState.status === 'active' && jackpotState.timer > 0 && !jackpotState.timerInterval) {
-                    startJackpotTimer();
-                }
-                saveJackpotState();
+                    const pets = [
+                        ...(currentPlayer.pets || []),
+                        ...(incomingPlayer.pets || [])
+                    ];
+
+                    // Aynı petleri tekilleştir
+                    const uniquePets = pets.filter((pet, index, array) =>
+                        index === array.findIndex(p =>
+                            (pet.id && p.id && pet.id === p.id) ||
+                            (
+                                pet.name === p.name &&
+                                pet.value === p.value &&
+                                pet.image === p.image
+                            )
+                        )
+                    );
+
+                    mergedPlayers[username] = {
+                        ...incomingPlayer,
+                        pets: uniquePets,
+                        total: uniquePets.reduce(
+                            (total, pet) => total + (Number(pet.value) || 0),
+                            0
+                        )
+                    };
+                });
+
+                // State'i güncelle, timerInterval'i koru
+                jackpotState = {
+                    ...jackpotState,
+                    ...incoming,
+                    players: mergedPlayers,
+                    timerInterval: jackpotState.timerInterval
+                };
+
                 updateJackpotUI();
-                return;
+                saveJackpotState();
             }
 
             if (msg.type === 'JACKPOT_RESET') {
@@ -4539,7 +4555,7 @@
         }
 
         // ============================================================
-        //  PUBSUB – MAIN (değişiklik yok, sadece JACKPOT_JOIN kaldırıldı)
+        //  PUBSUB – MAIN (değişiklik yok)
         // ============================================================
         pubnub.addListener({
             message: function(event) {
