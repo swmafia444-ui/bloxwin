@@ -2428,8 +2428,7 @@
                 <div class="jackpot-prize">
                     Prize: <span id="jp-prize">0</span>
                     <button class="jp-join-btn" id="jp-join-btn" onclick="openJackpotJoinModal()">Join Jackpot</button>
-                    <!-- Manuel sıfırlama butonu (herkes görebilir) -->
-                    <button class="action-btn danger-btn" onclick="manualResetJackpot()" style="font-size:12px;padding:4px 12px;">Reset Jackpot</button>
+                    <!-- Reset butonu kaldırıldı, artık sadece admin panelinde -->
                 </div>
             </div>
             <div class="jackpot-body">
@@ -2977,8 +2976,6 @@
                     if (parsed.timer !== undefined && parsed.timer < 0) {
                         return null;
                     }
-                    // ARTIK waiting + oyuncu varsa geçersiz sayma, çünkü timer başlatılabilir
-                    // Sadece oyuncu sayısı 0 ve waiting ise geçerli, ama yine de kabul edelim
                     return parsed;
                 }
                 return null;
@@ -3932,10 +3929,16 @@
                 jackpotState.winnerPets = stored.winnerPets || [];
                 jackpotState.playerCount = Object.keys(jackpotState.players).length;
 
-                // Eğer waiting durumunda ve 2+ oyuncu varsa timer'ı başlat
-                if (jackpotState.status === 'waiting' && jackpotState.playerCount >= 2) {
-                    startJackpotTimer();
-                } else if (jackpotState.status === 'active' && jackpotState.timer > 0) {
+                // Eğer active ise ve timer > 0 ise interval başlat, aksi halde timer’ı maxTimer’a setle
+                if (jackpotState.status === 'active') {
+                    if (jackpotState.timer > 0) {
+                        startJackpotTimer();
+                    } else {
+                        // Timer 0 veya negatifse maxTimer ile yeniden başlat
+                        jackpotState.timer = jackpotState.maxTimer || 90;
+                        startJackpotTimer();
+                    }
+                } else if (jackpotState.status === 'waiting' && jackpotState.playerCount >= 2) {
                     startJackpotTimer();
                 }
                 updateJackpotUI();
@@ -4202,6 +4205,8 @@
                     return;
                 }
                 jackpotState.timer -= 1;
+                // 🔥 Her saniye state’i kaydet
+                saveJackpotState();
                 if (jackpotState.timer <= 0) {
                     clearInterval(jackpotState.timerInterval);
                     jackpotState.timerInterval = null;
@@ -4250,12 +4255,7 @@
             }
         }
 
-        // Manuel reset (herkes için)
-        function manualResetJackpot() {
-            if (!confirm('Reset the current Jackpot? This will clear all bets.')) return;
-            resetJackpot(true);
-            showToast('Jackpot has been reset.');
-        }
+        // Manuel reset (herkes için) - KALDIRILDI, artık sadece admin panelinde
 
         // ============================================================
         //  HARD RESET - Tüm jackpot verilerini siler
