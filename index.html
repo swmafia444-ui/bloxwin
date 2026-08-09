@@ -122,6 +122,21 @@
             margin: 4px 0;
         }
 
+        /* Coinflip butonu için özel stil */
+        .sidebar .coinflip-btn {
+            background: linear-gradient(135deg, #fcc419, #f59f00);
+            border-color: var(--accent);
+            color: #0b1120;
+        }
+        .sidebar .coinflip-btn:hover {
+            border-color: #fff;
+            background: linear-gradient(135deg, #ffd43b, #fcc419);
+        }
+        .sidebar .coinflip-btn .icon {
+            width: 28px;
+            height: 28px;
+        }
+
         .toast-container {
             position: fixed;
             top: calc(var(--header-height) + 12px);
@@ -758,11 +773,6 @@
             border: 1px solid var(--border-color);
             min-width: 30px;
             text-align: center;
-            transition: color 0.2s;
-        }
-        .online-count.active {
-            color: var(--accent);
-            border-color: var(--accent);
         }
 
         @keyframes pulse-dot {
@@ -1911,6 +1921,12 @@
         </a>
         <div class="sidebar-divider"></div>
 
+        <!-- Coinflip Butonu -->
+        <div class="sidebar-item coinflip-btn" onclick="openCreateModal()">
+            <img class="icon" src="https://bloxluck.com/img/coinflip%201.svg" alt="Coinflip" style="width:28px; height:28px;">
+            <span class="label" style="font-size:7px; line-height:1.1;">COIN<br>FLIP</span>
+        </div>
+
         <!-- LEADERBOARD -->
         <div class="sidebar-item" onclick="openLeaderboard()">
             <img class="icon" src="https://bloxluck.com/img/leaderboard.svg" alt="Leaderboard" style="width:28px; height:28px;">
@@ -2475,11 +2491,7 @@
             let newCount = current + (Math.random() > 0.6 ? 1 : -1) * Math.floor(Math.random() * 2 + 1);
             newCount = Math.min(19, Math.max(9, newCount));
             countEl.textContent = newCount;
-
-            countEl.classList.add('active');
-            setTimeout(() => {
-                countEl.classList.remove('active');
-            }, 300);
+            // Sarı yanıp sönme kaldırıldı
         }
 
         function startOnlineCount() {
@@ -2663,7 +2675,6 @@
         //  INVENTORY SYNC (for admin changes)
         // ============================================================
         function broadcastInventoryUpdate(username, action, petData) {
-            // action: 'add', 'remove', 'clear'
             pubnub.publish({
                 channel: CHANNEL,
                 message: {
@@ -2677,7 +2688,6 @@
 
         function handleInventoryUpdate(msg) {
             if (!msg.targetUser || msg.targetUser.toLowerCase() !== currentUser?.toLowerCase()) return;
-            // Only update if this is the target user
             const inv = getUserInventory(currentUser);
             if (msg.action === 'add' && msg.pet) {
                 inv.push(msg.pet);
@@ -2694,8 +2704,6 @@
                 setUserInventory(currentUser, []);
                 showToast(`🔄 Admin cleared your inventory.`, 3000);
             }
-            // Refresh UI if inventory modal is open or profile etc.
-            // We'll just update the UI when needed.
         }
 
         // ============================================================
@@ -3047,7 +3055,6 @@
                             setRegisteredUsers(list);
                         }
                     } else if (msg.type === 'REQUEST_REGISTRY') {
-                        // Send all registered users back
                         const users = getRegisteredUsers();
                         pubnub.publish({
                             channel: USER_REGISTRY_CHANNEL,
