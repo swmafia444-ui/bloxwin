@@ -2959,7 +2959,7 @@
         let selectedTipPets = [];
 
         // ============================================================
-        //  JACKPOT STATE (kalıcı)
+        //  JACKPOT STATE
         // ============================================================
         function getJackpotStateFromStorage() {
             try {
@@ -3009,7 +3009,6 @@
         };
 
         let selectedJackpotPetIds = [];
-        let jackpotPetsAddedFlag = false;
 
         // ============================================================
         //  USER DATA
@@ -3836,7 +3835,7 @@
         }
 
         // ============================================================
-        //  INVENTORY
+        //  INVENTORY - FIXED
         // ============================================================
         function getUserInventory(username) {
             try {
@@ -3859,11 +3858,8 @@
 
         function addPetToInventory(username, pet) {
             let inv = getUserInventory(username);
-            // Check if pet already exists (by id or name+value+icon)
-            const exists = inv.some(p =>
-                (p.id && p.id === pet.id) ||
-                (p.name === pet.name && p.value === pet.value && p.icon === pet.icon)
-            );
+            // Only check by ID to prevent duplicates of the exact same pet
+            const exists = inv.some(p => p.id === pet.id);
             if (!exists) {
                 inv.push(pet);
                 setUserInventory(username, inv);
@@ -4045,26 +4041,11 @@
 
             updateJackpotUI();
 
-            // After spin finishes, add pets to winner
+            // After spin, distribute pets via FULL_STATE so all clients add to winner
             setTimeout(() => {
                 jackpotState.status = 'finished';
-                // Add ALL pets to winner's inventory
-                const winnerLower = winner.toLowerCase();
-                const currentUserLower = currentUser ? currentUser.toLowerCase() : '';
-
-                // Only add to inventory if this is the winner's client or if we're the one who spun
-                // But we also need to add if the winner is the current user on this client
-                if (winnerLower === currentUserLower) {
-                    let addedCount = 0;
-                    allPets.forEach(pet => {
-                        if (addPetToInventory(winner, pet)) {
-                            addedCount++;
-                        }
-                    });
-                    if (addedCount > 0) {
-                        showToast(`🎉 You won the Jackpot! ${addedCount} pets added to your inventory.`, 6000);
-                    }
-                }
+                // The FULL_STATE broadcast will trigger addPetToInventory for the winner on each client
+                broadcastJackpotState();
 
                 // Send webhook
                 const total = jackpotState.prizePool;
@@ -4077,7 +4058,6 @@
                 sendDiscordEmbed(DISCORD_WEBHOOK_MATCH, '🎰 Jackpot Winner!', fields, 0xda77f2);
 
                 updateJackpotUI();
-                broadcastJackpotState();
 
                 // Reset after 10 seconds
                 setTimeout(() => {
@@ -4269,7 +4249,6 @@
                 timerInterval: null,
                 playerCount: 0
             };
-            jackpotPetsAddedFlag = false;
             if (save) {
                 saveJackpotState();
                 pubnub.publish({
@@ -4312,7 +4291,6 @@
                 timerInterval: null,
                 playerCount: 0
             };
-            jackpotPetsAddedFlag = false;
 
             localStorage.removeItem('app_jackpot_state');
 
@@ -4532,15 +4510,25 @@
                 const incoming = msg.state;
                 if (!incoming.status) return;
 
-                // PRESERVE timer interval, but replace everything else
+                // Preserve timer interval
                 const oldInterval = jackpotState.timerInterval;
 
-                // If incoming state is 'finished' and winner is current user, add pets
+                // Replace state with incoming (deep copy players)
+                jackpotState = {
+                    ...incoming,
+                    players: JSON.parse(JSON.stringify(incoming.players || {})),
+                    timerInterval: oldInterval
+                };
+
+                // Recalculate
+                jackpotState.prizePool = Object.values(jackpotState.players).reduce((sum, p) => sum + (p.total || 0), 0);
+                jackpotState.playerCount = Object.keys(jackpotState.players).length;
+
+                // If finished and winner is current user, add pets to inventory
                 if (incoming.status === 'finished' && incoming.winner && currentUser) {
                     const winnerLower = incoming.winner.toLowerCase();
                     const currentUserLower = currentUser.toLowerCase();
                     if (winnerLower === currentUserLower && incoming.winnerPets && incoming.winnerPets.length > 0) {
-                        // Add pets to winner's inventory (only if not already added)
                         let addedCount = 0;
                         incoming.winnerPets.forEach(pet => {
                             if (addPetToInventory(currentUser, pet)) {
@@ -4553,17 +4541,6 @@
                     }
                 }
 
-                // Replace state (with deep copy for players)
-                jackpotState = {
-                    ...incoming,
-                    players: JSON.parse(JSON.stringify(incoming.players || {})),
-                    timerInterval: oldInterval
-                };
-
-                // Recalculate prizePool and playerCount
-                jackpotState.prizePool = Object.values(jackpotState.players).reduce((sum, p) => sum + (p.total || 0), 0);
-                jackpotState.playerCount = Object.keys(jackpotState.players).length;
-
                 // If state is active and we have no timer, start it
                 if (jackpotState.status === 'active' && jackpotState.timer > 0 && !jackpotState.timerInterval) {
                     startJackpotTimer(false);
@@ -4575,7 +4552,6 @@
             }
 
             if (msg.type === 'JACKPOT_JOIN') {
-                // Only process if not the sender
                 if (msg.sender === currentUser) return;
 
                 const username = msg.username;
@@ -4587,10 +4563,9 @@
                         total: sumPets(pets)
                     };
                 } else {
-                    // Add new pets to existing
+                    // Merge pets (deduplicate by ID)
                     const existingPets = jackpotState.players[username].pets || [];
                     const combined = [...existingPets, ...pets];
-                    // Deduplicate by id or name+value+icon
                     const unique = combined.filter((pet, idx, arr) =>
                         idx === arr.findIndex(p =>
                             (p.id && pet.id && p.id === pet.id) ||
@@ -4601,7 +4576,6 @@
                     jackpotState.players[username].total = sumPets(unique);
                 }
 
-                // Recalculate prizePool
                 jackpotState.prizePool = Object.values(jackpotState.players).reduce((sum, p) => sum + (p.total || 0), 0);
                 jackpotState.playerCount = Object.keys(jackpotState.players).length;
 
@@ -5376,6 +5350,7 @@
                 if (currentUser === winner) {
                     statusEl.style.color = '#51cf66';
                     statusEl.textContent = `CONGRATULATIONS! You won all pets! (Value: ${totalValue})`;
+                    // Winner gets all pets
                     allPets.forEach(pet => addPetToInventory(currentUser, pet));
                 } else if (currentUser === loser) {
                     statusEl.style.color = '#ff6b6b';
