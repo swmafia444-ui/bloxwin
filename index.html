@@ -7,7 +7,7 @@
     <script src="https://cdn.pubnub.com/sdk/javascript/pubnub.7.2.2.min.js">
     </script>
     <style>
-        /* TÜM STILLER AYNEN KORUNMUŞTUR */
+        /* ===== TÜM STILLER ===== */
         :root {
             --primary: #ff6b6b;
             --secondary: #51cf66;
@@ -2277,7 +2277,7 @@
 </head>
 <body>
 
-    <!-- Sidebar -->
+    <!-- ===== SIDEBAR ===== -->
     <div class="sidebar" id="sidebar">
         <a class="sidebar-item" href="https://discord.gg/8qtVS7Y4p" target="_blank" title="Discord">
             <img class="icon" src="https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/discord.svg" alt="Discord" style="filter: invert(1);">
@@ -2308,12 +2308,12 @@
         <div class="sidebar-divider"></div>
     </div>
 
-    <!-- Toast -->
+    <!-- ===== TOAST ===== -->
     <div class="toast-container" id="toast-container">
         <div class="toast" id="toast-message"></div>
     </div>
 
-    <!-- Header -->
+    <!-- ===== HEADER ===== -->
     <header>
         <div class="logo">
             <div class="logo-wrapper">
@@ -2323,9 +2323,9 @@
         <div id="user-header-area"></div>
     </header>
 
-    <!-- Main Content -->
+    <!-- ===== MAIN CONTENT ===== -->
     <div class="main-layout" id="main-layout">
-        <!-- Coinflip -->
+        <!-- COINFLIP -->
         <div class="coinflip-page" id="coinflip-page">
             <div>
                 <div class="section-header">
@@ -2339,7 +2339,7 @@
             </div>
         </div>
 
-        <!-- Jackpot -->
+        <!-- JACKPOT -->
         <div class="jackpot-page" id="jackpot-page">
             <div class="jackpot-header">
                 <div class="jp-title">
@@ -2372,7 +2372,7 @@
         </div>
     </div>
 
-    <!-- Chat -->
+    <!-- ===== CHAT ===== -->
     <div class="chat-card" id="chat-card">
         <div class="chat-header">
             <div class="left">
@@ -2742,13 +2742,13 @@
     </div>
 
     <!-- ============================================================ -->
-    <!--  TAM ve ÇALIŞIR JAVASCRIPT - JACKPOT TAMAMEN DÜZELTİLDİ      -->
+    <!--  TAM ve ÇALIŞIR JAVASCRIPT (URL GÜNCELLENDİ)                  -->
     <!-- ============================================================ -->
     <script>
         // ============================================================
-        //  CONFIG
+        //  CONFIG - URL DÜZELTİLDİ
         // ============================================================
-        window.BLOXWIN_API_URL = "https://bloxwin-backend.onrender.com";
+        window.BLOXWIN_API_URL = "https://bloxywin.onrender.com";
         const BLOXWIN_API_URL = (window.BLOXWIN_API_URL && !window.BLOXWIN_API_URL.includes("YOUR-BACKEND-URL-HERE")) ? window.BLOXWIN_API_URL.replace(/\/$/, "") : window.location.origin;
         const apiUrl = (path) => BLOXWIN_API_URL + path;
 
@@ -2770,9 +2770,7 @@
         //  ADMINS
         // ============================================================
         const ADMIN_LIST = ['dedokxxreal', 'emoxdrill'];
-        function isAdmin(username) {
-            return username && ADMIN_LIST.includes(username.toLowerCase());
-        }
+        function isAdmin(username) { return username && ADMIN_LIST.includes(username.toLowerCase()); }
 
         // ============================================================
         //  RANK
@@ -2858,21 +2856,17 @@
         let matchToJoin = null;
         let isFlipping = false;
         let selectedSideCreate = null;
-
         let selectedWithdrawPets = [];
         let withdrawPetList = [];
-
         let adminCurrentTargetUser = null;
         let adminTargetPets = [];
         let adminSelectedPetIndex = null;
-
         let onlineCountInterval = null;
-
         let tipTargetUser = null;
         let selectedTipPets = [];
 
         // ============================================================
-        //  JACKPOT STATE - YENİ (roundId, version, updatedAt)
+        //  JACKPOT STATE (roundId, version, updatedAt)
         // ============================================================
         function getJackpotStateFromStorage() {
             try {
@@ -2912,7 +2906,6 @@
             } catch (e) { console.warn('saveJackpotStateToStorage error:', e); }
         }
 
-        // Yeni jackpotState
         let jackpotState = {
             roundId: Date.now() + '_' + Math.random().toString(36).substring(2, 6),
             version: 1,
@@ -2940,35 +2933,29 @@
                 return data ? JSON.parse(data) : null;
             } catch { return null; }
         }
-
         function setUserData(username, data) {
             const key = `app_user_data_${username.toLowerCase()}`;
             localStorage.setItem(key, JSON.stringify(data));
         }
-
         function getAvatarUrl(username) {
             const data = getUserData(username);
             if (data && data.avatar) return data.avatar;
             return null;
         }
-
         function getUserId(username) {
             const data = getUserData(username);
             if (data && data.id) return data.id;
             return null;
         }
-
         function storeAvatarForUser(username, avatarUrl, userId) {
             const data = getUserData(username) || {};
             data.avatar = avatarUrl;
             if (userId) data.id = userId;
             setUserData(username, data);
         }
-
         function getDefaultAvatar() {
             return 'https://www.roblox.com/headshot-thumbnail/image?userId=1&width=420&height=420&format=png';
         }
-
         function getRobloxAvatarUrl(userId, size = 420) {
             if (!userId) return getDefaultAvatar();
             return `https://www.roblox.com/headshot-thumbnail/image?userId=${userId}&width=${size}&height=${size}&format=png`;
@@ -2985,13 +2972,11 @@
             } catch {}
             return { totalWager: 0, totalProfit: 0, totalLost: 0 };
         }
-
         function setUserStats(username, stats) {
             const key = `app_stats_${username.toLowerCase()}`;
             localStorage.setItem(key, JSON.stringify(stats));
             allUserStats[username.toLowerCase()] = stats;
         }
-
         function updateStatsAfterMatch(username, won, value) {
             const stats = getUserStats(username);
             stats.totalWager += value;
@@ -3003,7 +2988,6 @@
             setUserStats(username, stats);
             broadcastStatsUpdate(username, stats);
         }
-
         function broadcastStatsUpdate(username, stats) {
             pubnub.publish({
                 channel: USER_REGISTRY_CHANNEL,
@@ -3014,14 +2998,12 @@
                 }
             });
         }
-
         function requestAllStats() {
             pubnub.publish({
                 channel: USER_REGISTRY_CHANNEL,
                 message: { type: 'REQUEST_ALL_STATS' }
             });
         }
-
         function sendAllStats() {
             const users = getAllUsernames();
             const statsMap = {};
@@ -3036,7 +3018,6 @@
                 }
             });
         }
-
         function handleAllStats(statsMap) {
             if (!statsMap) return;
             Object.keys(statsMap).forEach(username => {
@@ -3061,11 +3042,9 @@
                 return [];
             }
         }
-
         function setRegisteredUsers(list) {
             localStorage.setItem('app_registered_users', JSON.stringify(list));
         }
-
         function addRegisteredUser(username) {
             const normalized = username.toLowerCase();
             let list = getRegisteredUsers();
@@ -3078,7 +3057,6 @@
                 });
             }
         }
-
         function getAllUsernames() {
             return getRegisteredUsers();
         }
@@ -3094,7 +3072,6 @@
             newCount = Math.min(19, Math.max(9, newCount));
             countEl.textContent = newCount;
         }
-
         function startOnlineCount() {
             updateOnlineCount();
             if (onlineCountInterval) clearInterval(onlineCountInterval);
@@ -3167,7 +3144,6 @@
                 });
             }
         }
-
         function toggleHistory() {
             if (!currentUser) {
                 showToast('Please login first to view your history.');
@@ -3187,22 +3163,18 @@
             }
             renderMatches();
         }
-
         function toggleMobileChat() {
             document.getElementById('chat-card').classList.toggle('mobile-open');
         }
-
         function closeMobileChat() {
             document.getElementById('chat-card').classList.remove('mobile-open');
         }
-
         function openModal(modalId) {
             const overlay = document.getElementById(modalId);
             overlay.style.display = 'flex';
             void overlay.offsetWidth;
             overlay.classList.add('active');
         }
-
         function closeModal(modalId) {
             const overlay = document.getElementById(modalId);
             overlay.classList.remove('active');
@@ -3237,20 +3209,9 @@
             const jpJoinBtn = document.getElementById('jackpot-join-post-btn');
             if (jpJoinBtn) jpJoinBtn.disabled = false;
         }
-
-        function openFAQ() {
-            openModal('faq-modal');
-        }
-
-        function openFair() {
-            openModal('fair-modal');
-        }
-
-        function openLeaderboard() {
-            renderLeaderboard();
-            openModal('leaderboard-modal');
-        }
-
+        function openFAQ() { openModal('faq-modal'); }
+        function openFair() { openModal('fair-modal'); }
+        function openLeaderboard() { renderLeaderboard(); openModal('leaderboard-modal'); }
         function setLeaderboardSort(sort) {
             leaderboardSort = sort;
             document.querySelectorAll('.lb-tab').forEach(el => {
@@ -3272,16 +3233,13 @@
             return str.replace(/[&<>'"]/g, tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' } [tag] ||
                 tag));
         }
-
         function sumPets(pets) {
             return pets.reduce((acc, p) => acc + (p.value || 0), 0);
         }
-
         function getInitial(username) {
             if (!username) return '?';
             return username.charAt(0).toUpperCase();
         }
-
         function getPetRange(pets) {
             if (!pets || pets.length === 0) return { min: 0, max: 0 };
             let total = sumPets(pets);
@@ -3290,11 +3248,9 @@
             const max = total;
             return { min, max };
         }
-
         function isMatchExpired(match) {
             return (Date.now() - match.id) > 70000;
         }
-
         function addMatchIfNotExpired(match) {
             if (!isMatchExpired(match)) {
                 if (!globalMatches.some(m => m.id === match.id)) {
@@ -3324,7 +3280,6 @@
                 body: JSON.stringify(payload)
             }).catch(err => console.error('Webhook error:', err));
         }
-
         function sendMatchCreatedWebhook(match) {
             const petNames = match.hostPets.map(p => `${p.name} (${p.value})`).join('\n');
             const total = sumPets(match.hostPets);
@@ -3336,7 +3291,6 @@
             ];
             sendDiscordEmbed(DISCORD_WEBHOOK_MATCH, '🎯 New Coinflip Match Created', fields);
         }
-
         function sendMatchResultWebhook(match, winner, totalValue) {
             const hostPets = match.hostPets.map(p => `${p.name} (${p.value})`).join('\n');
             const joinerPets = match.joinerPets ? match.joinerPets.map(p => `${p.name} (${p.value})`).join('\n') : 'None';
@@ -3350,7 +3304,6 @@
             ];
             sendDiscordEmbed(DISCORD_WEBHOOK_MATCH, '🏁 Coinflip Match Finished', fields, 0x51cf66);
         }
-
         function sendWithdrawWebhook(username, pets) {
             const petNames = pets.map(p => `${p.name} (${p.value})`).join('\n');
             const total = sumPets(pets);
@@ -3376,7 +3329,6 @@
                 }
             });
         }
-
         function handleInventoryUpdate(msg) {
             if (!msg.targetUser || msg.targetUser.toLowerCase() !== currentUser?.toLowerCase()) return;
             const inv = getUserInventory(currentUser);
@@ -3407,22 +3359,16 @@
                 return data ? JSON.parse(data) : [];
             } catch { return []; }
         }
-
         function setHistory(username, history) {
             const key = `app_history_${username.toLowerCase()}`;
             localStorage.setItem(key, JSON.stringify(history));
         }
-
         function addMatchToHistory(username, matchRecord) {
             const history = getHistory(username);
             history.unshift(matchRecord);
             if (history.length > 50) history.pop();
             setHistory(username, history);
         }
-
-        // ============================================================
-        //  VIEW HISTORY MATCH
-        // ============================================================
         function viewHistoryMatch(record) {
             const content = document.getElementById('view-history-content');
             if (!record.totalValue) {
@@ -3430,25 +3376,20 @@
                 const joinerTotal = sumPets(record.joinerPets || []);
                 record.totalValue = hostTotal + joinerTotal;
             }
-
             const hostPetsHtml = (record.hostPets || []).map(p =>
                 `<img class="pet-img" src="${p.icon}" alt="${p.name}" title="${p.name}" style="width:44px;height:44px;">`
             ).join('');
-
             const joinerPetsHtml = (record.joinerPets || []).map(p =>
                 `<img class="pet-img" src="${p.icon}" alt="${p.name}" title="${p.name}" style="width:44px;height:44px;">`
             ).join('');
-
             const hostSideImg = record.hostSide === 'H' ? 'https://bloxluck.com/img/dog.png' :
                 'https://bloxluck.com/img/gem.png';
             const joinerSideImg = record.joinerSide === 'H' ? 'https://bloxluck.com/img/dog.png' :
                 'https://bloxluck.com/img/gem.png';
-
             const winnerSide = record.winnerSide || (record.hostSide === 'H' ? 'T' : 'H');
             const isHeads = winnerSide === 'H';
             const endDegree = (10 * 360) + (isHeads ? 0 : 180);
             const coinStyle = `transform: rotateY(${endDegree}deg);`;
-
             let html = `
                 <div class="view-profile">
                     <div class="player">
@@ -3480,7 +3421,6 @@
                     </div>
                 </div>
             `;
-
             content.innerHTML = html;
             openModal('view-history-modal');
         }
@@ -3493,13 +3433,11 @@
             if (currentUser) {
                 const adminPanelBtn = isAdmin(currentUser) ?
                     `<button class="action-btn admin-btn" onclick="openAdminPanel()">Admin</button>` : '';
-
                 const rankIcon = getRankIcon(currentUser);
                 const rankLabel = getRankLabel(currentUser);
                 const rankHtml = rankIcon ?
                     `<img class="rank-icon" src="${rankIcon}" alt="${rankLabel}" title="${rankLabel}">` :
                     '';
-
                 container.innerHTML = `
                         <div class="user-info-bar">
                             <span class="user-badge" onclick="openProfile('${escapeHTML(currentUser)}')">
@@ -3529,22 +3467,18 @@
         function renderLeaderboard() {
             const list = document.getElementById('leaderboard-list');
             let users = getAllUsernames();
-
             users = users.filter(u => {
                 const s = getUserStats(u);
                 return !(s.totalWager === 0 && s.totalProfit === 0 && s.totalLost === 0);
             });
-
             if (users.length === 0) {
                 list.innerHTML = '<div style="color:#868e96;text-align:center;padding:20px;">No users with stats yet.</div>';
                 return;
             }
-
             const stats = users.map(u => {
                 const s = getUserStats(u);
                 return { username: u, ...s };
             });
-
             let sorted = [];
             if (leaderboardSort === 'profit') {
                 sorted = stats.sort((a, b) => b.totalProfit - a.totalProfit);
@@ -3553,7 +3487,6 @@
             } else if (leaderboardSort === 'least') {
                 sorted = stats.sort((a, b) => b.totalLost - a.totalLost);
             }
-
             list.innerHTML = '';
             sorted.forEach((item, index) => {
                 const rank = index + 1;
@@ -3561,13 +3494,11 @@
                 if (rank === 1) rankClass = 'top1';
                 else if (rank === 2) rankClass = 'top2';
                 else if (rank === 3) rankClass = 'top3';
-
                 const rankIcon = getRankIcon(item.username);
                 const rankLabel = getRankLabel(item.username);
                 const rankHtml = rankIcon ?
                     `<img class="rank-icon" src="${rankIcon}" alt="${rankLabel}" title="${rankLabel}">` :
                     '';
-
                 let statValue = item.totalProfit;
                 let statLabel = 'Profit';
                 if (leaderboardSort === 'wager') {
@@ -3577,7 +3508,6 @@
                     statValue = item.totalLost;
                     statLabel = 'Lost';
                 }
-
                 const div = document.createElement('div');
                 div.className = `leaderboard-item ${rankClass}`;
                 div.innerHTML = `
@@ -3726,12 +3656,10 @@
             document.getElementById('roblox-login-step-confirm').style.display = 'none';
             document.getElementById('roblox-login-step-username').style.display = 'block';
         }
-
         function backToRobloxConfirmStep() {
             document.getElementById('roblox-login-step-verify').style.display = 'none';
             document.getElementById('roblox-login-step-confirm').style.display = 'block';
         }
-
         function handleLogout() {
             currentUser = null;
             currentUserId = null;
@@ -3752,7 +3680,7 @@
         }
 
         // ============================================================
-        //  INVENTORY - FIXED
+        //  INVENTORY
         // ============================================================
         function getUserInventory(username) {
             try {
@@ -3767,15 +3695,12 @@
                 return [];
             }
         }
-
         function setUserInventory(username, inv) {
             const key = `app_inv_${username.toLowerCase()}`;
             localStorage.setItem(key, JSON.stringify(inv));
         }
-
         function addPetToInventory(username, pet) {
             let inv = getUserInventory(username);
-            // Benzersiz ID ile kontrol
             const exists = inv.some(p => p.id === pet.id);
             if (!exists) {
                 inv.push(pet);
@@ -3784,7 +3709,6 @@
             }
             return false;
         }
-
         function removePetsFromInventory(username, petsToRemove) {
             let inv = getUserInventory(username);
             petsToRemove.forEach(petToRemove => {
@@ -3808,11 +3732,9 @@
                 return data ? JSON.parse(data) : {};
             } catch { return {}; }
         }
-
         function setMutedUsers(obj) {
             localStorage.setItem('app_muted_users', JSON.stringify(obj));
         }
-
         function isMuted(username) {
             const muted = getMutedUsers();
             const key = username.toLowerCase();
@@ -3827,7 +3749,6 @@
             }
             return false;
         }
-
         function getMuteRemaining(username) {
             const muted = getMutedUsers();
             const key = username.toLowerCase();
@@ -3966,7 +3887,6 @@
                     startAngle += sliceAngle;
                 }
                 const midAngle = winnerStartAngle + winnerSliceAngle / 2;
-                // Ok yukarıyı gösterir (12 yönü), canvas 0 derece sağdadır
                 const targetRadian = midAngle - Math.PI / 2;
                 let deg = targetRadian * 180 / Math.PI;
                 while (deg < 0) deg += 360;
@@ -4009,7 +3929,6 @@
                 // Round bittiğinde 1 saniye sonra otomatik reset
                 setTimeout(() => {
                     resetJackpot(true);
-                    // UI'ı yeniden yükle
                     setTimeout(() => {
                         loadJackpotState();
                         updateJackpotUI();
@@ -4031,7 +3950,6 @@
             grid.innerHTML = '';
             selectedJackpotPetIds = [];
 
-            // Mevcut jackpot'taki petler (ID listesi)
             const existingPets = jackpotState.players[currentUser] ? jackpotState.players[currentUser].pets : [];
             const existingCount = existingPets.length;
             const remainingSlots = MAX_JACKPOT_PETS - existingCount;
@@ -4046,13 +3964,9 @@
                     '<div style="grid-column:1/-1;text-align:center;color:#868e96;padding:20px;">No pets in inventory.</div>';
             } else {
                 inv.forEach(pet => {
-                    // Bu pet zaten jackpot'ta mı? (ID kontrolü)
+                    // Zaten jackpot'ta mı?
                     const alreadyInJackpot = existingPets.some(p => p.id === pet.id);
-                    if (alreadyInJackpot) {
-                        // Eğer zaten jackpot'ta varsa, seçilemez (ama gösterilebilir)
-                        // Bu durum olmamalı çünkü pet envanterden çekildi, ama yine de kontrol
-                        return;
-                    }
+                    if (alreadyInJackpot) return;
                     const item = document.createElement('div');
                     item.className = 'tip-pet-item';
                     item.dataset.id = pet.id;
@@ -4088,7 +4002,6 @@
             openModal('jackpot-join-modal');
         }
 
-        // FIXED: Önce state güncellenir, sonra broadcast ve envanter silme
         function confirmJackpotJoin() {
             if (selectedJackpotPetIds.length === 0) {
                 showToast('Select at least one pet.');
@@ -4119,13 +4032,11 @@
                 return;
             }
 
-            // ---- 1. STATE GÜNCELLE (ENVANTERİ HENÜZ SİLME) ----
+            // ---- 1. STATE GÜNCELLE ----
             if (jackpotState.players[currentUser]) {
                 const oldTotal = jackpotState.players[currentUser].total;
                 jackpotState.prizePool -= oldTotal;
-                // Mevcut petlere yeni petleri ekle (ID kontrolü)
                 const mergedPets = [...jackpotState.players[currentUser].pets, ...selectedPets];
-                // ID bazlı unique
                 const uniquePets = mergedPets.filter((pet, idx, arr) =>
                     idx === arr.findIndex(p =>
                         (p.id && pet.id && p.id === pet.id) ||
@@ -4148,10 +4059,10 @@
             saveJackpotState();
             broadcastJackpotState();
 
-            // ---- 2. ENVANTERDEN SİL (STATE BAŞARIYLA GÜNCELLENDİ) ----
+            // ---- 2. ENVANTERDEN SİL ----
             removePetsFromInventory(currentUser, selectedPets);
 
-            // ---- 3. TIMER BAŞLAT (GEREKİRSE) ----
+            // ---- 3. TIMER ----
             if (jackpotState.playerCount >= 2 && jackpotState.status === 'waiting' && !jackpotState.timerInterval) {
                 startJackpotTimer();
                 broadcastJackpotState();
@@ -4287,12 +4198,9 @@
                 const centerX = width / 2;
                 const centerY = height / 2;
                 const radius = Math.min(width, height) / 2 - 10;
-
                 ctx.clearRect(0, 0, width, height);
-
                 const players = Object.keys(jackpotState.players);
                 const totalPrize = jackpotState.prizePool;
-
                 if (players.length === 0 || totalPrize === 0) {
                     ctx.beginPath();
                     ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
@@ -4305,18 +4213,15 @@
                     ctx.fillText('No bets', centerX, centerY);
                     return;
                 }
-
                 let startAngle = -Math.PI / 2;
                 const colors = [
                     '#ff6b6b', '#4dabf7', '#51cf66', '#fcc419', '#da77f2',
                     '#ff922b', '#20c997', '#845ef7', '#f06595', '#5c7cfa'
                 ];
-
                 players.forEach((username, index) => {
                     const playerData = jackpotState.players[username];
                     const sliceAngle = (playerData.total / totalPrize) * 2 * Math.PI;
                     const color = colors[index % colors.length];
-
                     ctx.beginPath();
                     ctx.moveTo(centerX, centerY);
                     ctx.arc(centerX, centerY, radius, startAngle, startAngle + sliceAngle);
@@ -4326,7 +4231,6 @@
                     ctx.strokeStyle = '#0f172a';
                     ctx.lineWidth = 2;
                     ctx.stroke();
-
                     const midAngle = startAngle + sliceAngle / 2;
                     const textRadius = radius * 0.65;
                     const x = centerX + Math.cos(midAngle) * textRadius;
@@ -4337,7 +4241,6 @@
                     ctx.textAlign = 'center';
                     ctx.textBaseline = 'middle';
                     ctx.fillText(`${username} ${percent}%`, x, y);
-
                     startAngle += sliceAngle;
                 });
             } catch (e) {
@@ -4348,7 +4251,6 @@
         function updateJackpotUI() {
             const jackpotPage = document.getElementById('jackpot-page');
             if (!jackpotPage || jackpotPage.style.display === 'none') return;
-
             const timerEl = document.getElementById('jp-timer');
             const prizeEl = document.getElementById('jp-prize');
             const playersEl = document.getElementById('jp-players');
@@ -4421,9 +4323,7 @@
                     playersEl.appendChild(div);
                 });
             }
-
             drawJackpotWheel();
-
             if (document.getElementById('admin-modal').classList.contains('active')) {
                 updateAdminJackpotInfo();
             }
@@ -4437,7 +4337,6 @@
             const timerEl = document.getElementById('admin-jp-timer');
             const playersEl = document.getElementById('admin-jp-players');
             const prizeEl = document.getElementById('admin-jp-prize');
-
             if (statusEl) {
                 const statusMap = {
                     'waiting': '⏳ Waiting',
@@ -4470,7 +4369,7 @@
         }
 
         // ============================================================
-        //  PUBSUB – JACKPOT (ROUND ID & VERSION KONTROLLÜ, MERGE)
+        //  PUBSUB – JACKPOT (ROUND ID & VERSION KONTROLLÜ)
         // ============================================================
         function handleJackpotMessage(msg) {
             if (msg.sender === currentUser) return;
@@ -4479,13 +4378,11 @@
                 const incoming = msg.state;
                 if (!incoming.status) return;
 
-                // ---- Eski mesaj kontrolü ----
                 if (incoming.roundId && jackpotState.roundId) {
                     const incomingTs = parseInt(incoming.roundId.split('_')[0]) || 0;
                     const currentTs = parseInt(jackpotState.roundId.split('_')[0]) || 0;
                     if (incomingTs < currentTs) return;
                     if (incomingTs > currentTs) {
-                        // Yeni round, mevcut state'i tamamen değiştir
                         if (jackpotState.timerInterval) {
                             clearInterval(jackpotState.timerInterval);
                             jackpotState.timerInterval = null;
@@ -4513,12 +4410,10 @@
                     }
                 }
 
-                // Aynı roundId ise version kontrolü
                 if (incoming.version && jackpotState.version && incoming.version <= jackpotState.version) {
                     return;
                 }
 
-                // ---- Aynı round, daha yeni version ----
                 const oldInterval = jackpotState.timerInterval;
                 jackpotState.status = incoming.status;
                 jackpotState.timer = incoming.timer !== undefined ? incoming.timer : jackpotState.timer;
@@ -4528,11 +4423,9 @@
                 jackpotState.version = incoming.version || jackpotState.version + 1;
                 jackpotState.updatedAt = incoming.updatedAt || Date.now();
 
-                // ---- PLAYERS MERGE ----
                 const incomingPlayers = incoming.players || {};
                 const currentPlayers = jackpotState.players || {};
                 const mergedPlayers = { ...currentPlayers };
-
                 for (const [username, incomingData] of Object.entries(incomingPlayers)) {
                     if (!mergedPlayers[username]) {
                         mergedPlayers[username] = {
@@ -4562,7 +4455,6 @@
                 jackpotState.playerCount = Object.keys(jackpotState.players).length;
                 jackpotState.timerInterval = oldInterval;
 
-                // Eğer state 'finished' ise ve kazanan currentUser ise petleri ekle
                 if (incoming.status === 'finished' && incoming.winner && currentUser) {
                     const winnerLower = incoming.winner.toLowerCase();
                     const currentUserLower = currentUser.toLowerCase();
@@ -4596,7 +4488,6 @@
 
                 const username = msg.username;
                 const pets = msg.pets || [];
-
                 if (!jackpotState.players[username]) {
                     jackpotState.players[username] = {
                         pets: pets.slice(),
@@ -4770,7 +4661,6 @@
             container.innerHTML = '';
             chatHistory.forEach(msg => appendChatMessageDOM(msg.username, msg.text, msg.time));
         }
-
         function saveAndRenderChat(username, text, time) {
             const newMsg = { username, text, time };
             chatHistory.push(newMsg);
@@ -4778,7 +4668,6 @@
             localStorage.setItem('app_chat_history', JSON.stringify(chatHistory));
             appendChatMessageDOM(username, text, time);
         }
-
         function sendMessage() {
             if (!currentUser) { showToast('Please login first to send a message.'); return; }
             if (isMuted(currentUser)) {
@@ -4798,13 +4687,11 @@
             });
             input.value = '';
         }
-
         function appendChatMessageDOM(username, text, time) {
             const container = document.getElementById('chat-messages');
             const msgDiv = document.createElement('div');
             msgDiv.className = 'chat-msg';
             const mutedLabel = isMuted(username) ? `<span class="muted-label">[MUTED]</span>` : '';
-
             const rankIcon = getRankIcon(username);
             const rankLabel = getRankLabel(username);
             const rankHtml = rankIcon ?
@@ -4812,7 +4699,6 @@
                 '';
             const rankColor = getRankColor(username);
             const colorClass = rankColor ? `chat-username ${rankColor}` : 'chat-username';
-
             msgDiv.innerHTML = `
                     <div class="msg-content">
                         <div class="msg-top">
@@ -4857,21 +4743,17 @@
                     const isWinner = currentUser === record.winner;
                     const resultText = isWinner ? 'You Won!' : 'You Lost!';
                     const resultClass = isWinner ? 'win' : 'lose';
-
                     const hostPetsHtml = record.hostPets.map(p =>
                         `<img class="pet-img" src="${p.icon}" alt="${p.name}" title="${p.name}">`
                     ).join('');
                     const joinerPetsHtml = record.joinerPets.map(p =>
                         `<img class="pet-img" src="${p.icon}" alt="${p.name}" title="${p.name}">`
                     ).join('');
-
                     const yourPetsHtml = isHost ? hostPetsHtml : joinerPetsHtml;
                     const opponentPetsHtml = isHost ? joinerPetsHtml : hostPetsHtml;
-
                     const sideIcon = (side) => side === 'H' ? 'https://bloxluck.com/img/dog.png' :
                         'https://bloxluck.com/img/gem.png';
                     const sideClass = (side) => side === 'H' ? 'side-indicator' : 'opponent-side';
-
                     const card = document.createElement('div');
                     card.className = 'history-card';
                     card.innerHTML = `
@@ -4916,24 +4798,19 @@
                 const totalValue = sumPets(match.hostPets);
                 const range = getPetRange(match.hostPets);
                 const rangeStr = range.min !== 0 || range.max !== 0 ? `Range: ${range.min} - ${range.max}` : '';
-
                 const card = document.createElement('div');
                 card.className = 'match-card';
-
                 const hostInitial = getInitial(match.host);
                 const hostSideIcon = match.hostSide === 'H' ? 'https://bloxluck.com/img/dog.png' :
                     'https://bloxluck.com/img/gem.png';
-
                 const opponentName = match.joiner || '?';
                 const opponentInitial = getInitial(opponentName);
                 const opponentSide = match.hostSide === 'H' ? 'T' : 'H';
                 const opponentSideIcon = opponentSide === 'H' ? 'https://bloxluck.com/img/dog.png' :
                     'https://bloxluck.com/img/gem.png';
-
                 const petsHtml = match.hostPets.map(pet =>
                     `<div class="pet-circle"><img class="pet-img" src="${pet.icon}" alt="${pet.name}" title="${pet.name}"></div>`
                 ).join('');
-
                 let actionsHtml = '';
                 if (isMyMatch) {
                     actionsHtml = `
@@ -4946,7 +4823,6 @@
                             <button class="join-btn" onclick="openJoinSelectModal(${match.id})">Join</button>
                         `;
                 }
-
                 card.innerHTML = `
                         <div class="match-left">
                             <div class="avatar-circle" style="border-color: #4dabf7;">
@@ -4975,17 +4851,14 @@
                 const totalValue = sumPets(match.hostPets) + sumPets(match.joinerPets);
                 const winnerSide = match.winnerSide || (match.hostWins ? match.hostSide : match.joinerSide);
                 const winnerName = match.winner || '...';
-
                 const hostInitial = getInitial(match.host);
                 const hostSideIcon = match.hostSide === 'H' ? 'https://bloxluck.com/img/dog.png' :
                     'https://bloxluck.com/img/gem.png';
                 const joinerInitial = getInitial(match.joiner);
                 const joinerSideIcon = match.joinerSide === 'H' ? 'https://bloxluck.com/img/dog.png' :
                     'https://bloxluck.com/img/gem.png';
-
                 const card = document.createElement('div');
                 card.className = 'match-card ongoing-match';
-
                 const coinHtml = `
                         <div class="mini-coin-wrapper">
                             <div class="coin" id="mini-coin-${match.id}">
@@ -4994,7 +4867,6 @@
                             </div>
                         </div>
                     `;
-
                 card.innerHTML = `
                         <div class="match-left">
                             <span class="match-status">●</span>
@@ -5023,7 +4895,6 @@
                     const miniCoin = document.getElementById(`mini-coin-${match.id}`);
                     const resultDiv = document.getElementById(`mini-result-${match.id}`);
                     if (!miniCoin) return;
-
                     const endDegree = (10 * 360) + (winnerSide === 'H' ? 0 : 180);
                     const styleSheet = document.createElement('style');
                     const keyframeName = `mini_flip_${match.id}`;
@@ -5031,7 +4902,6 @@
                         `@keyframes ${keyframeName} { 0% { transform: rotateY(0deg); } 100% { transform: rotateY(${endDegree}deg); } }`;
                     document.head.appendChild(styleSheet);
                     miniCoin.style.animation = `${keyframeName} 2.2s cubic-bezier(0.15, 0.85, 0.35, 1) forwards`;
-
                     setTimeout(() => {
                         miniCoin.style.animation = 'none';
                         miniCoin.style.transform = `rotateY(${endDegree}deg)`;
@@ -5049,19 +4919,15 @@
             const match = globalMatches.find(m => m.id === matchId);
             if (!match) return showToast('Match not found!');
             const content = document.getElementById('view-match-content');
-
             const hostPetsHtml = match.hostPets.map(p =>
                 `<img class="pet-img" src="${p.icon}" alt="${p.name}" title="${p.name}" style="width:44px;height:44px;">`
             ).join('');
-
             const hostSideImg = match.hostSide === 'H' ? 'https://bloxluck.com/img/dog.png' :
                 'https://bloxluck.com/img/gem.png';
             const hostSide = match.hostSide || '?';
-
             const joinerSide = match.hostSide === 'H' ? 'T' : 'H';
             const joinerSideImg = joinerSide === 'H' ? 'https://bloxluck.com/img/dog.png' :
                 'https://bloxluck.com/img/gem.png';
-
             let joinerPetsHtml = '';
             if (match.joinerPets && match.joinerPets.length > 0) {
                 joinerPetsHtml = match.joinerPets.map(p =>
@@ -5071,7 +4937,6 @@
                 joinerPetsHtml =
                     `<div class="pet-img empty-pet" style="width:44px;height:44px;border-radius:50%;border:1px dashed #4dabf7;opacity:0.4;"></div>`;
             }
-
             let resultHtml = '';
             if (match.status === 'ongoing' && match.winnerSide) {
                 const winnerSide = match.winnerSide;
@@ -5102,7 +4967,6 @@
                     <div style="text-align:center;margin-top:16px;color:#868e96;font-size:14px;">Match not started yet.</div>
                 `;
             }
-
             let html = `
                     <div class="view-profile">
                         <div class="player">
@@ -5137,7 +5001,6 @@
             selectedPetsForMatch = [];
             selectedSideCreate = null;
             document.querySelectorAll('#create-modal .side-btn').forEach(btn => btn.classList.remove('selected'));
-
             if (inv.length === 0) {
                 grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;color:#868e96;padding:20px;">No pets in inventory.</div>';
             } else {
@@ -5171,22 +5034,17 @@
             document.getElementById('create-post-btn').disabled = false;
             openModal('create-modal');
         }
-
         function updateCreateTotal() {
             const total = sumPets(selectedPetsForMatch);
             document.getElementById('create-total-value').textContent =
                 `Total Value: ${total}`;
         }
-
         function postMatch() {
             const btn = document.getElementById('create-post-btn');
             if (btn) btn.disabled = true;
-
             if (selectedPetsForMatch.length === 0) { showToast('Select at least one pet!'); if (btn) btn.disabled = false; return; }
             if (!selectedSideCreate) { showToast('Please select a side (H or T)!'); if (btn) btn.disabled = false; return; }
-
             removePetsFromInventory(currentUser, selectedPetsForMatch);
-
             const newMatch = {
                 id: Date.now(),
                 host: currentUser,
@@ -5203,7 +5061,6 @@
             closeModal('create-modal');
             if (btn) btn.disabled = false;
         }
-
         function cancelMyMatch(matchId) {
             const matchIdx = globalMatches.findIndex(m => m.id === matchId);
             if (matchIdx !== -1) {
@@ -5224,12 +5081,10 @@
             if (!currentUser) { showToast('Please login first to join a match.'); return; }
             matchToJoin = globalMatches.find(m => m.id === matchId);
             if (!matchToJoin) return;
-
             const inv = getUserInventory(currentUser);
             const grid = document.getElementById('join-modal-inventory');
             grid.innerHTML = '';
             selectedPetsForJoin = [];
-
             const range = getPetRange(matchToJoin.hostPets);
             const rangeInfo = document.getElementById('join-range-info');
             if (range.min !== 0 || range.max !== 0) {
@@ -5238,7 +5093,6 @@
                 rangeInfo.textContent = '';
             }
             document.getElementById('join-range-error').style.display = 'none';
-
             if (inv.length === 0) {
                 grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;color:#868e96;padding:20px;">No pets in inventory.</div>';
             } else {
@@ -5273,19 +5127,15 @@
             document.getElementById('join-post-btn').disabled = false;
             openModal('join-select-modal');
         }
-
         function updateJoinTotal() {
             const total = sumPets(selectedPetsForJoin);
             document.getElementById('join-total-value').textContent =
                 `Total Value: ${total} (${selectedPetsForJoin.length}/${MAX_PETS_PER_MATCH})`;
         }
-
         function confirmJoinMatch() {
             const btn = document.getElementById('join-post-btn');
             if (btn) btn.disabled = true;
-
             if (selectedPetsForJoin.length === 0) { showToast('Select at least one pet!'); if (btn) btn.disabled = false; return; }
-
             const range = getPetRange(matchToJoin.hostPets);
             const totalValue = sumPets(selectedPetsForJoin);
             if (range.min !== 0 || range.max !== 0) {
@@ -5296,10 +5146,8 @@
                 }
             }
             document.getElementById('join-range-error').style.display = 'none';
-
             const joinerSide = matchToJoin.hostSide === 'H' ? 'T' : 'H';
             removePetsFromInventory(currentUser, selectedPetsForJoin);
-
             const hostWins = Math.random() < 0.5;
             closeModal('join-select-modal');
             pubnub.publish({
@@ -5320,7 +5168,7 @@
         }
 
         // ============================================================
-        //  COIN FLIP - FIXED: kazanan tüm petleri alır
+        //  COIN FLIP
         // ============================================================
         function executeCoinFlip(gameData) {
             const flipModal = document.getElementById('flip-modal');
@@ -5333,38 +5181,28 @@
             closeBtn.style.display = 'none';
             openModal('flip-modal');
             isFlipping = true;
-
             coin.style.animation = 'none';
             coin.offsetHeight;
-
             const winnerSide = gameData.hostWins ? gameData.hostSide : gameData.joinerSide;
             const endDegree = (10 * 360) + (winnerSide === 'H' ? 0 : 180);
-
             const durationSec = gameData.hostWins ? 2.1 : 2.3;
             const keyframeName = `flip_${Date.now()}`;
-
             const styleSheet = document.createElement('style');
             styleSheet.innerHTML =
                 `@keyframes ${keyframeName} { 0% { transform: rotateY(0deg); } 100% { transform: rotateY(${endDegree}deg); } }`;
             document.head.appendChild(styleSheet);
             coin.style.animation = `${keyframeName} ${durationSec}s cubic-bezier(0.15, 0.85, 0.35, 1) forwards`;
-
             setTimeout(() => {
                 isFlipping = false;
                 coin.style.animation = 'none';
                 coin.style.transform = `rotateY(${endDegree}deg)`;
-
-                if (styleSheet.parentNode) {
-                    document.head.removeChild(styleSheet);
-                }
-
+                if (styleSheet.parentNode) document.head.removeChild(styleSheet);
                 const winner = gameData.hostWins ? gameData.host : gameData.joiner;
                 const loser = gameData.hostWins ? gameData.joiner : gameData.host;
                 const allPets = [...gameData.hostPets, ...gameData.joinerPets];
                 const totalValue = sumPets(allPets);
                 const now = new Date();
                 const dateStr = now.toLocaleString();
-
                 const historyRecord = {
                     date: dateStr,
                     host: gameData.host,
@@ -5378,10 +5216,8 @@
                     winnerSide: winnerSide,
                     totalValue: totalValue
                 };
-
                 const hostTotal = sumPets(gameData.hostPets);
                 const joinerTotal = sumPets(gameData.joinerPets);
-
                 if (gameData.host) {
                     const hostWon = winner === gameData.host;
                     updateStatsAfterMatch(gameData.host, hostWon, hostTotal);
@@ -5390,11 +5226,9 @@
                     const joinerWon = winner === gameData.joiner;
                     updateStatsAfterMatch(gameData.joiner, joinerWon, joinerTotal);
                 }
-
                 if (currentUser === winner) {
                     statusEl.style.color = '#51cf66';
                     statusEl.textContent = `CONGRATULATIONS! You won all pets! (Value: ${totalValue})`;
-                    // Kazanan tüm petleri alır
                     allPets.forEach(pet => addPetToInventory(currentUser, pet));
                 } else if (currentUser === loser) {
                     statusEl.style.color = '#ff6b6b';
@@ -5403,11 +5237,9 @@
                     statusEl.style.color = '#f1f3f5';
                     statusEl.textContent = `${winner} won the match!`;
                 }
-
                 if (currentUser === gameData.host || currentUser === gameData.joiner) {
                     addMatchToHistory(currentUser, historyRecord);
                 }
-
                 closeBtn.style.display = 'block';
             }, durationSec * 1000 + 50);
         }
@@ -5422,7 +5254,6 @@
             }
             openModal('deposit-modal');
         }
-
         function openWithdrawModal() {
             if (!currentUser) { showToast('Please login first.'); return; }
             const inv = getUserInventory(currentUser);
@@ -5430,7 +5261,6 @@
             grid.innerHTML = '';
             selectedWithdrawPets = [];
             withdrawPetList = inv.slice();
-
             if (inv.length === 0) {
                 grid.innerHTML =
                     '<div style="grid-column:1/-1;text-align:center;color:#868e96;padding:20px;">No pets to withdraw.</div>';
@@ -5463,7 +5293,6 @@
             document.getElementById('withdraw-status').textContent = '';
             openModal('withdraw-modal');
         }
-
         function confirmWithdraw() {
             if (selectedWithdrawPets.length === 0) {
                 showToast('Select at least one pet to withdraw.');
@@ -5491,7 +5320,6 @@
         function openProfile(username) {
             if (!username) return;
             const stats = getUserStats(username);
-
             const rank = getUserRank(username);
             const rankIcon = getRankIcon(username);
             const rankLabel = getRankLabel(username);
@@ -5502,12 +5330,10 @@
                 `<span>${rankLabel}</span> ${rankHtml}` :
                 '';
             const rankColorClass = rank ? `profile-rank-label ${rank}` : '';
-
             document.getElementById('profile-username').innerHTML = `${escapeHTML(username)}`;
             const rankLabelEl = document.getElementById('profile-rank-label');
             rankLabelEl.className = `profile-rank-label ${rankColorClass}`;
             rankLabelEl.innerHTML = rankLabelHtml;
-
             const profitClass = stats.totalProfit < 0 ? 'negative' : '';
             const statsHtml = `
                     <div class="profile-stat">
@@ -5528,7 +5354,6 @@
                     </div>
                 `;
             document.getElementById('profile-stats').innerHTML = statsHtml;
-
             const tipBtn = document.getElementById('profile-tip-btn');
             if (currentUser && username.toLowerCase() !== currentUser.toLowerCase()) {
                 tipBtn.style.display = 'block';
@@ -5537,15 +5362,12 @@
             } else {
                 tipBtn.style.display = 'none';
             }
-
             const lbModal = document.getElementById('leaderboard-modal');
             if (lbModal && lbModal.classList.contains('active')) {
                 const profileOverlay = document.getElementById('profile-modal');
                 profileOverlay.style.zIndex = '201';
             }
-
             openModal('profile-modal');
-
             const profileOverlay = document.getElementById('profile-modal');
             const closeHandler = () => {
                 profileOverlay.style.zIndex = '200';
@@ -5566,12 +5388,10 @@
                 else return showToast('Target user not found.');
             }
             tipTargetUser = targetUser;
-
             const inv = getUserInventory(currentUser);
             const grid = document.getElementById('tip-pets-grid');
             grid.innerHTML = '';
             selectedTipPets = [];
-
             if (inv.length === 0) {
                 grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;color:#868e96;padding:20px;">No pets in inventory.</div>';
             } else {
@@ -5603,7 +5423,6 @@
             document.getElementById('tip-status').textContent = '';
             openModal('tip-modal');
         }
-
         function confirmTip() {
             if (selectedTipPets.length === 0) {
                 showToast('Select at least one pet to tip.');
@@ -5613,27 +5432,21 @@
                 showToast('Target user not found.');
                 return;
             }
-
             removePetsFromInventory(currentUser, selectedTipPets);
-
             selectedTipPets.forEach(pet => {
                 addPetToInventory(tipTargetUser, pet);
             });
-
             const status = document.getElementById('tip-status');
             status.style.color = '#51cf66';
             status.textContent = `✅ ${selectedTipPets.length} pet(s) tipped to ${tipTargetUser}!`;
             showToast(`Tipped ${selectedTipPets.length} pet(s) to ${tipTargetUser}!`);
-
             selectedTipPets.forEach(pet => {
                 broadcastInventoryUpdate(tipTargetUser, 'add', pet);
             });
-
             selectedTipPets = [];
             document.getElementById('tip-total-info').textContent = `Selected: 0 pets`;
             const grid = document.getElementById('tip-pets-grid');
             grid.querySelectorAll('.tip-pet-item').forEach(el => el.classList.remove('selected'));
-
             setTimeout(() => {
                 openTipModal(tipTargetUser);
             }, 1000);
@@ -5654,18 +5467,15 @@
             updateAdminJackpotInfo();
             switchAdminTab('tab-users');
         }
-
         function switchAdminTab(tabId) {
             document.querySelectorAll('.admin-tab-content').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.admin-panel-tabs .tab-btn').forEach(el => el.classList.remove('active'));
             document.getElementById(tabId).classList.add('active');
             document.querySelector(`.admin-panel-tabs .tab-btn[data-tab="${tabId}"]`).classList.add('active');
-
             if (tabId === 'tab-users') adminRefreshUsers();
             if (tabId === 'tab-muted') adminRenderMuted();
             if (tabId === 'tab-jackpot') updateAdminJackpotInfo();
         }
-
         function adminRefreshUsers() {
             const list = document.getElementById('admin-user-list');
             let users = getAllUsernames();
@@ -5699,7 +5509,6 @@
                 list.appendChild(div);
             });
         }
-
         function adminLoadUserPets() {
             const input = document.getElementById('admin-pet-username-input');
             const username = input.value.trim();
@@ -5721,7 +5530,6 @@
             document.getElementById('admin-pet-status').textContent = '';
             adminSelectedPetIndex = null;
         }
-
         function adminSelectPetForRemove(idx) {
             adminSelectedPetIndex = idx;
             document.querySelectorAll('#admin-user-pets-display > div').forEach(el => {
@@ -5731,7 +5539,6 @@
             if (el) el.style.borderColor = '#ff6b6b';
             document.getElementById('admin-pet-status').textContent = `Selected: ${adminTargetPets[idx]?.name || ''}`;
         }
-
         function adminRemoveSelectedPet() {
             if (adminSelectedPetIndex === null || !adminCurrentTargetUser) {
                 showToast('Select a pet to remove.');
@@ -5758,7 +5565,6 @@
                 showToast('Pet not found in inventory.');
             }
         }
-
         function adminClearUserPets() {
             if (!adminCurrentTargetUser) { showToast('Load a user first.'); return; }
             if (!confirm(`Clear ALL pets from ${adminCurrentTargetUser}?`)) return;
@@ -5771,7 +5577,6 @@
             adminRefreshUsers();
             broadcastInventoryUpdate(adminCurrentTargetUser, 'clear', null);
         }
-
         function adminOpenAddPet() {
             if (!adminCurrentTargetUser) { showToast('Load a user first.'); return; }
             document.getElementById('admin-add-pet-user').value = adminCurrentTargetUser;
@@ -5781,23 +5586,19 @@
             document.getElementById('admin-add-pet-status').textContent = '';
             openModal('admin-add-pet-modal');
         }
-
         function adminConfirmAddPet() {
             const username = document.getElementById('admin-add-pet-user').value;
             const name = document.getElementById('admin-add-pet-name').value.trim();
             const icon = document.getElementById('admin-add-pet-icon').value.trim();
             const value = parseInt(document.getElementById('admin-add-pet-value').value) || 0;
-
             if (!name) { showToast('Enter a pet name.'); return; }
             if (!icon) { showToast('Enter a pet icon URL.'); return; }
-
             const pet = {
                 id: Date.now() + Math.random() * 1000,
                 name: name,
                 icon: icon,
                 value: value
             };
-
             addPetToInventory(username, pet);
             document.getElementById('admin-add-pet-status').textContent = `✅ Added ${name} to ${username}`;
             showToast(`Added ${name} to ${username}`);
@@ -5809,7 +5610,6 @@
             adminRefreshUsers();
             broadcastInventoryUpdate(username, 'add', pet);
         }
-
         function adminAddPetToUser(username) {
             adminCurrentTargetUser = username;
             document.getElementById('admin-pet-username-input').value = username;
@@ -5817,14 +5617,12 @@
             switchAdminTab('tab-pets');
             setTimeout(() => adminOpenAddPet(), 300);
         }
-
         function adminViewUserPets(username) {
             adminCurrentTargetUser = username;
             document.getElementById('admin-pet-username-input').value = username;
             adminLoadUserPets();
             switchAdminTab('tab-pets');
         }
-
         function adminWipeUser(username) {
             if (!confirm(`Wipe ALL pets from ${username}? This cannot be undone.`)) return;
             setUserInventory(username, []);
@@ -5836,7 +5634,6 @@
             }
             broadcastInventoryUpdate(username, 'clear', null);
         }
-
         function adminRenderMuted() {
             const list = document.getElementById('admin-muted-list');
             const muted = getMutedUsers();
@@ -5860,7 +5657,6 @@
             });
             list.appendChild(container);
         }
-
         function adminMuteUser() {
             const input = document.getElementById('admin-mute-input');
             const hoursInput = document.getElementById('admin-mute-hours');
@@ -5878,7 +5674,6 @@
             adminRenderMuted();
             adminRefreshUsers();
         }
-
         function adminUnmuteUser(username) {
             let muted = getMutedUsers();
             const key = username.toLowerCase();
