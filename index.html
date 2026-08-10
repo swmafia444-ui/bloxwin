@@ -3509,6 +3509,9 @@
             setHistory(username, history);
         }
 
+        // ============================================================
+        //  VIEW HISTORY MATCH (GÜNCELLENDİ)
+        // ============================================================
         function viewHistoryMatch(record) {
             const content = document.getElementById('view-history-content');
 
@@ -3525,43 +3528,42 @@
             const joinerSideImg = record.joinerSide === 'H' ? 'https://bloxluck.com/img/dog.png' :
                 'https://bloxluck.com/img/gem.png';
 
-            const winnerName = record.winner || '...';
-            const winnerSide = record.winnerSide || '?';
+            const winnerSide = record.winnerSide || (record.hostSide === 'H' ? 'T' : 'H');
             const isHeads = winnerSide === 'H';
             const endDegree = (10 * 360) + (isHeads ? 0 : 180);
             const coinStyle = `transform: rotateY(${endDegree}deg);`;
 
             let html = `
-                    <div class="view-profile">
-                        <div class="player">
-                            <div class="name">${record.host}</div>
-                            <div class="divider"></div>
-                            <div class="pets">${hostPetsHtml}</div>
-                            <div class="view-side"><img src="${hostSideImg}" alt="${record.hostSide}"> Side: ${record.hostSide}</div>
-                        </div>
-                        <div class="vs">VS</div>
-                        <div class="player">
-                            <div class="name">${record.joiner || 'No opponent'}</div>
-                            <div class="divider"></div>
-                            <div class="pets">${joinerPetsHtml}</div>
-                            <div class="view-side"><img src="${joinerSideImg}" alt="${record.joinerSide}"> Side: ${record.joinerSide}</div>
-                        </div>
+                <div class="view-profile">
+                    <div class="player">
+                        <div class="name">${record.host}</div>
+                        <div class="divider"></div>
+                        <div class="pets">${hostPetsHtml}</div>
+                        <div class="view-side"><img src="${hostSideImg}" alt="${record.hostSide}"> Side: ${record.hostSide}</div>
                     </div>
-                    <div class="view-status">Match finished</div>
-                    <div style="display:flex;justify-content:center;align-items:center;gap:20px;margin-top:16px;padding-top:16px;border-top:1px solid var(--border-color);">
-                        <div style="text-align:center;">
-                            <div style="width:60px;height:60px;margin:0 auto;perspective:600px;">
-                                <div style="width:100%;height:100%;position:relative;transform-style:preserve-3d;border-radius:50%;${coinStyle}">
-                                    <div style="position:absolute;width:100%;height:100%;border-radius:50%;backface-visibility:hidden;background-image:url('https://bloxluck.com/img/dog.png');background-size:cover;border:2px solid #fcc419;transform:rotateY(0deg);background-color:#0f172a;"></div>
-                                    <div style="position:absolute;width:100%;height:100%;border-radius:50%;backface-visibility:hidden;background-image:url('https://bloxluck.com/img/gem.png');background-size:cover;border:2px solid #fcc419;transform:rotateY(180deg);background-color:#0f172a;"></div>
-                                </div>
+                    <div class="vs">VS</div>
+                    <div class="player">
+                        <div class="name">${record.joiner || 'No opponent'}</div>
+                        <div class="divider"></div>
+                        <div class="pets">${joinerPetsHtml}</div>
+                        <div class="view-side"><img src="${joinerSideImg}" alt="${record.joinerSide}"> Side: ${record.joinerSide}</div>
+                    </div>
+                </div>
+                <div class="view-status">Match finished - Winner: ${record.winner || '...'}</div>
+                <div style="display:flex;justify-content:center;align-items:center;gap:20px;margin-top:16px;padding-top:16px;border-top:1px solid var(--border-color);">
+                    <div style="text-align:center;">
+                        <div style="width:80px;height:80px;margin:0 auto;perspective:600px;">
+                            <div style="width:100%;height:100%;position:relative;transform-style:preserve-3d;border-radius:50%;${coinStyle}">
+                                <div style="position:absolute;width:100%;height:100%;border-radius:50%;backface-visibility:hidden;background-image:url('https://bloxluck.com/img/dog.png');background-size:cover;border:2px solid #fcc419;transform:rotateY(0deg);background-color:#0f172a;"></div>
+                                <div style="position:absolute;width:100%;height:100%;border-radius:50%;backface-visibility:hidden;background-image:url('https://bloxluck.com/img/gem.png');background-size:cover;border:2px solid #fcc419;transform:rotateY(180deg);background-color:#0f172a;"></div>
                             </div>
-                            <div style="margin-top:8px;font-weight:700;color:var(--accent);">Winner: ${winnerName}</div>
-                            <div style="font-size:13px;color:#868e96;">Side: ${winnerSide}</div>
-                            <div style="font-size:13px;color:#868e96;">Total Value: ${record.totalValue}</div>
                         </div>
+                        <div style="margin-top:8px;font-weight:700;color:var(--accent);">Winner: ${record.winner}</div>
+                        <div style="font-size:13px;color:#868e96;">Side: ${winnerSide}</div>
+                        <div style="font-size:13px;color:#868e96;">Total Value: ${record.totalValue}</div>
                     </div>
-                `;
+                </div>
+            `;
 
             content.innerHTML = html;
             openModal('view-history-modal');
@@ -4510,49 +4512,64 @@
                 const incoming = msg.state;
                 if (!incoming.status) return;
 
-                // Eğer kendi timer'ımız çalışıyorsa, gelen timer'ı IGNORE et, sadece diğer bilgileri al
-                if (jackpotState.timerInterval) {
-                    // Sadece players, prizePool, status gibi bilgileri güncelle, timer'ı değiştirme
-                    if (incoming.status === 'spinning' || incoming.status === 'finished') {
-                        // Spin veya finish durumunda timer'ı durdur ve state'i güncelle
-                        if (jackpotState.timerInterval) {
-                            clearInterval(jackpotState.timerInterval);
-                            jackpotState.timerInterval = null;
-                        }
-                        jackpotState.status = incoming.status;
-                        jackpotState.players = incoming.players || {};
-                        jackpotState.prizePool = incoming.prizePool || 0;
-                        jackpotState.winner = incoming.winner || null;
-                        jackpotState.winnerPets = incoming.winnerPets || [];
-                        jackpotState.playerCount = Object.keys(jackpotState.players).length;
-                        saveJackpotState();
-                        updateJackpotUI();
+                // Preserve current players and pets (merge, don't overwrite)
+                if (!jackpotState.players) jackpotState.players = {};
+                if (!incoming.players) incoming.players = {};
+
+                // Start with incoming players
+                const mergedPlayers = { ...incoming.players };
+
+                // Merge existing player data to avoid losing pets
+                Object.keys(jackpotState.players).forEach(username => {
+                    const currentPlayer = jackpotState.players[username];
+                    if (!mergedPlayers[username]) {
+                        mergedPlayers[username] = currentPlayer;
                         return;
                     }
-                    // Diğer durumlarda timer'ı koru, sadece players ve prizePool'u güncelle
-                    jackpotState.players = incoming.players || {};
-                    jackpotState.prizePool = incoming.prizePool || 0;
-                    jackpotState.playerCount = Object.keys(jackpotState.players).length;
-                    jackpotState.winner = incoming.winner || null;
-                    jackpotState.winnerPets = incoming.winnerPets || [];
-                    saveJackpotState();
-                    updateJackpotUI();
-                    return;
-                }
 
-                // Eğer kendi timer'ımız çalışmıyorsa, gelen state'i tamamen uygula
-                jackpotState.status = incoming.status;
-                jackpotState.timer = incoming.timer !== undefined ? incoming.timer : 90;
-                jackpotState.maxTimer = incoming.maxTimer || 90;
-                jackpotState.players = incoming.players || {};
-                jackpotState.prizePool = incoming.prizePool || 0;
-                jackpotState.winner = incoming.winner || null;
-                jackpotState.winnerPets = incoming.winnerPets || [];
-                jackpotState.playerCount = Object.keys(jackpotState.players).length;
+                    const incomingPlayer = mergedPlayers[username];
+                    // Combine pets from both
+                    const combinedPets = [
+                        ...(currentPlayer.pets || []),
+                        ...(incomingPlayer.pets || [])
+                    ];
 
+                    // Deduplicate pets (by id or name+value+icon)
+                    const uniquePets = combinedPets.filter((pet, index, array) =>
+                        index === array.findIndex(p =>
+                            (pet.id && p.id && pet.id === p.id) ||
+                            (
+                                pet.name === p.name &&
+                                pet.value === p.value &&
+                                pet.image === p.image
+                            )
+                        )
+                    );
+
+                    mergedPlayers[username] = {
+                        ...incomingPlayer,
+                        pets: uniquePets,
+                        total: uniquePets.reduce((sum, pet) => sum + (Number(pet.value) || 0), 0)
+                    };
+                });
+
+                // Update jackpotState while preserving timerInterval
+                jackpotState = {
+                    ...jackpotState,
+                    ...incoming,
+                    players: mergedPlayers,
+                    timerInterval: jackpotState.timerInterval
+                };
+
+                // Recalculate prizePool and playerCount
+                jackpotState.prizePool = Object.values(mergedPlayers).reduce((sum, p) => sum + (p.total || 0), 0);
+                jackpotState.playerCount = Object.keys(mergedPlayers).length;
+
+                // If we have no running timer but state is active, start it
                 if (jackpotState.status === 'active' && jackpotState.timer > 0 && !jackpotState.timerInterval) {
                     startJackpotTimer();
                 }
+
                 saveJackpotState();
                 updateJackpotUI();
                 return;
