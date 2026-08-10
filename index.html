@@ -3831,7 +3831,7 @@
         }
 
         // ============================================================
-        //  JACKPOT - FIXED (weighted random, pet ekleme/çıkarma düzeltildi)
+        //  JACKPOT - FIXED (FULL SENKRONİZASYON)
         // ============================================================
 
         function loadJackpotState() {
@@ -3868,6 +3868,10 @@
         }
 
         function broadcastJackpotState() {
+            // prizePool ve playerCount'u yeniden hesapla (güvence)
+            jackpotState.prizePool = Object.values(jackpotState.players).reduce((sum, p) => sum + (p.total || 0), 0);
+            jackpotState.playerCount = Object.keys(jackpotState.players).length;
+
             const stateToSend = {
                 status: jackpotState.status,
                 timer: jackpotState.timer,
@@ -4047,6 +4051,7 @@
             openModal('jackpot-join-modal');
         }
 
+        // FIXED: Önce state güncellenir, sonra broadcast ve envanter silme
         function confirmJackpotJoin() {
             if (selectedJackpotPetIds.length === 0) {
                 showToast('Select at least one pet.');
@@ -4077,15 +4082,21 @@
                 return;
             }
 
-            // Envanterden çıkar
-            removePetsFromInventory(currentUser, selectedPets);
-
-            // Jackpot state'e ekle
+            // ---- 1. Önce state'i güncelle (henüz envanterden silme) ----
             if (jackpotState.players[currentUser]) {
                 const oldTotal = jackpotState.players[currentUser].total;
                 jackpotState.prizePool -= oldTotal;
-                jackpotState.players[currentUser].pets.push(...selectedPets);
-                jackpotState.players[currentUser].total = sumPets(jackpotState.players[currentUser].pets);
+                // Mevcut pets'leri koruyarak yeni pets'leri ekle
+                const mergedPets = [...jackpotState.players[currentUser].pets, ...selectedPets];
+                // ID bazlı unique
+                const uniquePets = mergedPets.filter((pet, idx, arr) =>
+                    idx === arr.findIndex(p =>
+                        (p.id && pet.id && p.id === pet.id) ||
+                        (p.name === pet.name && p.value === pet.value && p.icon === pet.icon)
+                    )
+                );
+                jackpotState.players[currentUser].pets = uniquePets;
+                jackpotState.players[currentUser].total = sumPets(uniquePets);
                 jackpotState.prizePool += jackpotState.players[currentUser].total;
             } else {
                 jackpotState.players[currentUser] = {
@@ -4096,15 +4107,22 @@
                 jackpotState.playerCount = Object.keys(jackpotState.players).length;
             }
 
+            // ---- 2. State'i kaydet ve yayınla ----
+            saveJackpotState();
             broadcastJackpotState();
 
+            // ---- 3. Envanterden petleri sil (state başarıyla güncellendikten sonra) ----
+            removePetsFromInventory(currentUser, selectedPets);
+
+            // ---- 4. Timer başlat (gerekirse) ----
             if (jackpotState.playerCount >= 2 && jackpotState.status === 'waiting' && !jackpotState.timerInterval) {
                 startJackpotTimer();
                 broadcastJackpotState();
             }
 
-            closeModal('jackpot-join-modal');
+            // ---- 5. UI güncelle ve modalı kapat ----
             updateJackpotUI();
+            closeModal('jackpot-join-modal');
             showToast(`Added ${selectedPets.length} pet(s) to Jackpot!`);
             selectedJackpotPetIds = [];
             if (btn) btn.disabled = false;
@@ -4419,7 +4437,7 @@
         }
 
         // ============================================================
-        //  PUBSUB – JACKPOT (senkron)
+        //  PUBSUB – JACKPOT (FIXED: MERGE)
         // ============================================================
         function handleJackpotMessage(msg) {
             if (msg.sender === currentUser) return;
@@ -4429,16 +4447,57 @@
                 if (!incoming.status) return;
 
                 const oldInterval = jackpotState.timerInterval;
-                jackpotState = {
-                    ...incoming,
-                    players: JSON.parse(JSON.stringify(incoming.players || {})),
-                    timerInterval: oldInterval
-                };
+                const oldStatus = jackpotState.status;
 
+                // Temel alanları kopyala
+                jackpotState.status = incoming.status;
+                jackpotState.timer = incoming.timer !== undefined ? incoming.timer : jackpotState.timer;
+                jackpotState.maxTimer = incoming.maxTimer || jackpotState.maxTimer || 90;
+                jackpotState.winner = incoming.winner || null;
+                jackpotState.winnerPets = incoming.winnerPets || [];
+                jackpotState.timerInterval = oldInterval;
+
+                // ---- PLAYERS MERGE ----
+                const incomingPlayers = incoming.players || {};
+                const currentPlayers = jackpotState.players || {};
+                const mergedPlayers = { ...currentPlayers };
+
+                for (const [username, incomingData] of Object.entries(incomingPlayers)) {
+                    if (!mergedPlayers[username]) {
+                        mergedPlayers[username] = {
+                            pets: incomingData.pets ? incomingData.pets.slice() : [],
+                            total: incomingData.total || 0
+                        };
+                    } else {
+                        const existingPets = mergedPlayers[username].pets || [];
+                        const newPets = incomingData.pets || [];
+                        const petMap = new Map();
+                        existingPets.forEach(p => petMap.set(p.id, p));
+                        newPets.forEach(p => {
+                            if (!petMap.has(p.id)) {
+                                petMap.set(p.id, p);
+                            }
+                        });
+                        const mergedPets = Array.from(petMap.values());
+                        mergedPlayers[username] = {
+                            pets: mergedPets,
+                            total: sumPets(mergedPets)
+                        };
+                    }
+                }
+
+                jackpotState.players = mergedPlayers;
+
+                // ---- prizePool ve playerCount'u yeniden hesapla ----
                 jackpotState.prizePool = Object.values(jackpotState.players).reduce((sum, p) => sum + (p.total || 0), 0);
                 jackpotState.playerCount = Object.keys(jackpotState.players).length;
 
-                // Eğer kazanan currentUser ise petleri ekle
+                // ---- Eğer state 'active' ise ve timer çalışmıyorsa başlat ----
+                if (jackpotState.status === 'active' && jackpotState.timer > 0 && !jackpotState.timerInterval) {
+                    startJackpotTimer(false);
+                }
+
+                // ---- Eğer state 'finished' ise ve kazanan currentUser ise petleri ekle ----
                 if (incoming.status === 'finished' && incoming.winner && currentUser) {
                     const winnerLower = incoming.winner.toLowerCase();
                     const currentUserLower = currentUser.toLowerCase();
@@ -4447,12 +4506,10 @@
                         incoming.winnerPets.forEach(pet => {
                             if (addPetToInventory(currentUser, pet)) added++;
                         });
-                        if (added > 0) showToast(`🎉 You won the Jackpot! ${added} pets added.`, 6000);
+                        if (added > 0) {
+                            showToast(`🎉 You won the Jackpot! ${added} pets added.`, 6000);
+                        }
                     }
-                }
-
-                if (jackpotState.status === 'active' && jackpotState.timer > 0 && !jackpotState.timerInterval) {
-                    startJackpotTimer(false);
                 }
 
                 saveJackpotState();
