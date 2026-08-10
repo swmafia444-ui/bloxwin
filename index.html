@@ -7,7 +7,6 @@
     <script src="https://cdn.pubnub.com/sdk/javascript/pubnub.7.2.2.min.js">
     </script>
     <style>
-        /* ... tüm stiller aynen korunmuştur ... */
         :root {
             --primary: #ff6b6b;
             --secondary: #51cf66;
@@ -1676,7 +1675,6 @@
             padding: 6px 16px;
         }
 
-        /* Admin Jackpot tab */
         .admin-jackpot-info {
             background: #0f172a;
             border-radius: 12px;
@@ -1839,7 +1837,7 @@
             font-weight: 600;
         }
 
-        /* JACKPOT SAYFASI */
+        /* JACKPOT */
         .jackpot-page .jackpot-body {
             display: flex;
             gap: 30px;
@@ -2078,7 +2076,6 @@
             display: none;
         }
 
-        /* Mobile */
         @media (max-width: 768px) {
             body {
                 padding-right: 0;
@@ -2403,7 +2400,7 @@
 
     <!-- Main Content -->
     <div class="main-layout" id="main-layout">
-        <!-- Coinflip sayfası -->
+        <!-- Coinflip -->
         <div class="coinflip-page" id="coinflip-page">
             <div>
                 <div class="section-header">
@@ -2417,7 +2414,7 @@
             </div>
         </div>
 
-        <!-- Jackpot sayfası -->
+        <!-- Jackpot -->
         <div class="jackpot-page" id="jackpot-page">
             <div class="jackpot-header">
                 <div class="jp-title">
@@ -2450,7 +2447,7 @@
         </div>
     </div>
 
-    <!-- Chat Sidebar -->
+    <!-- Chat -->
     <div class="chat-card" id="chat-card">
         <div class="chat-header">
             <div class="left">
@@ -2749,7 +2746,7 @@
         </div>
     </div>
 
-    <!-- Jackpot Join Modal (pet seçme) -->
+    <!-- Jackpot Join Modal -->
     <div class="modal-overlay" id="jackpot-join-modal">
         <div class="modal" style="max-width:480px;">
             <h2>Select pets to join Jackpot (max 5)</h2>
@@ -2825,18 +2822,13 @@
     </div>
 
     <!-- ============================================================ -->
-    <!--  GÜNCELLENMİŞ JAVASCRIPT (tüm düzeltmeler uygulandı)        -->
+    <!--  FIXED JAVASCRIPT                                             -->
     <!-- ============================================================ -->
     <script>
         // ============================================================
-        //  CONFIG (kendi backend URL’ni buraya yaz)
+        //  CONFIG
         // ============================================================
-        window.BLOXWIN_API_URL = "https://bloxwin-backend.onrender.com"; // değiştir!
-
-        // ============================================================
-        //  MAIN SCRIPT – TÜM DEĞİŞİKLİKLER UYGULANDI
-        // ============================================================
-
+        window.BLOXWIN_API_URL = "https://bloxwin-backend.onrender.com";
         const BLOXWIN_API_URL = (window.BLOXWIN_API_URL && !window.BLOXWIN_API_URL.includes("YOUR-BACKEND-URL-HERE")) ? window.BLOXWIN_API_URL.replace(/\/$/, "") : window.location.origin;
         const apiUrl = (path) => BLOXWIN_API_URL + path;
 
@@ -2967,7 +2959,7 @@
         let selectedTipPets = [];
 
         // ============================================================
-        //  JACKPOT STATE (localStorage ile kalıcı) - DÜZELTİLDİ
+        //  JACKPOT STATE (kalıcı)
         // ============================================================
         function getJackpotStateFromStorage() {
             try {
@@ -3017,6 +3009,7 @@
         };
 
         let selectedJackpotPetIds = [];
+        let jackpotPetsAddedFlag = false;
 
         // ============================================================
         //  USER DATA
@@ -3206,7 +3199,7 @@
         }
 
         // ============================================================
-        //  SAYFA GEÇİŞİ
+        //  NAVIGATE
         // ============================================================
         function navigateTo(page) {
             currentPage = page;
@@ -3512,12 +3505,10 @@
         }
 
         // ============================================================
-        //  VIEW HISTORY MATCH (GÜNCELLENDİ)
+        //  VIEW HISTORY MATCH
         // ============================================================
         function viewHistoryMatch(record) {
             const content = document.getElementById('view-history-content');
-
-            // Hesapla totalValue eğer yoksa
             if (!record.totalValue) {
                 const hostTotal = sumPets(record.hostPets || []);
                 const joinerTotal = sumPets(record.joinerPets || []);
@@ -3868,20 +3859,28 @@
 
         function addPetToInventory(username, pet) {
             let inv = getUserInventory(username);
-            inv.push(pet);
-            setUserInventory(username, inv);
-            return true;
+            // Check if pet already exists (by id or name+value+icon)
+            const exists = inv.some(p =>
+                (p.id && p.id === pet.id) ||
+                (p.name === pet.name && p.value === pet.value && p.icon === pet.icon)
+            );
+            if (!exists) {
+                inv.push(pet);
+                setUserInventory(username, inv);
+                return true;
+            }
+            return false;
         }
 
         function removePetsFromInventory(username, petsToRemove) {
             let inv = getUserInventory(username);
             petsToRemove.forEach(petToRemove => {
-                const idx = inv.findIndex(p => p === petToRemove);
+                const idx = inv.findIndex(p =>
+                    (p.id && p.id === petToRemove.id) ||
+                    (p.name === petToRemove.name && p.value === petToRemove.value && p.icon === petToRemove.icon)
+                );
                 if (idx !== -1) {
                     inv.splice(idx, 1);
-                } else {
-                    const idx2 = inv.findIndex(p => p.id === petToRemove.id);
-                    if (idx2 !== -1) inv.splice(idx2, 1);
                 }
             });
             setUserInventory(username, inv);
@@ -3927,7 +3926,7 @@
         }
 
         // ============================================================
-        //  JACKPOT (kalıcı ve senkron) - DÜZELTİLDİ
+        //  JACKPOT - FIXED
         // ============================================================
 
         function loadJackpotState() {
@@ -3997,7 +3996,6 @@
             }
 
             jackpotState.status = 'spinning';
-            // Spinning durumunda timer'ı boşalt
             if (jackpotState.timerInterval) {
                 clearInterval(jackpotState.timerInterval);
                 jackpotState.timerInterval = null;
@@ -4005,6 +4003,7 @@
             updateJackpotUI();
             broadcastJackpotState();
 
+            // Weighted random winner
             let rand = Math.random() * totalPrize;
             let winner = null;
             for (const username of players) {
@@ -4026,7 +4025,7 @@
             jackpotState.winner = winner;
             jackpotState.winnerPets = allPets.slice();
 
-            // Çarkı döndür
+            // Spin wheel
             const canvas = document.getElementById('jp-wheel-canvas');
             if (canvas) {
                 let startAngle = -Math.PI / 2;
@@ -4046,10 +4045,28 @@
 
             updateJackpotUI();
 
+            // After spin finishes, add pets to winner
             setTimeout(() => {
                 jackpotState.status = 'finished';
-                allPets.forEach(pet => addPetToInventory(winner, pet));
+                // Add ALL pets to winner's inventory
+                const winnerLower = winner.toLowerCase();
+                const currentUserLower = currentUser ? currentUser.toLowerCase() : '';
 
+                // Only add to inventory if this is the winner's client or if we're the one who spun
+                // But we also need to add if the winner is the current user on this client
+                if (winnerLower === currentUserLower) {
+                    let addedCount = 0;
+                    allPets.forEach(pet => {
+                        if (addPetToInventory(winner, pet)) {
+                            addedCount++;
+                        }
+                    });
+                    if (addedCount > 0) {
+                        showToast(`🎉 You won the Jackpot! ${addedCount} pets added to your inventory.`, 6000);
+                    }
+                }
+
+                // Send webhook
                 const total = jackpotState.prizePool;
                 const fields = [
                     { name: 'Winner', value: winner, inline: true },
@@ -4062,6 +4079,7 @@
                 updateJackpotUI();
                 broadcastJackpotState();
 
+                // Reset after 10 seconds
                 setTimeout(() => {
                     resetJackpot();
                 }, 10000);
@@ -4160,6 +4178,10 @@
                 return;
             }
 
+            // Remove from inventory
+            removePetsFromInventory(currentUser, selectedPets);
+
+            // Add to jackpot state
             if (jackpotState.players[currentUser]) {
                 const oldTotal = jackpotState.players[currentUser].total;
                 jackpotState.prizePool -= oldTotal;
@@ -4175,18 +4197,7 @@
                 jackpotState.playerCount = Object.keys(jackpotState.players).length;
             }
 
-            removePetsFromInventory(currentUser, selectedPets);
-
-            pubnub.publish({
-                channel: JACKPOT_CHANNEL,
-                message: {
-                    type: 'JACKPOT_JOIN',
-                    username: currentUser,
-                    pets: selectedPets.slice(),
-                    sender: currentUser
-                }
-            });
-
+            // Broadcast
             broadcastJackpotState();
 
             if (jackpotState.playerCount >= 2 && jackpotState.status === 'waiting' && !jackpotState.timerInterval) {
@@ -4258,6 +4269,7 @@
                 timerInterval: null,
                 playerCount: 0
             };
+            jackpotPetsAddedFlag = false;
             if (save) {
                 saveJackpotState();
                 pubnub.publish({
@@ -4300,6 +4312,7 @@
                 timerInterval: null,
                 playerCount: 0
             };
+            jackpotPetsAddedFlag = false;
 
             localStorage.removeItem('app_jackpot_state');
 
@@ -4411,7 +4424,7 @@
                 joinBtn.textContent = 'Join Jackpot';
                 resultEl.style.display = 'none';
             } else if (jackpotState.status === 'spinning') {
-                timerEl.textContent = ''; // Emoji kaldırıldı
+                timerEl.textContent = '';
                 timerEl.className = 'jackpot-timer spinning';
                 statusEl.textContent = 'Spinning the wheel...';
                 joinBtn.disabled = true;
@@ -4510,7 +4523,7 @@
         }
 
         // ============================================================
-        //  PUBSUB – JACKPOT (düzeltilmiş)
+        //  PUBSUB – JACKPOT (FIXED)
         // ============================================================
         function handleJackpotMessage(msg) {
             if (msg.sender === currentUser) return;
@@ -4519,62 +4532,41 @@
                 const incoming = msg.state;
                 if (!incoming.status) return;
 
-                // Preserve current players and pets (merge, don't overwrite)
-                if (!jackpotState.players) jackpotState.players = {};
-                if (!incoming.players) incoming.players = {};
+                // PRESERVE timer interval, but replace everything else
+                const oldInterval = jackpotState.timerInterval;
 
-                // Start with incoming players
-                const mergedPlayers = { ...incoming.players };
-
-                // Merge existing player data to avoid losing pets
-                Object.keys(jackpotState.players).forEach(username => {
-                    const currentPlayer = jackpotState.players[username];
-                    if (!mergedPlayers[username]) {
-                        mergedPlayers[username] = currentPlayer;
-                        return;
+                // If incoming state is 'finished' and winner is current user, add pets
+                if (incoming.status === 'finished' && incoming.winner && currentUser) {
+                    const winnerLower = incoming.winner.toLowerCase();
+                    const currentUserLower = currentUser.toLowerCase();
+                    if (winnerLower === currentUserLower && incoming.winnerPets && incoming.winnerPets.length > 0) {
+                        // Add pets to winner's inventory (only if not already added)
+                        let addedCount = 0;
+                        incoming.winnerPets.forEach(pet => {
+                            if (addPetToInventory(currentUser, pet)) {
+                                addedCount++;
+                            }
+                        });
+                        if (addedCount > 0) {
+                            showToast(`🎉 You won the Jackpot! ${addedCount} pets added to your inventory.`, 6000);
+                        }
                     }
+                }
 
-                    const incomingPlayer = mergedPlayers[username];
-                    // Combine pets from both
-                    const combinedPets = [
-                        ...(currentPlayer.pets || []),
-                        ...(incomingPlayer.pets || [])
-                    ];
-
-                    // Deduplicate pets (by id or name+value+icon)
-                    const uniquePets = combinedPets.filter((pet, index, array) =>
-                        index === array.findIndex(p =>
-                            (pet.id && p.id && pet.id === p.id) ||
-                            (
-                                pet.name === p.name &&
-                                pet.value === p.value &&
-                                pet.image === p.image
-                            )
-                        )
-                    );
-
-                    mergedPlayers[username] = {
-                        ...incomingPlayer,
-                        pets: uniquePets,
-                        total: uniquePets.reduce((sum, pet) => sum + (Number(pet.value) || 0), 0)
-                    };
-                });
-
-                // Update jackpotState while preserving timerInterval
+                // Replace state (with deep copy for players)
                 jackpotState = {
-                    ...jackpotState,
                     ...incoming,
-                    players: mergedPlayers,
-                    timerInterval: jackpotState.timerInterval
+                    players: JSON.parse(JSON.stringify(incoming.players || {})),
+                    timerInterval: oldInterval
                 };
 
                 // Recalculate prizePool and playerCount
-                jackpotState.prizePool = Object.values(mergedPlayers).reduce((sum, p) => sum + (p.total || 0), 0);
-                jackpotState.playerCount = Object.keys(mergedPlayers).length;
+                jackpotState.prizePool = Object.values(jackpotState.players).reduce((sum, p) => sum + (p.total || 0), 0);
+                jackpotState.playerCount = Object.keys(jackpotState.players).length;
 
-                // If we have no running timer but state is active, start it
+                // If state is active and we have no timer, start it
                 if (jackpotState.status === 'active' && jackpotState.timer > 0 && !jackpotState.timerInterval) {
-                    startJackpotTimer();
+                    startJackpotTimer(false);
                 }
 
                 saveJackpotState();
@@ -4583,21 +4575,40 @@
             }
 
             if (msg.type === 'JACKPOT_JOIN') {
-                if (!jackpotState.players[msg.username]) {
-                    jackpotState.players[msg.username] = { pets: msg.pets, total: sumPets(msg.pets) };
-                    jackpotState.prizePool += sumPets(msg.pets);
-                    jackpotState.playerCount = Object.keys(jackpotState.players).length;
+                // Only process if not the sender
+                if (msg.sender === currentUser) return;
+
+                const username = msg.username;
+                const pets = msg.pets || [];
+
+                if (!jackpotState.players[username]) {
+                    jackpotState.players[username] = {
+                        pets: pets.slice(),
+                        total: sumPets(pets)
+                    };
                 } else {
-                    const oldTotal = jackpotState.players[msg.username].total;
-                    jackpotState.prizePool -= oldTotal;
-                    jackpotState.players[msg.username].pets.push(...msg.pets);
-                    jackpotState.players[msg.username].total = sumPets(jackpotState.players[msg.username].pets);
-                    jackpotState.prizePool += jackpotState.players[msg.username].total;
+                    // Add new pets to existing
+                    const existingPets = jackpotState.players[username].pets || [];
+                    const combined = [...existingPets, ...pets];
+                    // Deduplicate by id or name+value+icon
+                    const unique = combined.filter((pet, idx, arr) =>
+                        idx === arr.findIndex(p =>
+                            (p.id && pet.id && p.id === pet.id) ||
+                            (p.name === pet.name && p.value === pet.value && p.icon === pet.icon)
+                        )
+                    );
+                    jackpotState.players[username].pets = unique;
+                    jackpotState.players[username].total = sumPets(unique);
                 }
+
+                // Recalculate prizePool
+                jackpotState.prizePool = Object.values(jackpotState.players).reduce((sum, p) => sum + (p.total || 0), 0);
+                jackpotState.playerCount = Object.keys(jackpotState.players).length;
 
                 if (jackpotState.playerCount >= 2 && jackpotState.status === 'waiting' && !jackpotState.timerInterval) {
                     startJackpotTimer();
                 }
+
                 saveJackpotState();
                 updateJackpotUI();
                 broadcastJackpotState();
@@ -4605,6 +4616,10 @@
 
             if (msg.type === 'JACKPOT_RESET') {
                 resetJackpot(true);
+            }
+
+            if (msg.type === 'JACKPOT_REQUEST_STATE') {
+                broadcastJackpotState();
             }
         }
 
@@ -4748,14 +4763,12 @@
 
         function sendMessage() {
             if (!currentUser) { showToast('Please login first to send a message.'); return; }
-
             if (isMuted(currentUser)) {
                 const hours = getMuteRemaining(currentUser);
                 const hourText = hours === 1 ? 'hour' : 'hours';
                 showToast(`You have been muted for ${hours} ${hourText}.`, 5000);
                 return;
             }
-
             const input = document.getElementById('chat-input');
             const text = input.value.trim();
             if (!text) return;
