@@ -2773,7 +2773,7 @@
         // ============================================================
         //  CONFIG
         // ============================================================
-        window.BLOXWIN_API_URL = ""; // 🔥 KENDİ SİTESİNE YÖNLENDİRMEK İÇİN BOŞ BIRAK
+        window.BLOXWIN_API_URL = "";
 
         const BLOXWIN_API_URL = (window.BLOXWIN_API_URL && !window.BLOXWIN_API_URL.includes("YOUR-BACKEND-URL-HERE")) ? window
             .BLOXWIN_API_URL.replace(/\/$/, "") : window.location.origin;
@@ -3373,7 +3373,7 @@
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)
-            }).catch(err => console.error('Webhook error:', err));
+            }).catch(err => console.warn('Webhook error:', err));
         }
 
         function sendMatchCreatedWebhook(match) {
@@ -3944,7 +3944,7 @@
                 updateJackpotUI();
                 return true;
             }
-            resetJackpot(false); // sadece local reset, publish YOK
+            resetJackpot(false);
             return false;
         }
 
@@ -4049,7 +4049,6 @@
                 broadcastJackpotState();
 
                 setTimeout(() => {
-                    // 🔥 HER ZAMAN LOCAL STORAGE'İ GÜNCELLE, PUBLISH SADECE SAVE TRUE İSE
                     resetJackpot(false);
                 }, 10000);
             }, 4000);
@@ -4221,7 +4220,6 @@
             }, 1000);
         }
 
-        // 🔥 DÜZELTİLMİŞ resetJackpot: her zaman localStorage güncellenir, publish sadece save=true ise yapılır.
         function resetJackpot(save = true) {
             if (jackpotState.timerInterval) {
                 clearInterval(jackpotState.timerInterval);
@@ -4246,9 +4244,7 @@
                 timerInterval: null,
                 playerCount: 0
             };
-            // HER ZAMAN localStorage güncelle
             saveJackpotState();
-            // Sadece save=true ise publish yap
             if (save) {
                 pubnub.publish({
                     channel: JACKPOT_CHANNEL,
@@ -4490,7 +4486,7 @@
                 return;
             }
             if (!confirm('Are you sure you want to reset the current Jackpot? All bets will be cleared.')) return;
-            resetJackpot(true); // 🔥 Burada publish yapılacak (save=true)
+            resetJackpot(true);
             showToast('Jackpot has been reset successfully.');
             document.getElementById('admin-jp-message').textContent = '✅ Jackpot reset at ' + new Date().toLocaleTimeString();
             updateAdminJackpotInfo();
@@ -4575,14 +4571,13 @@
                 broadcastJackpotState();
             }
 
-            // 🔥 DÜZELTME: JACKPOT_RESET alındığında resetJackpot(false) – tekrar publish YOK!
             if (msg.type === 'JACKPOT_RESET') {
                 resetJackpot(false);
             }
         }
 
         // ============================================================
-        //  PUBSUB – MAIN
+        //  PUBSUB – MAIN (DÜZELTİLMİŞ)
         // ============================================================
         pubnub.addListener({
             message: function(event) {
@@ -4638,18 +4633,25 @@
                 if (msg.type === 'CHAT') {
                     saveAndRenderChat(msg.username, msg.text, msg.time);
                 }
+
+                // --- COINFLIP MESAJLARI (SENDER KONTROLÜ) ---
                 if (msg.type === 'MATCH_CREATED') {
+                    if (msg.sender === currentUser) return;
                     if (!globalMatches.some(m => m.id === msg.match.id)) {
                         globalMatches.push(msg.match);
                         renderMatches();
                         sendMatchCreatedWebhook(msg.match);
                     }
                 }
+
                 if (msg.type === 'MATCH_CANCELED') {
+                    if (msg.sender === currentUser) return;
                     globalMatches = globalMatches.filter(m => m.id !== msg.matchId);
                     renderMatches();
                 }
+
                 if (msg.type === 'GAME_START') {
+                    if (msg.sender === currentUser) return;
                     const match = globalMatches.find(m => m.id === msg.matchId);
                     if (match) {
                         if (match.status === 'ongoing') return;
@@ -4679,12 +4681,14 @@
                         sendMatchResultWebhook(matchObj, winner, totalValue);
                     }
                 }
+
                 if (msg.type === 'REQUEST_SYNC' && globalMatches.length > 0) {
                     pubnub.publish({
                         channel: CHANNEL,
                         message: { type: 'SYNC_MATCHES', matches: globalMatches }
                     });
                 }
+
                 if (msg.type === 'SYNC_MATCHES') {
                     msg.matches.forEach(m => {
                         if (!globalMatches.some(g => g.id === m.id)) {
@@ -4767,15 +4771,11 @@
         }
 
         // ============================================================
-        //  RENDER MATCHES – EXPIRATION KALDIRILDI
-        //  SADECE BİTEN VE İPTAL EDİLEN MAÇLAR SİLİNİR
+        //  RENDER MATCHES – (DÜZELTİLMİŞ)
         // ============================================================
         function renderMatches() {
             const container = document.getElementById('matches-list');
             container.innerHTML = '';
-
-            // --- EXPIRATION KALDIRILDI ---
-            // globalMatches artık sadece cancel veya complete ile temizlenir
 
             if (showHistory) {
                 if (!currentUser) {
@@ -5068,7 +5068,7 @@
         }
 
         // ============================================================
-        //  CREATE MATCH
+        //  CREATE MATCH (DÜZELTİLMİŞ – SENDER EKLENDİ)
         // ============================================================
         function openCreateModal() {
             if (!currentUser) { showToast('Please login first to create a match.'); return; }
@@ -5121,10 +5121,10 @@
 
         function postMatch() {
             const btn = document.getElementById('create-post-btn');
-            if (btn) btn.disabled = true;
+            btn.disabled = true;
 
-            if (selectedPetsForMatch.length === 0) { showToast('Select at least one pet!'); if (btn) btn.disabled = false; return; }
-            if (!selectedSideCreate) { showToast('Please select a side (H or T)!'); if (btn) btn.disabled = false; return; }
+            if (selectedPetsForMatch.length === 0) { showToast('Select at least one pet!'); btn.disabled = false; return; }
+            if (!selectedSideCreate) { showToast('Please select a side (H or T)!'); btn.disabled = false; return; }
 
             removePetsFromInventory(currentUser, selectedPetsForMatch);
 
@@ -5137,14 +5137,23 @@
             };
             globalMatches.unshift(newMatch);
             renderMatches();
+
             pubnub.publish({
                 channel: CHANNEL,
-                message: { type: 'MATCH_CREATED', match: newMatch }
+                message: { type: 'MATCH_CREATED', match: newMatch, sender: currentUser }
+            }, function(status) {
+                btn.disabled = false;
+                if (status.error) {
+                    showToast('Match created but PubNub publish failed. Please check network.');
+                }
             });
+
             closeModal('create-modal');
-            if (btn) btn.disabled = false;
         }
 
+        // ============================================================
+        //  CANCEL MATCH (DÜZELTİLMİŞ – SENDER EKLENDİ)
+        // ============================================================
         function cancelMyMatch(matchId) {
             const matchIdx = globalMatches.findIndex(m => m.id === matchId);
             if (matchIdx !== -1) {
@@ -5153,7 +5162,7 @@
                 renderMatches();
                 pubnub.publish({
                     channel: CHANNEL,
-                    message: { type: 'MATCH_CANCELED', matchId: matchId }
+                    message: { type: 'MATCH_CANCELED', matchId: matchId, sender: currentUser }
                 });
             }
         }
@@ -5223,16 +5232,16 @@
 
         function confirmJoinMatch() {
             const btn = document.getElementById('join-post-btn');
-            if (btn) btn.disabled = true;
+            btn.disabled = true;
 
-            if (selectedPetsForJoin.length === 0) { showToast('Select at least one pet!'); if (btn) btn.disabled = false; return; }
+            if (selectedPetsForJoin.length === 0) { showToast('Select at least one pet!'); btn.disabled = false; return; }
 
             const range = getPetRange(matchToJoin.hostPets);
             const totalValue = sumPets(selectedPetsForJoin);
             if (range.min !== 0 || range.max !== 0) {
                 if (totalValue < range.min || totalValue > range.max) {
                     document.getElementById('join-range-error').style.display = 'block';
-                    if (btn) btn.disabled = false;
+                    btn.disabled = false;
                     return;
                 }
             }
@@ -5245,7 +5254,7 @@
             if (currentUser && isAdmin(currentUser) && getForceWinState()) {
                 if (currentUser === matchToJoin.host) {
                     hostWins = true;
-                } else if (currentUser === currentUser) {
+                } else {
                     hostWins = false;
                 }
             }
@@ -5262,14 +5271,19 @@
                     joiner: currentUser,
                     joinerPets: selectedPetsForJoin.slice(),
                     joinerSide: joinerSide,
-                    hostWins: hostWins
+                    hostWins: hostWins,
+                    sender: currentUser
+                }
+            }, function(status) {
+                btn.disabled = false;
+                if (status.error) {
+                    showToast('Failed to start match. Please try again.');
                 }
             });
-            if (btn) btn.disabled = false;
         }
 
         // ============================================================
-        //  COIN FLIP – FORCE WIN ENTEGRE, PET TRANSFERİ DÜZELTİLDİ
+        //  COIN FLIP – (DÜZELTİLMİŞ – SENDER KONTROLÜ)
         // ============================================================
         function executeCoinFlip(gameData) {
             const flipModal = document.getElementById('flip-modal');
