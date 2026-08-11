@@ -2268,22 +2268,6 @@
             font-size: 12px;
             padding: 6px 16px;
         }
-        /* Login demo butonu için ek stil */
-        .demo-login-btn {
-            background: linear-gradient(135deg, #fcc419, #f59f00);
-            color: #0b1120;
-            border: none;
-            padding: 12px;
-            border-radius: 30px;
-            font-weight: 700;
-            cursor: pointer;
-            width: 100%;
-            margin-top: 10px;
-            transition: transform 0.15s ease;
-        }
-        .demo-login-btn:hover {
-            transform: scale(1.02);
-        }
     </style>
 </head>
 <body>
@@ -2428,9 +2412,6 @@
                 <button class="post-btn" id="find-roblox-user-btn" onclick="findRobloxUser()">Continue</button>
                 <button class="cancel-btn" onclick="closeModal('login-modal')">Cancel</button>
             </div>
-            <!-- DEMO LOGIN BUTONU -->
-            <button class="demo-login-btn" onclick="demoLogin()">🚀 Demo Giriş (Backend'i Bypass)</button>
-            <div style="margin-top:8px;font-size:12px;color:#868e96;text-align:center;">Backend çalışmıyorsa bu butonla giriş yapın.</div>
         </div>
         <div class="modal" id="roblox-login-step-confirm" style="display:none;">
             <h2>Is this you?</h2>
@@ -2781,7 +2762,7 @@
     </div>
 
     <!-- ============================================================ -->
-    <!--  JAVASCRIPT – DEMO LOGIN EKLENDİ, BACKEND HATALARI BYPASS    -->
+    <!--  JAVASCRIPT – TÜM FİX’LER UYGULANMIŞTIR                      -->
     <!-- ============================================================ -->
     <script>
         // ============================================================
@@ -3638,41 +3619,10 @@
         }
 
         // ============================================================
-        //  LOGIN / LOGOUT – DEMO LOGIN EKLENDİ
+        //  LOGIN / LOGOUT
         // ============================================================
         let pendingRobloxUser = null;
         let robloxVerificationToken = null;
-
-        // DEMO LOGIN – Backend'i bypass eder
-        function demoLogin() {
-            const input = document.getElementById('login-username');
-            let username = input.value.trim();
-            if (!username) {
-                showToast('Please enter a username first.');
-                return;
-            }
-            // Kullanıcı adını düzgün formata getir
-            username = username.replace(/\s+/g, '').toLowerCase();
-            if (username.length < 3) {
-                showToast('Username must be at least 3 characters.');
-                return;
-            }
-            // Demo login yap
-            currentUser = username;
-            currentUserId = 'demo_' + Date.now();
-            currentUserAvatar = getRobloxAvatarUrl(1);
-            localStorage.setItem('app_current_user', currentUser);
-            localStorage.setItem('app_current_user_id', currentUserId);
-            localStorage.setItem('app_current_user_avatar', currentUserAvatar);
-            storeAvatarForUser(currentUser, currentUserAvatar, currentUserId);
-            addRegisteredUser(currentUser);
-            getUserInventory(currentUser);
-            closeModal('login-modal');
-            renderHeader();
-            renderMatches();
-            pubnub.publish({ channel: CHANNEL, message: { type: 'REQUEST_SYNC' } });
-            showToast(`✅ Demo giriş başarılı! Hoş geldin @${currentUser}`);
-        }
 
         function resetRobloxLoginModal() {
             pendingRobloxUser = null;
@@ -3699,26 +3649,8 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ username })
                 });
-
-                const text = await response.text();
-                if (!response.ok) {
-                    let errorMsg = 'Roblox user not found.';
-                    try {
-                        const errorData = JSON.parse(text);
-                        if (errorData.error) errorMsg = errorData.error;
-                    } catch (e) {
-                        if (text.includes('<html')) {
-                            errorMsg = 'Backend server error. Please use Demo Login instead.';
-                        } else {
-                            errorMsg = text || 'Unknown error.';
-                        }
-                    }
-                    throw new Error(errorMsg);
-                }
-
-                const data = JSON.parse(text);
-                if (!data.user) throw new Error('User data missing.');
-
+                const data = await response.json();
+                if (!response.ok) throw new Error(data.error || 'Roblox user not found.');
                 pendingRobloxUser = data.user;
                 const avatarUrl = data.user.avatarUrl || getRobloxAvatarUrl(data.user.id);
                 document.getElementById('roblox-user-preview').innerHTML = `
@@ -3745,29 +3677,14 @@
             const codeEl = document.getElementById('roblox-verification-code');
             info.textContent = 'Creating your verification code...';
             codeEl.textContent = '•••••••••';
-            const btn = document.querySelector('#roblox-login-step-confirm .post-btn');
-            btn.disabled = true;
-            btn.textContent = 'Processing...';
             try {
                 const response = await fetch(apiUrl('/api/roblox/start-verification'), {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ userId: pendingRobloxUser.id })
                 });
-                const text = await response.text();
-                if (!response.ok) {
-                    let errorMsg = 'Could not create verification code.';
-                    try {
-                        const errorData = JSON.parse(text);
-                        if (errorData.error) errorMsg = errorData.error;
-                    } catch (e) {
-                        if (text.includes('<html')) errorMsg = 'Backend server error.';
-                        else errorMsg = text || 'Unknown error.';
-                    }
-                    throw new Error(errorMsg);
-                }
-                const data = JSON.parse(text);
-                if (!data.token || !data.code) throw new Error('Invalid response from server.');
+                const data = await response.json();
+                if (!response.ok) throw new Error(data.error || 'Could not create verification code.');
                 robloxVerificationToken = data.token;
                 codeEl.textContent = data.code;
                 info.innerHTML =
@@ -3777,9 +3694,6 @@
                 document.getElementById('roblox-code-input').focus();
             } catch (error) {
                 showToast(error.message || 'Could not create verification code.');
-            } finally {
-                btn.disabled = false;
-                btn.textContent = 'Yes, this is me';
             }
         }
 
@@ -3808,20 +3722,8 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ token: robloxVerificationToken, code })
                 });
-                const text = await response.text();
-                if (!response.ok) {
-                    let errorMsg = 'Verification failed.';
-                    try {
-                        const errorData = JSON.parse(text);
-                        if (errorData.error) errorMsg = errorData.error;
-                    } catch (e) {
-                        if (text.includes('<html')) errorMsg = 'Backend server error.';
-                        else errorMsg = text || 'Unknown error.';
-                    }
-                    throw new Error(errorMsg);
-                }
-                const data = JSON.parse(text);
-                if (!data.user || !data.user.name) throw new Error('Invalid user data.');
+                const data = await response.json();
+                if (!response.ok) throw new Error(data.error || 'Verification failed.');
                 currentUser = data.user.name;
                 currentUserId = data.user.id;
                 currentUserAvatar = data.user.avatarUrl || getRobloxAvatarUrl(data.user.id);
@@ -3899,6 +3801,7 @@
 
         function addPetToInventory(username, pet) {
             let inv = getUserInventory(username);
+            // Aynı pet varsa ekleme (id kontrolü)
             if (!inv.some(p => p.id === pet.id)) {
                 inv.push(pet);
                 setUserInventory(username, inv);
@@ -4832,6 +4735,11 @@
                 }
                 return true;
             });
+            // Eğer bir şey silindiyse render'ı güncelle
+            if (globalMatches.length !== beforeCount) {
+                // pubnub'a sync göndermeye gerek yok, sadece yerel
+                // Ama diğer cihazlar için sync mesajı gönderebiliriz, ama burada sadece render
+            }
 
             if (showHistory) {
                 if (!currentUser) {
@@ -4903,6 +4811,7 @@
                 return;
             }
 
+            // Sadece waiting ve ongoing (süresi dolmamış) olanları göster
             const waiting = globalMatches.filter(m => m.status === 'waiting');
             const ongoing = globalMatches.filter(m => m.status === 'ongoing' && (!m.finishedAt || Date.now() < m.finishedAt));
 
@@ -5205,6 +5114,7 @@
                 const canceled = globalMatches.splice(matchIdx, 1)[0];
                 // Petleri geri verirken duplicate kontrolü yap
                 canceled.hostPets.forEach(pet => {
+                    // Envantere ekle, zaten varsa ekleme
                     const inv = getUserInventory(currentUser);
                     if (!inv.some(p => p.id === pet.id)) {
                         inv.push(pet);
@@ -5413,9 +5323,11 @@
                 if (currentUser === winner) {
                     statusEl.style.color = '#51cf66';
                     statusEl.textContent = `CONGRATULATIONS! You won all pets! (Value: ${totalValue})`;
+                    // Kullanıcının envanterine ekle (zaten kaybedenin envanteri güncellendi)
                     allPets.forEach(pet => {
                         addPetToInventory(currentUser, pet);
                     });
+                    // Envanter güncellemesini broadcast et
                     broadcastInventoryUpdate(currentUser, 'set', getUserInventory(currentUser));
                     showToast(`You won ${allPets.length} pets!`, 5000);
                 } else if (currentUser === loser) {
@@ -5436,6 +5348,10 @@
                 if (currentUser === gameData.host || currentUser === gameData.joiner) {
                     addMatchToHistory(currentUser, historyRecord);
                 }
+
+                // Maçı global listesinden kaldır (zaten finishedAt ile işaretlendi)
+                // Ama silme işlemini renderMatches yapacak, burada sadece status ongoing ve finishedAt set
+                // renderMatches zaten 75 saniye sonra silecek
 
                 closeBtn.style.display = 'block';
             }, durationSec * 1000 + 50);
@@ -5665,6 +5581,7 @@
             status.textContent = `✅ ${selectedTipPets.length} pet(s) tipped to ${tipTargetUser}!`;
             showToast(`Tipped ${selectedTipPets.length} pet(s) to ${tipTargetUser}!`);
 
+            // Özel mesaj: sadece hedef ve adminler
             selectedTipPets.forEach(pet => {
                 broadcastInventoryUpdate(tipTargetUser, 'add', pet, true);
             });
