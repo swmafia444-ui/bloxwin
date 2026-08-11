@@ -581,6 +581,15 @@
             font-size: 14px;
             margin-right: 4px;
         }
+        .finished-match {
+            background: #1a2a2a;
+            border-color: var(--accent);
+        }
+        .finished-match .match-result {
+            color: var(--secondary);
+            font-weight: 700;
+            font-size: 14px;
+        }
         .mini-coin-wrapper {
             perspective: 600px;
             width: 38px;
@@ -2556,7 +2565,7 @@
 
     <!-- Admin Panel Modal -->
     <div class="modal-overlay" id="admin-modal">
-        <div class="modal" style="max-width:620px;">
+        <div class="modal" style="max-width:700px;">
             <h2>Admin Panel</h2>
             <div class="admin-panel-tabs">
                 <button class="tab-btn active" data-tab="tab-users" onclick="switchAdminTab('tab-users')">Users</button>
@@ -2564,8 +2573,9 @@
                 <button class="tab-btn" data-tab="tab-muted" onclick="switchAdminTab('tab-muted')">Muted</button>
                 <button class="tab-btn" data-tab="tab-jackpot" onclick="switchAdminTab('tab-jackpot')">Jackpot</button>
                 <button class="tab-btn" data-tab="tab-forcewin" onclick="switchAdminTab('tab-forcewin')">Force Win</button>
-                <!-- YENİ: Matches sekmesi -->
                 <button class="tab-btn" data-tab="tab-matches" onclick="switchAdminTab('tab-matches')">Matches</button>
+                <!-- YENİ: Inventory sekmesi -->
+                <button class="tab-btn" data-tab="tab-inventory" onclick="switchAdminTab('tab-inventory')">Inventory</button>
             </div>
 
             <div class="admin-tab-content active" id="tab-users">
@@ -2633,11 +2643,20 @@
                 <div id="force-win-status" style="margin-top:12px;font-size:13px;color:#868e96;"></div>
             </div>
 
-            <!-- YENİ: Matches Tab -->
+            <!-- Matches Tab -->
             <div class="admin-tab-content" id="tab-matches">
                 <div style="font-weight:600;color:#ced4da;font-size:14px;margin-bottom:8px;">Manage Matches</div>
                 <div id="admin-matches-list" style="max-height:300px;overflow-y:auto;margin-bottom:10px;"></div>
                 <button class="action-btn secondary-btn" onclick="adminRefreshMatches()">Refresh</button>
+            </div>
+
+            <!-- YENİ: Inventory Tab -->
+            <div class="admin-tab-content" id="tab-inventory">
+                <div style="font-weight:600;color:#ced4da;font-size:14px;margin-bottom:8px;">All Users Inventory (Live)</div>
+                <div id="admin-inventory-container" style="max-height:400px;overflow-y:auto;background:#0f172a;border-radius:12px;padding:10px;border:1px solid var(--border-color);">
+                    <div style="color:#868e96;text-align:center;padding:10px;">Loading inventories...</div>
+                </div>
+                <button class="action-btn secondary-btn" style="margin-top:10px;" onclick="adminRefreshInventory()">Refresh</button>
             </div>
 
             <button class="cancel-btn" style="width:100%;margin-top:16px;" onclick="closeModal('admin-modal')">Close</button>
@@ -2673,7 +2692,7 @@
     </div>
 
     <!-- Profile Modal -->
-    <div class="modal-overlay" id="profile-modal">
+    <div class="modal-overlay" id="profile-modal" data-close-on-overlay="false">
         <div class="modal" style="max-width:480px;">
             <div id="profile-content" style="text-align:center;">
                 <div id="profile-username" class="profile-username"></div>
@@ -3312,6 +3331,18 @@
             if (jpJoinBtn) jpJoinBtn.disabled = false;
         }
 
+        // Overlay click handler – profile modal için kapatmayı engelle
+        document.querySelectorAll('.modal-overlay').forEach(overlay => {
+            overlay.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    if (this.id === 'flip-modal' && isFlipping) return;
+                    // Eğer overlay'de data-close-on-overlay="false" varsa kapatma
+                    if (this.dataset.closeOnOverlay === 'false') return;
+                    closeModal(this.id);
+                }
+            });
+        });
+
         function openFAQ() {
             openModal('faq-modal');
         }
@@ -3332,15 +3363,6 @@
             });
             renderLeaderboard();
         }
-
-        document.querySelectorAll('.modal-overlay').forEach(overlay => {
-            overlay.addEventListener('click', function(e) {
-                if (e.target === this) {
-                    if (this.id === 'flip-modal' && isFlipping) return;
-                    closeModal(this.id);
-                }
-            });
-        });
 
         function escapeHTML(str) {
             return str.replace(/[&<>'"]/g, tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' } [tag] ||
@@ -3482,8 +3504,10 @@
             if (currentUser && currentUser.toLowerCase() === target) {
                 renderMatches();
             }
+            // Admin inventory panelini güncelle
             if (document.getElementById('admin-modal').classList.contains('active')) {
                 adminRefreshUsers();
+                adminRefreshInventory();
             }
         }
 
@@ -4662,6 +4686,7 @@
                     if (match && match.timeoutId) {
                         clearTimeout(match.timeoutId);
                     }
+                    // Eğer finished ise de kaldır
                     globalMatches = globalMatches.filter(m => m.id !== msg.matchId);
                     renderMatches();
                 }
@@ -4808,7 +4833,7 @@
         }
 
         // ============================================================
-        //  RENDER MATCHES (DÜZELTİLMİŞ)
+        //  RENDER MATCHES (DÜZELTİLMİŞ – finished maçları göster)
         // ============================================================
         function renderMatches() {
             const container = document.getElementById('matches-list');
@@ -4880,7 +4905,7 @@
                 return;
             }
 
-            // Eski ongoing maçları temizle
+            // Eski ongoing maçları temizle (70 saniye)
             const now = Date.now();
             const staleMatches = globalMatches.filter(m => m.status === 'ongoing' && m.startedAt && (now - m.startedAt > 70000));
             staleMatches.forEach(match => {
@@ -4894,6 +4919,14 @@
                 globalMatches = globalMatches.filter(m => m.id !== match.id);
             });
 
+            // finished maçları temizle (70 saniye sonra)
+            const finishedExpiry = 70000;
+            const toRemove = globalMatches.filter(m => m.status === 'finished' && m.finishedAt && (now - m.finishedAt > finishedExpiry));
+            toRemove.forEach(m => {
+                if (m.timeoutId) clearTimeout(m.timeoutId);
+                globalMatches = globalMatches.filter(m2 => m2.id !== m.id);
+            });
+
             if (globalMatches.length === 0) {
                 container.innerHTML =
                     '<div style="color:#868e96;padding:20px;text-align:center;">No Active Matches.</div>';
@@ -4902,7 +4935,9 @@
 
             const waiting = globalMatches.filter(m => m.status === 'waiting');
             const ongoing = globalMatches.filter(m => m.status === 'ongoing');
+            const finished = globalMatches.filter(m => m.status === 'finished');
 
+            // Waiting maçlar
             waiting.forEach(match => {
                 const isMyMatch = currentUser && match.host === currentUser;
                 const totalValue = sumPets(match.hostPets);
@@ -4963,6 +4998,7 @@
                 container.appendChild(card);
             });
 
+            // Ongoing maçlar
             ongoing.forEach(match => {
                 const totalValue = sumPets(match.hostPets) + sumPets(match.joinerPets);
                 const winnerSide = match.winnerSide || (match.hostWins ? match.hostSide : match.joinerSide);
@@ -5032,6 +5068,44 @@
                     }, 2300);
                 }, 300);
             });
+
+            // Finished maçlar (70 saniye boyunca göster)
+            finished.forEach(match => {
+                const totalValue = match.totalValue || (sumPets(match.hostPets) + sumPets(match.joinerPets));
+                const winnerName = match.winner || 'Unknown';
+                const winnerSide = match.winnerSide || '?';
+
+                const card = document.createElement('div');
+                card.className = 'match-card finished-match';
+
+                const hostInitial = getInitial(match.host);
+                const hostSideIcon = match.hostSide === 'H' ? 'https://bloxluck.com/img/dog.png' :
+                    'https://bloxluck.com/img/gem.png';
+                const joinerInitial = getInitial(match.joiner);
+                const joinerSideIcon = match.joinerSide === 'H' ? 'https://bloxluck.com/img/dog.png' :
+                    'https://bloxluck.com/img/gem.png';
+
+                card.innerHTML = `
+                        <div class="match-left">
+                            <span class="match-result">🏁 ${winnerName} won!</span>
+                            <div class="avatar-circle" style="border-color: #4dabf7;">
+                                <span class="initials">${hostInitial}</span>
+                                <img class="side-icon" src="${hostSideIcon}" alt="${match.hostSide}">
+                            </div>
+                            <span class="match-vs">vs</span>
+                            <div class="avatar-circle" style="border-color: #ff6b6b;">
+                                <span class="initials">${joinerInitial}</span>
+                                <img class="side-icon" src="${joinerSideIcon}" alt="${match.joinerSide}">
+                            </div>
+                            <span class="match-total-value">${totalValue} Value</span>
+                            <span class="mini-result">Winner: ${winnerName} (${winnerSide})</span>
+                        </div>
+                        <div class="match-right">
+                            <button class="view-btn" onclick="viewMatch(${match.id})">View</button>
+                        </div>
+                    `;
+                container.appendChild(card);
+            });
         }
 
         // ============================================================
@@ -5065,7 +5139,7 @@
             }
 
             let resultHtml = '';
-            if (match.status === 'ongoing' && match.winnerSide) {
+            if (match.status === 'finished' && match.winnerSide) {
                 const winnerSide = match.winnerSide;
                 const winnerName = match.winner || '...';
                 const isHeads = winnerSide === 'H';
@@ -5089,6 +5163,10 @@
                 resultHtml = `
                     <div style="text-align:center;margin-top:16px;color:#868e96;font-size:14px;">Waiting for opponent...</div>
                 `;
+            } else if (match.status === 'ongoing') {
+                resultHtml = `
+                    <div style="text-align:center;margin-top:16px;color:#868e96;font-size:14px;">Match in progress...</div>
+                `;
             } else {
                 resultHtml = `
                     <div style="text-align:center;margin-top:16px;color:#868e96;font-size:14px;">Match not started yet.</div>
@@ -5111,7 +5189,7 @@
                             <div class="view-side"><img src="${joinerSideImg}" alt="${joinerSide}"> Side: ${joinerSide}</div>
                         </div>
                     </div>
-                    <div class="view-status">Status: ${match.status === 'ongoing' ? 'In progress' : 'Waiting for opponent'}</div>
+                    <div class="view-status">Status: ${match.status === 'ongoing' ? 'In progress' : match.status === 'finished' ? 'Finished' : 'Waiting for opponent'}</div>
                     ${resultHtml}
                 `;
             content.innerHTML = html;
@@ -5335,7 +5413,7 @@
         }
 
         // ============================================================
-        //  COIN FLIP
+        //  COIN FLIP (DÜZELTİLMİŞ – finished durumu eklendi)
         // ============================================================
         function executeCoinFlip(gameData) {
             const flipModal = document.getElementById('flip-modal');
@@ -5439,11 +5517,25 @@
                     addMatchToHistory(currentUser, historyRecord);
                 }
 
+                // Maçı finished yap, 70 saniye sonra silinecek
                 const match = globalMatches.find(m => m.id === gameData.matchId);
-                if (match && match.timeoutId) {
-                    clearTimeout(match.timeoutId);
+                if (match) {
+                    match.status = 'finished';
+                    match.finishedAt = Date.now();
+                    match.totalValue = totalValue;
+                    match.winner = winner;
+                    match.winnerSide = winnerSide;
+                    if (match.timeoutId) clearTimeout(match.timeoutId);
+
+                    // 70 saniye sonra kaldır
+                    match.timeoutId = setTimeout(() => {
+                        if (match) {
+                            globalMatches = globalMatches.filter(m => m.id !== match.id);
+                            renderMatches();
+                        }
+                    }, 70000);
                 }
-                globalMatches = globalMatches.filter(m => m.id !== gameData.matchId);
+
                 renderMatches();
 
                 closeBtn.style.display = 'block';
@@ -5716,6 +5808,7 @@
             if (tabId === 'tab-jackpot') updateAdminJackpotInfo();
             if (tabId === 'tab-forcewin') updateForceWinUI();
             if (tabId === 'tab-matches') adminRefreshMatches();
+            if (tabId === 'tab-inventory') adminRefreshInventory();
         }
 
         function adminRefreshUsers() {
@@ -5945,7 +6038,7 @@
         }
 
         // ============================================================
-        //  ADMIN – MATCH MANAGEMENT (YENİ)
+        //  ADMIN – MATCH MANAGEMENT
         // ============================================================
         function adminRefreshMatches() {
             const container = document.getElementById('admin-matches-list');
@@ -5958,7 +6051,8 @@
             globalMatches.forEach(match => {
                 const div = document.createElement('div');
                 div.className = 'admin-user-item';
-                const statusText = match.status === 'waiting' ? '⏳ Waiting' : '🔄 Ongoing';
+                const statusText = match.status === 'waiting' ? '⏳ Waiting' : match.status === 'ongoing' ? '🔄 Ongoing' :
+                    '🏁 Finished';
                 const players = match.joiner ? `${match.host} vs ${match.joiner}` : `${match.host} (waiting)`;
                 div.innerHTML = `
                     <span class="username">${match.id} - ${players} (${statusText})</span>
@@ -5989,6 +6083,41 @@
                 message: { type: 'MATCH_CANCELED', matchId: matchId, sender: 'admin' }
             });
             showToast(`Match ${matchId} deleted by admin.`);
+        }
+
+        // ============================================================
+        //  ADMIN – INVENTORY (YENİ)
+        // ============================================================
+        function adminRefreshInventory() {
+            const container = document.getElementById('admin-inventory-container');
+            if (!container) return;
+            const users = getAllUsernames();
+            if (users.length === 0) {
+                container.innerHTML = '<div style="color:#868e96;text-align:center;padding:10px;">No users registered.</div>';
+                return;
+            }
+            let html = '';
+            users.forEach(u => {
+                const inv = getUserInventory(u);
+                const petCount = inv.length;
+                const petsHtml = inv.map(p =>
+                    `<div style="display:inline-flex;align-items:center;gap:4px;background:#0f172a;border:1px solid var(--border-color);border-radius:20px;padding:4px 10px;margin:2px;">
+                        <img src="${p.icon}" alt="${p.name}" style="width:24px;height:24px;border-radius:50%;">
+                        <span style="font-size:11px;">${p.name}</span>
+                        <span style="font-size:10px;color:#868e96;">${p.value}</span>
+                    </div>`
+                ).join('');
+                html += `
+                    <div style="margin-bottom:8px;background:#0f172a;padding:8px 12px;border-radius:8px;border:1px solid var(--border-color);">
+                        <div style="font-weight:600;color:#ced4da;display:flex;justify-content:space-between;">
+                            <span>${escapeHTML(u)} (${petCount} pets)</span>
+                            <span style="color:#868e96;font-size:12px;">Total: ${sumPets(inv)}</span>
+                        </div>
+                        <div style="margin-top:4px;display:flex;flex-wrap:wrap;gap:2px;">${petsHtml || 'No pets'}</div>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
         }
 
         // ============================================================
