@@ -2564,6 +2564,8 @@
                 <button class="tab-btn" data-tab="tab-muted" onclick="switchAdminTab('tab-muted')">Muted</button>
                 <button class="tab-btn" data-tab="tab-jackpot" onclick="switchAdminTab('tab-jackpot')">Jackpot</button>
                 <button class="tab-btn" data-tab="tab-forcewin" onclick="switchAdminTab('tab-forcewin')">Force Win</button>
+                <!-- YENİ: Matches sekmesi -->
+                <button class="tab-btn" data-tab="tab-matches" onclick="switchAdminTab('tab-matches')">Matches</button>
             </div>
 
             <div class="admin-tab-content active" id="tab-users">
@@ -2629,6 +2631,13 @@
                     Force Win: OFF
                 </button>
                 <div id="force-win-status" style="margin-top:12px;font-size:13px;color:#868e96;"></div>
+            </div>
+
+            <!-- YENİ: Matches Tab -->
+            <div class="admin-tab-content" id="tab-matches">
+                <div style="font-weight:600;color:#ced4da;font-size:14px;margin-bottom:8px;">Manage Matches</div>
+                <div id="admin-matches-list" style="max-height:300px;overflow-y:auto;margin-bottom:10px;"></div>
+                <button class="action-btn secondary-btn" onclick="adminRefreshMatches()">Refresh</button>
             </div>
 
             <button class="cancel-btn" style="width:100%;margin-top:16px;" onclick="closeModal('admin-modal')">Close</button>
@@ -3917,7 +3926,7 @@
         }
 
         // ============================================================
-        //  JACKPOT – DÜZELTİLMİŞ VERSİYON
+        //  JACKPOT – DÜZELTİLMİŞ VERSİYON (playerCount güncellemeleri eklendi)
         // ============================================================
         function loadJackpotState() {
             const stored = getJackpotStateFromStorage();
@@ -4172,6 +4181,9 @@
                     sender: currentUser
                 }
             });
+
+            // playerCount güncelle
+            jackpotState.playerCount = Object.keys(jackpotState.players).length;
 
             broadcastJackpotState();
 
@@ -4646,7 +4658,6 @@
 
                 if (msg.type === 'MATCH_CANCELED') {
                     if (msg.sender === currentUser) return;
-                    // Eğer maç varsa timeout'ı temizle
                     const match = globalMatches.find(m => m.id === msg.matchId);
                     if (match && match.timeoutId) {
                         clearTimeout(match.timeoutId);
@@ -4667,25 +4678,19 @@
                         match.hostWins = msg.hostWins;
                         match.winner = msg.hostWins ? msg.host : msg.joiner;
                         match.winnerSide = msg.hostWins ? match.hostSide : msg.joinerSide;
-                        // Başlangıç zamanını kaydet
                         match.startedAt = Date.now();
 
-                        // 70 saniye timeout başlat
                         const timeoutId = setTimeout(() => {
-                            // Maç hala ongoing mi kontrol et
                             if (match && match.status === 'ongoing') {
-                                // Petleri iade et
                                 const hostPets = match.hostPets || [];
                                 const joinerPets = match.joinerPets || [];
                                 hostPets.forEach(pet => addPetToInventory(match.host, pet));
                                 if (match.joiner) {
                                     joinerPets.forEach(pet => addPetToInventory(match.joiner, pet));
                                 }
-                                // Maçı kaldır
                                 globalMatches = globalMatches.filter(m => m.id !== match.id);
                                 renderMatches();
                                 showToast(`Match ${match.id} timed out and was cancelled.`, 3000);
-                                // İptal mesajı yayınla
                                 pubnub.publish({
                                     channel: CHANNEL,
                                     message: { type: 'MATCH_CANCELED', matchId: match.id, sender: 'system' }
@@ -4875,11 +4880,10 @@
                 return;
             }
 
-            // Temizleme: 70 saniyeden eski ongoing maçları iptal et (site açılışında)
+            // Eski ongoing maçları temizle
             const now = Date.now();
             const staleMatches = globalMatches.filter(m => m.status === 'ongoing' && m.startedAt && (now - m.startedAt > 70000));
             staleMatches.forEach(match => {
-                // Petleri iade et
                 const hostPets = match.hostPets || [];
                 const joinerPets = match.joinerPets || [];
                 hostPets.forEach(pet => addPetToInventory(match.host, pet));
@@ -4889,10 +4893,6 @@
                 if (match.timeoutId) clearTimeout(match.timeoutId);
                 globalMatches = globalMatches.filter(m => m.id !== match.id);
             });
-            if (staleMatches.length > 0) {
-                // Değişiklik oldu, yeniden render etmek için recursive çağrı yapabiliriz ama render zaten devam ediyor.
-                // Sadece listeyi temizledik.
-            }
 
             if (globalMatches.length === 0) {
                 container.innerHTML =
@@ -5203,13 +5203,12 @@
         }
 
         // ============================================================
-        //  CANCEL MATCH (DÜZELTİLMİŞ)
+        //  CANCEL MATCH
         // ============================================================
         function cancelMyMatch(matchId) {
             const matchIdx = globalMatches.findIndex(m => m.id === matchId);
             if (matchIdx !== -1) {
                 const canceled = globalMatches.splice(matchIdx, 1)[0];
-                // timeout varsa temizle
                 if (canceled.timeoutId) clearTimeout(canceled.timeoutId);
                 canceled.hostPets.forEach(pet => addPetToInventory(currentUser, pet));
                 renderMatches();
@@ -5336,7 +5335,7 @@
         }
 
         // ============================================================
-        //  COIN FLIP (DÜZELTİLMİŞ)
+        //  COIN FLIP
         // ============================================================
         function executeCoinFlip(gameData) {
             const flipModal = document.getElementById('flip-modal');
@@ -5440,7 +5439,6 @@
                     addMatchToHistory(currentUser, historyRecord);
                 }
 
-                // Maçı globalMatches'ten kaldır ve timeout'ı temizle
                 const match = globalMatches.find(m => m.id === gameData.matchId);
                 if (match && match.timeoutId) {
                     clearTimeout(match.timeoutId);
@@ -5717,6 +5715,7 @@
             if (tabId === 'tab-muted') adminRenderMuted();
             if (tabId === 'tab-jackpot') updateAdminJackpotInfo();
             if (tabId === 'tab-forcewin') updateForceWinUI();
+            if (tabId === 'tab-matches') adminRefreshMatches();
         }
 
         function adminRefreshUsers() {
@@ -5844,8 +5843,9 @@
             if (!name) { showToast('Enter a pet name.'); return; }
             if (!icon) { showToast('Enter a pet icon URL.'); return; }
 
+            // Benzersiz ID oluştur (aynı petten iki tane seçilebilsin diye)
             const pet = {
-                id: Date.now() + Math.random() * 1000,
+                id: Date.now() + '_' + Math.random().toString(36).substr(2, 9),
                 name: name,
                 icon: icon,
                 value: value
@@ -5942,6 +5942,53 @@
                 adminRenderMuted();
                 adminRefreshUsers();
             }
+        }
+
+        // ============================================================
+        //  ADMIN – MATCH MANAGEMENT (YENİ)
+        // ============================================================
+        function adminRefreshMatches() {
+            const container = document.getElementById('admin-matches-list');
+            if (!container) return;
+            if (globalMatches.length === 0) {
+                container.innerHTML = '<div style="color:#868e96;padding:10px;">No matches currently.</div>';
+                return;
+            }
+            container.innerHTML = '';
+            globalMatches.forEach(match => {
+                const div = document.createElement('div');
+                div.className = 'admin-user-item';
+                const statusText = match.status === 'waiting' ? '⏳ Waiting' : '🔄 Ongoing';
+                const players = match.joiner ? `${match.host} vs ${match.joiner}` : `${match.host} (waiting)`;
+                div.innerHTML = `
+                    <span class="username">${match.id} - ${players} (${statusText})</span>
+                    <button class="danger" onclick="adminDeleteMatch(${match.id})" style="background:#ff6b6b;color:#0b1120;border:none;padding:3px 12px;border-radius:20px;cursor:pointer;">🗑️</button>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function adminDeleteMatch(matchId) {
+            if (!currentUser || !isAdmin(currentUser)) { showToast('Access denied.'); return; }
+            const matchIndex = globalMatches.findIndex(m => m.id === matchId);
+            if (matchIndex === -1) return showToast('Match not found.');
+            const match = globalMatches[matchIndex];
+            // Petleri iade et
+            if (match.hostPets) {
+                match.hostPets.forEach(pet => addPetToInventory(match.host, pet));
+            }
+            if (match.status === 'ongoing' && match.joinerPets) {
+                match.joinerPets.forEach(pet => addPetToInventory(match.joiner, pet));
+            }
+            if (match.timeoutId) clearTimeout(match.timeoutId);
+            globalMatches.splice(matchIndex, 1);
+            renderMatches();
+            adminRefreshMatches();
+            pubnub.publish({
+                channel: CHANNEL,
+                message: { type: 'MATCH_CANCELED', matchId: matchId, sender: 'admin' }
+            });
+            showToast(`Match ${matchId} deleted by admin.`);
         }
 
         // ============================================================
