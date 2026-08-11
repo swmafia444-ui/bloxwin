@@ -456,6 +456,7 @@
         }
         .pet-circle {
             display: inline-flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
             background: #0f172a;
@@ -464,6 +465,7 @@
             width: 46px;
             height: 46px;
             transition: border-color 0.2s, transform 0.2s;
+            position: relative;
         }
         .pet-circle:hover {
             border-color: var(--accent);
@@ -476,6 +478,32 @@
             border-radius: 50%;
             display: block;
         }
+        .pet-circle .pet-extra-icons {
+            position: absolute;
+            bottom: -6px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 2px;
+            white-space: nowrap;
+        }
+        .pet-extra-icon {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            color: white;
+            font-weight: 700;
+            font-size: 9px;
+            line-height: 16px;
+            text-align: center;
+            font-family: 'Segoe UI', sans-serif;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+        }
+        .pet-extra-icon.ride { background: #e74c3c; }
+        .pet-extra-icon.fly { background: #3498db; }
+        .pet-extra-icon.neon { background: #2ecc71; }
+        .pet-extra-icon.mega { background: #f1c40f; color: #2c3e50; }
         .match-total-value {
             color: var(--accent);
             font-weight: 700;
@@ -681,6 +709,7 @@
             display: flex;
             gap: 4px;
             flex-wrap: wrap;
+            align-items: center;
         }
         .history-card .pets-row .pet-group .pet-img {
             width: 30px;
@@ -2282,13 +2311,111 @@
             font-size: 12px;
             padding: 6px 16px;
         }
-        /* Pet ikon stilleri */
-        .pet-extra-icon {
-            width: 16px;
-            height: 16px;
-            vertical-align: middle;
-            margin-left: 2px;
-            display: inline-block;
+        /* Admin add pet preview */
+        .admin-pet-preview {
+            background: #0f172a;
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+            margin: 16px 0;
+            min-height: 120px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .admin-pet-preview .preview-pet-img {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--accent);
+        }
+        .admin-pet-preview .preview-pet-name {
+            font-size: 18px;
+            font-weight: 700;
+            color: #f1f3f5;
+            margin-top: 8px;
+        }
+        .admin-pet-preview .preview-pet-icons {
+            display: flex;
+            gap: 4px;
+            margin-top: 4px;
+            justify-content: center;
+        }
+        .admin-pet-preview .preview-pet-value {
+            color: var(--accent);
+            font-size: 14px;
+            margin-top: 4px;
+        }
+        .admin-extra-btn {
+            background: #0f172a;
+            border: 2px solid var(--border-color);
+            color: #ced4da;
+            padding: 4px 12px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 12px;
+            transition: all 0.2s;
+        }
+        .admin-extra-btn:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+        .admin-extra-btn.active {
+            background: var(--accent);
+            color: #0b1120;
+            border-color: var(--accent);
+        }
+        /* Giveaway styles */
+        .giveaway-container {
+            border-top: 1px solid var(--border-color);
+            padding: 12px 16px;
+            background: #0f172a;
+            margin-top: 4px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .giveaway-item {
+            background: #1a2332;
+            border-radius: 10px;
+            padding: 8px 12px;
+            margin-bottom: 6px;
+            border: 1px solid var(--accent);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .giveaway-item .g-pet-img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--accent);
+        }
+        .giveaway-item .g-info {
+            flex: 1;
+            min-width: 100px;
+        }
+        .giveaway-item .g-name {
+            font-weight: 700;
+            color: #f1f3f5;
+            font-size: 14px;
+        }
+        .giveaway-item .g-value {
+            color: var(--accent);
+            font-size: 13px;
+        }
+        .giveaway-item .g-timer {
+            color: #868e96;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .giveaway-item .g-timer.urgent {
+            color: #ff6b6b;
         }
     </style>
 </head>
@@ -2407,6 +2534,8 @@
             <button class="close-chat-btn" onclick="closeMobileChat()">✕</button>
         </div>
         <div class="chat-messages" id="chat-messages"></div>
+        <!-- GIVEAWAY ALANI -->
+        <div class="giveaway-container" id="giveaway-container"></div>
         <div class="chat-input-area">
             <input type="text" class="chat-input" id="chat-input" placeholder="Type a message..." onkeydown="if(event.key==='Enter') sendMessage()">
             <button class="chat-send-btn" onclick="sendMessage()">Send</button>
@@ -2573,7 +2702,7 @@
 
     <!-- Admin Panel Modal -->
     <div class="modal-overlay" id="admin-modal">
-        <div class="modal" style="max-width:700px;">
+        <div class="modal" style="max-width:720px;">
             <h2>Admin Panel</h2>
             <div class="admin-panel-tabs">
                 <button class="tab-btn active" data-tab="tab-users" onclick="switchAdminTab('tab-users')">Users</button>
@@ -2583,6 +2712,7 @@
                 <button class="tab-btn" data-tab="tab-forcewin" onclick="switchAdminTab('tab-forcewin')">Force Win</button>
                 <button class="tab-btn" data-tab="tab-matches" onclick="switchAdminTab('tab-matches')">Matches</button>
                 <button class="tab-btn" data-tab="tab-inventory" onclick="switchAdminTab('tab-inventory')">Inventory</button>
+                <button class="tab-btn" data-tab="tab-giveaway" onclick="switchAdminTab('tab-giveaway')">Giveaway</button>
             </div>
 
             <div class="admin-tab-content active" id="tab-users">
@@ -2666,6 +2796,36 @@
                 <button class="action-btn secondary-btn" style="margin-top:10px;" onclick="adminRefreshInventory()">Refresh</button>
             </div>
 
+            <!-- GIVEAWAY Tab -->
+            <div class="admin-tab-content" id="tab-giveaway">
+                <div style="font-weight:600;color:#ced4da;font-size:14px;margin-bottom:8px;">Create Giveaway</div>
+                <div class="form-group">
+                    <label>Pet Name</label>
+                    <input type="text" id="giveaway-pet-name" placeholder="e.g. FR Shadow Dragon" oninput="updateGiveawayPreview()">
+                </div>
+                <div class="form-group">
+                    <label>Pet Image URL</label>
+                    <input type="text" id="giveaway-pet-image" placeholder="https://..." oninput="updateGiveawayPreview()">
+                </div>
+                <div class="form-group">
+                    <label>Value</label>
+                    <input type="number" id="giveaway-pet-value" placeholder="670" value="100" oninput="updateGiveawayPreview()">
+                </div>
+                <div class="form-group">
+                    <label>Duration (hours)</label>
+                    <input type="number" id="giveaway-duration" placeholder="24" value="24" min="1">
+                </div>
+                <!-- Önizleme -->
+                <div style="margin:12px 0;">
+                    <div style="font-weight:500;color:#ced4da;font-size:13px;margin-bottom:4px;">Preview:</div>
+                    <div id="giveaway-preview" class="admin-pet-preview" style="min-height:80px;padding:12px;">
+                        <div style="color:#868e96;font-size:13px;">Pet details will appear here</div>
+                    </div>
+                </div>
+                <button class="post-btn" onclick="createGiveaway()" style="width:100%;">Create Giveaway</button>
+                <div id="giveaway-status" style="margin-top:10px;font-size:13px;color:#868e96;min-height:20px;"></div>
+            </div>
+
             <button class="cancel-btn" style="width:100%;margin-top:16px;" onclick="closeModal('admin-modal')">Close</button>
         </div>
     </div>
@@ -2680,15 +2840,26 @@
             </div>
             <div class="form-group">
                 <label>Pet Name</label>
-                <input type="text" id="admin-add-pet-name" placeholder="e.g. FR Shadow Dragon">
+                <input type="text" id="admin-add-pet-name" placeholder="e.g. FR Shadow Dragon" oninput="updateAdminPetPreview()">
             </div>
             <div class="form-group">
                 <label>Pet Icon URL</label>
-                <input type="text" id="admin-add-pet-icon" placeholder="https://...">
+                <input type="text" id="admin-add-pet-icon" placeholder="https://..." oninput="updateAdminPetPreview()">
             </div>
             <div class="form-group">
                 <label>Pet Value</label>
-                <input type="number" id="admin-add-pet-value" placeholder="670" value="100">
+                <input type="number" id="admin-add-pet-value" placeholder="670" value="100" oninput="updateAdminPetPreview()">
+            </div>
+            <!-- Extra butonlar -->
+            <div style="display:flex;gap:6px;flex-wrap:wrap;margin:8px 0 12px;">
+                <button class="admin-extra-btn" data-extra="Ride" onclick="toggleAdminPetExtra('Ride')">Ride</button>
+                <button class="admin-extra-btn" data-extra="Fly" onclick="toggleAdminPetExtra('Fly')">Fly</button>
+                <button class="admin-extra-btn" data-extra="Neon" onclick="toggleAdminPetExtra('Neon')">Neon</button>
+                <button class="admin-extra-btn" data-extra="Mega" onclick="toggleAdminPetExtra('Mega')">Mega</button>
+            </div>
+            <!-- Önizleme -->
+            <div id="admin-pet-preview" class="admin-pet-preview" style="min-height:100px;">
+                <div style="color:#868e96;font-size:13px;">Preview will appear here</div>
             </div>
             <div class="modal-actions">
                 <button class="post-btn" onclick="adminConfirmAddPet()">Add Pet</button>
@@ -3312,6 +3483,9 @@
             if (modalId === 'login-modal') resetRobloxLoginModal();
             if (modalId === 'admin-add-pet-modal') {
                 document.getElementById('admin-add-pet-status').textContent = '';
+                adminPetExtraState = [];
+                document.querySelectorAll('#admin-add-pet-modal .admin-extra-btn').forEach(b => b.classList.remove('active'));
+                document.getElementById('admin-pet-preview').innerHTML = '<div style="color:#868e96;font-size:13px;">Preview will appear here</div>';
             }
             if (modalId === 'withdraw-modal') {
                 document.getElementById('withdraw-status').textContent = '';
@@ -3394,49 +3568,100 @@
         }
 
         // ============================================================
-        //  PET GÖRSELLERİ – Ride/Fly/Neon/Mega ikonları
+        //  PET EXTRA ICONS (CSS ile)
         // ============================================================
-        const PET_ICONS = {
-            ride: 'https://cdn.discordapp.com/attachments/1484339829771731084/1536855316074078258/image.png?ex=6a7ceb8c&is=6a7b9a0c&hm=3f7ad7dee10bbd1482ce3cfac3c918817f1468cb9a77dae891abfc015ee03c7d&',
-            fly: 'https://cdn.discordapp.com/attachments/1484339829771731084/1536855530608394240/image.png?ex=6a7cebbf&is=6a7b9a3f&hm=d5d323d9718ed0dcdcc51c8f21ab46c34a2b32fabbfd91c04ea4dcf0430af1f1&',
-            neon: 'https://cdn.discordapp.com/attachments/1484339829771731084/1536855772221153342/image.png?ex=6a7cebf9&is=6a7b9a79&hm=688459868057e304bcf6f5499a087635830e6b340005e7a6dfd987ec5991fdb2&',
-            mega: 'https://cdn.discordapp.com/attachments/1484339829771731084/1536855822922162236/image.png?ex=6a7cec05&is=6a7b9a85&hm=b89e38a8148d28db0564a97b0c4b92daf85beed474b1edd153fa56b597b4b252&'
-        };
-
         function getPetExtraIcons(petName) {
-            const name = petName || '';
-            let icons = '';
-            if (name.includes('Ride') || name.includes('R ')) {
-                icons += `<img class="pet-extra-icon" src="${PET_ICONS.ride}" alt="Ride" title="Ride">`;
+            if (!petName) return '';
+            const name = petName.toLowerCase();
+            let html = '';
+            if (name.includes('ride')) {
+                html += `<span class="pet-extra-icon ride">R</span>`;
             }
-            if (name.includes('Fly') || name.includes('F ')) {
-                icons += `<img class="pet-extra-icon" src="${PET_ICONS.fly}" alt="Fly" title="Fly">`;
+            if (name.includes('fly')) {
+                html += `<span class="pet-extra-icon fly">F</span>`;
             }
-            if (name.includes('Neon') || name.includes('NFR') || name.includes('NR')) {
-                icons += `<img class="pet-extra-icon" src="${PET_ICONS.neon}" alt="Neon" title="Neon">`;
+            if (name.includes('neon') || name.includes('nfr') || name.includes('nr')) {
+                html += `<span class="pet-extra-icon neon">N</span>`;
             }
-            if (name.includes('Mega') || name.includes('MFR') || name.includes('MR')) {
-                icons += `<img class="pet-extra-icon" src="${PET_ICONS.mega}" alt="Mega" title="Mega">`;
+            if (name.includes('mega') || name.includes('mfr') || name.includes('mr')) {
+                html += `<span class="pet-extra-icon mega">M</span>`;
             }
-            return icons;
+            return html;
         }
 
         function getPetDisplayHtml(pet) {
             if (!pet) return '';
             const extraIcons = getPetExtraIcons(pet.name);
-            return `<img class="pet-img" src="${pet.icon}" alt="${pet.name}" title="${pet.name}" style="width:44px;height:44px;border-radius:50%;border:1px solid #2d3b4f;"> ${extraIcons}`;
+            return `<img class="pet-img" src="${pet.icon}" alt="${pet.name}" title="${pet.name}" style="width:44px;height:44px;border-radius:50%;border:1px solid #2d3b4f;">${extraIcons ? `<div class="pet-extra-icons">${extraIcons}</div>` : ''}`;
         }
 
         function getPetDisplaySmall(pet) {
             if (!pet) return '';
             const extraIcons = getPetExtraIcons(pet.name);
-            return `<img class="pet-img" src="${pet.icon}" alt="${pet.name}" title="${pet.name}" style="width:32px;height:32px;border-radius:50%;border:1px solid #2d3b4f;"> ${extraIcons}`;
+            return `<img class="pet-img" src="${pet.icon}" alt="${pet.name}" title="${pet.name}" style="width:32px;height:32px;border-radius:50%;border:1px solid #2d3b4f;">${extraIcons ? `<div class="pet-extra-icons">${extraIcons}</div>` : ''}`;
         }
 
         function getPetDisplayAdmin(pet) {
             if (!pet) return '';
             const extraIcons = getPetExtraIcons(pet.name);
             return `<img src="${pet.icon}" alt="${pet.name}" style="width:24px;height:24px;border-radius:50%;border:1px solid #2d3b4f;"> ${extraIcons} <span style="font-size:11px;">${pet.name}</span>`;
+        }
+
+        // Admin pet ekleme önizleme
+        let adminPetExtraState = [];
+
+        function updateAdminPetPreview() {
+            const name = document.getElementById('admin-add-pet-name').value.trim();
+            const icon = document.getElementById('admin-add-pet-icon').value.trim();
+            const value = document.getElementById('admin-add-pet-value').value || 0;
+            const preview = document.getElementById('admin-pet-preview');
+            let extra = '';
+            adminPetExtraState.forEach(e => extra += `<span class="pet-extra-icon ${e.toLowerCase()}">${e.charAt(0)}</span>`);
+            if (!name && !icon) {
+                preview.innerHTML = '<div style="color:#868e96;font-size:13px;">Preview will appear here</div>';
+                return;
+            }
+            let finalName = name;
+            let extraText = adminPetExtraState.join(' ');
+            if (extraText) finalName = extraText + ' ' + name;
+            preview.innerHTML = `
+                <img class="preview-pet-img" src="${icon || 'https://bloxluck.com/img/dog.png'}" alt="Pet" onerror="this.src='https://bloxluck.com/img/dog.png'">
+                <div class="preview-pet-name">${escapeHTML(finalName)}</div>
+                <div class="preview-pet-icons">${extra}</div>
+                <div class="preview-pet-value">Value: ${value}</div>
+            `;
+        }
+
+        function toggleAdminPetExtra(type) {
+            const idx = adminPetExtraState.indexOf(type);
+            const btn = document.querySelector(`.admin-extra-btn[data-extra="${type}"]`);
+            if (idx > -1) {
+                adminPetExtraState.splice(idx, 1);
+                btn.classList.remove('active');
+            } else {
+                adminPetExtraState.push(type);
+                btn.classList.add('active');
+            }
+            updateAdminPetPreview();
+        }
+
+        // Giveaway önizleme
+        function updateGiveawayPreview() {
+            const name = document.getElementById('giveaway-pet-name').value.trim();
+            const icon = document.getElementById('giveaway-pet-image').value.trim();
+            const value = document.getElementById('giveaway-pet-value').value || 0;
+            const preview = document.getElementById('giveaway-preview');
+            if (!name && !icon) {
+                preview.innerHTML = '<div style="color:#868e96;font-size:13px;">Pet details will appear here</div>';
+                return;
+            }
+            const extraIcons = getPetExtraIcons(name);
+            preview.innerHTML = `
+                <img class="preview-pet-img" src="${icon || 'https://bloxluck.com/img/dog.png'}" alt="Pet" onerror="this.src='https://bloxluck.com/img/dog.png'">
+                <div class="preview-pet-name">${escapeHTML(name)}</div>
+                <div class="preview-pet-icons">${extraIcons}</div>
+                <div class="preview-pet-value">Value: ${value}</div>
+            `;
         }
 
         // ============================================================
@@ -3556,7 +3781,6 @@
             if (currentUser && currentUser.toLowerCase() === target) {
                 renderMatches();
             }
-            // Admin inventory panelini güncelle
             if (document.getElementById('admin-modal').classList.contains('active')) {
                 adminRefreshUsers();
                 adminRefreshInventory();
@@ -3997,7 +4221,7 @@
         }
 
         // ============================================================
-        //  JACKPOT – DÜZELTİLMİŞ VERSİYON (playerCount güncellemeleri eklendi)
+        //  JACKPOT – TÜM FONKSİYONLAR
         // ============================================================
         function loadJackpotState() {
             const stored = getJackpotStateFromStorage();
@@ -4255,7 +4479,6 @@
                 }
             });
 
-            // playerCount güncelle
             jackpotState.playerCount = Object.keys(jackpotState.players).length;
 
             broadcastJackpotState();
@@ -4577,9 +4800,6 @@
             updateAdminJackpotInfo();
         }
 
-        // ============================================================
-        //  PUBSUB – JACKPOT
-        // ============================================================
         function handleJackpotMessage(msg) {
             if (msg.sender === currentUser) return;
 
@@ -4662,7 +4882,117 @@
         }
 
         // ============================================================
-        //  PUBSUB – MAIN (DÜZELTİLMİŞ)
+        //  GIVEAWAY SİSTEMİ
+        // ============================================================
+        let activeGiveaways = [];
+
+        function loadGiveaways() {
+            try {
+                const data = localStorage.getItem('app_giveaways');
+                if (data) {
+                    activeGiveaways = JSON.parse(data);
+                    const now = Date.now();
+                    activeGiveaways = activeGiveaways.filter(g => g.expiresAt > now);
+                    saveGiveaways();
+                }
+            } catch { activeGiveaways = []; }
+            renderGiveaways();
+        }
+
+        function saveGiveaways() {
+            localStorage.setItem('app_giveaways', JSON.stringify(activeGiveaways));
+        }
+
+        function renderGiveaways() {
+            const container = document.getElementById('giveaway-container');
+            if (!container) return;
+            const now = Date.now();
+            activeGiveaways = activeGiveaways.filter(g => g.expiresAt > now);
+            saveGiveaways();
+            if (activeGiveaways.length === 0) {
+                container.innerHTML = '';
+                return;
+            }
+            let html = '';
+            activeGiveaways.forEach((g, idx) => {
+                const remaining = Math.max(0, g.expiresAt - now);
+                const hours = Math.floor(remaining / 3600000);
+                const minutes = Math.floor((remaining % 3600000) / 60000);
+                const timeStr = hours > 0 ? `${hours}h ${minutes}m` : `${minutes}m`;
+                const urgent = remaining < 3600000 ? 'urgent' : '';
+                html += `
+                    <div class="giveaway-item">
+                        <img class="g-pet-img" src="${g.image}" alt="${g.name}" onerror="this.src='https://bloxluck.com/img/dog.png'">
+                        <div class="g-info">
+                            <div class="g-name">${escapeHTML(g.name)}</div>
+                            <div class="g-value">Value: ${g.value}</div>
+                        </div>
+                        <div class="g-timer ${urgent}">⏳ ${timeStr}</div>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+        }
+
+        let giveawayInterval = null;
+
+        function startGiveawayTimer() {
+            if (giveawayInterval) clearInterval(giveawayInterval);
+            giveawayInterval = setInterval(renderGiveaways, 10000);
+        }
+
+        function createGiveaway() {
+            if (!currentUser || !isAdmin(currentUser)) {
+                showToast('Access denied.');
+                return;
+            }
+            const name = document.getElementById('giveaway-pet-name').value.trim();
+            const image = document.getElementById('giveaway-pet-image').value.trim();
+            const value = parseInt(document.getElementById('giveaway-pet-value').value) || 0;
+            const hours = parseInt(document.getElementById('giveaway-duration').value) || 24;
+            if (!name || !image) {
+                showToast('Please fill pet name and image URL.');
+                return;
+            }
+            const giveaway = {
+                id: Date.now() + '_' + Math.random().toString(36).substr(2, 6),
+                name: name,
+                image: image,
+                value: value,
+                createdAt: Date.now(),
+                expiresAt: Date.now() + hours * 3600000,
+                createdBy: currentUser
+            };
+            activeGiveaways.push(giveaway);
+            saveGiveaways();
+            renderGiveaways();
+            pubnub.publish({
+                channel: CHANNEL,
+                message: { type: 'GIVEAWAY_CREATED', giveaway: giveaway, sender: currentUser }
+            });
+            document.getElementById('giveaway-status').textContent = '✅ Giveaway created successfully!';
+            document.getElementById('giveaway-pet-name').value = '';
+            document.getElementById('giveaway-pet-image').value = '';
+            document.getElementById('giveaway-pet-value').value = '100';
+            document.getElementById('giveaway-duration').value = '24';
+            updateGiveawayPreview();
+            showToast(`Giveaway created: ${name} for ${hours} hours!`);
+        }
+
+        function handleGiveawayMessage(msg) {
+            if (msg.sender === currentUser) return;
+            if (msg.type === 'GIVEAWAY_CREATED') {
+                const exists = activeGiveaways.some(g => g.id === msg.giveaway.id);
+                if (!exists) {
+                    activeGiveaways.push(msg.giveaway);
+                    saveGiveaways();
+                    renderGiveaways();
+                }
+            }
+        }
+
+        // ============================================================
+        //  PUBSUB – MAIN
         // ============================================================
         pubnub.addListener({
             message: function(event) {
@@ -4719,7 +5049,10 @@
                     saveAndRenderChat(msg.username, msg.text, msg.time);
                 }
 
-                // --- COINFLIP MESAJLARI (SENDER KONTROLÜ) ---
+                if (msg.type === 'GIVEAWAY_CREATED') {
+                    handleGiveawayMessage(msg);
+                }
+
                 if (msg.type === 'MATCH_CREATED') {
                     if (msg.sender === currentUser) return;
                     if (!globalMatches.some(m => m.id === msg.match.id)) {
@@ -4881,7 +5214,7 @@
         }
 
         // ============================================================
-        //  RENDER MATCHES (DÜZELTİLMİŞ – finished maçları göster)
+        //  RENDER MATCHES
         // ============================================================
         function renderMatches() {
             const container = document.getElementById('matches-list');
@@ -4949,7 +5282,6 @@
                 return;
             }
 
-            // Eski ongoing maçları temizle (70 saniye)
             const now = Date.now();
             const staleMatches = globalMatches.filter(m => m.status === 'ongoing' && m.startedAt && (now - m.startedAt > 70000));
             staleMatches.forEach(match => {
@@ -4963,7 +5295,6 @@
                 globalMatches = globalMatches.filter(m => m.id !== match.id);
             });
 
-            // finished maçları temizle (70 saniye sonra)
             const finishedExpiry = 70000;
             const toRemove = globalMatches.filter(m => m.status === 'finished' && m.finishedAt && (now - m.finishedAt > finishedExpiry));
             toRemove.forEach(m => {
@@ -4981,7 +5312,6 @@
             const ongoing = globalMatches.filter(m => m.status === 'ongoing');
             const finished = globalMatches.filter(m => m.status === 'finished');
 
-            // Waiting maçlar
             waiting.forEach(match => {
                 const isMyMatch = currentUser && match.host === currentUser;
                 const totalValue = sumPets(match.hostPets);
@@ -5042,7 +5372,6 @@
                 container.appendChild(card);
             });
 
-            // Ongoing maçlar
             ongoing.forEach(match => {
                 const totalValue = sumPets(match.hostPets) + sumPets(match.joinerPets);
                 const winnerSide = match.winnerSide || (match.hostWins ? match.hostSide : match.joinerSide);
@@ -5113,7 +5442,6 @@
                 }, 300);
             });
 
-            // Finished maçlar (70 saniye boyunca göster)
             finished.forEach(match => {
                 const totalValue = match.totalValue || (sumPets(match.hostPets) + sumPets(match.joinerPets));
                 const winnerName = match.winner || 'Unknown';
@@ -5454,7 +5782,7 @@
         }
 
         // ============================================================
-        //  COIN FLIP (DÜZELTİLMİŞ – finished durumu eklendi)
+        //  COIN FLIP
         // ============================================================
         function executeCoinFlip(gameData) {
             const flipModal = document.getElementById('flip-modal');
@@ -5978,16 +6306,20 @@
             if (!icon) { showToast('Enter a pet icon URL.'); return; }
 
             // Benzersiz ID oluştur (aynı petten iki tane seçilebilsin diye)
+            let finalName = name;
+            if (adminPetExtraState.length > 0) {
+                finalName = adminPetExtraState.join(' ') + ' ' + name;
+            }
             const pet = {
                 id: Date.now() + '_' + Math.random().toString(36).substr(2, 9),
-                name: name,
+                name: finalName,
                 icon: icon,
                 value: value
             };
 
             addPetToInventory(username, pet);
-            document.getElementById('admin-add-pet-status').textContent = `✅ Added ${name} to ${username}`;
-            showToast(`Added ${name} to ${username}`);
+            document.getElementById('admin-add-pet-status').textContent = `✅ Added ${finalName} to ${username}`;
+            showToast(`Added ${finalName} to ${username}`);
             closeModal('admin-add-pet-modal');
             if (adminCurrentTargetUser === username) {
                 adminTargetPets = getUserInventory(username);
@@ -6126,7 +6458,7 @@
         }
 
         // ============================================================
-        //  ADMIN – INVENTORY (DÜZELTİLMİŞ – CANLI GÜNCELLENİYOR)
+        //  ADMIN – INVENTORY
         // ============================================================
         function adminRefreshInventory() {
             const container = document.getElementById('admin-inventory-container');
@@ -6172,6 +6504,7 @@
         cleanupHistory();
 
         loadJackpotState();
+        loadGiveaways();
 
         setTimeout(() => {
             pubnub.publish({
@@ -6193,6 +6526,7 @@
         renderMatches();
         renderChatHistory();
         startOnlineCount();
+        startGiveawayTimer();
 
         if (currentUser) {
             addRegisteredUser(currentUser);
@@ -6246,6 +6580,8 @@
         });
 
         updateForceWinUI();
+
+        console.log('BloxyWin loaded successfully! All features updated.');
     </script>
 </body>
 </html>
