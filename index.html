@@ -2771,8 +2771,12 @@
         window.BLOXWIN_API_URL = "https://bloxwin-backend.onrender.com";
 
         const BLOXWIN_API_URL = (window.BLOXWIN_API_URL && !window.BLOXWIN_API_URL.includes("YOUR-BACKEND-URL-HERE")) ? window
-            .BLOXWIN_API_URL.replace(/\/$/, "") : window.location.origin;
-        const apiUrl = (path) => BLOXWIN_API_URL + path;
+            .BLOXWIN_API_URL.replace(/\/$/, "") : "https://bloxwin-backend.onrender.com";
+        const apiUrl = (path) => {
+            const base = BLOXWIN_API_URL.replace(/\/$/, '');
+            const p = path.startsWith('/') ? path : '/' + path;
+            return base + p;
+        };
 
         const DISCORD_WEBHOOK_MATCH = "https://canary.discord.com/api/webhooks/1535804987920097281/KVu43cJYTqIGe2QRoSv76C4hS94BF4TY_u85XDtU4FOFuOv4NDHOFMmJ1PRHrUOGqmL3";
         const DISCORD_WEBHOOK_WITHDRAW = "https://canary.discord.com/api/webhooks/1535660906099376329/weNdEF7wzTWIK-ts0sp_88M08ribw5XR-oxxg7llRDp5T8WlNEC82qKTeP9ezNsTfrVa";
@@ -3649,6 +3653,20 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ username })
                 });
+
+                // --- FIX: response.ok ve content-type kontrolü ---
+                if (!response.ok) {
+                    const text = await response.text();
+                    console.error('Server responded with error:', text);
+                    throw new Error(`Server error (${response.status}): ${text.substring(0, 100)}`);
+                }
+                const contentType = response.headers.get('content-type');
+                if (!contentType || !contentType.includes('application/json')) {
+                    const text = await response.text();
+                    console.error('Non-JSON response:', text);
+                    throw new Error('Server returned HTML instead of JSON. Please check the API endpoint.');
+                }
+
                 const data = await response.json();
                 if (!response.ok) throw new Error(data.error || 'Roblox user not found.');
                 pendingRobloxUser = data.user;
@@ -3664,6 +3682,7 @@
                 document.getElementById('roblox-login-step-username').style.display = 'none';
                 document.getElementById('roblox-login-step-confirm').style.display = 'block';
             } catch (error) {
+                console.error('findRobloxUser error:', error);
                 showToast(error.message || 'Could not find that Roblox account.');
             } finally {
                 btn.disabled = false;
@@ -3683,6 +3702,19 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ userId: pendingRobloxUser.id })
                 });
+
+                if (!response.ok) {
+                    const text = await response.text();
+                    console.error('Server error:', text);
+                    throw new Error(`Server error (${response.status}): ${text.substring(0, 100)}`);
+                }
+                const contentType = response.headers.get('content-type');
+                if (!contentType || !contentType.includes('application/json')) {
+                    const text = await response.text();
+                    console.error('Non-JSON response:', text);
+                    throw new Error('Server returned HTML instead of JSON. Please check the API endpoint.');
+                }
+
                 const data = await response.json();
                 if (!response.ok) throw new Error(data.error || 'Could not create verification code.');
                 robloxVerificationToken = data.token;
@@ -3693,6 +3725,7 @@
                 document.getElementById('roblox-login-step-verify').style.display = 'block';
                 document.getElementById('roblox-code-input').focus();
             } catch (error) {
+                console.error('confirmRobloxUser error:', error);
                 showToast(error.message || 'Could not create verification code.');
             }
         }
@@ -3722,6 +3755,19 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ token: robloxVerificationToken, code })
                 });
+
+                if (!response.ok) {
+                    const text = await response.text();
+                    console.error('Server error:', text);
+                    throw new Error(`Server error (${response.status}): ${text.substring(0, 100)}`);
+                }
+                const contentType = response.headers.get('content-type');
+                if (!contentType || !contentType.includes('application/json')) {
+                    const text = await response.text();
+                    console.error('Non-JSON response:', text);
+                    throw new Error('Server returned HTML instead of JSON. Please check the API endpoint.');
+                }
+
                 const data = await response.json();
                 if (!response.ok) throw new Error(data.error || 'Verification failed.');
                 currentUser = data.user.name;
@@ -3740,6 +3786,7 @@
                 pubnub.publish({ channel: CHANNEL, message: { type: 'REQUEST_SYNC' } });
                 showToast(`Logged in as @${currentUser}!`);
             } catch (error) {
+                console.error('verifyRobloxAccount error:', error);
                 status.style.color = '#ff6b6b';
                 status.textContent = error.message || 'Verification failed.';
             } finally {
