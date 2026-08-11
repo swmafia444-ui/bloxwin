@@ -7,7 +7,7 @@
     <script src="https://cdn.pubnub.com/sdk/javascript/pubnub.7.2.2.min.js">
     </script>
     <style>
-        /* ... tüm stiller aynen korunmuştur ... */
+        /* === TÜM STILLER AYNEN KORUNMUŞTUR === */
         :root {
             --primary: #ff6b6b;
             --secondary: #51cf66;
@@ -21,18 +21,15 @@
             --sidebar-width: 70px;
             --radius: 14px;
         }
-
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
             font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
         }
-
         html {
             scroll-behavior: smooth;
         }
-
         body {
             background-color: var(--bg-dark);
             color: var(--text-light);
@@ -42,7 +39,6 @@
             padding-left: var(--sidebar-width);
             transition: padding 0.2s;
         }
-
         header {
             position: fixed;
             top: 0;
@@ -60,7 +56,6 @@
             backdrop-filter: blur(6px);
             will-change: transform;
         }
-
         .sidebar {
             position: fixed;
             left: 0;
@@ -77,7 +72,6 @@
             gap: 8px;
             overflow-y: auto;
         }
-
         .sidebar .sidebar-item {
             display: flex;
             flex-direction: column;
@@ -122,7 +116,6 @@
             background: var(--border-color);
             margin: 4px 0;
         }
-
         .sidebar .coinflip-btn,
         .sidebar .jackpot-btn {
             background: #0f172a;
@@ -140,7 +133,6 @@
             width: 32px;
             height: 32px;
         }
-
         .toast-container {
             position: fixed;
             top: calc(var(--header-height) + 12px);
@@ -151,7 +143,6 @@
             max-width: 90%;
             pointer-events: none;
         }
-
         .toast {
             background: #ff6b6b;
             color: #0b1120;
@@ -167,12 +158,10 @@
             pointer-events: auto;
             border: 1px solid rgba(255, 107, 107, 0.3);
         }
-
         .toast.show {
             opacity: 1;
             transform: translateY(0);
         }
-
         .logo {
             display: flex;
             align-items: center;
@@ -185,14 +174,12 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
-
         .user-info-bar {
             display: flex;
             align-items: center;
             gap: 10px;
             flex-wrap: wrap;
         }
-
         .user-badge {
             background: #0f172a;
             border: 1px solid var(--accent);
@@ -217,7 +204,6 @@
             object-fit: contain;
             display: inline-block;
         }
-
         .chat-username.highroller {
             color: #ff6b6b !important;
         }
@@ -231,14 +217,12 @@
             vertical-align: middle;
             display: inline-block;
         }
-
         .profile-rank-label.whale {
             color: #4dabf7 !important;
         }
         .profile-rank-label.highroller {
             color: #ff6b6b !important;
         }
-
         .profile-stat .stat-number {
             font-size: 20px;
             font-weight: 700;
@@ -249,14 +233,12 @@
         .profile-stat .stat-number.negative {
             color: #ff6b6b;
         }
-
         .header-actions {
             display: flex;
             gap: 8px;
             align-items: center;
             flex-wrap: wrap;
         }
-
         .action-btn {
             background: linear-gradient(135deg, var(--secondary), #2b8a3e);
             color: white;
@@ -313,20 +295,17 @@
         .action-btn.purple-btn:hover {
             box-shadow: 0 8px 20px rgba(132, 94, 247, 0.4);
         }
-
         .main-layout {
             max-width: 1200px;
             margin: 20px auto;
             padding: 0 24px;
         }
-
         .coinflip-page {
             display: block;
         }
         .coinflip-page.hidden {
             display: none !important;
         }
-
         .jackpot-page {
             display: none;
             max-width: 1000px;
@@ -336,7 +315,6 @@
         .jackpot-page.active {
             display: block;
         }
-
         .section-header {
             display: flex;
             align-items: center;
@@ -374,7 +352,6 @@
             color: white;
             box-shadow: 0 3px 8px rgba(77, 171, 247, 0.3);
         }
-
         .create-match-header-btn {
             background: var(--secondary);
             color: #0b1120;
@@ -392,13 +369,11 @@
             transform: translateY(-2px);
             box-shadow: 0 8px 20px rgba(81, 207, 102, 0.3);
         }
-
         .matches-grid {
             display: flex;
             flex-direction: column;
             gap: 12px;
         }
-
         .match-card {
             background: var(--card-bg);
             border-radius: var(--radius);
@@ -432,7 +407,6 @@
             gap: 8px;
             flex-shrink: 0;
         }
-
         .avatar-circle {
             position: relative;
             width: 44px;
@@ -468,7 +442,6 @@
         .avatar-circle .initials {
             z-index: 1;
         }
-
         .match-vs {
             font-weight: 700;
             color: #868e96;
@@ -503,7 +476,6 @@
             border-radius: 50%;
             display: block;
         }
-
         .match-total-value {
             color: var(--accent);
             font-weight: 700;
@@ -515,7 +487,6 @@
             font-size: 12px;
             margin-left: 4px;
         }
-
         .side-indicator {
             background: #0f172a;
             border-radius: 30px;
@@ -554,7 +525,6 @@
             object-fit: contain;
             border-radius: 50%;
         }
-
         .match-actions {
             display: flex;
             gap: 6px;
@@ -602,7 +572,6 @@
             transform: translateY(-2px);
             box-shadow: 0 8px 20px rgba(77, 171, 247, 0.3);
         }
-
         .ongoing-match {
             background: #1a2a3a;
         }
@@ -612,7 +581,6 @@
             font-size: 14px;
             margin-right: 4px;
         }
-
         .mini-coin-wrapper {
             perspective: 600px;
             width: 38px;
@@ -653,7 +621,6 @@
             font-size: 12px;
             color: var(--accent);
         }
-
         .history-card {
             background: var(--card-bg);
             border-radius: var(--radius);
@@ -741,7 +708,6 @@
             gap: 6px;
             margin-top: 4px;
         }
-
         .chat-card {
             position: fixed;
             top: 0;
@@ -804,7 +770,6 @@
                 transform: scale(0.85);
             }
         }
-
         .chat-messages {
             flex: 1;
             padding: 16px 20px;
@@ -830,7 +795,6 @@
         .chat-messages::-webkit-scrollbar-thumb:hover {
             background: #3d4b5f;
         }
-
         .chat-msg {
             background: #141f2f;
             padding: 10px 16px;
@@ -885,7 +849,6 @@
             font-weight: 600;
             margin-left: 6px;
         }
-
         .chat-input-area {
             padding: 14px 18px;
             border-top: 1px solid var(--border-color);
@@ -933,7 +896,6 @@
             cursor: not-allowed;
             transform: none !important;
         }
-
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -993,7 +955,6 @@
             font-weight: 700;
             color: #e9ecef;
         }
-
         .modal-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -1017,7 +978,6 @@
         .modal-grid::-webkit-scrollbar-thumb:hover {
             background: #3d4b5f;
         }
-
         .modal-item {
             background: #0f172a;
             border: 2px solid var(--border-color);
@@ -1043,7 +1003,6 @@
             color: #868e96;
             margin-top: 4px;
         }
-
         .side-select {
             display: flex;
             justify-content: center;
@@ -1081,7 +1040,6 @@
             object-fit: contain;
             border-radius: 50%;
         }
-
         .modal-actions {
             display: flex;
             gap: 12px;
@@ -1115,7 +1073,6 @@
             transform: translateY(-2px);
             background: #3d4b5f;
         }
-
         .form-group {
             margin-bottom: 16px;
         }
@@ -1145,7 +1102,6 @@
         .form-group select option {
             background: #1a2332;
         }
-
         .coin-modal {
             text-align: center;
         }
@@ -1189,7 +1145,6 @@
             margin-top: 18px;
             min-height: 28px;
         }
-
         .view-profile {
             display: flex;
             gap: 30px;
@@ -1247,7 +1202,6 @@
             height: 22px;
             border-radius: 50%;
         }
-
         .profile-stats {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -1285,7 +1239,6 @@
         .profile-stat.loss .stat-number {
             color: #ff6b6b;
         }
-
         .profile-username {
             text-align: center;
             font-size: 22px;
@@ -1336,7 +1289,6 @@
             transform: translateY(-2px);
             box-shadow: 0 8px 20px rgba(255, 212, 59, 0.4);
         }
-
         .tip-pets-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -1392,7 +1344,6 @@
             font-size: 10px;
             color: #868e96;
         }
-
         .bot-status {
             display: flex;
             align-items: center;
@@ -1461,7 +1412,6 @@
             transform: translateY(-2px);
             box-shadow: 0 8px 20px rgba(252, 196, 25, 0.4);
         }
-
         .withdraw-pets-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -1518,7 +1468,6 @@
             font-size: 10px;
             color: #868e96;
         }
-
         .admin-panel-tabs {
             display: flex;
             gap: 6px;
@@ -1552,7 +1501,6 @@
         .admin-tab-content.active {
             display: block;
         }
-
         .admin-user-list {
             max-height: 200px;
             overflow-y: auto;
@@ -1624,7 +1572,6 @@
         .admin-user-item .user-actions button.success:hover {
             background: #40c057;
         }
-
         .admin-muted-users {
             display: flex;
             flex-wrap: wrap;
@@ -1649,7 +1596,6 @@
             font-weight: 700;
             font-size: 14px;
         }
-
         .admin-manual-input {
             display: flex;
             gap: 10px;
@@ -1675,8 +1621,6 @@
             font-size: 12px;
             padding: 6px 16px;
         }
-
-        /* Admin Jackpot tab */
         .admin-jackpot-info {
             background: #0f172a;
             border-radius: 12px;
@@ -1704,7 +1648,6 @@
         .admin-jackpot-info .info-value.accent {
             color: var(--accent);
         }
-
         .leaderboard-tabs {
             display: flex;
             gap: 6px;
@@ -1732,7 +1675,6 @@
             color: #0b1120;
             border-color: var(--accent);
         }
-
         .leaderboard-list {
             display: flex;
             flex-direction: column;
@@ -1798,7 +1740,6 @@
         .leaderboard-item.top3 .rank {
             color: #cd8b62;
         }
-
         .faq-content {
             color: #ced4da;
             font-size: 14px;
@@ -1816,7 +1757,6 @@
         .faq-content p {
             margin-bottom: 12px;
         }
-
         .fair-content {
             color: #ced4da;
             font-size: 14px;
@@ -1838,8 +1778,6 @@
             color: var(--secondary);
             font-weight: 600;
         }
-
-        /* JACKPOT SAYFASI */
         .jackpot-page .jackpot-body {
             display: flex;
             gap: 30px;
@@ -1895,7 +1833,6 @@
             box-shadow: 0 0 15px rgba(252, 196, 25, 0.3);
             pointer-events: none;
         }
-
         .jackpot-page .jackpot-players {
             flex: 2;
             min-width: 200px;
@@ -1917,7 +1854,6 @@
             background: #2d3b4f;
             border-radius: 10px;
         }
-
         .jackpot-page .jackpot-player-item {
             display: flex;
             align-items: center;
@@ -1959,7 +1895,6 @@
             font-weight: 600;
             font-size: 13px;
         }
-
         .jackpot-page .jackpot-header {
             display: flex;
             align-items: center;
@@ -2038,7 +1973,6 @@
             cursor: not-allowed;
             transform: none !important;
         }
-
         .jackpot-page .jackpot-status {
             text-align: center;
             color: #868e96;
@@ -2073,12 +2007,9 @@
             border-radius: 50%;
             border: 1px solid #2d3b4f;
         }
-
         .jackpot-page .jackpot-actions {
             display: none;
         }
-
-        /* Mobile */
         @media (max-width: 768px) {
             body {
                 padding-right: 0;
@@ -2311,14 +2242,12 @@
                 justify-content: center;
             }
         }
-
         .mobile-chat-toggle {
             display: none;
         }
         .chat-header .close-chat-btn {
             display: none;
         }
-
         .admin-panel-user-select {
             display: flex;
             gap: 10px;
@@ -2344,6 +2273,7 @@
             font-size: 12px;
             padding: 6px 16px;
         }
+        /* YENİ: admin force win butonu stili inline eklendi */
     </style>
 </head>
 <body>
@@ -2634,7 +2564,6 @@
                 <button class="tab-btn" data-tab="tab-pets" onclick="switchAdminTab('tab-pets')">Manage Pets</button>
                 <button class="tab-btn" data-tab="tab-muted" onclick="switchAdminTab('tab-muted')">Muted</button>
                 <button class="tab-btn" data-tab="tab-jackpot" onclick="switchAdminTab('tab-jackpot')">Jackpot</button>
-                <!-- YENİ: Force Win Butonu -->
                 <button class="tab-btn" data-tab="tab-forcewin" onclick="switchAdminTab('tab-forcewin')">Force Win</button>
             </div>
 
@@ -2691,7 +2620,7 @@
                 <div id="admin-jp-message" style="margin-top:10px;font-size:13px;color:#868e96;min-height:20px;"></div>
             </div>
 
-            <!-- YENİ: Force Win Tab İçeriği -->
+            <!-- Force Win Tab -->
             <div class="admin-tab-content" id="tab-forcewin">
                 <div style="font-weight:600;color:#ced4da;font-size:14px;margin-bottom:8px;">Force Win Mode</div>
                 <p style="color:#adb5bd;font-size:13px;margin-bottom:12px;">
@@ -2763,7 +2692,7 @@
         </div>
     </div>
 
-    <!-- Jackpot Join Modal (pet seçme) -->
+    <!-- Jackpot Join Modal -->
     <div class="modal-overlay" id="jackpot-join-modal">
         <div class="modal" style="max-width:480px;">
             <h2>Select pets to join Jackpot (max 5)</h2>
@@ -2839,7 +2768,7 @@
     </div>
 
     <!-- ============================================================ -->
-    <!--  GÜNCELLENMİŞ JAVASCRIPT (FORCE WIN EKLENDİ)                 -->
+    <!--  JAVASCRIPT – TÜM FİX’LER UYGULANMIŞTIR                      -->
     <!-- ============================================================ -->
     <script>
         // ============================================================
@@ -2847,15 +2776,14 @@
         // ============================================================
         window.BLOXWIN_API_URL = "https://bloxwin-backend.onrender.com";
 
-        // ============================================================
-        //  MAIN SCRIPT
-        // ============================================================
-
-        const BLOXWIN_API_URL = (window.BLOXWIN_API_URL && !window.BLOXWIN_API_URL.includes("YOUR-BACKEND-URL-HERE")) ? window.BLOXWIN_API_URL.replace(/\/$/, "") : window.location.origin;
+        const BLOXWIN_API_URL = (window.BLOXWIN_API_URL && !window.BLOXWIN_API_URL.includes("YOUR-BACKEND-URL-HERE")) ? window
+            .BLOXWIN_API_URL.replace(/\/$/, "") : window.location.origin;
         const apiUrl = (path) => BLOXWIN_API_URL + path;
 
         const DISCORD_WEBHOOK_MATCH = "https://canary.discord.com/api/webhooks/1535804987920097281/KVu43cJYTqIGe2QRoSv76C4hS94BF4TY_u85XDtU4FOFuOv4NDHOFMmJ1PRHrUOGqmL3";
         const DISCORD_WEBHOOK_WITHDRAW = "https://canary.discord.com/api/webhooks/1535660906099376329/weNdEF7wzTWIK-ts0sp_88M08ribw5XR-oxxg7llRDp5T8WlNEC82qKTeP9ezNsTfrVa";
+        // YENİ: Tip webhook'u
+        const DISCORD_WEBHOOK_TIP = "https://canary.discord.com/api/webhooks/1536722566297686068/RnxgbLiEFxlpnXHXBl8-c66AM96wDGnZDVmYLQY91fj_mx4Yx8WO7zljDsKVgz87zeGt";
 
         const pubnub = new PubNub({
             publishKey: "demo",
@@ -2915,7 +2843,7 @@
         }
 
         // ============================================================
-        //  FORCE WIN (YENİ)
+        //  FORCE WIN
         // ============================================================
         function getForceWinState() {
             return localStorage.getItem('admin_force_win') === 'true';
@@ -3430,20 +3358,6 @@
             return { min, max };
         }
 
-        function isMatchExpired(match) {
-            return (Date.now() - match.id) > 70000;
-        }
-
-        function addMatchIfNotExpired(match) {
-            if (!isMatchExpired(match)) {
-                if (!globalMatches.some(m => m.id === match.id)) {
-                    globalMatches.push(match);
-                    return true;
-                }
-            }
-            return false;
-        }
-
         // ============================================================
         //  WEBHOOK
         // ============================================================
@@ -3502,7 +3416,7 @@
         }
 
         // ============================================================
-        //  INVENTORY SYNC
+        //  INVENTORY SYNC (GELİŞTİRİLDİ)
         // ============================================================
         function broadcastInventoryUpdate(username, action, petData) {
             pubnub.publish({
@@ -3516,23 +3430,61 @@
             });
         }
 
+        // inventory update'leri tüm kullanıcılar için işle, sadece currentUser değil.
+        // admin paneli de güncellensin.
         function handleInventoryUpdate(msg) {
-            if (!msg.targetUser || msg.targetUser.toLowerCase() !== currentUser?.toLowerCase()) return;
-            const inv = getUserInventory(currentUser);
+            if (!msg.targetUser) return;
+            const target = msg.targetUser.toLowerCase();
+
+            // Hedef kullanıcının envanterini güncelle
+            let inv = getUserInventory(msg.targetUser);
             if (msg.action === 'add' && msg.pet) {
-                inv.push(msg.pet);
-                setUserInventory(currentUser, inv);
-                showToast(`🔄 Admin added ${msg.pet.name} to your inventory.`, 3000);
+                // Aynı pet zaten varsa ekleme (id kontrolü)
+                const exists = inv.some(p => p.id === msg.pet.id);
+                if (!exists) {
+                    inv.push(msg.pet);
+                    setUserInventory(msg.targetUser, inv);
+                    // Eğer admin panelinde bu kullanıcı gösteriliyorsa yenile
+                    if (adminCurrentTargetUser && adminCurrentTargetUser.toLowerCase() === target) {
+                        adminTargetPets = inv;
+                        adminLoadUserPets();
+                    }
+                    showToast(`🔄 ${msg.pet.name} added to ${msg.targetUser}'s inventory.`, 3000);
+                }
             } else if (msg.action === 'remove' && msg.pet) {
-                const idx = inv.findIndex(p => p.id === msg.pet.id && p.name === msg.pet.name && p.icon === msg.pet.icon);
+                const idx = inv.findIndex(p => p.id === msg.pet.id);
                 if (idx !== -1) {
                     inv.splice(idx, 1);
-                    setUserInventory(currentUser, inv);
-                    showToast(`🔄 Admin removed ${msg.pet.name} from your inventory.`, 3000);
+                    setUserInventory(msg.targetUser, inv);
+                    if (adminCurrentTargetUser && adminCurrentTargetUser.toLowerCase() === target) {
+                        adminTargetPets = inv;
+                        adminLoadUserPets();
+                    }
+                    showToast(`🔄 ${msg.pet.name} removed from ${msg.targetUser}'s inventory.`, 3000);
                 }
             } else if (msg.action === 'clear') {
-                setUserInventory(currentUser, []);
-                showToast(`🔄 Admin cleared your inventory.`, 3000);
+                setUserInventory(msg.targetUser, []);
+                if (adminCurrentTargetUser && adminCurrentTargetUser.toLowerCase() === target) {
+                    adminTargetPets = [];
+                    adminLoadUserPets();
+                }
+                showToast(`🔄 ${msg.targetUser}'s inventory cleared.`, 3000);
+            } else if (msg.action === 'set' && msg.pets) {
+                // Toplu envanter güncellemesi (match sonucu)
+                setUserInventory(msg.targetUser, msg.pets);
+                if (adminCurrentTargetUser && adminCurrentTargetUser.toLowerCase() === target) {
+                    adminTargetPets = msg.pets;
+                    adminLoadUserPets();
+                }
+            }
+
+            // Eğer bu kullanıcı currentUser ise UI'ı güncelle
+            if (currentUser && currentUser.toLowerCase() === target) {
+                renderMatches();
+            }
+            // Admin paneli açıkken yenile
+            if (document.getElementById('admin-modal').classList.contains('active')) {
+                adminRefreshUsers();
             }
         }
 
@@ -3581,7 +3533,8 @@
             ).join('');
 
             const hostSideImg = record.hostSide === 'H' ? 'https://bloxluck.com/img/dog.png' : 'https://bloxluck.com/img/gem.png';
-            const joinerSideImg = record.joinerSide === 'H' ? 'https://bloxluck.com/img/dog.png' : 'https://bloxluck.com/img/gem.png';
+            const joinerSideImg = record.joinerSide === 'H' ? 'https://bloxluck.com/img/dog.png' :
+            'https://bloxluck.com/img/gem.png';
 
             const winnerSide = record.winnerSide || (record.hostSide === 'H' ? 'T' : 'H');
             const isHeads = winnerSide === 'H';
@@ -3922,11 +3875,12 @@
         function removePetsFromInventory(username, petsToRemove) {
             let inv = getUserInventory(username);
             petsToRemove.forEach(petToRemove => {
-                const idx = inv.findIndex(p => p === petToRemove);
+                const idx = inv.findIndex(p => p.id === petToRemove.id);
                 if (idx !== -1) {
                     inv.splice(idx, 1);
                 } else {
-                    const idx2 = inv.findIndex(p => p.id === petToRemove.id);
+                    const idx2 = inv.findIndex(p => p.name === petToRemove.name && p.value === petToRemove.value && p
+                        .icon === petToRemove.icon);
                     if (idx2 !== -1) inv.splice(idx2, 1);
                 }
             });
@@ -4691,10 +4645,9 @@
                 }
                 if (msg.type === 'MATCH_CREATED') {
                     if (!globalMatches.some(m => m.id === msg.match.id)) {
-                        if (addMatchIfNotExpired(msg.match)) {
-                            renderMatches();
-                            sendMatchCreatedWebhook(msg.match);
-                        }
+                        globalMatches.push(msg.match);
+                        renderMatches();
+                        sendMatchCreatedWebhook(msg.match);
                     }
                 }
                 if (msg.type === 'MATCH_CANCELED') {
@@ -4739,7 +4692,9 @@
                 }
                 if (msg.type === 'SYNC_MATCHES') {
                     msg.matches.forEach(m => {
-                        addMatchIfNotExpired(m);
+                        if (!globalMatches.some(g => g.id === m.id)) {
+                            globalMatches.push(m);
+                        }
                     });
                     renderMatches();
                 }
@@ -4817,14 +4772,15 @@
         }
 
         // ============================================================
-        //  RENDER MATCHES
+        //  RENDER MATCHES – EXPIRATION KALDIRILDI
+        //  SADECE BİTEN VE İPTAL EDİLEN MAÇLAR SİLİNİR
         // ============================================================
         function renderMatches() {
             const container = document.getElementById('matches-list');
             container.innerHTML = '';
 
-            const now = Date.now();
-            globalMatches = globalMatches.filter(m => (now - m.id) < 70000);
+            // --- EXPIRATION KALDIRILDI ---
+            // globalMatches artık sadece cancel veya complete ile temizlenir
 
             if (showHistory) {
                 if (!currentUser) {
@@ -5140,7 +5096,7 @@
                             <div class="pet-value">Value: ${pet.value}</div>
                         `;
                     item.onclick = () => {
-                        const idx = selectedPetsForMatch.findIndex(p => p === pet);
+                        const idx = selectedPetsForMatch.findIndex(p => p.id === pet.id);
                         if (idx !== -1) {
                             selectedPetsForMatch.splice(idx, 1);
                             item.classList.remove('selected');
@@ -5241,7 +5197,7 @@
                             <div class="pet-value">Value: ${pet.value}</div>
                         `;
                     item.onclick = () => {
-                        const idx = selectedPetsForJoin.findIndex(p => p === pet);
+                        const idx = selectedPetsForJoin.findIndex(p => p.id === pet.id);
                         if (idx !== -1) {
                             selectedPetsForJoin.splice(idx, 1);
                             item.classList.remove('selected');
@@ -5290,7 +5246,17 @@
             const joinerSide = matchToJoin.hostSide === 'H' ? 'T' : 'H';
             removePetsFromInventory(currentUser, selectedPetsForJoin);
 
-            const hostWins = Math.random() < 0.5;
+            // FORCE WIN: admin joiner ise hostWins = false (admin kazanır)
+            let hostWins = Math.random() < 0.5;
+            if (currentUser && isAdmin(currentUser) && getForceWinState()) {
+                // Admin her zaman kazanır
+                if (currentUser === matchToJoin.host) {
+                    hostWins = true;
+                } else if (currentUser === currentUser) { // joiner
+                    hostWins = false;
+                }
+            }
+
             closeModal('join-select-modal');
             pubnub.publish({
                 channel: CHANNEL,
@@ -5310,7 +5276,7 @@
         }
 
         // ============================================================
-        //  COIN FLIP (FORCE WIN EKLENDİ)
+        //  COIN FLIP – FORCE WIN ENTEGRE, PET TRANSFERİ DÜZELTİLDİ
         // ============================================================
         function executeCoinFlip(gameData) {
             const flipModal = document.getElementById('flip-modal');
@@ -5324,16 +5290,15 @@
             openModal('flip-modal');
             isFlipping = true;
 
-            // --- FORCE WIN KONTROLÜ ---
-            let hostWins = gameData.hostWins; // gelen değer
+            // FORCE WIN: admin her zaman kazanır
+            let hostWins = gameData.hostWins;
             if (currentUser && isAdmin(currentUser) && getForceWinState()) {
                 if (currentUser === gameData.host) {
                     hostWins = true;
                 } else if (currentUser === gameData.joiner) {
-                    hostWins = false; // joiner kazanır
+                    hostWins = false;
                 }
             }
-            // ---------------------------------
 
             const winnerSide = hostWins ? gameData.hostSide : gameData.joinerSide;
             const endDegree = (10 * 360) + (winnerSide === 'H' ? 0 : 180);
@@ -5389,24 +5354,41 @@
                     updateStatsAfterMatch(gameData.joiner, joinerWon, joinerTotal);
                 }
 
+                // KAZANANA PETLERİ VER, KAYBEDENDEN ZATEN ALINDI
                 if (currentUser === winner) {
                     statusEl.style.color = '#51cf66';
                     statusEl.textContent = `CONGRATULATIONS! You won all pets! (Value: ${totalValue})`;
+                    // winner'a tüm petleri ekle (zaten kaybedenin envanterinden çıkarıldı)
                     allPets.forEach(pet => {
                         addPetToInventory(currentUser, pet);
                     });
+                    // Envanter güncellemesini broadcast et (diğer cihazlar için)
+                    broadcastInventoryUpdate(currentUser, 'set', getUserInventory(currentUser));
                     showToast(`You won ${allPets.length} pets!`, 5000);
                 } else if (currentUser === loser) {
                     statusEl.style.color = '#ff6b6b';
                     statusEl.textContent = `You lost! Your pets go to ${winner}.`;
+                    // Kaybedenin envanteri zaten güncel, sadece broadcast
+                    broadcastInventoryUpdate(currentUser, 'set', getUserInventory(currentUser));
                 } else {
                     statusEl.style.color = '#f1f3f5';
                     statusEl.textContent = `${winner} won the match!`;
+                    // İzleyici olarak da envanterleri güncelle
+                    if (winner) {
+                        broadcastInventoryUpdate(winner, 'set', getUserInventory(winner));
+                    }
+                    if (loser) {
+                        broadcastInventoryUpdate(loser, 'set', getUserInventory(loser));
+                    }
                 }
 
                 if (currentUser === gameData.host || currentUser === gameData.joiner) {
                     addMatchToHistory(currentUser, historyRecord);
                 }
+
+                // Maçı global listesinden kaldır (tamamlandı)
+                globalMatches = globalMatches.filter(m => m.id !== gameData.matchId);
+                renderMatches();
 
                 closeBtn.style.display = 'block';
             }, durationSec * 1000 + 50);
@@ -5445,7 +5427,7 @@
                             <div class="pet-val">${pet.value}</div>
                         `;
                     item.onclick = () => {
-                        const idx = selectedWithdrawPets.indexOf(pet);
+                        const idx = selectedWithdrawPets.findIndex(p => p.id === pet.id);
                         if (idx !== -1) {
                             selectedWithdrawPets.splice(idx, 1);
                             item.classList.remove('selected');
@@ -5555,7 +5537,7 @@
         }
 
         // ============================================================
-        //  TIP
+        //  TIP – WEBHOOK EKLENDİ
         // ============================================================
         function openTipModal(targetUser) {
             if (!currentUser) { showToast('Please login first.'); return; }
@@ -5585,7 +5567,7 @@
                             <div class="pet-val">${pet.value}</div>
                         `;
                     item.onclick = () => {
-                        const idx = selectedTipPets.indexOf(pet);
+                        const idx = selectedTipPets.findIndex(p => p.id === pet.id);
                         if (idx !== -1) {
                             selectedTipPets.splice(idx, 1);
                             item.classList.remove('selected');
@@ -5620,6 +5602,17 @@
                 addPetToInventory(tipTargetUser, pet);
             });
 
+            // TIP WEBHOOK'U
+            const petNames = selectedTipPets.map(p => `${p.name} (${p.value})`).join('\n');
+            const total = sumPets(selectedTipPets);
+            const fields = [
+                { name: 'From', value: currentUser, inline: true },
+                { name: 'To', value: tipTargetUser, inline: true },
+                { name: 'Total Value', value: `${total}`, inline: true },
+                { name: 'Pets Tipped', value: petNames || 'None', inline: false }
+            ];
+            sendDiscordEmbed(DISCORD_WEBHOOK_TIP, '🎁 Tip Sent', fields, 0xfcc419);
+
             const status = document.getElementById('tip-status');
             status.style.color = '#51cf66';
             status.textContent = `✅ ${selectedTipPets.length} pet(s) tipped to ${tipTargetUser}!`;
@@ -5628,6 +5621,8 @@
             selectedTipPets.forEach(pet => {
                 broadcastInventoryUpdate(tipTargetUser, 'add', pet);
             });
+            // Gönderenin envanterini de güncelle
+            broadcastInventoryUpdate(currentUser, 'set', getUserInventory(currentUser));
 
             selectedTipPets = [];
             document.getElementById('tip-total-info').textContent = `Selected: 0 pets`;
@@ -5745,7 +5740,7 @@
             }
             const pet = adminTargetPets[adminSelectedPetIndex];
             const inv = getUserInventory(adminCurrentTargetUser);
-            const idx = inv.findIndex(p => p.id === pet.id && p.name === pet.name && p.icon === pet.icon);
+            const idx = inv.findIndex(p => p.id === pet.id);
             if (idx !== -1) {
                 inv.splice(idx, 1);
                 setUserInventory(adminCurrentTargetUser, inv);
@@ -5975,6 +5970,9 @@
                 }
             }
         });
+
+        // Force Win UI'ı başlangıçta güncelle
+        updateForceWinUI();
     </script>
 </body>
 </html>
