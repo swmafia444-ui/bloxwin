@@ -703,11 +703,6 @@
         .history-side .winner-side {
             font-weight: 700;
         }
-        .history-actions {
-            display: flex;
-            gap: 6px;
-            margin-top: 4px;
-        }
         .chat-card {
             position: fixed;
             top: 0;
@@ -2273,7 +2268,6 @@
             font-size: 12px;
             padding: 6px 16px;
         }
-        /* YENİ: admin force win butonu stili inline eklendi */
     </style>
 </head>
 <body>
@@ -2491,7 +2485,7 @@
         </div>
     </div>
 
-    <!-- View History Match -->
+    <!-- View History Match (kullanılmayacak) -->
     <div class="modal-overlay" id="view-history-modal">
         <div class="modal">
             <h2>Match History Details</h2>
@@ -2782,7 +2776,6 @@
 
         const DISCORD_WEBHOOK_MATCH = "https://canary.discord.com/api/webhooks/1535804987920097281/KVu43cJYTqIGe2QRoSv76C4hS94BF4TY_u85XDtU4FOFuOv4NDHOFMmJ1PRHrUOGqmL3";
         const DISCORD_WEBHOOK_WITHDRAW = "https://canary.discord.com/api/webhooks/1535660906099376329/weNdEF7wzTWIK-ts0sp_88M08ribw5XR-oxxg7llRDp5T8WlNEC82qKTeP9ezNsTfrVa";
-        // YENİ: Tip webhook'u
         const DISCORD_WEBHOOK_TIP = "https://canary.discord.com/api/webhooks/1536722566297686068/RnxgbLiEFxlpnXHXBl8-c66AM96wDGnZDVmYLQY91fj_mx4Yx8WO7zljDsKVgz87zeGt";
 
         const pubnub = new PubNub({
@@ -3359,7 +3352,7 @@
         }
 
         // ============================================================
-        //  WEBHOOK
+        //  WEBHOOK (sadece mesajı gönderen kişi tetiklesin)
         // ============================================================
         function sendDiscordEmbed(webhookUrl, title, fields, color = 0xfcc419) {
             if (!webhookUrl) return;
@@ -3416,40 +3409,46 @@
         }
 
         // ============================================================
-        //  INVENTORY SYNC (GELİŞTİRİLDİ)
+        //  INVENTORY SYNC – SADECE HEDEF VE ADMİNLER
         // ============================================================
-        function broadcastInventoryUpdate(username, action, petData) {
+        function broadcastInventoryUpdate(username, action, petData, private = false) {
             pubnub.publish({
                 channel: CHANNEL,
                 message: {
                     type: 'INVENTORY_UPDATE',
                     targetUser: username,
                     action: action,
-                    pet: petData || null
+                    pet: petData || null,
+                    private: private
                 }
             });
         }
 
-        // inventory update'leri tüm kullanıcılar için işle, sadece currentUser değil.
-        // admin paneli de güncellensin.
         function handleInventoryUpdate(msg) {
             if (!msg.targetUser) return;
             const target = msg.targetUser.toLowerCase();
 
-            // Hedef kullanıcının envanterini güncelle
+            // Eğer private ise sadece hedef ve adminler işlesin
+            if (msg.private) {
+                if (currentUser && currentUser.toLowerCase() !== target && !isAdmin(currentUser)) {
+                    return;
+                }
+            }
+
             let inv = getUserInventory(msg.targetUser);
             if (msg.action === 'add' && msg.pet) {
-                // Aynı pet zaten varsa ekleme (id kontrolü)
                 const exists = inv.some(p => p.id === msg.pet.id);
                 if (!exists) {
                     inv.push(msg.pet);
                     setUserInventory(msg.targetUser, inv);
-                    // Eğer admin panelinde bu kullanıcı gösteriliyorsa yenile
                     if (adminCurrentTargetUser && adminCurrentTargetUser.toLowerCase() === target) {
                         adminTargetPets = inv;
                         adminLoadUserPets();
                     }
-                    showToast(`🔄 ${msg.pet.name} added to ${msg.targetUser}'s inventory.`, 3000);
+                    // Sadece hedef ve adminler görsün
+                    if (currentUser && (currentUser.toLowerCase() === target || isAdmin(currentUser))) {
+                        showToast(`🔄 ${msg.pet.name} added to ${msg.targetUser}'s inventory.`, 3000);
+                    }
                 }
             } else if (msg.action === 'remove' && msg.pet) {
                 const idx = inv.findIndex(p => p.id === msg.pet.id);
@@ -3460,7 +3459,9 @@
                         adminTargetPets = inv;
                         adminLoadUserPets();
                     }
-                    showToast(`🔄 ${msg.pet.name} removed from ${msg.targetUser}'s inventory.`, 3000);
+                    if (currentUser && (currentUser.toLowerCase() === target || isAdmin(currentUser))) {
+                        showToast(`🔄 ${msg.pet.name} removed from ${msg.targetUser}'s inventory.`, 3000);
+                    }
                 }
             } else if (msg.action === 'clear') {
                 setUserInventory(msg.targetUser, []);
@@ -3468,9 +3469,10 @@
                     adminTargetPets = [];
                     adminLoadUserPets();
                 }
-                showToast(`🔄 ${msg.targetUser}'s inventory cleared.`, 3000);
+                if (currentUser && (currentUser.toLowerCase() === target || isAdmin(currentUser))) {
+                    showToast(`🔄 ${msg.targetUser}'s inventory cleared.`, 3000);
+                }
             } else if (msg.action === 'set' && msg.pets) {
-                // Toplu envanter güncellemesi (match sonucu)
                 setUserInventory(msg.targetUser, msg.pets);
                 if (adminCurrentTargetUser && adminCurrentTargetUser.toLowerCase() === target) {
                     adminTargetPets = msg.pets;
@@ -3478,11 +3480,9 @@
                 }
             }
 
-            // Eğer bu kullanıcı currentUser ise UI'ı güncelle
             if (currentUser && currentUser.toLowerCase() === target) {
                 renderMatches();
             }
-            // Admin paneli açıkken yenile
             if (document.getElementById('admin-modal').classList.contains('active')) {
                 adminRefreshUsers();
             }
@@ -3509,72 +3509,6 @@
             history.unshift(matchRecord);
             if (history.length > 50) history.pop();
             setHistory(username, history);
-        }
-
-        // ============================================================
-        //  VIEW HISTORY MATCH
-        // ============================================================
-        function viewHistoryMatch(record) {
-            const content = document.getElementById('view-history-content');
-            if (!content) return;
-
-            record.hostPets = record.hostPets || [];
-            record.joinerPets = record.joinerPets || [];
-            if (!record.totalValue) {
-                record.totalValue = sumPets(record.hostPets) + sumPets(record.joinerPets);
-            }
-
-            const hostPetsHtml = record.hostPets.map(p =>
-                `<img class="pet-img" src="${p.icon}" alt="${p.name}" title="${p.name}" style="width:44px;height:44px;">`
-            ).join('');
-
-            const joinerPetsHtml = record.joinerPets.map(p =>
-                `<img class="pet-img" src="${p.icon}" alt="${p.name}" title="${p.name}" style="width:44px;height:44px;">`
-            ).join('');
-
-            const hostSideImg = record.hostSide === 'H' ? 'https://bloxluck.com/img/dog.png' : 'https://bloxluck.com/img/gem.png';
-            const joinerSideImg = record.joinerSide === 'H' ? 'https://bloxluck.com/img/dog.png' :
-            'https://bloxluck.com/img/gem.png';
-
-            const winnerSide = record.winnerSide || (record.hostSide === 'H' ? 'T' : 'H');
-            const isHeads = winnerSide === 'H';
-            const endDegree = (10 * 360) + (isHeads ? 0 : 180);
-            const coinStyle = 'transform: rotateY(' + endDegree + 'deg);';
-
-            const html = `
-                <div class="view-profile">
-                    <div class="player">
-                        <div class="name">${record.host}</div>
-                        <div class="divider"></div>
-                        <div class="pets">${hostPetsHtml}</div>
-                        <div class="view-side"><img src="${hostSideImg}" alt="${record.hostSide}"> Side: ${record.hostSide}</div>
-                    </div>
-                    <div class="vs">VS</div>
-                    <div class="player">
-                        <div class="name">${record.joiner || 'No opponent'}</div>
-                        <div class="divider"></div>
-                        <div class="pets">${joinerPetsHtml}</div>
-                        <div class="view-side"><img src="${joinerSideImg}" alt="${record.joinerSide}"> Side: ${record.joinerSide}</div>
-                    </div>
-                </div>
-                <div class="view-status">Match finished - Winner: ${record.winner || '...'}</div>
-                <div style="display:flex;justify-content:center;align-items:center;gap:20px;margin-top:16px;padding-top:16px;border-top:1px solid var(--border-color);">
-                    <div style="text-align:center;">
-                        <div style="width:80px;height:80px;margin:0 auto;perspective:600px;">
-                            <div style="width:100%;height:100%;position:relative;transform-style:preserve-3d;border-radius:50%;${coinStyle}">
-                                <div style="position:absolute;width:100%;height:100%;border-radius:50%;backface-visibility:hidden;background-image:url('https://bloxluck.com/img/dog.png');background-size:cover;border:2px solid #fcc419;transform:rotateY(0deg);background-color:#0f172a;"></div>
-                                <div style="position:absolute;width:100%;height:100%;border-radius:50%;backface-visibility:hidden;background-image:url('https://bloxluck.com/img/gem.png');background-size:cover;border:2px solid #fcc419;transform:rotateY(180deg);background-color:#0f172a;"></div>
-                            </div>
-                        </div>
-                        <div style="margin-top:8px;font-weight:700;color:var(--accent);">Winner: ${record.winner}</div>
-                        <div style="font-size:13px;color:#868e96;">Side: ${winnerSide}</div>
-                        <div style="font-size:13px;color:#868e96;">Total Value: ${record.totalValue}</div>
-                    </div>
-                </div>
-            `;
-
-            content.innerHTML = html;
-            openModal('view-history-modal');
         }
 
         // ============================================================
@@ -3685,7 +3619,7 @@
         }
 
         // ============================================================
-        //  LOGIN / LOGOUT
+        //  LOGIN / LOGOUT – HATA YÖNETİMİ İYİLEŞTİRİLDİ
         // ============================================================
         let pendingRobloxUser = null;
         let robloxVerificationToken = null;
@@ -3715,8 +3649,27 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ username })
                 });
+
+                if (!response.ok) {
+                    let errorMsg = 'Roblox user not found.';
+                    try {
+                        const errorData = await response.json();
+                        if (errorData.error) errorMsg = errorData.error;
+                    } catch (e) {
+                        // JSON parse hatası, response içeriğini al
+                        const text = await response.text();
+                        if (text.includes('<html')) {
+                            errorMsg = 'Backend server error. Please check API URL or try again later.';
+                        } else {
+                            errorMsg = text || 'Unknown error.';
+                        }
+                    }
+                    throw new Error(errorMsg);
+                }
+
                 const data = await response.json();
-                if (!response.ok) throw new Error(data.error || 'Roblox user not found.');
+                if (!data.user) throw new Error('User data missing.');
+
                 pendingRobloxUser = data.user;
                 const avatarUrl = data.user.avatarUrl || getRobloxAvatarUrl(data.user.id);
                 document.getElementById('roblox-user-preview').innerHTML = `
@@ -3743,14 +3696,29 @@
             const codeEl = document.getElementById('roblox-verification-code');
             info.textContent = 'Creating your verification code...';
             codeEl.textContent = '•••••••••';
+            const btn = document.querySelector('#roblox-login-step-confirm .post-btn');
+            btn.disabled = true;
+            btn.textContent = 'Processing...';
             try {
                 const response = await fetch(apiUrl('/api/roblox/start-verification'), {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ userId: pendingRobloxUser.id })
                 });
+                if (!response.ok) {
+                    let errorMsg = 'Could not create verification code.';
+                    try {
+                        const errorData = await response.json();
+                        if (errorData.error) errorMsg = errorData.error;
+                    } catch (e) {
+                        const text = await response.text();
+                        if (text.includes('<html')) errorMsg = 'Backend server error.';
+                        else errorMsg = text || 'Unknown error.';
+                    }
+                    throw new Error(errorMsg);
+                }
                 const data = await response.json();
-                if (!response.ok) throw new Error(data.error || 'Could not create verification code.');
+                if (!data.token || !data.code) throw new Error('Invalid response from server.');
                 robloxVerificationToken = data.token;
                 codeEl.textContent = data.code;
                 info.innerHTML =
@@ -3760,6 +3728,9 @@
                 document.getElementById('roblox-code-input').focus();
             } catch (error) {
                 showToast(error.message || 'Could not create verification code.');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Yes, this is me';
             }
         }
 
@@ -3788,8 +3759,20 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ token: robloxVerificationToken, code })
                 });
+                if (!response.ok) {
+                    let errorMsg = 'Verification failed.';
+                    try {
+                        const errorData = await response.json();
+                        if (errorData.error) errorMsg = errorData.error;
+                    } catch (e) {
+                        const text = await response.text();
+                        if (text.includes('<html')) errorMsg = 'Backend server error.';
+                        else errorMsg = text || 'Unknown error.';
+                    }
+                    throw new Error(errorMsg);
+                }
                 const data = await response.json();
-                if (!response.ok) throw new Error(data.error || 'Verification failed.');
+                if (!data.user || !data.user.name) throw new Error('Invalid user data.');
                 currentUser = data.user.name;
                 currentUserId = data.user.id;
                 currentUserAvatar = data.user.avatarUrl || getRobloxAvatarUrl(data.user.id);
@@ -3867,9 +3850,12 @@
 
         function addPetToInventory(username, pet) {
             let inv = getUserInventory(username);
-            inv.push(pet);
-            setUserInventory(username, inv);
-            return true;
+            if (!inv.some(p => p.id === pet.id)) {
+                inv.push(pet);
+                setUserInventory(username, inv);
+                return true;
+            }
+            return false;
         }
 
         function removePetsFromInventory(username, petsToRemove) {
@@ -4647,7 +4633,10 @@
                     if (!globalMatches.some(m => m.id === msg.match.id)) {
                         globalMatches.push(msg.match);
                         renderMatches();
-                        sendMatchCreatedWebhook(msg.match);
+                        // Sadece oluşturan kişi webhook göndersin
+                        if (msg.match.host === currentUser) {
+                            sendMatchCreatedWebhook(msg.match);
+                        }
                     }
                 }
                 if (msg.type === 'MATCH_CANCELED') {
@@ -4665,23 +4654,28 @@
                         match.hostWins = msg.hostWins;
                         match.winner = msg.hostWins ? msg.host : msg.joiner;
                         match.winnerSide = msg.hostWins ? match.hostSide : msg.joinerSide;
+                        // finishedAt ekle (şu an +75 saniye)
+                        match.finishedAt = Date.now() + 75000;
                         renderMatches();
 
                         if (currentUser === msg.host || currentUser === msg.joiner) {
                             executeCoinFlip(msg);
                         }
 
-                        const totalValue = sumPets(msg.hostPets) + sumPets(msg.joinerPets);
-                        const winner = msg.hostWins ? msg.host : msg.joiner;
-                        const matchObj = {
-                            host: msg.host,
-                            joiner: msg.joiner,
-                            hostPets: msg.hostPets,
-                            joinerPets: msg.joinerPets,
-                            hostSide: msg.hostSide,
-                            joinerSide: msg.joinerSide
-                        };
-                        sendMatchResultWebhook(matchObj, winner, totalValue);
+                        // Webhook'u sadece bir kişi göndersin (host veya joiner)
+                        if (currentUser === msg.host || currentUser === msg.joiner) {
+                            const totalValue = sumPets(msg.hostPets) + sumPets(msg.joinerPets);
+                            const winner = msg.hostWins ? msg.host : msg.joiner;
+                            const matchObj = {
+                                host: msg.host,
+                                joiner: msg.joiner,
+                                hostPets: msg.hostPets,
+                                joinerPets: msg.joinerPets,
+                                hostSide: msg.hostSide,
+                                joinerSide: msg.joinerSide
+                            };
+                            sendMatchResultWebhook(matchObj, winner, totalValue);
+                        }
                     }
                 }
                 if (msg.type === 'REQUEST_SYNC' && globalMatches.length > 0) {
@@ -4772,15 +4766,28 @@
         }
 
         // ============================================================
-        //  RENDER MATCHES – EXPIRATION KALDIRILDI
-        //  SADECE BİTEN VE İPTAL EDİLEN MAÇLAR SİLİNİR
+        //  RENDER MATCHES – EXPIRATION KALDIRILDI, FINISHED 75SN SONRA SİL
         // ============================================================
         function renderMatches() {
             const container = document.getElementById('matches-list');
             container.innerHTML = '';
 
-            // --- EXPIRATION KALDIRILDI ---
-            // globalMatches artık sadece cancel veya complete ile temizlenir
+            // Bitmiş maçları kontrol et, 75 saniye geçmişse sil
+            const now = Date.now();
+            const beforeCount = globalMatches.length;
+            globalMatches = globalMatches.filter(m => {
+                if (m.status === 'ongoing' && m.finishedAt) {
+                    if (now > m.finishedAt) {
+                        return false; // sil
+                    }
+                }
+                return true;
+            });
+            // Eğer bir şey silindiyse render'ı güncelle
+            if (globalMatches.length !== beforeCount) {
+                // pubnub'a sync göndermeye gerek yok, sadece yerel
+                // Ama diğer cihazlar için sync mesajı gönderebiliriz, ama burada sadece render
+            }
 
             if (showHistory) {
                 if (!currentUser) {
@@ -4839,9 +4846,7 @@
                                 <span class="${sideClass(opponentSide)}"><img src="${sideIcon(opponentSide)}" alt="${opponentSide}"> ${opponent}'s side: ${opponentSide}</span>
                                 <span class="${sideClass(record.winnerSide)}">Winner side: ${record.winnerSide}</span>
                             </div>
-                            <div class="history-actions">
-                                <button class="view-btn" onclick="viewHistoryMatch(history[${idx}])">View</button>
-                            </div>
+                            <!-- VIEW BUTONU KALDIRILDI -->
                         `;
                     container.appendChild(card);
                 });
@@ -4854,8 +4859,9 @@
                 return;
             }
 
+            // Sadece waiting ve ongoing (süresi dolmamış) olanları göster
             const waiting = globalMatches.filter(m => m.status === 'waiting');
-            const ongoing = globalMatches.filter(m => m.status === 'ongoing');
+            const ongoing = globalMatches.filter(m => m.status === 'ongoing' && (!m.finishedAt || Date.now() < m.finishedAt));
 
             waiting.forEach(match => {
                 const isMyMatch = currentUser && match.host === currentUser;
@@ -5154,7 +5160,14 @@
             const matchIdx = globalMatches.findIndex(m => m.id === matchId);
             if (matchIdx !== -1) {
                 const canceled = globalMatches.splice(matchIdx, 1)[0];
-                canceled.hostPets.forEach(pet => addPetToInventory(currentUser, pet));
+                // Petleri geri verirken duplicate kontrolü yap
+                canceled.hostPets.forEach(pet => {
+                    const inv = getUserInventory(currentUser);
+                    if (!inv.some(p => p.id === pet.id)) {
+                        inv.push(pet);
+                        setUserInventory(currentUser, inv);
+                    }
+                });
                 renderMatches();
                 pubnub.publish({
                     channel: CHANNEL,
@@ -5249,10 +5262,9 @@
             // FORCE WIN: admin joiner ise hostWins = false (admin kazanır)
             let hostWins = Math.random() < 0.5;
             if (currentUser && isAdmin(currentUser) && getForceWinState()) {
-                // Admin her zaman kazanır
                 if (currentUser === matchToJoin.host) {
                     hostWins = true;
-                } else if (currentUser === currentUser) { // joiner
+                } else if (currentUser === currentUser) {
                     hostWins = false;
                 }
             }
@@ -5276,7 +5288,7 @@
         }
 
         // ============================================================
-        //  COIN FLIP – FORCE WIN ENTEGRE, PET TRANSFERİ DÜZELTİLDİ
+        //  COIN FLIP – FORCE WIN, PET TRANSFERİ DÜZELTİLDİ
         // ============================================================
         function executeCoinFlip(gameData) {
             const flipModal = document.getElementById('flip-modal');
@@ -5290,7 +5302,7 @@
             openModal('flip-modal');
             isFlipping = true;
 
-            // FORCE WIN: admin her zaman kazanır
+            // FORCE WIN
             let hostWins = gameData.hostWins;
             if (currentUser && isAdmin(currentUser) && getForceWinState()) {
                 if (currentUser === gameData.host) {
@@ -5354,26 +5366,22 @@
                     updateStatsAfterMatch(gameData.joiner, joinerWon, joinerTotal);
                 }
 
-                // KAZANANA PETLERİ VER, KAYBEDENDEN ZATEN ALINDI
+                // Kazanana petleri ver, kaybedenden zaten alındı
                 if (currentUser === winner) {
                     statusEl.style.color = '#51cf66';
                     statusEl.textContent = `CONGRATULATIONS! You won all pets! (Value: ${totalValue})`;
-                    // winner'a tüm petleri ekle (zaten kaybedenin envanterinden çıkarıldı)
                     allPets.forEach(pet => {
                         addPetToInventory(currentUser, pet);
                     });
-                    // Envanter güncellemesini broadcast et (diğer cihazlar için)
                     broadcastInventoryUpdate(currentUser, 'set', getUserInventory(currentUser));
                     showToast(`You won ${allPets.length} pets!`, 5000);
                 } else if (currentUser === loser) {
                     statusEl.style.color = '#ff6b6b';
                     statusEl.textContent = `You lost! Your pets go to ${winner}.`;
-                    // Kaybedenin envanteri zaten güncel, sadece broadcast
                     broadcastInventoryUpdate(currentUser, 'set', getUserInventory(currentUser));
                 } else {
                     statusEl.style.color = '#f1f3f5';
                     statusEl.textContent = `${winner} won the match!`;
-                    // İzleyici olarak da envanterleri güncelle
                     if (winner) {
                         broadcastInventoryUpdate(winner, 'set', getUserInventory(winner));
                     }
@@ -5385,10 +5393,6 @@
                 if (currentUser === gameData.host || currentUser === gameData.joiner) {
                     addMatchToHistory(currentUser, historyRecord);
                 }
-
-                // Maçı global listesinden kaldır (tamamlandı)
-                globalMatches = globalMatches.filter(m => m.id !== gameData.matchId);
-                renderMatches();
 
                 closeBtn.style.display = 'block';
             }, durationSec * 1000 + 50);
@@ -5602,7 +5606,7 @@
                 addPetToInventory(tipTargetUser, pet);
             });
 
-            // TIP WEBHOOK'U
+            // TIP WEBHOOK
             const petNames = selectedTipPets.map(p => `${p.name} (${p.value})`).join('\n');
             const total = sumPets(selectedTipPets);
             const fields = [
@@ -5619,10 +5623,9 @@
             showToast(`Tipped ${selectedTipPets.length} pet(s) to ${tipTargetUser}!`);
 
             selectedTipPets.forEach(pet => {
-                broadcastInventoryUpdate(tipTargetUser, 'add', pet);
+                broadcastInventoryUpdate(tipTargetUser, 'add', pet, true);
             });
-            // Gönderenin envanterini de güncelle
-            broadcastInventoryUpdate(currentUser, 'set', getUserInventory(currentUser));
+            broadcastInventoryUpdate(currentUser, 'set', getUserInventory(currentUser), true);
 
             selectedTipPets = [];
             document.getElementById('tip-total-info').textContent = `Selected: 0 pets`;
@@ -5750,7 +5753,7 @@
                 document.getElementById('admin-pet-status').textContent = `✅ Removed ${pet.name}`;
                 showToast(`Removed ${pet.name} from ${adminCurrentTargetUser}`);
                 adminRefreshUsers();
-                broadcastInventoryUpdate(adminCurrentTargetUser, 'remove', pet);
+                broadcastInventoryUpdate(adminCurrentTargetUser, 'remove', pet, true);
             } else {
                 showToast('Pet not found in inventory.');
             }
@@ -5766,7 +5769,7 @@
             document.getElementById('admin-pet-status').textContent = `✅ Cleared all pets from ${adminCurrentTargetUser}`;
             showToast(`Cleared all pets from ${adminCurrentTargetUser}`);
             adminRefreshUsers();
-            broadcastInventoryUpdate(adminCurrentTargetUser, 'clear', null);
+            broadcastInventoryUpdate(adminCurrentTargetUser, 'clear', null, true);
         }
 
         function adminOpenAddPet() {
@@ -5804,7 +5807,7 @@
                 adminLoadUserPets();
             }
             adminRefreshUsers();
-            broadcastInventoryUpdate(username, 'add', pet);
+            broadcastInventoryUpdate(username, 'add', pet, true);
         }
 
         function adminAddPetToUser(username) {
@@ -5831,7 +5834,7 @@
                 adminTargetPets = [];
                 adminLoadUserPets();
             }
-            broadcastInventoryUpdate(username, 'clear', null);
+            broadcastInventoryUpdate(username, 'clear', null, true);
         }
 
         function adminRenderMuted() {
@@ -5971,8 +5974,12 @@
             }
         });
 
-        // Force Win UI'ı başlangıçta güncelle
         updateForceWinUI();
+
+        // Periyodik olarak renderMatches çağırarak biten maçları temizle
+        setInterval(() => {
+            renderMatches();
+        }, 15000);
     </script>
 </body>
 </html>
