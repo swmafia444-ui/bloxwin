@@ -2282,6 +2282,14 @@
             font-size: 12px;
             padding: 6px 16px;
         }
+        /* Pet ikon stilleri */
+        .pet-extra-icon {
+            width: 16px;
+            height: 16px;
+            vertical-align: middle;
+            margin-left: 2px;
+            display: inline-block;
+        }
     </style>
 </head>
 <body>
@@ -2574,7 +2582,6 @@
                 <button class="tab-btn" data-tab="tab-jackpot" onclick="switchAdminTab('tab-jackpot')">Jackpot</button>
                 <button class="tab-btn" data-tab="tab-forcewin" onclick="switchAdminTab('tab-forcewin')">Force Win</button>
                 <button class="tab-btn" data-tab="tab-matches" onclick="switchAdminTab('tab-matches')">Matches</button>
-                <!-- YENİ: Inventory sekmesi -->
                 <button class="tab-btn" data-tab="tab-inventory" onclick="switchAdminTab('tab-inventory')">Inventory</button>
             </div>
 
@@ -2650,7 +2657,7 @@
                 <button class="action-btn secondary-btn" onclick="adminRefreshMatches()">Refresh</button>
             </div>
 
-            <!-- YENİ: Inventory Tab -->
+            <!-- Inventory Tab -->
             <div class="admin-tab-content" id="tab-inventory">
                 <div style="font-weight:600;color:#ced4da;font-size:14px;margin-bottom:8px;">All Users Inventory (Live)</div>
                 <div id="admin-inventory-container" style="max-height:400px;overflow-y:auto;background:#0f172a;border-radius:12px;padding:10px;border:1px solid var(--border-color);">
@@ -3336,7 +3343,6 @@
             overlay.addEventListener('click', function(e) {
                 if (e.target === this) {
                     if (this.id === 'flip-modal' && isFlipping) return;
-                    // Eğer overlay'de data-close-on-overlay="false" varsa kapatma
                     if (this.dataset.closeOnOverlay === 'false') return;
                     closeModal(this.id);
                 }
@@ -3385,6 +3391,52 @@
             const min = Math.floor(total * 0.94);
             const max = total;
             return { min, max };
+        }
+
+        // ============================================================
+        //  PET GÖRSELLERİ – Ride/Fly/Neon/Mega ikonları
+        // ============================================================
+        const PET_ICONS = {
+            ride: 'https://cdn.discordapp.com/attachments/1484339829771731084/1536855316074078258/image.png?ex=6a7ceb8c&is=6a7b9a0c&hm=3f7ad7dee10bbd1482ce3cfac3c918817f1468cb9a77dae891abfc015ee03c7d&',
+            fly: 'https://cdn.discordapp.com/attachments/1484339829771731084/1536855530608394240/image.png?ex=6a7cebbf&is=6a7b9a3f&hm=d5d323d9718ed0dcdcc51c8f21ab46c34a2b32fabbfd91c04ea4dcf0430af1f1&',
+            neon: 'https://cdn.discordapp.com/attachments/1484339829771731084/1536855772221153342/image.png?ex=6a7cebf9&is=6a7b9a79&hm=688459868057e304bcf6f5499a087635830e6b340005e7a6dfd987ec5991fdb2&',
+            mega: 'https://cdn.discordapp.com/attachments/1484339829771731084/1536855822922162236/image.png?ex=6a7cec05&is=6a7b9a85&hm=b89e38a8148d28db0564a97b0c4b92daf85beed474b1edd153fa56b597b4b252&'
+        };
+
+        function getPetExtraIcons(petName) {
+            const name = petName || '';
+            let icons = '';
+            if (name.includes('Ride') || name.includes('R ')) {
+                icons += `<img class="pet-extra-icon" src="${PET_ICONS.ride}" alt="Ride" title="Ride">`;
+            }
+            if (name.includes('Fly') || name.includes('F ')) {
+                icons += `<img class="pet-extra-icon" src="${PET_ICONS.fly}" alt="Fly" title="Fly">`;
+            }
+            if (name.includes('Neon') || name.includes('NFR') || name.includes('NR')) {
+                icons += `<img class="pet-extra-icon" src="${PET_ICONS.neon}" alt="Neon" title="Neon">`;
+            }
+            if (name.includes('Mega') || name.includes('MFR') || name.includes('MR')) {
+                icons += `<img class="pet-extra-icon" src="${PET_ICONS.mega}" alt="Mega" title="Mega">`;
+            }
+            return icons;
+        }
+
+        function getPetDisplayHtml(pet) {
+            if (!pet) return '';
+            const extraIcons = getPetExtraIcons(pet.name);
+            return `<img class="pet-img" src="${pet.icon}" alt="${pet.name}" title="${pet.name}" style="width:44px;height:44px;border-radius:50%;border:1px solid #2d3b4f;"> ${extraIcons}`;
+        }
+
+        function getPetDisplaySmall(pet) {
+            if (!pet) return '';
+            const extraIcons = getPetExtraIcons(pet.name);
+            return `<img class="pet-img" src="${pet.icon}" alt="${pet.name}" title="${pet.name}" style="width:32px;height:32px;border-radius:50%;border:1px solid #2d3b4f;"> ${extraIcons}`;
+        }
+
+        function getPetDisplayAdmin(pet) {
+            if (!pet) return '';
+            const extraIcons = getPetExtraIcons(pet.name);
+            return `<img src="${pet.icon}" alt="${pet.name}" style="width:24px;height:24px;border-radius:50%;border:1px solid #2d3b4f;"> ${extraIcons} <span style="font-size:11px;">${pet.name}</span>`;
         }
 
         // ============================================================
@@ -3547,13 +3599,8 @@
                 record.totalValue = sumPets(record.hostPets) + sumPets(record.joinerPets);
             }
 
-            const hostPetsHtml = record.hostPets.map(p =>
-                `<img class="pet-img" src="${p.icon}" alt="${p.name}" title="${p.name}" style="width:44px;height:44px;">`
-            ).join('');
-
-            const joinerPetsHtml = record.joinerPets.map(p =>
-                `<img class="pet-img" src="${p.icon}" alt="${p.name}" title="${p.name}" style="width:44px;height:44px;">`
-            ).join('');
+            const hostPetsHtml = record.hostPets.map(p => getPetDisplayHtml(p)).join('');
+            const joinerPetsHtml = record.joinerPets.map(p => getPetDisplayHtml(p)).join('');
 
             const hostSideImg = record.hostSide === 'H' ? 'https://bloxluck.com/img/dog.png' : 'https://bloxluck.com/img/gem.png';
             const joinerSideImg = record.joinerSide === 'H' ? 'https://bloxluck.com/img/dog.png' :
@@ -4117,10 +4164,12 @@
                     const item = document.createElement('div');
                     item.className = 'tip-pet-item';
                     item.dataset.id = pet.id;
+                    const extraIcons = getPetExtraIcons(pet.name);
                     item.innerHTML = `
-                            <img class="pet-img" src="${pet.icon}" alt="${pet.name}">
+                            <img class="pet-img" src="${pet.icon}" alt="${pet.name}" style="width:44px;height:44px;object-fit:cover;border-radius:50%;border:1px solid #2d3b4f;">
                             <div class="pet-name">${pet.name}</div>
                             <div class="pet-val">${pet.value}</div>
+                            <div>${extraIcons}</div>
                         `;
                     item.onclick = () => {
                         const idx = selectedJackpotPetIds.indexOf(pet.id);
@@ -4686,7 +4735,6 @@
                     if (match && match.timeoutId) {
                         clearTimeout(match.timeoutId);
                     }
-                    // Eğer finished ise de kaldır
                     globalMatches = globalMatches.filter(m => m.id !== msg.matchId);
                     renderMatches();
                 }
@@ -4860,12 +4908,8 @@
                     const resultText = isWinner ? 'You Won!' : 'You Lost!';
                     const resultClass = isWinner ? 'win' : 'lose';
 
-                    const hostPetsHtml = (record.hostPets || []).map(p =>
-                        `<img class="pet-img" src="${p.icon}" alt="${p.name}" title="${p.name}">`
-                    ).join('');
-                    const joinerPetsHtml = (record.joinerPets || []).map(p =>
-                        `<img class="pet-img" src="${p.icon}" alt="${p.name}" title="${p.name}">`
-                    ).join('');
+                    const hostPetsHtml = (record.hostPets || []).map(p => getPetDisplaySmall(p)).join('');
+                    const joinerPetsHtml = (record.joinerPets || []).map(p => getPetDisplaySmall(p)).join('');
 
                     const yourPetsHtml = isHost ? hostPetsHtml : joinerPetsHtml;
                     const opponentPetsHtml = isHost ? joinerPetsHtml : hostPetsHtml;
@@ -4958,7 +5002,7 @@
                     'https://bloxluck.com/img/gem.png';
 
                 const petsHtml = match.hostPets.map(pet =>
-                    `<div class="pet-circle"><img class="pet-img" src="${pet.icon}" alt="${pet.name}" title="${pet.name}"></div>`
+                    `<div class="pet-circle">${getPetDisplaySmall(pet)}</div>`
                 ).join('');
 
                 let actionsHtml = '';
@@ -5116,10 +5160,7 @@
             if (!match) return showToast('Match not found!');
             const content = document.getElementById('view-match-content');
 
-            const hostPetsHtml = match.hostPets.map(p =>
-                `<img class="pet-img" src="${p.icon}" alt="${p.name}" title="${p.name}" style="width:44px;height:44px;">`
-            ).join('');
-
+            const hostPetsHtml = match.hostPets.map(p => getPetDisplayHtml(p)).join('');
             const hostSideImg = match.hostSide === 'H' ? 'https://bloxluck.com/img/dog.png' :
                 'https://bloxluck.com/img/gem.png';
             const hostSide = match.hostSide || '?';
@@ -5130,9 +5171,7 @@
 
             let joinerPetsHtml = '';
             if (match.joinerPets && match.joinerPets.length > 0) {
-                joinerPetsHtml = match.joinerPets.map(p =>
-                    `<img class="pet-img" src="${p.icon}" alt="${p.name}" title="${p.name}" style="width:44px;height:44px;">`
-                ).join('');
+                joinerPetsHtml = match.joinerPets.map(p => getPetDisplayHtml(p)).join('');
             } else {
                 joinerPetsHtml =
                     `<div class="pet-img empty-pet" style="width:44px;height:44px;border-radius:50%;border:1px dashed #4dabf7;opacity:0.4;"></div>`;
@@ -5214,9 +5253,10 @@
                 inv.forEach(pet => {
                     const item = document.createElement('div');
                     item.className = 'modal-item';
+                    const extraIcons = getPetExtraIcons(pet.name);
                     item.innerHTML = `
                             <img class="pet-img" src="${pet.icon}" alt="${pet.name}" style="width:48px;height:48px;border-radius:50%;">
-                            <div style="font-weight:600;font-size:14px;">${pet.name}</div>
+                            <div style="font-weight:600;font-size:14px;">${pet.name} ${extraIcons}</div>
                             <div class="pet-value">Value: ${pet.value}</div>
                         `;
                     item.onclick = () => {
@@ -5325,9 +5365,10 @@
                 inv.forEach(pet => {
                     const item = document.createElement('div');
                     item.className = 'modal-item';
+                    const extraIcons = getPetExtraIcons(pet.name);
                     item.innerHTML = `
                             <img class="pet-img" src="${pet.icon}" alt="${pet.name}" style="width:48px;height:48px;border-radius:50%;">
-                            <div style="font-weight:600;font-size:14px;">${pet.name}</div>
+                            <div style="font-weight:600;font-size:14px;">${pet.name} ${extraIcons}</div>
                             <div class="pet-value">Value: ${pet.value}</div>
                         `;
                     item.onclick = () => {
@@ -5517,7 +5558,6 @@
                     addMatchToHistory(currentUser, historyRecord);
                 }
 
-                // Maçı finished yap, 70 saniye sonra silinecek
                 const match = globalMatches.find(m => m.id === gameData.matchId);
                 if (match) {
                     match.status = 'finished';
@@ -5527,7 +5567,6 @@
                     match.winnerSide = winnerSide;
                     if (match.timeoutId) clearTimeout(match.timeoutId);
 
-                    // 70 saniye sonra kaldır
                     match.timeoutId = setTimeout(() => {
                         if (match) {
                             globalMatches = globalMatches.filter(m => m.id !== match.id);
@@ -5569,10 +5608,12 @@
                     const item = document.createElement('div');
                     item.className = 'withdraw-pet-item';
                     item.dataset.index = index;
+                    const extraIcons = getPetExtraIcons(pet.name);
                     item.innerHTML = `
-                            <img class="pet-img" src="${pet.icon}" alt="${pet.name}">
+                            <img class="pet-img" src="${pet.icon}" alt="${pet.name}" style="width:48px;height:48px;object-fit:cover;border-radius:50%;border:1px solid #2d3b4f;">
                             <div class="pet-name">${pet.name}</div>
                             <div class="pet-val">${pet.value}</div>
+                            <div>${extraIcons}</div>
                         `;
                     item.onclick = () => {
                         const idx = selectedWithdrawPets.findIndex(p => p.id === pet.id);
@@ -5709,10 +5750,12 @@
                     const item = document.createElement('div');
                     item.className = 'tip-pet-item';
                     item.dataset.index = index;
+                    const extraIcons = getPetExtraIcons(pet.name);
                     item.innerHTML = `
-                            <img class="pet-img" src="${pet.icon}" alt="${pet.name}">
+                            <img class="pet-img" src="${pet.icon}" alt="${pet.name}" style="width:44px;height:44px;object-fit:cover;border-radius:50%;border:1px solid #2d3b4f;">
                             <div class="pet-name">${pet.name}</div>
                             <div class="pet-val">${pet.value}</div>
+                            <div>${extraIcons}</div>
                         `;
                     item.onclick = () => {
                         const idx = selectedTipPets.findIndex(p => p.id === pet.id);
@@ -5857,9 +5900,7 @@
             } else {
                 display.innerHTML = adminTargetPets.map((p, idx) =>
                     `<div style="display:inline-flex;align-items:center;gap:4px;background:#0f172a;border:1px solid var(--border-color);border-radius:20px;padding:4px 12px 4px 6px;cursor:pointer;" onclick="adminSelectPetForRemove(${idx})" id="admin-pet-${idx}">
-                            <img class="pet-img" src="${p.icon}" alt="${p.name}" style="width:28px;height:28px;border-radius:50%;margin:0;">
-                            <span style="font-size:12px;">${p.name}</span>
-                            <span style="font-size:10px;color:#868e96;">${p.value}</span>
+                            ${getPetDisplayAdmin(p)}
                         </div>`
                 ).join('');
             }
@@ -6067,7 +6108,6 @@
             const matchIndex = globalMatches.findIndex(m => m.id === matchId);
             if (matchIndex === -1) return showToast('Match not found.');
             const match = globalMatches[matchIndex];
-            // Petleri iade et
             if (match.hostPets) {
                 match.hostPets.forEach(pet => addPetToInventory(match.host, pet));
             }
@@ -6086,7 +6126,7 @@
         }
 
         // ============================================================
-        //  ADMIN – INVENTORY (YENİ)
+        //  ADMIN – INVENTORY (DÜZELTİLMİŞ – CANLI GÜNCELLENİYOR)
         // ============================================================
         function adminRefreshInventory() {
             const container = document.getElementById('admin-inventory-container');
@@ -6100,13 +6140,15 @@
             users.forEach(u => {
                 const inv = getUserInventory(u);
                 const petCount = inv.length;
-                const petsHtml = inv.map(p =>
-                    `<div style="display:inline-flex;align-items:center;gap:4px;background:#0f172a;border:1px solid var(--border-color);border-radius:20px;padding:4px 10px;margin:2px;">
+                const petsHtml = inv.map(p => {
+                    const extraIcons = getPetExtraIcons(p.name);
+                    return `<div style="display:inline-flex;align-items:center;gap:4px;background:#0f172a;border:1px solid var(--border-color);border-radius:20px;padding:4px 10px;margin:2px;">
                         <img src="${p.icon}" alt="${p.name}" style="width:24px;height:24px;border-radius:50%;">
                         <span style="font-size:11px;">${p.name}</span>
                         <span style="font-size:10px;color:#868e96;">${p.value}</span>
-                    </div>`
-                ).join('');
+                        ${extraIcons}
+                    </div>`;
+                }).join('');
                 html += `
                     <div style="margin-bottom:8px;background:#0f172a;padding:8px 12px;border-radius:8px;border:1px solid var(--border-color);">
                         <div style="font-weight:600;color:#ced4da;display:flex;justify-content:space-between;">
