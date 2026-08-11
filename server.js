@@ -58,16 +58,13 @@ app.use(express.json({
     limit: "50kb"
 }));
 
-app.use(express.static(__dirname));
+// ⚠️ BU SATIR KALDIRILDI – app.use(express.static(__dirname));
+// Yerine en sona app.get('*', ...) eklendi.
 
 /*
 |--------------------------------------------------------------------------
 | DATABASE
 |--------------------------------------------------------------------------
-|
-| Basit JSON database.
-| Sunucu ilk açıldığında otomatik oluşturulur.
-|
 */
 
 function createEmptyDatabase() {
@@ -1467,9 +1464,6 @@ app.get(
 |--------------------------------------------------------------------------
 | CHAT MESSAGE CHECK
 |--------------------------------------------------------------------------
-|
-| Frontend mesaj göndermeden önce bunu çağırabilir.
-|
 */
 
 app.post(
@@ -1585,6 +1579,18 @@ app.use(
         });
     }
 );
+
+/*
+|--------------------------------------------------------------------------
+| STATIC FILES (SPA) - EN SONA EKLENDİ
+|--------------------------------------------------------------------------
+*/
+
+// Tüm API rotaları tanımlandıktan sonra,
+// eşleşmeyen tüm istekler index.html'ye yönlendirilir.
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'index.html'));
+});
 
 /*
 |--------------------------------------------------------------------------
