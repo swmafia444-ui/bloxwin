@@ -2268,6 +2268,22 @@
             font-size: 12px;
             padding: 6px 16px;
         }
+        /* Login demo butonu için ek stil */
+        .demo-login-btn {
+            background: linear-gradient(135deg, #fcc419, #f59f00);
+            color: #0b1120;
+            border: none;
+            padding: 12px;
+            border-radius: 30px;
+            font-weight: 700;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 10px;
+            transition: transform 0.15s ease;
+        }
+        .demo-login-btn:hover {
+            transform: scale(1.02);
+        }
     </style>
 </head>
 <body>
@@ -2412,6 +2428,9 @@
                 <button class="post-btn" id="find-roblox-user-btn" onclick="findRobloxUser()">Continue</button>
                 <button class="cancel-btn" onclick="closeModal('login-modal')">Cancel</button>
             </div>
+            <!-- DEMO LOGIN BUTONU -->
+            <button class="demo-login-btn" onclick="demoLogin()">🚀 Demo Giriş (Backend'i Bypass)</button>
+            <div style="margin-top:8px;font-size:12px;color:#868e96;text-align:center;">Backend çalışmıyorsa bu butonla giriş yapın.</div>
         </div>
         <div class="modal" id="roblox-login-step-confirm" style="display:none;">
             <h2>Is this you?</h2>
@@ -2762,7 +2781,7 @@
     </div>
 
     <!-- ============================================================ -->
-    <!--  JAVASCRIPT – LOGIN HATALARI DÜZELTİLDİ, TAM KOD              -->
+    <!--  JAVASCRIPT – DEMO LOGIN EKLENDİ, BACKEND HATALARI BYPASS    -->
     <!-- ============================================================ -->
     <script>
         // ============================================================
@@ -3619,10 +3638,41 @@
         }
 
         // ============================================================
-        //  LOGIN / LOGOUT – HATA YÖNETİMİ İYİLEŞTİRİLDİ
+        //  LOGIN / LOGOUT – DEMO LOGIN EKLENDİ
         // ============================================================
         let pendingRobloxUser = null;
         let robloxVerificationToken = null;
+
+        // DEMO LOGIN – Backend'i bypass eder
+        function demoLogin() {
+            const input = document.getElementById('login-username');
+            let username = input.value.trim();
+            if (!username) {
+                showToast('Please enter a username first.');
+                return;
+            }
+            // Kullanıcı adını düzgün formata getir
+            username = username.replace(/\s+/g, '').toLowerCase();
+            if (username.length < 3) {
+                showToast('Username must be at least 3 characters.');
+                return;
+            }
+            // Demo login yap
+            currentUser = username;
+            currentUserId = 'demo_' + Date.now();
+            currentUserAvatar = getRobloxAvatarUrl(1);
+            localStorage.setItem('app_current_user', currentUser);
+            localStorage.setItem('app_current_user_id', currentUserId);
+            localStorage.setItem('app_current_user_avatar', currentUserAvatar);
+            storeAvatarForUser(currentUser, currentUserAvatar, currentUserId);
+            addRegisteredUser(currentUser);
+            getUserInventory(currentUser);
+            closeModal('login-modal');
+            renderHeader();
+            renderMatches();
+            pubnub.publish({ channel: CHANNEL, message: { type: 'REQUEST_SYNC' } });
+            showToast(`✅ Demo giriş başarılı! Hoş geldin @${currentUser}`);
+        }
 
         function resetRobloxLoginModal() {
             pendingRobloxUser = null;
@@ -3650,7 +3700,6 @@
                     body: JSON.stringify({ username })
                 });
 
-                // Önce text olarak al, sonra parse et
                 const text = await response.text();
                 if (!response.ok) {
                     let errorMsg = 'Roblox user not found.';
@@ -3659,7 +3708,7 @@
                         if (errorData.error) errorMsg = errorData.error;
                     } catch (e) {
                         if (text.includes('<html')) {
-                            errorMsg = 'Backend server error. Please check API URL or try again later.';
+                            errorMsg = 'Backend server error. Please use Demo Login instead.';
                         } else {
                             errorMsg = text || 'Unknown error.';
                         }
