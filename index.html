@@ -2762,7 +2762,7 @@
     </div>
 
     <!-- ============================================================ -->
-    <!--  JAVASCRIPT – TÜM FİX’LER UYGULANMIŞTIR                      -->
+    <!--  JAVASCRIPT – LOGIN HATALARI DÜZELTİLDİ, TAM KOD              -->
     <!-- ============================================================ -->
     <script>
         // ============================================================
@@ -3650,14 +3650,14 @@
                     body: JSON.stringify({ username })
                 });
 
+                // Önce text olarak al, sonra parse et
+                const text = await response.text();
                 if (!response.ok) {
                     let errorMsg = 'Roblox user not found.';
                     try {
-                        const errorData = await response.json();
+                        const errorData = JSON.parse(text);
                         if (errorData.error) errorMsg = errorData.error;
                     } catch (e) {
-                        // JSON parse hatası, response içeriğini al
-                        const text = await response.text();
                         if (text.includes('<html')) {
                             errorMsg = 'Backend server error. Please check API URL or try again later.';
                         } else {
@@ -3667,7 +3667,7 @@
                     throw new Error(errorMsg);
                 }
 
-                const data = await response.json();
+                const data = JSON.parse(text);
                 if (!data.user) throw new Error('User data missing.');
 
                 pendingRobloxUser = data.user;
@@ -3705,19 +3705,19 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ userId: pendingRobloxUser.id })
                 });
+                const text = await response.text();
                 if (!response.ok) {
                     let errorMsg = 'Could not create verification code.';
                     try {
-                        const errorData = await response.json();
+                        const errorData = JSON.parse(text);
                         if (errorData.error) errorMsg = errorData.error;
                     } catch (e) {
-                        const text = await response.text();
                         if (text.includes('<html')) errorMsg = 'Backend server error.';
                         else errorMsg = text || 'Unknown error.';
                     }
                     throw new Error(errorMsg);
                 }
-                const data = await response.json();
+                const data = JSON.parse(text);
                 if (!data.token || !data.code) throw new Error('Invalid response from server.');
                 robloxVerificationToken = data.token;
                 codeEl.textContent = data.code;
@@ -3759,19 +3759,19 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ token: robloxVerificationToken, code })
                 });
+                const text = await response.text();
                 if (!response.ok) {
                     let errorMsg = 'Verification failed.';
                     try {
-                        const errorData = await response.json();
+                        const errorData = JSON.parse(text);
                         if (errorData.error) errorMsg = errorData.error;
                     } catch (e) {
-                        const text = await response.text();
                         if (text.includes('<html')) errorMsg = 'Backend server error.';
                         else errorMsg = text || 'Unknown error.';
                     }
                     throw new Error(errorMsg);
                 }
-                const data = await response.json();
+                const data = JSON.parse(text);
                 if (!data.user || !data.user.name) throw new Error('Invalid user data.');
                 currentUser = data.user.name;
                 currentUserId = data.user.id;
@@ -4783,11 +4783,6 @@
                 }
                 return true;
             });
-            // Eğer bir şey silindiyse render'ı güncelle
-            if (globalMatches.length !== beforeCount) {
-                // pubnub'a sync göndermeye gerek yok, sadece yerel
-                // Ama diğer cihazlar için sync mesajı gönderebiliriz, ama burada sadece render
-            }
 
             if (showHistory) {
                 if (!currentUser) {
@@ -4859,7 +4854,6 @@
                 return;
             }
 
-            // Sadece waiting ve ongoing (süresi dolmamış) olanları göster
             const waiting = globalMatches.filter(m => m.status === 'waiting');
             const ongoing = globalMatches.filter(m => m.status === 'ongoing' && (!m.finishedAt || Date.now() < m.finishedAt));
 
