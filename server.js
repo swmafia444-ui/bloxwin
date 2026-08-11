@@ -58,8 +58,7 @@ app.use(express.json({
     limit: "50kb"
 }));
 
-// ⚠️ BU SATIR KALDIRILDI – app.use(express.static(__dirname));
-// Yerine en sona app.get('*', ...) eklendi.
+// ⚠️ express.static kaldırıldı – yerine en sona app.get('*', ...) eklendi.
 
 /*
 |--------------------------------------------------------------------------
@@ -430,10 +429,11 @@ function generateVerificationCode() {
 
 /*
 |--------------------------------------------------------------------------
-| FIND ROBLOX USER
+| API ROTALARI (ÖNCE TANIMLANIR)
 |--------------------------------------------------------------------------
 */
 
+// FIND ROBLOX USER
 app.post(
     "/api/roblox/user",
     async (req, res) => {
@@ -516,12 +516,7 @@ app.post(
     }
 );
 
-/*
-|--------------------------------------------------------------------------
-| START VERIFICATION
-|--------------------------------------------------------------------------
-*/
-
+// START VERIFICATION
 app.post(
     "/api/roblox/start-verification",
     async (req, res) => {
@@ -590,12 +585,7 @@ app.post(
     }
 );
 
-/*
-|--------------------------------------------------------------------------
-| VERIFY ROBLOX ACCOUNT
-|--------------------------------------------------------------------------
-*/
-
+// VERIFY ROBLOX ACCOUNT
 app.post(
     "/api/roblox/verify",
     async (req, res) => {
@@ -697,17 +687,11 @@ app.post(
                     profile.name
                 );
 
-            /*
-             * Create / update server-side user.
-             */
             ensureUser(
                 username,
                 profile.id
             );
 
-            /*
-             * Create login session.
-             */
             const sessionToken =
                 generateSessionToken();
 
@@ -749,12 +733,7 @@ app.post(
     }
 );
 
-/*
-|--------------------------------------------------------------------------
-| LOGOUT
-|--------------------------------------------------------------------------
-*/
-
+// LOGOUT
 app.post(
     "/api/logout",
     requireLogin,
@@ -772,12 +751,7 @@ app.post(
     }
 );
 
-/*
-|--------------------------------------------------------------------------
-| CURRENT USER
-|--------------------------------------------------------------------------
-*/
-
+// CURRENT USER
 app.get(
     "/api/me",
     requireLogin,
@@ -825,12 +799,7 @@ app.get(
     }
 );
 
-/*
-|--------------------------------------------------------------------------
-| GET INVENTORY
-|--------------------------------------------------------------------------
-*/
-
+// GET INVENTORY
 app.get(
     "/api/inventory",
     requireLogin,
@@ -858,12 +827,7 @@ app.get(
     }
 );
 
-/*
-|--------------------------------------------------------------------------
-| ADMIN - LIST USERS
-|--------------------------------------------------------------------------
-*/
-
+// ADMIN - LIST USERS
 app.get(
     "/api/admin/users",
     requireAdmin,
@@ -897,11 +861,6 @@ app.get(
                         user.username
                     )
             }));
-
-        /*
-         * Also include configured admins
-         * even if they have not created inventory yet.
-         */
 
         for (
             const adminName
@@ -946,12 +905,7 @@ app.get(
     }
 );
 
-/*
-|--------------------------------------------------------------------------
-| ADMIN - GET USER
-|--------------------------------------------------------------------------
-*/
-
+// ADMIN - GET USER
 app.get(
     "/api/admin/user/:username",
     requireAdmin,
@@ -1021,12 +975,7 @@ app.get(
     }
 );
 
-/*
-|--------------------------------------------------------------------------
-| ADMIN - ADD PET
-|--------------------------------------------------------------------------
-*/
-
+// ADMIN - ADD PET
 app.post(
     "/api/admin/add-pet",
     requireAdmin,
@@ -1083,12 +1032,6 @@ app.post(
             });
         }
 
-        /*
-         * Ensure target user exists.
-         * This is the important part that fixes
-         * "I can only give myself pets".
-         */
-
         const user =
             ensureUser(username);
 
@@ -1135,12 +1078,7 @@ app.post(
     }
 );
 
-/*
-|--------------------------------------------------------------------------
-| ADMIN - REMOVE PET
-|--------------------------------------------------------------------------
-*/
-
+// ADMIN - REMOVE PET
 app.post(
     "/api/admin/remove-pet",
     requireAdmin,
@@ -1215,12 +1153,7 @@ app.post(
     }
 );
 
-/*
-|--------------------------------------------------------------------------
-| ADMIN - MUTE
-|--------------------------------------------------------------------------
-*/
-
+// ADMIN - MUTE
 app.post(
     "/api/admin/mute",
     requireAdmin,
@@ -1268,12 +1201,7 @@ app.post(
     }
 );
 
-/*
-|--------------------------------------------------------------------------
-| ADMIN - UNMUTE
-|--------------------------------------------------------------------------
-*/
-
+// ADMIN - UNMUTE
 app.post(
     "/api/admin/unmute",
     requireAdmin,
@@ -1315,12 +1243,7 @@ app.post(
     }
 );
 
-/*
-|--------------------------------------------------------------------------
-| ADMIN - BAN
-|--------------------------------------------------------------------------
-*/
-
+// ADMIN - BAN
 app.post(
     "/api/admin/ban",
     requireAdmin,
@@ -1337,10 +1260,6 @@ app.post(
                     "Username is required."
             });
         }
-
-        /*
-         * Do not allow admins to be banned.
-         */
 
         if (isAdmin(username)) {
             return res.status(400).json({
@@ -1379,12 +1298,7 @@ app.post(
     }
 );
 
-/*
-|--------------------------------------------------------------------------
-| ADMIN - UNBAN
-|--------------------------------------------------------------------------
-*/
-
+// ADMIN - UNBAN
 app.post(
     "/api/admin/unban",
     requireAdmin,
@@ -1426,12 +1340,7 @@ app.post(
     }
 );
 
-/*
-|--------------------------------------------------------------------------
-| CHAT STATUS
-|--------------------------------------------------------------------------
-*/
-
+// CHAT STATUS
 app.get(
     "/api/chat/status/:username",
     (req, res) => {
@@ -1460,12 +1369,7 @@ app.get(
     }
 );
 
-/*
-|--------------------------------------------------------------------------
-| CHAT MESSAGE CHECK
-|--------------------------------------------------------------------------
-*/
-
+// CHAT MESSAGE CHECK
 app.post(
     "/api/chat/check",
     requireLogin,
@@ -1490,7 +1394,7 @@ app.post(
 
 /*
 |--------------------------------------------------------------------------
-| CLEANUP SESSIONS
+| CLEANUP SESSIONS & VERIFICATION
 |--------------------------------------------------------------------------
 */
 
@@ -1521,12 +1425,6 @@ setInterval(() => {
     }
 
 }, 60_000).unref();
-
-/*
-|--------------------------------------------------------------------------
-| CLEANUP VERIFICATION CHALLENGES
-|--------------------------------------------------------------------------
-*/
 
 setInterval(() => {
 
@@ -1582,14 +1480,16 @@ app.use(
 
 /*
 |--------------------------------------------------------------------------
-| STATIC FILES (SPA) - EN SONA EKLENDİ
+| STATIC FILES & SPA FALLBACK (EN SON)
 |--------------------------------------------------------------------------
 */
 
-// Tüm API rotaları tanımlandıktan sonra,
-// eşleşmeyen tüm istekler index.html'ye yönlendirilir.
+// Statik dosyaları sun (CSS, JS, resimler, favicon vb.)
+app.use(express.static(__dirname));
+
+// Eşleşmeyen tüm istekler (ör. tarayıcıda sayfa yenileme) index.html'ye yönlendirilir.
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'index.html'));
+    res.sendFile(path.join(__dirname, 'index.html'));
 });
 
 /*
