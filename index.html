@@ -3654,7 +3654,6 @@
                     body: JSON.stringify({ username })
                 });
 
-                // --- FIX: response.ok ve content-type kontrolü ---
                 if (!response.ok) {
                     const text = await response.text();
                     console.error('Server responded with error:', text);
