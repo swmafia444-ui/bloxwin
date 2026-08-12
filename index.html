@@ -503,7 +503,7 @@
         .pet-extra-icon.ride { background: #e74c3c; }
         .pet-extra-icon.fly { background: #3498db; }
         .pet-extra-icon.neon { background: #2ecc71; }
-        .pet-extra-icon.mega { background: #f1c40f; color: #2c3e50; }
+        .pet-extra-icon.mega { background: #9b59b6; color: white; }
         .match-total-value {
             color: var(--accent);
             font-weight: 700;
@@ -810,11 +810,11 @@
         }
         .chat-messages {
             flex: 1;
-            padding: 16px 20px;
+            padding: 8px 16px;
             overflow-y: auto;
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 8px;
             background: rgba(11, 17, 32, 0.6);
             scrollbar-width: thin;
             scrollbar-color: #2d3b4f transparent;
@@ -835,21 +835,12 @@
         }
         .chat-msg {
             background: #141f2f;
-            padding: 10px 16px;
-            border-radius: 12px;
+            padding: 8px 12px;
+            border-radius: 10px;
             border: 1px solid #253141;
             box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
             animation: fadeInUp 0.2s ease;
-        }
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(6px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            position: relative;
         }
         .chat-msg .msg-content {
             display: flex;
@@ -887,8 +878,28 @@
             font-weight: 600;
             margin-left: 6px;
         }
+        .chat-msg .delete-msg-btn {
+            position: absolute;
+            right: 6px;
+            top: 6px;
+            background: #ff6b6b;
+            border: none;
+            color: #0b1120;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            font-size: 12px;
+            cursor: pointer;
+            display: none;
+            line-height: 20px;
+            text-align: center;
+            padding: 0;
+        }
+        .chat-msg:hover .delete-msg-btn {
+            display: block;
+        }
         .chat-input-area {
-            padding: 14px 18px;
+            padding: 10px 16px;
             border-top: 1px solid var(--border-color);
             display: flex;
             gap: 10px;
@@ -900,7 +911,7 @@
             background: #0f172a;
             border: 1px solid var(--border-color);
             border-radius: 30px;
-            padding: 10px 18px;
+            padding: 8px 16px;
             color: white;
             outline: none;
             font-size: 14px;
@@ -917,7 +928,7 @@
             background: var(--accent);
             color: #0b1120;
             border: none;
-            padding: 10px 22px;
+            padding: 8px 18px;
             border-radius: 30px;
             font-weight: 700;
             cursor: pointer;
@@ -1560,7 +1571,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 8px 12px;
+            padding: 6px 10px;
             background: #0f172a;
             border-radius: 8px;
             margin-bottom: 4px;
@@ -1586,7 +1597,7 @@
             background: #2d3b4f;
             border: none;
             color: #ced4da;
-            padding: 3px 12px;
+            padding: 2px 10px;
             border-radius: 20px;
             font-size: 11px;
             cursor: pointer;
@@ -2311,7 +2322,6 @@
             font-size: 12px;
             padding: 6px 16px;
         }
-        /* Admin add pet preview */
         .admin-pet-preview {
             background: #0f172a;
             border: 2px solid var(--border-color);
@@ -2369,58 +2379,80 @@
             color: #0b1120;
             border-color: var(--accent);
         }
-        /* Giveaway styles */
         .giveaway-container {
-            border-top: 1px solid var(--border-color);
-            padding: 12px 16px;
+            border-bottom: 1px solid var(--border-color);
+            padding: 8px 12px;
             background: #0f172a;
-            margin-top: 4px;
-            max-height: 200px;
+            max-height: 120px;
             overflow-y: auto;
+            flex-shrink: 0;
         }
         .giveaway-item {
             background: #1a2332;
-            border-radius: 10px;
-            padding: 8px 12px;
-            margin-bottom: 6px;
+            border-radius: 8px;
+            padding: 6px 10px;
+            margin-bottom: 4px;
             border: 1px solid var(--accent);
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
             flex-wrap: wrap;
         }
         .giveaway-item .g-pet-img {
-            width: 40px;
-            height: 40px;
+            width: 32px;
+            height: 32px;
             border-radius: 50%;
             object-fit: cover;
             border: 2px solid var(--accent);
         }
         .giveaway-item .g-info {
             flex: 1;
-            min-width: 100px;
+            min-width: 80px;
         }
         .giveaway-item .g-name {
             font-weight: 700;
             color: #f1f3f5;
-            font-size: 14px;
+            font-size: 13px;
         }
         .giveaway-item .g-value {
             color: var(--accent);
-            font-size: 13px;
+            font-size: 12px;
         }
         .giveaway-item .g-timer {
             color: #868e96;
-            font-size: 12px;
+            font-size: 11px;
             font-weight: 600;
+            min-width: 50px;
         }
         .giveaway-item .g-timer.urgent {
             color: #ff6b6b;
         }
+        .giveaway-item .g-join-btn {
+            background: var(--secondary);
+            color: #0b1120;
+            border: none;
+            padding: 2px 12px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 11px;
+            cursor: pointer;
+            transition: transform 0.15s;
+        }
+        .giveaway-item .g-join-btn:hover {
+            transform: scale(1.05);
+        }
+        .giveaway-item .g-join-btn:disabled {
+            opacity: 0.4;
+            cursor: default;
+            transform: none;
+        }
+        .giveaway-item .g-participants {
+            color: #868e96;
+            font-size: 11px;
+        }
     </style>
 </head>
 <body>
-
     <!-- Sidebar -->
     <div class="sidebar" id="sidebar">
         <a class="sidebar-item" href="https://discord.gg/8qtVS7Y4p" target="_blank" title="Discord">
@@ -2533,9 +2565,9 @@
             </div>
             <button class="close-chat-btn" onclick="closeMobileChat()">✕</button>
         </div>
-        <div class="chat-messages" id="chat-messages"></div>
-        <!-- GIVEAWAY ALANI -->
+        <!-- Giveaway -->
         <div class="giveaway-container" id="giveaway-container"></div>
+        <div class="chat-messages" id="chat-messages"></div>
         <div class="chat-input-area">
             <input type="text" class="chat-input" id="chat-input" placeholder="Type a message..." onkeydown="if(event.key==='Enter') sendMessage()">
             <button class="chat-send-btn" onclick="sendMessage()">Send</button>
@@ -2713,6 +2745,7 @@
                 <button class="tab-btn" data-tab="tab-matches" onclick="switchAdminTab('tab-matches')">Matches</button>
                 <button class="tab-btn" data-tab="tab-inventory" onclick="switchAdminTab('tab-inventory')">Inventory</button>
                 <button class="tab-btn" data-tab="tab-giveaway" onclick="switchAdminTab('tab-giveaway')">Giveaway</button>
+                <button class="tab-btn" data-tab="tab-chat" onclick="switchAdminTab('tab-chat')">Chat</button>
             </div>
 
             <div class="admin-tab-content active" id="tab-users">
@@ -2796,7 +2829,7 @@
                 <button class="action-btn secondary-btn" style="margin-top:10px;" onclick="adminRefreshInventory()">Refresh</button>
             </div>
 
-            <!-- GIVEAWAY Tab -->
+            <!-- Giveaway Tab -->
             <div class="admin-tab-content" id="tab-giveaway">
                 <div style="font-weight:600;color:#ced4da;font-size:14px;margin-bottom:8px;">Create Giveaway</div>
                 <div class="form-group">
@@ -2815,7 +2848,6 @@
                     <label>Duration (hours)</label>
                     <input type="number" id="giveaway-duration" placeholder="24" value="24" min="1">
                 </div>
-                <!-- Önizleme -->
                 <div style="margin:12px 0;">
                     <div style="font-weight:500;color:#ced4da;font-size:13px;margin-bottom:4px;">Preview:</div>
                     <div id="giveaway-preview" class="admin-pet-preview" style="min-height:80px;padding:12px;">
@@ -2824,6 +2856,15 @@
                 </div>
                 <button class="post-btn" onclick="createGiveaway()" style="width:100%;">Create Giveaway</button>
                 <div id="giveaway-status" style="margin-top:10px;font-size:13px;color:#868e96;min-height:20px;"></div>
+            </div>
+
+            <!-- Chat Tab -->
+            <div class="admin-tab-content" id="tab-chat">
+                <div style="font-weight:600;color:#ced4da;font-size:14px;margin-bottom:8px;">Chat Management</div>
+                <div id="admin-chat-list" style="max-height:300px;overflow-y:auto;background:#0f172a;border-radius:12px;padding:10px;border:1px solid var(--border-color);">
+                    <div style="color:#868e96;text-align:center;padding:10px;">Loading messages...</div>
+                </div>
+                <button class="action-btn secondary-btn" style="margin-top:10px;" onclick="adminRefreshChat()">Refresh</button>
             </div>
 
             <button class="cancel-btn" style="width:100%;margin-top:16px;" onclick="closeModal('admin-modal')">Close</button>
@@ -2850,12 +2891,12 @@
                 <label>Pet Value</label>
                 <input type="number" id="admin-add-pet-value" placeholder="670" value="100" oninput="updateAdminPetPreview()">
             </div>
-            <!-- Extra butonlar -->
+            <!-- Extra butonlar: R, F, N, M -->
             <div style="display:flex;gap:6px;flex-wrap:wrap;margin:8px 0 12px;">
-                <button class="admin-extra-btn" data-extra="Ride" onclick="toggleAdminPetExtra('Ride')">Ride</button>
-                <button class="admin-extra-btn" data-extra="Fly" onclick="toggleAdminPetExtra('Fly')">Fly</button>
-                <button class="admin-extra-btn" data-extra="Neon" onclick="toggleAdminPetExtra('Neon')">Neon</button>
-                <button class="admin-extra-btn" data-extra="Mega" onclick="toggleAdminPetExtra('Mega')">Mega</button>
+                <button class="admin-extra-btn" data-extra="R" onclick="toggleAdminPetExtra('R')">R</button>
+                <button class="admin-extra-btn" data-extra="F" onclick="toggleAdminPetExtra('F')">F</button>
+                <button class="admin-extra-btn" data-extra="N" onclick="toggleAdminPetExtra('N')">N</button>
+                <button class="admin-extra-btn" data-extra="M" onclick="toggleAdminPetExtra('M')">M</button>
             </div>
             <!-- Önizleme -->
             <div id="admin-pet-preview" class="admin-pet-preview" style="min-height:100px;">
@@ -2870,7 +2911,7 @@
     </div>
 
     <!-- Profile Modal -->
-    <div class="modal-overlay" id="profile-modal" data-close-on-overlay="false">
+    <div class="modal-overlay" id="profile-modal" data-close-on-overlay="true">
         <div class="modal" style="max-width:480px;">
             <div id="profile-content" style="text-align:center;">
                 <div id="profile-username" class="profile-username"></div>
@@ -3512,7 +3553,7 @@
             if (jpJoinBtn) jpJoinBtn.disabled = false;
         }
 
-        // Overlay click handler – profile modal için kapatmayı engelle
+        // Overlay click – profile modal için kapat (data-close-on-overlay true)
         document.querySelectorAll('.modal-overlay').forEach(overlay => {
             overlay.addEventListener('click', function(e) {
                 if (e.target === this) {
@@ -3574,16 +3615,16 @@
             if (!petName) return '';
             const name = petName.toLowerCase();
             let html = '';
-            if (name.includes('ride')) {
+            if (name.includes('r')) {
                 html += `<span class="pet-extra-icon ride">R</span>`;
             }
-            if (name.includes('fly')) {
+            if (name.includes('f')) {
                 html += `<span class="pet-extra-icon fly">F</span>`;
             }
-            if (name.includes('neon') || name.includes('nfr') || name.includes('nr')) {
+            if (name.includes('n')) {
                 html += `<span class="pet-extra-icon neon">N</span>`;
             }
-            if (name.includes('mega') || name.includes('mfr') || name.includes('mr')) {
+            if (name.includes('m')) {
                 html += `<span class="pet-extra-icon mega">M</span>`;
             }
             return html;
@@ -3616,13 +3657,13 @@
             const value = document.getElementById('admin-add-pet-value').value || 0;
             const preview = document.getElementById('admin-pet-preview');
             let extra = '';
-            adminPetExtraState.forEach(e => extra += `<span class="pet-extra-icon ${e.toLowerCase()}">${e.charAt(0)}</span>`);
+            adminPetExtraState.forEach(e => extra += `<span class="pet-extra-icon ${e.toLowerCase()}">${e}</span>`);
             if (!name && !icon) {
                 preview.innerHTML = '<div style="color:#868e96;font-size:13px;">Preview will appear here</div>';
                 return;
             }
             let finalName = name;
-            let extraText = adminPetExtraState.join(' ');
+            let extraText = adminPetExtraState.join('');
             if (extraText) finalName = extraText + ' ' + name;
             preview.innerHTML = `
                 <img class="preview-pet-img" src="${icon || 'https://bloxluck.com/img/dog.png'}" alt="Pet" onerror="this.src='https://bloxluck.com/img/dog.png'">
@@ -4800,6 +4841,9 @@
             updateAdminJackpotInfo();
         }
 
+        // ============================================================
+        //  PUBSUB – JACKPOT
+        // ============================================================
         function handleJackpotMessage(msg) {
             if (msg.sender === currentUser) return;
 
@@ -4914,12 +4958,12 @@
                 return;
             }
             let html = '';
-            activeGiveaways.forEach((g, idx) => {
+            activeGiveaways.forEach((g) => {
                 const remaining = Math.max(0, g.expiresAt - now);
-                const hours = Math.floor(remaining / 3600000);
-                const minutes = Math.floor((remaining % 3600000) / 60000);
-                const timeStr = hours > 0 ? `${hours}h ${minutes}m` : `${minutes}m`;
-                const urgent = remaining < 3600000 ? 'urgent' : '';
+                const seconds = (remaining / 1000).toFixed(2);
+                const urgent = remaining < 60000 ? 'urgent' : '';
+                const participants = g.participants ? g.participants.length : 0;
+                const joined = g.participants && g.participants.includes(currentUser);
                 html += `
                     <div class="giveaway-item">
                         <img class="g-pet-img" src="${g.image}" alt="${g.name}" onerror="this.src='https://bloxluck.com/img/dog.png'">
@@ -4927,7 +4971,9 @@
                             <div class="g-name">${escapeHTML(g.name)}</div>
                             <div class="g-value">Value: ${g.value}</div>
                         </div>
-                        <div class="g-timer ${urgent}">⏳ ${timeStr}</div>
+                        <div class="g-timer ${urgent}">${seconds}s</div>
+                        <span class="g-participants">👤 ${participants}</span>
+                        ${currentUser ? `<button class="g-join-btn" onclick="joinGiveaway('${g.id}')" ${joined ? 'disabled' : ''}>${joined ? 'Joined' : 'Join'}</button>` : ''}
                     </div>
                 `;
             });
@@ -4938,7 +4984,43 @@
 
         function startGiveawayTimer() {
             if (giveawayInterval) clearInterval(giveawayInterval);
-            giveawayInterval = setInterval(renderGiveaways, 10000);
+            giveawayInterval = setInterval(renderGiveaways, 100);
+        }
+
+        function joinGiveaway(giveawayId) {
+            if (!currentUser) { showToast('Please login first.'); return; }
+            const g = activeGiveaways.find(item => item.id === giveawayId);
+            if (!g) return showToast('Giveaway not found.');
+            if (g.participants && g.participants.includes(currentUser)) return showToast('Already joined.');
+            if (!g.participants) g.participants = [];
+            g.participants.push(currentUser);
+            saveGiveaways();
+            renderGiveaways();
+            pubnub.publish({
+                channel: CHANNEL,
+                message: { type: 'GIVEAWAY_JOIN', giveawayId: giveawayId, username: currentUser, sender: currentUser }
+            });
+            showToast(`You joined the giveaway for ${g.name}!`);
+        }
+
+        function handleGiveawayMessage(msg) {
+            if (msg.sender === currentUser) return;
+            if (msg.type === 'GIVEAWAY_CREATED') {
+                const exists = activeGiveaways.some(g => g.id === msg.giveaway.id);
+                if (!exists) {
+                    activeGiveaways.push(msg.giveaway);
+                    saveGiveaways();
+                    renderGiveaways();
+                }
+            }
+            if (msg.type === 'GIVEAWAY_JOIN') {
+                const g = activeGiveaways.find(item => item.id === msg.giveawayId);
+                if (g && !g.participants.includes(msg.username)) {
+                    g.participants.push(msg.username);
+                    saveGiveaways();
+                    renderGiveaways();
+                }
+            }
         }
 
         function createGiveaway() {
@@ -4961,7 +5043,8 @@
                 value: value,
                 createdAt: Date.now(),
                 expiresAt: Date.now() + hours * 3600000,
-                createdBy: currentUser
+                createdBy: currentUser,
+                participants: []
             };
             activeGiveaways.push(giveaway);
             saveGiveaways();
@@ -4979,185 +5062,100 @@
             showToast(`Giveaway created: ${name} for ${hours} hours!`);
         }
 
-        function handleGiveawayMessage(msg) {
-            if (msg.sender === currentUser) return;
-            if (msg.type === 'GIVEAWAY_CREATED') {
-                const exists = activeGiveaways.some(g => g.id === msg.giveaway.id);
-                if (!exists) {
-                    activeGiveaways.push(msg.giveaway);
-                    saveGiveaways();
-                    renderGiveaways();
-                }
-            }
-        }
-
-        // ============================================================
-        //  PUBSUB – MAIN
-        // ============================================================
-        pubnub.addListener({
-            message: function(event) {
-                const msg = event.message;
-                const channel = event.channel;
-
-                if (channel === JACKPOT_CHANNEL) {
-                    handleJackpotMessage(msg);
-                    return;
-                }
-
-                if (channel === USER_REGISTRY_CHANNEL) {
-                    if (msg.type === 'USER_REGISTERED') {
-                        const list = getRegisteredUsers();
-                        if (!list.includes(msg.username)) {
-                            list.push(msg.username);
-                            setRegisteredUsers(list);
-                        }
-                    } else if (msg.type === 'REQUEST_REGISTRY') {
-                        const users = getRegisteredUsers();
-                        pubnub.publish({
-                            channel: USER_REGISTRY_CHANNEL,
-                            message: { type: 'REGISTRY_LIST', users: users }
-                        });
-                    } else if (msg.type === 'REGISTRY_LIST') {
-                        if (msg.users && Array.isArray(msg.users)) {
-                            setRegisteredUsers(msg.users);
-                        }
-                    } else if (msg.type === 'STATS_UPDATE') {
-                        if (msg.username && msg.stats) {
-                            const u = msg.username.toLowerCase();
-                            allUserStats[u] = msg.stats;
-                            const key = `app_stats_${u}`;
-                            localStorage.setItem(key, JSON.stringify(msg.stats));
-                            renderLeaderboard();
-                            renderHeader();
-                        }
-                    } else if (msg.type === 'REQUEST_ALL_STATS') {
-                        sendAllStats();
-                    } else if (msg.type === 'ALL_STATS') {
-                        if (msg.stats) {
-                            handleAllStats(msg.stats);
-                        }
-                    }
-                    return;
-                }
-
-                if (msg.type === 'INVENTORY_UPDATE') {
-                    handleInventoryUpdate(msg);
-                    return;
-                }
-
-                if (msg.type === 'CHAT') {
-                    saveAndRenderChat(msg.username, msg.text, msg.time);
-                }
-
-                if (msg.type === 'GIVEAWAY_CREATED') {
-                    handleGiveawayMessage(msg);
-                }
-
-                if (msg.type === 'MATCH_CREATED') {
-                    if (msg.sender === currentUser) return;
-                    if (!globalMatches.some(m => m.id === msg.match.id)) {
-                        globalMatches.push(msg.match);
-                        renderMatches();
-                        sendMatchCreatedWebhook(msg.match);
-                    }
-                }
-
-                if (msg.type === 'MATCH_CANCELED') {
-                    if (msg.sender === currentUser) return;
-                    const match = globalMatches.find(m => m.id === msg.matchId);
-                    if (match && match.timeoutId) {
-                        clearTimeout(match.timeoutId);
-                    }
-                    globalMatches = globalMatches.filter(m => m.id !== msg.matchId);
-                    renderMatches();
-                }
-
-                if (msg.type === 'GAME_START') {
-                    if (msg.sender === currentUser) return;
-                    const match = globalMatches.find(m => m.id === msg.matchId);
-                    if (match) {
-                        if (match.status === 'ongoing') return;
-                        match.status = 'ongoing';
-                        match.joiner = msg.joiner;
-                        match.joinerPets = msg.joinerPets;
-                        match.joinerSide = msg.joinerSide;
-                        match.hostWins = msg.hostWins;
-                        match.winner = msg.hostWins ? msg.host : msg.joiner;
-                        match.winnerSide = msg.hostWins ? match.hostSide : msg.joinerSide;
-                        match.startedAt = Date.now();
-
-                        const timeoutId = setTimeout(() => {
-                            if (match && match.status === 'ongoing') {
-                                const hostPets = match.hostPets || [];
-                                const joinerPets = match.joinerPets || [];
-                                hostPets.forEach(pet => addPetToInventory(match.host, pet));
-                                if (match.joiner) {
-                                    joinerPets.forEach(pet => addPetToInventory(match.joiner, pet));
-                                }
-                                globalMatches = globalMatches.filter(m => m.id !== match.id);
-                                renderMatches();
-                                showToast(`Match ${match.id} timed out and was cancelled.`, 3000);
-                                pubnub.publish({
-                                    channel: CHANNEL,
-                                    message: { type: 'MATCH_CANCELED', matchId: match.id, sender: 'system' }
-                                });
-                            }
-                        }, 70000);
-                        match.timeoutId = timeoutId;
-
-                        renderMatches();
-
-                        if (currentUser === msg.host || currentUser === msg.joiner) {
-                            executeCoinFlip(msg);
-                        }
-
-                        const totalValue = sumPets(msg.hostPets) + sumPets(msg.joinerPets);
-                        const winner = msg.hostWins ? msg.host : msg.joiner;
-                        const matchObj = {
-                            host: msg.host,
-                            joiner: msg.joiner,
-                            hostPets: msg.hostPets,
-                            joinerPets: msg.joinerPets,
-                            hostSide: msg.hostSide,
-                            joinerSide: msg.joinerSide
-                        };
-                        sendMatchResultWebhook(matchObj, winner, totalValue);
-                    }
-                }
-
-                if (msg.type === 'REQUEST_SYNC' && globalMatches.length > 0) {
-                    pubnub.publish({
-                        channel: CHANNEL,
-                        message: { type: 'SYNC_MATCHES', matches: globalMatches }
-                    });
-                }
-
-                if (msg.type === 'SYNC_MATCHES') {
-                    msg.matches.forEach(m => {
-                        if (!globalMatches.some(g => g.id === m.id)) {
-                            globalMatches.push(m);
-                        }
-                    });
-                    renderMatches();
-                }
-            }
-        });
-
         // ============================================================
         //  CHAT
         // ============================================================
         function renderChatHistory() {
             const container = document.getElementById('chat-messages');
             container.innerHTML = '';
-            chatHistory.forEach(msg => appendChatMessageDOM(msg.username, msg.text, msg.time));
+            chatHistory.forEach((msg, index) => {
+                const msgDiv = document.createElement('div');
+                msgDiv.className = 'chat-msg';
+                const mutedLabel = isMuted(msg.username) ? `<span class="muted-label">[MUTED]</span>` : '';
+
+                const rankIcon = getRankIcon(msg.username);
+                const rankLabel = getRankLabel(msg.username);
+                const rankHtml = rankIcon ?
+                    `<img class="rank-icon" src="${rankIcon}" alt="${rankLabel}" title="${rankLabel}">` :
+                    '';
+                const rankColor = getRankColor(msg.username);
+                const colorClass = rankColor ? `chat-username ${rankColor}` : 'chat-username';
+                const deleteBtn = isAdmin(currentUser) ?
+                    `<button class="delete-msg-btn" onclick="deleteChatMessage(${index})">✕</button>` :
+                    '';
+                msgDiv.innerHTML = `
+                    <div class="msg-content">
+                        <div class="msg-top">
+                            ${rankHtml}
+                            <span class="${colorClass}" onclick="openProfile('${escapeHTML(msg.username)}')">
+                                ${escapeHTML(msg.username)}
+                            </span>
+                            <span class="time">${msg.time}</span>
+                            ${mutedLabel}
+                        </div>
+                        <div class="msg-text">${escapeHTML(msg.text)}</div>
+                        ${deleteBtn}
+                    </div>
+                `;
+                container.appendChild(msgDiv);
+            });
+            container.scrollTop = container.scrollHeight;
         }
 
         function saveAndRenderChat(username, text, time) {
             const newMsg = { username, text, time };
             chatHistory.push(newMsg);
-            if (chatHistory.length > 50) chatHistory.shift();
+            if (chatHistory.length > 100) chatHistory.shift();
             localStorage.setItem('app_chat_history', JSON.stringify(chatHistory));
-            appendChatMessageDOM(username, text, time);
+            renderChatHistory();
+        }
+
+        function deleteChatMessage(index) {
+            if (!currentUser || !isAdmin(currentUser)) return;
+            const msg = chatHistory[index];
+            if (!msg) return;
+            chatHistory.splice(index, 1);
+            localStorage.setItem('app_chat_history', JSON.stringify(chatHistory));
+            renderChatHistory();
+            pubnub.publish({
+                channel: CHANNEL,
+                message: { type: 'CHAT_DELETE', index: index, sender: currentUser }
+            });
+            if (document.getElementById('admin-modal').classList.contains('active')) {
+                adminRefreshChat();
+            }
+            showToast('Message deleted.');
+        }
+
+        function handleChatDelete(msg) {
+            if (msg.sender === currentUser) return;
+            if (msg.index !== undefined && msg.index < chatHistory.length) {
+                chatHistory.splice(msg.index, 1);
+                localStorage.setItem('app_chat_history', JSON.stringify(chatHistory));
+                renderChatHistory();
+                if (document.getElementById('admin-modal').classList.contains('active')) {
+                    adminRefreshChat();
+                }
+            }
+        }
+
+        function adminRefreshChat() {
+            const container = document.getElementById('admin-chat-list');
+            if (!container) return;
+            if (chatHistory.length === 0) {
+                container.innerHTML = '<div style="color:#868e96;text-align:center;padding:10px;">No messages.</div>';
+                return;
+            }
+            let html = '';
+            chatHistory.forEach((msg, idx) => {
+                html += `
+                    <div class="admin-user-item">
+                        <span class="username">${escapeHTML(msg.username)}: ${escapeHTML(msg.text)} <span style="color:#6c7a8a;font-size:11px;">${msg.time}</span></span>
+                        <button class="danger" onclick="deleteChatMessage(${idx})" style="background:#ff6b6b;color:#0b1120;border:none;padding:2px 10px;border-radius:20px;cursor:pointer;">🗑️</button>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
         }
 
         function sendMessage() {
@@ -5182,39 +5180,8 @@
             input.value = '';
         }
 
-        function appendChatMessageDOM(username, text, time) {
-            const container = document.getElementById('chat-messages');
-            const msgDiv = document.createElement('div');
-            msgDiv.className = 'chat-msg';
-            const mutedLabel = isMuted(username) ? `<span class="muted-label">[MUTED]</span>` : '';
-
-            const rankIcon = getRankIcon(username);
-            const rankLabel = getRankLabel(username);
-            const rankHtml = rankIcon ?
-                `<img class="rank-icon" src="${rankIcon}" alt="${rankLabel}" title="${rankLabel}">` :
-                '';
-            const rankColor = getRankColor(username);
-            const colorClass = rankColor ? `chat-username ${rankColor}` : 'chat-username';
-
-            msgDiv.innerHTML = `
-                    <div class="msg-content">
-                        <div class="msg-top">
-                            ${rankHtml}
-                            <span class="${colorClass}" onclick="openProfile('${escapeHTML(username)}')">
-                                ${escapeHTML(username)}
-                            </span>
-                            <span class="time">${time}</span>
-                            ${mutedLabel}
-                        </div>
-                        <div class="msg-text">${escapeHTML(text)}</div>
-                    </div>
-                `;
-            container.appendChild(msgDiv);
-            container.scrollTop = container.scrollHeight;
-        }
-
         // ============================================================
-        //  RENDER MATCHES
+        //  RENDER MATCHES (DÜZELTİLMİŞ – finished maçları göster)
         // ============================================================
         function renderMatches() {
             const container = document.getElementById('matches-list');
@@ -5282,6 +5249,7 @@
                 return;
             }
 
+            // Eski ongoing maçları temizle (70 saniye)
             const now = Date.now();
             const staleMatches = globalMatches.filter(m => m.status === 'ongoing' && m.startedAt && (now - m.startedAt > 70000));
             staleMatches.forEach(match => {
@@ -5295,6 +5263,7 @@
                 globalMatches = globalMatches.filter(m => m.id !== match.id);
             });
 
+            // finished maçları temizle (70 saniye sonra)
             const finishedExpiry = 70000;
             const toRemove = globalMatches.filter(m => m.status === 'finished' && m.finishedAt && (now - m.finishedAt > finishedExpiry));
             toRemove.forEach(m => {
@@ -5312,6 +5281,7 @@
             const ongoing = globalMatches.filter(m => m.status === 'ongoing');
             const finished = globalMatches.filter(m => m.status === 'finished');
 
+            // Waiting maçlar
             waiting.forEach(match => {
                 const isMyMatch = currentUser && match.host === currentUser;
                 const totalValue = sumPets(match.hostPets);
@@ -5372,6 +5342,7 @@
                 container.appendChild(card);
             });
 
+            // Ongoing maçlar
             ongoing.forEach(match => {
                 const totalValue = sumPets(match.hostPets) + sumPets(match.joinerPets);
                 const winnerSide = match.winnerSide || (match.hostWins ? match.hostSide : match.joinerSide);
@@ -5442,6 +5413,7 @@
                 }, 300);
             });
 
+            // Finished maçlar (70 saniye boyunca göster)
             finished.forEach(match => {
                 const totalValue = match.totalValue || (sumPets(match.hostPets) + sumPets(match.joinerPets));
                 const winnerName = match.winner || 'Unknown';
@@ -5782,7 +5754,7 @@
         }
 
         // ============================================================
-        //  COIN FLIP
+        //  COIN FLIP (DÜZELTİLMİŞ – finished durumu eklendi)
         // ============================================================
         function executeCoinFlip(gameData) {
             const flipModal = document.getElementById('flip-modal');
@@ -6010,19 +5982,19 @@
             const profitClass = stats.totalProfit < 0 ? 'negative' : '';
             const statsHtml = `
                     <div class="profile-stat">
-                        <div class="stat-number">${stats.totalWager}</div>
+                        <div class="stat-number">${stats.totalWager.toLocaleString()}</div>
                         <div class="stat-label">Total Bet</div>
                     </div>
                     <div class="profile-stat profit">
-                        <div class="stat-number ${profitClass}">${stats.totalProfit}</div>
+                        <div class="stat-number ${profitClass}">${stats.totalProfit.toLocaleString()}</div>
                         <div class="stat-label">Total Profit</div>
                     </div>
                     <div class="profile-stat">
-                        <div class="stat-number">${stats.totalProfit}</div>
+                        <div class="stat-number">${stats.totalProfit.toLocaleString()}</div>
                         <div class="stat-label">Total Won</div>
                     </div>
                     <div class="profile-stat loss">
-                        <div class="stat-number">${stats.totalLost}</div>
+                        <div class="stat-number">${stats.totalLost.toLocaleString()}</div>
                         <div class="stat-label">Total Lost</div>
                     </div>
                 `;
@@ -6180,6 +6152,7 @@
             if (tabId === 'tab-forcewin') updateForceWinUI();
             if (tabId === 'tab-matches') adminRefreshMatches();
             if (tabId === 'tab-inventory') adminRefreshInventory();
+            if (tabId === 'tab-chat') adminRefreshChat();
         }
 
         function adminRefreshUsers() {
@@ -6308,7 +6281,7 @@
             // Benzersiz ID oluştur (aynı petten iki tane seçilebilsin diye)
             let finalName = name;
             if (adminPetExtraState.length > 0) {
-                finalName = adminPetExtraState.join(' ') + ' ' + name;
+                finalName = adminPetExtraState.join('') + ' ' + name;
             }
             const pet = {
                 id: Date.now() + '_' + Math.random().toString(36).substr(2, 9),
@@ -6493,6 +6466,169 @@
             });
             container.innerHTML = html;
         }
+
+        // ============================================================
+        //  PUBSUB – MAIN
+        // ============================================================
+        pubnub.addListener({
+            message: function(event) {
+                const msg = event.message;
+                const channel = event.channel;
+
+                if (channel === JACKPOT_CHANNEL) {
+                    handleJackpotMessage(msg);
+                    return;
+                }
+
+                if (channel === USER_REGISTRY_CHANNEL) {
+                    if (msg.type === 'USER_REGISTERED') {
+                        const list = getRegisteredUsers();
+                        if (!list.includes(msg.username)) {
+                            list.push(msg.username);
+                            setRegisteredUsers(list);
+                        }
+                    } else if (msg.type === 'REQUEST_REGISTRY') {
+                        const users = getRegisteredUsers();
+                        pubnub.publish({
+                            channel: USER_REGISTRY_CHANNEL,
+                            message: { type: 'REGISTRY_LIST', users: users }
+                        });
+                    } else if (msg.type === 'REGISTRY_LIST') {
+                        if (msg.users && Array.isArray(msg.users)) {
+                            setRegisteredUsers(msg.users);
+                        }
+                    } else if (msg.type === 'STATS_UPDATE') {
+                        if (msg.username && msg.stats) {
+                            const u = msg.username.toLowerCase();
+                            allUserStats[u] = msg.stats;
+                            const key = `app_stats_${u}`;
+                            localStorage.setItem(key, JSON.stringify(msg.stats));
+                            renderLeaderboard();
+                            renderHeader();
+                        }
+                    } else if (msg.type === 'REQUEST_ALL_STATS') {
+                        sendAllStats();
+                    } else if (msg.type === 'ALL_STATS') {
+                        if (msg.stats) {
+                            handleAllStats(msg.stats);
+                        }
+                    }
+                    return;
+                }
+
+                if (msg.type === 'INVENTORY_UPDATE') {
+                    handleInventoryUpdate(msg);
+                    return;
+                }
+
+                if (msg.type === 'CHAT') {
+                    saveAndRenderChat(msg.username, msg.text, msg.time);
+                    if (document.getElementById('admin-modal').classList.contains('active')) {
+                        adminRefreshChat();
+                    }
+                    return;
+                }
+
+                if (msg.type === 'CHAT_DELETE') {
+                    handleChatDelete(msg);
+                    return;
+                }
+
+                if (msg.type === 'GIVEAWAY_CREATED' || msg.type === 'GIVEAWAY_JOIN') {
+                    handleGiveawayMessage(msg);
+                    return;
+                }
+
+                // --- COINFLIP MESAJLARI (SENDER KONTROLÜ) ---
+                if (msg.type === 'MATCH_CREATED') {
+                    if (msg.sender === currentUser) return;
+                    if (!globalMatches.some(m => m.id === msg.match.id)) {
+                        globalMatches.push(msg.match);
+                        renderMatches();
+                        sendMatchCreatedWebhook(msg.match);
+                    }
+                }
+
+                if (msg.type === 'MATCH_CANCELED') {
+                    if (msg.sender === currentUser) return;
+                    const match = globalMatches.find(m => m.id === msg.matchId);
+                    if (match && match.timeoutId) {
+                        clearTimeout(match.timeoutId);
+                    }
+                    globalMatches = globalMatches.filter(m => m.id !== msg.matchId);
+                    renderMatches();
+                }
+
+                if (msg.type === 'GAME_START') {
+                    if (msg.sender === currentUser) return;
+                    const match = globalMatches.find(m => m.id === msg.matchId);
+                    if (match) {
+                        if (match.status === 'ongoing') return;
+                        match.status = 'ongoing';
+                        match.joiner = msg.joiner;
+                        match.joinerPets = msg.joinerPets;
+                        match.joinerSide = msg.joinerSide;
+                        match.hostWins = msg.hostWins;
+                        match.winner = msg.hostWins ? msg.host : msg.joiner;
+                        match.winnerSide = msg.hostWins ? match.hostSide : msg.joinerSide;
+                        match.startedAt = Date.now();
+
+                        const timeoutId = setTimeout(() => {
+                            if (match && match.status === 'ongoing') {
+                                const hostPets = match.hostPets || [];
+                                const joinerPets = match.joinerPets || [];
+                                hostPets.forEach(pet => addPetToInventory(match.host, pet));
+                                if (match.joiner) {
+                                    joinerPets.forEach(pet => addPetToInventory(match.joiner, pet));
+                                }
+                                globalMatches = globalMatches.filter(m => m.id !== match.id);
+                                renderMatches();
+                                showToast(`Match ${match.id} timed out and was cancelled.`, 3000);
+                                pubnub.publish({
+                                    channel: CHANNEL,
+                                    message: { type: 'MATCH_CANCELED', matchId: match.id, sender: 'system' }
+                                });
+                            }
+                        }, 70000);
+                        match.timeoutId = timeoutId;
+
+                        renderMatches();
+
+                        if (currentUser === msg.host || currentUser === msg.joiner) {
+                            executeCoinFlip(msg);
+                        }
+
+                        const totalValue = sumPets(msg.hostPets) + sumPets(msg.joinerPets);
+                        const winner = msg.hostWins ? msg.host : msg.joiner;
+                        const matchObj = {
+                            host: msg.host,
+                            joiner: msg.joiner,
+                            hostPets: msg.hostPets,
+                            joinerPets: msg.joinerPets,
+                            hostSide: msg.hostSide,
+                            joinerSide: msg.joinerSide
+                        };
+                        sendMatchResultWebhook(matchObj, winner, totalValue);
+                    }
+                }
+
+                if (msg.type === 'REQUEST_SYNC' && globalMatches.length > 0) {
+                    pubnub.publish({
+                        channel: CHANNEL,
+                        message: { type: 'SYNC_MATCHES', matches: globalMatches }
+                    });
+                }
+
+                if (msg.type === 'SYNC_MATCHES') {
+                    msg.matches.forEach(m => {
+                        if (!globalMatches.some(g => g.id === m.id)) {
+                            globalMatches.push(m);
+                        }
+                    });
+                    renderMatches();
+                }
+            }
+        });
 
         // ============================================================
         //  INIT
