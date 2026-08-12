@@ -18,7 +18,7 @@
             --border-color: #2d3b4f;
             --header-height: 70px;
             --chat-width: 370px;
-            --sidebar-width: 70px;
+            --sidebar-width: 85px;
             --radius: 14px;
         }
         * {
@@ -68,8 +68,8 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 16px 0;
-            gap: 8px;
+            padding: 18px 0;
+            gap: 10px;
             overflow-y: auto;
         }
         .sidebar .sidebar-item {
@@ -77,8 +77,8 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            width: 52px;
-            height: 52px;
+            width: 60px;
+            height: 60px;
             border-radius: 14px;
             background: #0f172a;
             border: 1px solid var(--border-color);
@@ -99,12 +99,12 @@
             color: #f1f3f5;
         }
         .sidebar .sidebar-item .icon {
-            width: 28px;
-            height: 28px;
+            width: 34px;
+            height: 34px;
             object-fit: contain;
         }
         .sidebar .sidebar-item .label {
-            font-size: 8px;
+            font-size: 9px;
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 0.3px;
@@ -130,8 +130,8 @@
         }
         .sidebar .coinflip-btn .icon,
         .sidebar .jackpot-btn .icon {
-            width: 32px;
-            height: 32px;
+            width: 38px;
+            height: 38px;
         }
         .toast-container {
             position: fixed;
@@ -170,9 +170,23 @@
         .logo-wrapper span {
             font-size: 28px;
             font-weight: 800;
-            background: linear-gradient(135deg, var(--accent), #ff922b);
+            background: linear-gradient(135deg, #fcc419, #ff922b, #fcc419, #ff922b);
+            background-size: 300% 300%;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            animation: shimmerGold 3s ease-in-out infinite;
+            display: inline-block;
+        }
+        @keyframes shimmerGold {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
         }
         .user-info-bar {
             display: flex;
@@ -273,12 +287,20 @@
             box-shadow: 0 8px 20px rgba(255, 107, 107, 0.3);
         }
         .action-btn.gold-btn {
-            background: linear-gradient(135deg, #fcc419, #f59f00);
+            background: linear-gradient(135deg, var(--secondary), #2b8a3e);
             color: #0b1120;
-            box-shadow: 0 4px 10px rgba(252, 196, 25, 0.25);
+            box-shadow: 0 4px 10px rgba(81, 207, 102, 0.25);
         }
         .action-btn.gold-btn:hover {
-            box-shadow: 0 8px 20px rgba(252, 196, 25, 0.4);
+            box-shadow: 0 8px 20px rgba(81, 207, 102, 0.4);
+        }
+        .action-btn.purple-btn {
+            background: linear-gradient(135deg, var(--secondary), #2b8a3e);
+            color: #0b1120;
+            box-shadow: 0 4px 10px rgba(81, 207, 102, 0.25);
+        }
+        .action-btn.purple-btn:hover {
+            box-shadow: 0 8px 20px rgba(81, 207, 102, 0.4);
         }
         .action-btn.admin-btn {
             background: linear-gradient(135deg, #da77f2, #9c36b5);
@@ -287,14 +309,6 @@
         }
         .action-btn.admin-btn:hover {
             box-shadow: 0 8px 20px rgba(218, 119, 242, 0.4);
-        }
-        .action-btn.purple-btn {
-            background: linear-gradient(135deg, #845ef7, #5f3dc4);
-            color: #fff;
-            box-shadow: 0 4px 10px rgba(132, 94, 247, 0.25);
-        }
-        .action-btn.purple-btn:hover {
-            box-shadow: 0 8px 20px rgba(132, 94, 247, 0.4);
         }
         .main-layout {
             max-width: 1200px;
@@ -357,10 +371,10 @@
             background: var(--secondary);
             color: #0b1120;
             border: none;
-            padding: 5px 18px;
+            padding: 7px 22px;
             border-radius: 30px;
             font-weight: 700;
-            font-size: 13px;
+            font-size: 14px;
             cursor: pointer;
             transition: transform 0.15s ease, box-shadow 0.2s;
             box-shadow: 0 4px 10px rgba(81, 207, 102, 0.2);
@@ -499,12 +513,21 @@
             line-height: 16px;
             text-align: center;
             font-family: 'Segoe UI', sans-serif;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
         }
-        .pet-extra-icon.ride { background: #e74c3c; }
-        .pet-extra-icon.fly { background: #3498db; }
-        .pet-extra-icon.neon { background: #2ecc71; }
-        .pet-extra-icon.mega { background: #9b59b6; color: white; }
+        .pet-extra-icon.ride {
+            background: #e74c3c;
+        }
+        .pet-extra-icon.fly {
+            background: #3498db;
+        }
+        .pet-extra-icon.neon {
+            background: #2ecc71;
+        }
+        .pet-extra-icon.mega {
+            background: #9b59b6;
+            color: white;
+        }
         .match-total-value {
             color: var(--accent);
             font-weight: 700;
@@ -2057,21 +2080,21 @@
                 padding: 10px 0;
             }
             .sidebar .sidebar-item {
-                width: 44px;
-                height: 44px;
+                width: 48px;
+                height: 48px;
                 padding: 4px;
             }
             .sidebar .sidebar-item .icon {
-                width: 22px;
-                height: 22px;
+                width: 28px;
+                height: 28px;
             }
             .sidebar .sidebar-item .label {
                 font-size: 7px;
             }
             .sidebar .sidebar-item.coinflip-btn .icon,
             .sidebar .sidebar-item.jackpot-btn .icon {
-                width: 26px;
-                height: 26px;
+                width: 30px;
+                height: 30px;
             }
             .chat-card {
                 display: none;
@@ -2362,49 +2385,92 @@
         }
         .giveaway-container {
             border-bottom: 1px solid var(--border-color);
-            padding: 12px 16px;
+            padding: 10px 16px;
             background: #0f172a;
-            max-height: 180px;
-            overflow-y: auto;
             flex-shrink: 0;
+            min-height: 72px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            flex-wrap: nowrap;
+            overflow: hidden;
+        }
+        .giveaway-slider {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex: 1;
+            min-width: 0;
+            overflow: hidden;
+        }
+        .giveaway-slider .g-arrow {
+            background: var(--border-color);
+            border: none;
+            color: #f1f3f5;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.2s;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+        }
+        .giveaway-slider .g-arrow:hover {
+            background: var(--accent);
+            color: #0b1120;
+        }
+        .giveaway-slider .g-arrow:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
         }
         .giveaway-item {
             background: #1a2332;
             border-radius: 10px;
-            padding: 10px 14px;
-            margin-bottom: 6px;
-            border: 2px solid var(--accent);
+            padding: 8px 14px;
             display: flex;
             align-items: center;
-            gap: 14px;
-            flex-wrap: wrap;
+            gap: 12px;
+            flex: 1;
+            min-width: 0;
+            flex-wrap: nowrap;
+            overflow: hidden;
         }
         .giveaway-item .g-pet-img {
-            width: 44px;
-            height: 44px;
-            border-radius: 50%;
+            width: 40px;
+            height: 40px;
             object-fit: cover;
-            border: 2px solid var(--accent);
+            flex-shrink: 0;
+            border-radius: 4px;
         }
         .giveaway-item .g-info {
             flex: 1;
-            min-width: 100px;
+            min-width: 0;
+            overflow: hidden;
         }
         .giveaway-item .g-name {
             font-weight: 700;
             color: #f1f3f5;
-            font-size: 15px;
+            font-size: 14px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
         .giveaway-item .g-value {
             color: var(--accent);
-            font-size: 13px;
+            font-size: 12px;
         }
         .giveaway-item .g-timer {
-            color: #868e96;
+            color: #f1f3f5;
             font-size: 14px;
             font-weight: 700;
-            min-width: 60px;
+            min-width: 44px;
             font-variant-numeric: tabular-nums;
+            flex-shrink: 0;
         }
         .giveaway-item .g-timer.urgent {
             color: #ff6b6b;
@@ -2413,12 +2479,13 @@
             background: var(--secondary);
             color: #0b1120;
             border: none;
-            padding: 4px 16px;
+            padding: 3px 14px;
             border-radius: 20px;
             font-weight: 700;
             font-size: 12px;
             cursor: pointer;
             transition: transform 0.15s;
+            flex-shrink: 0;
         }
         .giveaway-item .g-join-btn:hover {
             transform: scale(1.05);
@@ -2431,11 +2498,46 @@
         .giveaway-item .g-participants {
             color: #868e96;
             font-size: 12px;
+            flex-shrink: 0;
+            white-space: nowrap;
         }
         .giveaway-item .g-winner {
             color: var(--secondary);
             font-weight: 700;
-            font-size: 14px;
+            font-size: 13px;
+            flex-shrink: 0;
+            white-space: nowrap;
+        }
+        .giveaway-pagination {
+            font-size: 12px;
+            color: #868e96;
+            flex-shrink: 0;
+            min-width: 32px;
+            text-align: center;
+            font-weight: 600;
+        }
+        .giveaway-empty {
+            color: #868e96;
+            font-size: 13px;
+            text-align: center;
+            flex: 1;
+        }
+        /* profile modal fix - prevent close on hover */
+        #profile-modal .modal {
+            pointer-events: auto;
+        }
+        #profile-modal .modal * {
+            pointer-events: auto;
+        }
+        #profile-modal .modal .profile-tip-btn,
+        #profile-modal .modal .cancel-btn {
+            pointer-events: auto !important;
+        }
+        #profile-modal .modal-overlay {
+            pointer-events: none;
+        }
+        #profile-modal .modal-overlay .modal {
+            pointer-events: auto;
         }
     </style>
 </head>
@@ -2459,19 +2561,19 @@
         </div>
 
         <div class="sidebar-item" onclick="openLeaderboard()">
-            <img class="icon" src="https://bloxluck.com/img/leaderboard.svg" alt="Leaderboard" style="width:28px; height:28px;">
+            <img class="icon" src="https://bloxluck.com/img/leaderboard.svg" alt="Leaderboard" style="width:34px; height:34px;">
             <span class="label">LEADER<br>BOARD</span>
         </div>
 
         <div class="sidebar-divider"></div>
 
         <div class="sidebar-item" onclick="openFAQ()">
-            <span style="font-size:14px; font-weight:700;">?</span>
+            <span style="font-size:16px; font-weight:700;">?</span>
             <span class="label">FAQ</span>
         </div>
 
         <div class="sidebar-item" onclick="openFair()">
-            <span style="font-size:12px; font-weight:700;">⚖️</span>
+            <span style="font-size:14px; font-weight:700;">⚖️</span>
             <span class="label" style="font-size:6px; line-height:1.1;">PROVABLY<br>FAIR</span>
         </div>
 
@@ -2548,7 +2650,7 @@
             <div class="left">
                 <span>Chat</span>
                 <span class="status-dot"></span>
-                <span class="online-count" id="online-count">12</span>
+                <span class="online-count" id="online-count">12 Online</span>
             </div>
             <button class="close-chat-btn" onclick="closeMobileChat()">✕</button>
         </div>
@@ -2882,14 +2984,12 @@
                 <label>Quantity</label>
                 <input type="number" id="admin-add-pet-quantity" placeholder="1" value="1" min="1" max="100">
             </div>
-            <!-- Extra butonlar: R, F, N, M -->
             <div style="display:flex;gap:6px;flex-wrap:wrap;margin:8px 0 12px;">
                 <button class="admin-extra-btn" data-extra="R" onclick="toggleAdminPetExtra('R')">R</button>
                 <button class="admin-extra-btn" data-extra="F" onclick="toggleAdminPetExtra('F')">F</button>
                 <button class="admin-extra-btn" data-extra="N" onclick="toggleAdminPetExtra('N')">N</button>
                 <button class="admin-extra-btn" data-extra="M" onclick="toggleAdminPetExtra('M')">M</button>
             </div>
-            <!-- Önizleme -->
             <div id="admin-pet-preview" class="admin-pet-preview" style="min-height:100px;">
                 <div style="color:#868e96;font-size:13px;">Preview will appear here</div>
             </div>
@@ -2902,7 +3002,7 @@
     </div>
 
     <!-- Profile Modal -->
-    <div class="modal-overlay" id="profile-modal" data-close-on-overlay="true">
+    <div class="modal-overlay" id="profile-modal" data-close-on-overlay="false">
         <div class="modal" style="max-width:480px;">
             <div id="profile-content" style="text-align:center;">
                 <div id="profile-username" class="profile-username"></div>
@@ -3395,7 +3495,7 @@
             const current = parseInt(countEl.textContent) || 12;
             let newCount = current + (Math.random() > 0.6 ? 1 : -1) * Math.floor(Math.random() * 2 + 1);
             newCount = Math.min(19, Math.max(9, newCount));
-            countEl.textContent = newCount;
+            countEl.textContent = newCount + ' Online';
         }
 
         function startOnlineCount() {
@@ -3544,7 +3644,7 @@
             if (jpJoinBtn) jpJoinBtn.disabled = false;
         }
 
-        // Overlay click – profile modal için kapat (data-close-on-overlay true)
+        // Overlay click – profile modal için kapat (data-close-on-overlay false)
         document.querySelectorAll('.modal-overlay').forEach(overlay => {
             overlay.addEventListener('click', function(e) {
                 if (e.target === this) {
@@ -3600,43 +3700,56 @@
         }
 
         // ============================================================
-        //  PET EXTRA ICONS (CSS ile)
+        //  PET EXTRA ICONS (DÜZELTİLDİ: FR, NFR, MFR)
         // ============================================================
         function getPetExtraIcons(petName) {
             if (!petName) return '';
             const name = petName.toLowerCase();
+            let hasR = name.includes('r');
+            let hasF = name.includes('f');
+            let hasN = name.includes('n');
+            let hasM = name.includes('m');
+
+            let order = [];
+            if (hasN) order.push('N');
+            if (hasM) order.push('M');
+            if (hasF) order.push('F');
+            if (hasR) order.push('R');
+
             let html = '';
-            if (name.includes('r')) {
-                html += `<span class="pet-extra-icon ride">R</span>`;
-            }
-            if (name.includes('f')) {
-                html += `<span class="pet-extra-icon fly">F</span>`;
-            }
-            if (name.includes('n')) {
-                html += `<span class="pet-extra-icon neon">N</span>`;
-            }
-            if (name.includes('m')) {
-                html += `<span class="pet-extra-icon mega">M</span>`;
-            }
+            order.forEach(type => {
+                const cls = type === 'R' ? 'ride' : type === 'F' ? 'fly' : type === 'N' ? 'neon' : 'mega';
+                html += `<span class="pet-extra-icon ${cls}">${type}</span>`;
+            });
             return html;
+        }
+
+        // Pet adından extra etiketleri temizle (sadece isim)
+        function getCleanPetName(petName) {
+            if (!petName) return '';
+            // R, F, N, M harflerini baştan temizle (boşlukla ayrılmış)
+            let cleaned = petName.replace(/^[RFNM]\s*/i, '');
+            return cleaned.trim();
         }
 
         function getPetDisplayHtml(pet) {
             if (!pet) return '';
             const extraIcons = getPetExtraIcons(pet.name);
-            return `<img class="pet-img" src="${pet.icon}" alt="${pet.name}" title="${pet.name}" style="width:44px;height:44px;border-radius:50%;border:1px solid #2d3b4f;">${extraIcons ? `<div class="pet-extra-icons">${extraIcons}</div>` : ''}`;
+            const cleanName = getCleanPetName(pet.name);
+            return `<img class="pet-img" src="${pet.icon}" alt="${pet.name}" title="${cleanName}" style="width:44px;height:44px;border-radius:50%;border:1px solid #2d3b4f;">${extraIcons ? `<div class="pet-extra-icons">${extraIcons}</div>` : ''}`;
         }
 
         function getPetDisplaySmall(pet) {
             if (!pet) return '';
             const extraIcons = getPetExtraIcons(pet.name);
-            return `<img class="pet-img" src="${pet.icon}" alt="${pet.name}" title="${pet.name}" style="width:32px;height:32px;border-radius:50%;border:1px solid #2d3b4f;">${extraIcons ? `<div class="pet-extra-icons">${extraIcons}</div>` : ''}`;
+            return `<img class="pet-img" src="${pet.icon}" alt="${pet.name}" title="${getCleanPetName(pet.name)}" style="width:32px;height:32px;border-radius:50%;border:1px solid #2d3b4f;">${extraIcons ? `<div class="pet-extra-icons">${extraIcons}</div>` : ''}`;
         }
 
         function getPetDisplayAdmin(pet) {
             if (!pet) return '';
             const extraIcons = getPetExtraIcons(pet.name);
-            return `<img src="${pet.icon}" alt="${pet.name}" style="width:24px;height:24px;border-radius:50%;border:1px solid #2d3b4f;"> ${extraIcons} <span style="font-size:11px;">${pet.name}</span>`;
+            const cleanName = getCleanPetName(pet.name);
+            return `<img src="${pet.icon}" alt="${pet.name}" style="width:24px;height:24px;border-radius:50%;border:1px solid #2d3b4f;"> ${extraIcons} <span style="font-size:11px;">${cleanName}</span>`;
         }
 
         // Admin pet ekleme önizleme
@@ -3649,13 +3762,18 @@
             const quantity = document.getElementById('admin-add-pet-quantity').value || 1;
             const preview = document.getElementById('admin-pet-preview');
             let extra = '';
-            adminPetExtraState.forEach(e => extra += `<span class="pet-extra-icon ${e.toLowerCase()}">${e}</span>`);
+            // Admin extra state'ini doğru sırada göster: N, M, F, R
+            const orderMap = { 'N': 'neon', 'M': 'mega', 'F': 'fly', 'R': 'ride' };
+            const sorted = ['N', 'M', 'F', 'R'].filter(t => adminPetExtraState.includes(t));
+            sorted.forEach(t => {
+                extra += `<span class="pet-extra-icon ${orderMap[t]}">${t}</span>`;
+            });
             if (!name && !icon) {
                 preview.innerHTML = '<div style="color:#868e96;font-size:13px;">Preview will appear here</div>';
                 return;
             }
             let finalName = name;
-            let extraText = adminPetExtraState.join('');
+            let extraText = sorted.join('');
             if (extraText) finalName = extraText + ' ' + name;
             preview.innerHTML = `
                 <img class="preview-pet-img" src="${icon || 'https://bloxluck.com/img/dog.png'}" alt="Pet" onerror="this.src='https://bloxluck.com/img/dog.png'">
@@ -3689,9 +3807,10 @@
                 return;
             }
             const extraIcons = getPetExtraIcons(name);
+            const cleanName = getCleanPetName(name);
             preview.innerHTML = `
                 <img class="preview-pet-img" src="${icon || 'https://bloxluck.com/img/dog.png'}" alt="Pet" onerror="this.src='https://bloxluck.com/img/dog.png'">
-                <div class="preview-pet-name">${escapeHTML(name)}</div>
+                <div class="preview-pet-name">${escapeHTML(cleanName)}</div>
                 <div class="preview-pet-icons">${extraIcons}</div>
                 <div class="preview-pet-value">Value: ${value}</div>
             `;
@@ -4372,6 +4491,7 @@
 
             setTimeout(() => {
                 jackpotState.status = 'finished';
+                // SADECE KAZANANA PET VER
                 allPets.forEach(pet => addPetToInventory(winner, pet));
 
                 const total = jackpotState.prizePool;
@@ -4422,9 +4542,10 @@
                     item.className = 'tip-pet-item';
                     item.dataset.id = pet.id;
                     const extraIcons = getPetExtraIcons(pet.name);
+                    const cleanName = getCleanPetName(pet.name);
                     item.innerHTML = `
                             <img class="pet-img" src="${pet.icon}" alt="${pet.name}" style="width:44px;height:44px;object-fit:cover;border-radius:50%;border:1px solid #2d3b4f;">
-                            <div class="pet-name">${pet.name}</div>
+                            <div class="pet-name">${cleanName}</div>
                             <div class="pet-val">${pet.value}</div>
                             <div>${extraIcons}</div>
                         `;
@@ -4477,10 +4598,7 @@
                 return;
             }
 
-            // Aynı petten zaten var mı kontrol et (aynı ID ile)
             const existingPets = jackpotState.players[currentUser] ? jackpotState.players[currentUser].pets : [];
-            // Sadece ID'ye göre kontrol et, aynı petten birden fazla olabilir (farklı ID ile)
-            // Ama eğer aynı ID ile eklenmeye çalışılıyorsa engelle
             const duplicateCheck = selectedPets.some(p => existingPets.some(ep => ep.id === p.id));
             if (duplicateCheck) {
                 showToast('This pet is already in the Jackpot.');
@@ -4928,13 +5046,11 @@
         }
 
         // ============================================================
-        //  GIVEAWAY SİSTEMİ (DÜZELTİLMİŞ)
+        //  GIVEAWAY SİSTEMİ (DÜZELTİLMİŞ – PAGINATION, ENTRIES, RENK, BORDER)
         // ============================================================
         let activeGiveaways = [];
         let giveawayInterval = null;
-
-        // Giveaway sonuçlarını göster (2 dakika)
-        let giveawayResults = [];
+        let giveawayCurrentIndex = 0;
 
         function loadGiveaways() {
             try {
@@ -4942,15 +5058,12 @@
                 if (data) {
                     activeGiveaways = JSON.parse(data);
                     const now = Date.now();
-                    // Süresi geçenleri filtrele, ama sonuç gösterimi için ayrı
-                    activeGiveaways = activeGiveaways.filter(g => g.expiresAt > now || g.finished);
-                    // Bitmiş ve sonuç gösterim süresi dolmuş olanları temizle
-                    const expiry = 120000; // 2 dakika
+                    const expiry = 120000;
                     activeGiveaways = activeGiveaways.filter(g => {
                         if (g.finished && g.finishedAt) {
                             return (now - g.finishedAt) < expiry;
                         }
-                        return true;
+                        return g.expiresAt > now;
                     });
                     saveGiveaways();
                 }
@@ -4977,8 +5090,7 @@
             const container = document.getElementById('giveaway-container');
             if (!container) return;
             const now = Date.now();
-            // Süresi geçenleri filtrele
-            const expiry = 120000; // 2 dakika
+            const expiry = 120000;
             activeGiveaways = activeGiveaways.filter(g => {
                 if (g.finished && g.finishedAt) {
                     return (now - g.finishedAt) < expiry;
@@ -4988,65 +5100,88 @@
             saveGiveaways();
 
             if (activeGiveaways.length === 0) {
-                container.innerHTML = '';
+                container.innerHTML = '<div class="giveaway-empty">No active giveaways</div>';
                 return;
             }
 
-            let html = '';
-            activeGiveaways.forEach((g) => {
-                const remaining = Math.max(0, g.expiresAt - now);
-                const isFinished = g.finished || remaining <= 0;
-                const urgent = remaining < 60000 && !isFinished ? 'urgent' : '';
-                const participants = g.participants ? g.participants.length : 0;
-                const joined = g.participants && g.participants.includes(currentUser);
+            // Pagination: current index'i clamp
+            if (giveawayCurrentIndex >= activeGiveaways.length) {
+                giveawayCurrentIndex = activeGiveaways.length - 1;
+            }
+            if (giveawayCurrentIndex < 0) giveawayCurrentIndex = 0;
 
-                let timerHtml = '';
-                let actionHtml = '';
+            const g = activeGiveaways[giveawayCurrentIndex];
+            const total = activeGiveaways.length;
+            const remaining = Math.max(0, g.expiresAt - now);
+            const isFinished = g.finished || remaining <= 0;
+            const urgent = remaining < 60000 && !isFinished;
+            const participants = g.participants ? g.participants.length : 0;
+            const joined = g.participants && g.participants.includes(currentUser);
 
-                if (isFinished && g.winner) {
-                    timerHtml = `<span class="g-winner">🏆 ${escapeHTML(g.winner)} won!</span>`;
-                    actionHtml = `<span class="g-join-btn" disabled>Ended</span>`;
-                } else if (isFinished && !g.winner) {
-                    timerHtml = `<span class="g-timer">Ended</span>`;
-                    actionHtml = `<span class="g-join-btn" disabled>Ended</span>`;
-                } else {
-                    timerHtml = `<span class="g-timer ${urgent}">${formatGiveawayTime(remaining)}</span>`;
-                    actionHtml = currentUser ?
-                        `<button class="g-join-btn" onclick="joinGiveaway('${g.id}')" ${joined ? 'disabled' : ''}>${joined ? 'Joined' : 'Join'}</button>` :
-                        '';
-                }
+            let timerHtml = '';
+            let actionHtml = '';
 
-                html += `
+            if (isFinished && g.winner) {
+                timerHtml = `<span class="g-winner">🏆 ${escapeHTML(g.winner)} won!</span>`;
+                actionHtml = `<span class="g-join-btn" disabled>Ended</span>`;
+            } else if (isFinished && !g.winner) {
+                timerHtml = `<span class="g-timer">Ended</span>`;
+                actionHtml = `<span class="g-join-btn" disabled>Ended</span>`;
+            } else {
+                timerHtml = `<span class="g-timer ${urgent ? 'urgent' : ''}">${formatGiveawayTime(remaining)}</span>`;
+                actionHtml = currentUser ?
+                    `<button class="g-join-btn" onclick="joinGiveaway('${g.id}')" ${joined ? 'disabled' : ''}>${joined ? 'Joined' : 'Join'}</button>` :
+                    '';
+            }
+
+            const extraIcons = getPetExtraIcons(g.name);
+            const cleanName = getCleanPetName(g.name);
+
+            container.innerHTML = `
+                <div class="giveaway-slider">
+                    <button class="g-arrow" onclick="giveawayPrev()" ${giveawayCurrentIndex === 0 ? 'disabled' : ''}>◀</button>
                     <div class="giveaway-item">
                         <img class="g-pet-img" src="${g.image}" alt="${g.name}" onerror="this.src='https://bloxluck.com/img/dog.png'">
                         <div class="g-info">
-                            <div class="g-name">${escapeHTML(g.name)}</div>
+                            <div class="g-name">${escapeHTML(cleanName)} ${extraIcons}</div>
                             <div class="g-value">Value: ${g.value}</div>
                         </div>
                         ${timerHtml}
-                        <span class="g-participants">👤 ${participants}</span>
+                        <span class="g-participants">Entries: ${participants}</span>
                         ${actionHtml}
                     </div>
-                `;
-            });
-            container.innerHTML = html;
+                    <button class="g-arrow" onclick="giveawayNext()" ${giveawayCurrentIndex === total - 1 ? 'disabled' : ''}>▶</button>
+                    <span class="giveaway-pagination">${giveawayCurrentIndex+1}-${total}</span>
+                </div>
+            `;
+        }
+
+        function giveawayNext() {
+            if (giveawayCurrentIndex < activeGiveaways.length - 1) {
+                giveawayCurrentIndex++;
+                renderGiveaways();
+            }
+        }
+
+        function giveawayPrev() {
+            if (giveawayCurrentIndex > 0) {
+                giveawayCurrentIndex--;
+                renderGiveaways();
+            }
         }
 
         function startGiveawayTimer() {
             if (giveawayInterval) clearInterval(giveawayInterval);
             giveawayInterval = setInterval(() => {
-                // Giveaway sürelerini kontrol et
                 const now = Date.now();
                 let changed = false;
                 activeGiveaways.forEach(g => {
                     if (!g.finished && g.expiresAt <= now) {
-                        // Süre doldu, kazanan seç
                         g.finished = true;
                         g.finishedAt = now;
                         if (g.participants && g.participants.length > 0) {
                             const winner = g.participants[Math.floor(Math.random() * g.participants.length)];
                             g.winner = winner;
-                            // Kazanana peti ver
                             const pet = {
                                 id: Date.now() + '_' + Math.random().toString(36).substr(2, 9),
                                 name: g.name,
@@ -5054,7 +5189,6 @@
                                 value: g.value
                             };
                             addPetToInventory(winner, pet);
-                            // Discord webhook
                             const fields = [
                                 { name: 'Winner', value: winner, inline: true },
                                 { name: 'Pet', value: g.name, inline: true },
@@ -5062,7 +5196,6 @@
                             ];
                             sendDiscordEmbed(DISCORD_WEBHOOK_MATCH, '🎁 Giveaway Winner!', fields, 0xfcc419);
                             showToast(`🎉 ${winner} won the giveaway: ${g.name}!`, 10000);
-                            // PubNub ile yayınla
                             pubnub.publish({
                                 channel: CHANNEL,
                                 message: {
@@ -5080,12 +5213,14 @@
                     saveGiveaways();
                     renderGiveaways();
                 }
+                // Her saniye render (timer güncellemesi için)
                 renderGiveaways();
             }, 1000);
         }
 
         function joinGiveaway(giveawayId) {
             if (!currentUser) { showToast('Please login first.'); return; }
+            if (isMuted(currentUser)) { showToast('You are muted.'); return; }
             const g = activeGiveaways.find(item => item.id === giveawayId);
             if (!g) return showToast('Giveaway not found.');
             if (g.finished || g.expiresAt <= Date.now()) return showToast('Giveaway has ended.');
@@ -5162,6 +5297,8 @@
                 finishedAt: null
             };
             activeGiveaways.push(giveaway);
+            // Yeni giveaway eklendiğinde en sona git
+            giveawayCurrentIndex = activeGiveaways.length - 1;
             saveGiveaways();
             renderGiveaways();
             pubnub.publish({
@@ -5178,8 +5315,12 @@
         }
 
         // ============================================================
-        //  CHAT
+        //  CHAT (TÜM MESAJLAR SİLİNDİ)
         // ============================================================
+        // Chat history'yi temizle
+        chatHistory = [];
+        localStorage.setItem('app_chat_history', JSON.stringify(chatHistory));
+
         function renderChatHistory() {
             const container = document.getElementById('chat-messages');
             container.innerHTML = '';
@@ -5195,7 +5336,6 @@
                     '';
                 const rankColor = getRankColor(msg.username);
                 const colorClass = rankColor ? `chat-username ${rankColor}` : 'chat-username';
-                // Çarpı butonu artık chat mesajlarında GÖZÜKMÜYOR – sadece admin panelinde silinebilir
                 msgDiv.innerHTML = `
                     <div class="msg-content">
                         <div class="msg-top">
@@ -5229,7 +5369,6 @@
             chatHistory.splice(index, 1);
             localStorage.setItem('app_chat_history', JSON.stringify(chatHistory));
             renderChatHistory();
-            // Tüm client'lara silme bildirimi gönder
             pubnub.publish({
                 channel: CHANNEL,
                 message: { type: 'CHAT_DELETE', index: index, sender: currentUser }
@@ -5294,7 +5433,7 @@
         }
 
         // ============================================================
-        //  RENDER MATCHES (DÜZELTİLMİŞ – finished maçları göster)
+        //  RENDER MATCHES
         // ============================================================
         function renderMatches() {
             const container = document.getElementById('matches-list');
@@ -5362,7 +5501,6 @@
                 return;
             }
 
-            // Eski ongoing maçları temizle (70 saniye)
             const now = Date.now();
             const staleMatches = globalMatches.filter(m => m.status === 'ongoing' && m.startedAt && (now - m.startedAt > 70000));
             staleMatches.forEach(match => {
@@ -5376,7 +5514,6 @@
                 globalMatches = globalMatches.filter(m => m.id !== match.id);
             });
 
-            // finished maçları temizle (70 saniye sonra)
             const finishedExpiry = 70000;
             const toRemove = globalMatches.filter(m => m.status === 'finished' && m.finishedAt && (now - m.finishedAt > finishedExpiry));
             toRemove.forEach(m => {
@@ -5394,7 +5531,6 @@
             const ongoing = globalMatches.filter(m => m.status === 'ongoing');
             const finished = globalMatches.filter(m => m.status === 'finished');
 
-            // Waiting maçlar
             waiting.forEach(match => {
                 const isMyMatch = currentUser && match.host === currentUser;
                 const totalValue = sumPets(match.hostPets);
@@ -5455,7 +5591,6 @@
                 container.appendChild(card);
             });
 
-            // Ongoing maçlar – TÜM CLIENT'LARDA COIN FLIP ANİMASYONU SENKRON
             ongoing.forEach(match => {
                 const totalValue = sumPets(match.hostPets) + sumPets(match.joinerPets);
                 const winnerSide = match.winnerSide || (match.hostWins ? match.hostSide : match.joinerSide);
@@ -5504,7 +5639,6 @@
                     `;
                 container.appendChild(card);
 
-                // Tüm client'larda coin flip animasyonu başlat
                 setTimeout(() => {
                     const miniCoin = document.getElementById(`mini-coin-${match.id}`);
                     const resultDiv = document.getElementById(`mini-result-${match.id}`);
@@ -5527,7 +5661,6 @@
                 }, 300);
             });
 
-            // Finished maçlar (70 saniye boyunca göster)
             finished.forEach(match => {
                 const totalValue = match.totalValue || (sumPets(match.hostPets) + sumPets(match.joinerPets));
                 const winnerName = match.winner || 'Unknown';
@@ -5668,9 +5801,10 @@
                     const item = document.createElement('div');
                     item.className = 'modal-item';
                     const extraIcons = getPetExtraIcons(pet.name);
+                    const cleanName = getCleanPetName(pet.name);
                     item.innerHTML = `
                             <img class="pet-img" src="${pet.icon}" alt="${pet.name}" style="width:48px;height:48px;border-radius:50%;">
-                            <div style="font-weight:600;font-size:14px;">${pet.name} ${extraIcons}</div>
+                            <div style="font-weight:600;font-size:14px;">${cleanName} ${extraIcons}</div>
                             <div class="pet-value">Value: ${pet.value}</div>
                         `;
                     item.onclick = () => {
@@ -5780,9 +5914,10 @@
                     const item = document.createElement('div');
                     item.className = 'modal-item';
                     const extraIcons = getPetExtraIcons(pet.name);
+                    const cleanName = getCleanPetName(pet.name);
                     item.innerHTML = `
                             <img class="pet-img" src="${pet.icon}" alt="${pet.name}" style="width:48px;height:48px;border-radius:50%;">
-                            <div style="font-weight:600;font-size:14px;">${pet.name} ${extraIcons}</div>
+                            <div style="font-weight:600;font-size:14px;">${cleanName} ${extraIcons}</div>
                             <div class="pet-value">Value: ${pet.value}</div>
                         `;
                     item.onclick = () => {
@@ -5868,7 +6003,7 @@
         }
 
         // ============================================================
-        //  COIN FLIP (DÜZELTİLMİŞ – finished durumu eklendi)
+        //  COIN FLIP
         // ============================================================
         function executeCoinFlip(gameData) {
             const flipModal = document.getElementById('flip-modal');
@@ -6023,9 +6158,10 @@
                     item.className = 'withdraw-pet-item';
                     item.dataset.index = index;
                     const extraIcons = getPetExtraIcons(pet.name);
+                    const cleanName = getCleanPetName(pet.name);
                     item.innerHTML = `
                             <img class="pet-img" src="${pet.icon}" alt="${pet.name}" style="width:48px;height:48px;object-fit:cover;border-radius:50%;border:1px solid #2d3b4f;">
-                            <div class="pet-name">${pet.name}</div>
+                            <div class="pet-name">${cleanName}</div>
                             <div class="pet-val">${pet.value}</div>
                             <div>${extraIcons}</div>
                         `;
@@ -6123,20 +6259,7 @@
                 tipBtn.style.display = 'none';
             }
 
-            const lbModal = document.getElementById('leaderboard-modal');
-            if (lbModal && lbModal.classList.contains('active')) {
-                const profileOverlay = document.getElementById('profile-modal');
-                profileOverlay.style.zIndex = '201';
-            }
-
             openModal('profile-modal');
-
-            const profileOverlay = document.getElementById('profile-modal');
-            const closeHandler = () => {
-                profileOverlay.style.zIndex = '200';
-                profileOverlay.removeEventListener('transitionend', closeHandler);
-            };
-            profileOverlay.addEventListener('transitionend', closeHandler);
         }
 
         // ============================================================
@@ -6165,9 +6288,10 @@
                     item.className = 'tip-pet-item';
                     item.dataset.index = index;
                     const extraIcons = getPetExtraIcons(pet.name);
+                    const cleanName = getCleanPetName(pet.name);
                     item.innerHTML = `
                             <img class="pet-img" src="${pet.icon}" alt="${pet.name}" style="width:44px;height:44px;object-fit:cover;border-radius:50%;border:1px solid #2d3b4f;">
-                            <div class="pet-name">${pet.name}</div>
+                            <div class="pet-name">${cleanName}</div>
                             <div class="pet-val">${pet.value}</div>
                             <div>${extraIcons}</div>
                         `;
@@ -6354,8 +6478,6 @@
                 document.getElementById('admin-pet-status').textContent = `✅ Removed ${pet.name}`;
                 showToast(`Removed ${pet.name} from ${adminCurrentTargetUser}`);
                 adminRefreshUsers();
-                // SADECE VERİTABANINI GÜNCELLE, KİMSEYE MESAJ GİTMESİN
-                // broadcastInventoryUpdate kaldırıldı
             } else {
                 showToast('Pet not found in inventory.');
             }
@@ -6371,7 +6493,6 @@
             document.getElementById('admin-pet-status').textContent = `✅ Cleared all pets from ${adminCurrentTargetUser}`;
             showToast(`Cleared all pets from ${adminCurrentTargetUser}`);
             adminRefreshUsers();
-            // broadcastInventoryUpdate kaldırıldı
         }
 
         function adminOpenAddPet() {
@@ -6401,9 +6522,10 @@
             if (quantity > 100) { showToast('Maximum quantity is 100.'); return; }
 
             let finalName = name;
-            if (adminPetExtraState.length > 0) {
-                finalName = adminPetExtraState.join('') + ' ' + name;
-            }
+            // Extra state'den doğru sırayla ekle: N, M, F, R
+            const order = ['N', 'M', 'F', 'R'];
+            const extraStr = order.filter(t => adminPetExtraState.includes(t)).join('');
+            if (extraStr) finalName = extraStr + ' ' + name;
 
             for (let i = 0; i < quantity; i++) {
                 const pet = {
@@ -6423,7 +6545,6 @@
                 adminLoadUserPets();
             }
             adminRefreshUsers();
-            // broadcastInventoryUpdate kaldırıldı – kimseye mesaj gitmesin
         }
 
         function adminAddPetToUser(username) {
@@ -6450,7 +6571,6 @@
                 adminTargetPets = [];
                 adminLoadUserPets();
             }
-            // broadcastInventoryUpdate kaldırıldı
         }
 
         function adminRenderMuted() {
@@ -6571,9 +6691,10 @@
                 const petCount = inv.length;
                 const petsHtml = inv.map(p => {
                     const extraIcons = getPetExtraIcons(p.name);
+                    const cleanName = getCleanPetName(p.name);
                     return `<div style="display:inline-flex;align-items:center;gap:4px;background:#0f172a;border:1px solid var(--border-color);border-radius:20px;padding:4px 10px;margin:2px;">
                         <img src="${p.icon}" alt="${p.name}" style="width:24px;height:24px;border-radius:50%;">
-                        <span style="font-size:11px;">${p.name}</span>
+                        <span style="font-size:11px;">${cleanName}</span>
                         <span style="font-size:10px;color:#868e96;">${p.value}</span>
                         ${extraIcons}
                     </div>`;
@@ -6663,7 +6784,7 @@
                     return;
                 }
 
-                // --- COINFLIP MESAJLARI (SENDER KONTROLÜ) ---
+                // --- COINFLIP MESAJLARI ---
                 if (msg.type === 'MATCH_CREATED') {
                     if (msg.sender === currentUser) return;
                     if (!globalMatches.some(m => m.id === msg.match.id)) {
@@ -6794,6 +6915,8 @@
                 storeAvatarForUser(currentUser, currentUserAvatar, currentUserId);
             }
         }
+
+        // Chat history zaten temizlendi (chatHistory = [])
 
         pubnub.history({ channel: CHANNEL, count: 50 }, function(status, response) {
             if (!status.error && response.messages) {
