@@ -36,17 +36,17 @@
             min-height: 100vh;
             padding-top: var(--header-height);
             padding-right: var(--chat-width);
-            padding-left: var(--sidebar-width);
+            padding-left: 110px; /* sidebar width + boşluk */
             transition: padding 0.2s;
         }
         header {
             position: fixed;
             top: 0;
-            left: var(--sidebar-width);
+            left: 0;
             right: var(--chat-width);
             height: var(--header-height);
             background: var(--card-bg);
-            padding: 0 28px;
+            padding: 0 28px 0 110px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -56,16 +56,16 @@
             backdrop-filter: blur(6px);
             will-change: transform;
         }
-        /* Sidebar – eğimli, üst/alt boşluk, chat'e değmez */
+        /* Sidebar – eğimli, üst/alt boşluk, sola değmez */
         .sidebar {
             position: fixed;
-            left: 0;
-            top: 10px;
-            bottom: 10px;
+            left: 12px;
+            top: 80px;
+            bottom: 20px;
             width: var(--sidebar-width);
             background: var(--card-bg);
-            border-right: 1px solid var(--border-color);
-            border-radius: 20px 0 0 20px;
+            border: 1px solid var(--border-color);
+            border-radius: 24px;
             z-index: 150;
             display: flex;
             flex-direction: column;
@@ -74,6 +74,12 @@
             gap: 10px;
             overflow-y: auto;
             box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+            transition: transform 0.3s ease, opacity 0.3s ease;
+        }
+        .sidebar.closed {
+            transform: translateX(-120px);
+            opacity: 0;
+            pointer-events: none;
         }
         .sidebar .sidebar-item {
             display: flex;
@@ -137,6 +143,36 @@
             width: 38px;
             height: 38px;
         }
+        /* Mobile sidebar toggle */
+        .sidebar-toggle {
+            display: none;
+            position: fixed;
+            left: 12px;
+            top: 80px;
+            z-index: 160;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 50%;
+            width: 48px;
+            height: 48px;
+            color: #f1f3f5;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s;
+        }
+        .sidebar-toggle:hover {
+            transform: scale(1.05);
+        }
+        .sidebar-toggle svg {
+            width: 28px;
+            height: 28px;
+            stroke: #f1f3f5;
+            fill: none;
+            stroke-width: 2.5;
+        }
         .toast-container {
             position: fixed;
             top: calc(var(--header-height) + 12px);
@@ -174,23 +210,17 @@
         .logo-wrapper span {
             font-size: 28px;
             font-weight: 800;
-            background: linear-gradient(135deg, #fcc419, #ff922b, #fcc419, #ff922b);
-            background-size: 300% 300%;
+            background: linear-gradient(135deg, #fcc419, #ff922b, #fcc419, #ff922b, #fcc419);
+            background-size: 400% 400%;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            animation: shimmerGold 3s ease-in-out infinite;
+            animation: shimmerGold 2s ease-in-out infinite;
             display: inline-block;
         }
         @keyframes shimmerGold {
-            0% {
-                background-position: 0% 50%;
-            }
-            50% {
-                background-position: 100% 50%;
-            }
-            100% {
-                background-position: 0% 50%;
-            }
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
         }
         .user-info-bar {
             display: flex;
@@ -446,8 +476,8 @@
             position: absolute;
             top: -4px;
             right: -4px;
-            width: 22px;
-            height: 22px;
+            width: 24px;
+            height: 24px;
             border-radius: 50%;
             border: 2px solid var(--bg-dark);
             box-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
@@ -485,14 +515,15 @@
             height: 52px;
             transition: border-color 0.2s, transform 0.2s;
             position: relative;
+            overflow: hidden;
         }
         .pet-circle:hover {
             border-color: var(--accent);
             transform: scale(1.05);
         }
         .pet-circle .pet-img {
-            width: 38px;
-            height: 38px;
+            width: 40px;
+            height: 40px;
             object-fit: cover;
             border-radius: 50%;
             display: block;
@@ -500,7 +531,7 @@
         }
         .pet-circle .pet-extra-icons {
             position: absolute;
-            bottom: -6px;
+            bottom: -4px;
             left: 50%;
             transform: translateX(-50%);
             display: flex;
@@ -520,19 +551,10 @@
             font-family: 'Segoe UI', sans-serif;
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
         }
-        .pet-extra-icon.ride {
-            background: #e74c3c;
-        }
-        .pet-extra-icon.fly {
-            background: #3498db;
-        }
-        .pet-extra-icon.neon {
-            background: #2ecc71;
-        }
-        .pet-extra-icon.mega {
-            background: #9b59b6;
-            color: white;
-        }
+        .pet-extra-icon.ride { background: #e74c3c; }
+        .pet-extra-icon.fly { background: #3498db; }
+        .pet-extra-icon.neon { background: #2ecc71; }
+        .pet-extra-icon.mega { background: #9b59b6; color: white; }
         .pet-circle.more-indicator {
             background: #1a2332;
             border-color: var(--accent);
@@ -834,15 +856,8 @@
             text-align: center;
         }
         @keyframes pulse-dot {
-            0%,
-            100% {
-                opacity: 1;
-                transform: scale(1);
-            }
-            50% {
-                opacity: 0.5;
-                transform: scale(0.85);
-            }
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(0.85); }
         }
         .chat-messages {
             flex: 1;
@@ -1998,14 +2013,8 @@
             animation: pulse-text 0.8s ease-in-out infinite alternate;
         }
         @keyframes pulse-text {
-            0% {
-                opacity: 1;
-                transform: scale(1);
-            }
-            100% {
-                opacity: 0.5;
-                transform: scale(0.95);
-            }
+            0% { opacity: 1; transform: scale(1); }
+            100% { opacity: 0.5; transform: scale(0.95); }
         }
         .jackpot-page .jackpot-prize {
             font-size: 18px;
@@ -2087,11 +2096,11 @@
                 padding: 0 12px;
             }
             .sidebar {
-                display: flex !important;
+                left: 8px;
+                top: 75px;
+                bottom: 10px;
                 width: 60px;
-                top: 8px;
-                bottom: 8px;
-                border-radius: 16px 0 0 16px;
+                border-radius: 18px;
                 padding: 12px 0;
             }
             .sidebar .sidebar-item {
@@ -2110,6 +2119,16 @@
             .sidebar .sidebar-item.jackpot-btn .icon {
                 width: 30px;
                 height: 30px;
+            }
+            .sidebar-toggle {
+                display: flex;
+                left: 8px;
+                top: 75px;
+                width: 44px;
+                height: 44px;
+            }
+            .sidebar.closed {
+                transform: translateX(-80px);
             }
             .chat-card {
                 display: none;
@@ -2415,12 +2434,13 @@
             color: #0b1120;
             border-color: var(--accent);
         }
+        /* Giveaway – eski geniş dikdörtgen görünüm */
         .giveaway-container {
             border-bottom: 1px solid var(--border-color);
-            padding: 8px 12px;
+            padding: 10px 16px;
             background: #0f172a;
             flex-shrink: 0;
-            min-height: 62px;
+            min-height: 70px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -2428,53 +2448,55 @@
         .giveaway-slider {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 12px;
             flex: 1;
             min-width: 0;
             width: 100%;
+            justify-content: space-between;
         }
         .giveaway-slider .g-arrow {
             background: transparent;
             border: none;
             color: #4dabf7;
-            font-size: 20px;
+            font-size: 22px;
             cursor: pointer;
             transition: transform 0.2s, color 0.2s;
             flex-shrink: 0;
             display: flex;
             align-items: center;
             justify-content: center;
-            width: 32px;
-            height: 32px;
+            width: 36px;
+            height: 36px;
             border-radius: 50%;
             font-weight: 300;
             padding: 0;
         }
         .giveaway-slider .g-arrow:hover:not(:disabled) {
             color: var(--accent);
-            transform: scale(1.2);
+            transform: scale(1.15);
         }
         .giveaway-slider .g-arrow:disabled {
-            opacity: 0;
+            opacity: 0.3;
             cursor: default;
             pointer-events: none;
         }
         .giveaway-item {
             background: #1a2332;
-            border-radius: 10px;
-            padding: 6px 14px;
+            border-radius: 12px;
+            padding: 8px 18px;
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 16px;
             flex: 1;
             min-width: 0;
             flex-wrap: nowrap;
             overflow: hidden;
             border: none;
+            box-shadow: none;
         }
         .giveaway-item .g-pet-img {
-            width: 38px;
-            height: 38px;
+            width: 44px;
+            height: 44px;
             object-fit: cover;
             flex-shrink: 0;
             border-radius: 50%;
@@ -2488,22 +2510,23 @@
         .giveaway-item .g-name {
             font-weight: 700;
             color: #f1f3f5;
-            font-size: 13px;
+            font-size: 15px;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
         }
         .giveaway-item .g-value {
             color: var(--accent);
-            font-size: 11px;
+            font-size: 13px;
         }
         .giveaway-item .g-timer {
             color: #f1f3f5;
-            font-size: 14px;
+            font-size: 15px;
             font-weight: 700;
-            min-width: 40px;
+            min-width: 48px;
             font-variant-numeric: tabular-nums;
             flex-shrink: 0;
+            text-align: center;
         }
         .giveaway-item .g-timer.urgent {
             color: #ff6b6b;
@@ -2512,10 +2535,10 @@
             background: var(--secondary);
             color: #0b1120;
             border: none;
-            padding: 3px 14px;
-            border-radius: 20px;
+            padding: 4px 18px;
+            border-radius: 30px;
             font-weight: 700;
-            font-size: 11px;
+            font-size: 13px;
             cursor: pointer;
             transition: transform 0.15s;
             flex-shrink: 0;
@@ -2530,28 +2553,28 @@
         }
         .giveaway-item .g-participants {
             color: #868e96;
-            font-size: 11px;
+            font-size: 13px;
             flex-shrink: 0;
             white-space: nowrap;
         }
         .giveaway-item .g-winner {
             color: var(--secondary);
             font-weight: 700;
-            font-size: 13px;
+            font-size: 14px;
             flex-shrink: 0;
             white-space: nowrap;
         }
         .giveaway-pagination {
-            font-size: 12px;
+            font-size: 13px;
             color: #868e96;
             flex-shrink: 0;
-            min-width: 28px;
+            min-width: 36px;
             text-align: center;
             font-weight: 600;
         }
         .giveaway-empty {
             color: #868e96;
-            font-size: 13px;
+            font-size: 14px;
             text-align: center;
             flex: 1;
         }
@@ -2565,7 +2588,6 @@
         #profile-modal .modal * {
             pointer-events: auto;
         }
-        /* view modal coin flip */
         .view-coin-wrapper {
             perspective: 600px;
             width: 80px;
@@ -2613,6 +2635,33 @@
             color: var(--secondary);
             text-align: center;
         }
+        /* create match limit buttons */
+        .limit-selector {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            margin: 12px 0;
+        }
+        .limit-btn {
+            background: #0f172a;
+            border: 2px solid var(--border-color);
+            color: #868e96;
+            padding: 4px 16px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+        .limit-btn:hover {
+            border-color: #4dabf7;
+            color: #f1f3f5;
+        }
+        .limit-btn.active {
+            background: var(--accent);
+            color: #0b1120;
+            border-color: var(--accent);
+        }
     </style>
 </head>
 <body>
@@ -2653,6 +2702,15 @@
 
         <div class="sidebar-divider"></div>
     </div>
+
+    <!-- Sidebar Toggle (Mobile) -->
+    <button class="sidebar-toggle" id="sidebar-toggle" onclick="toggleSidebar()">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="3" y1="12" x2="21" y2="12"/>
+            <line x1="3" y1="6" x2="21" y2="6"/>
+            <line x1="3" y1="18" x2="21" y2="18"/>
+        </svg>
+    </button>
 
     <!-- Toast -->
     <div class="toast-container" id="toast-container">
@@ -2789,7 +2847,13 @@
     <!-- Create Match -->
     <div class="modal-overlay" id="create-modal">
         <div class="modal">
-            <h2>Select Pets to Wager (max 15)</h2>
+            <h2>Create Match</h2>
+            <div class="limit-selector">
+                <button class="limit-btn active" data-limit="15" onclick="setMatchLimit(15)">1x</button>
+                <button class="limit-btn" data-limit="5" onclick="setMatchLimit(5)">5x</button>
+                <button class="limit-btn" data-limit="10" onclick="setMatchLimit(10)">10x</button>
+                <button class="limit-btn" data-limit="15" onclick="setMatchLimit(15)">15x</button>
+            </div>
             <div class="modal-grid" id="modal-inventory"></div>
             <div id="create-total-value" style="text-align:center;font-weight:700;margin:10px 0;color:var(--accent);">Total Value: 0</div>
             <div class="side-select">
@@ -3324,7 +3388,7 @@
         let currentUser = localStorage.getItem('app_current_user') || null;
         let currentUserId = localStorage.getItem('app_current_user_id') || null;
         let currentUserAvatar = localStorage.getItem('app_current_user_avatar') || null;
-        let globalMatches = [];
+        let globalMatches = JSON.parse(localStorage.getItem('app_global_matches') || '[]');
         let chatHistory = JSON.parse(localStorage.getItem('app_chat_history') || '[]');
         let showHistory = false;
         let leaderboardSort = 'profit';
@@ -3339,6 +3403,7 @@
         let matchToJoin = null;
         let isFlipping = false;
         let selectedSideCreate = null;
+        let matchLimit = 15; // default
 
         let selectedWithdrawPets = [];
         let withdrawPetList = [];
@@ -3352,9 +3417,15 @@
         let tipTargetUser = null;
         let selectedTipPets = [];
 
-        // View match coin flip state
         let currentViewedMatchId = null;
         let viewCoinFlipTimeout = null;
+
+        // Silinen mesaj ID'leri
+        let deletedMessageIds = new Set(JSON.parse(localStorage.getItem('app_deleted_msg_ids') || '[]'));
+
+        function saveDeletedIds() {
+            localStorage.setItem('app_deleted_msg_ids', JSON.stringify([...deletedMessageIds]));
+        }
 
         // ============================================================
         //  JACKPOT STATE
@@ -3677,6 +3748,11 @@
             document.getElementById('chat-card').classList.remove('mobile-open');
         }
 
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('closed');
+        }
+
         function openModal(modalId) {
             const overlay = document.getElementById(modalId);
             overlay.style.display = 'flex';
@@ -3749,7 +3825,6 @@
         }
 
         function openLeaderboard() {
-            // Leaderboard açılırken profile modal'ı kapat
             closeModal('profile-modal');
             renderLeaderboard();
             openModal('leaderboard-modal');
@@ -3903,6 +3978,8 @@
         // ============================================================
         //  WEBHOOK
         // ============================================================
+        let webhookSentMatches = new Set();
+
         function sendDiscordEmbed(webhookUrl, title, fields, color = 0xfcc419) {
             if (!webhookUrl) return;
             const payload = {
@@ -3921,6 +3998,9 @@
         }
 
         function sendMatchCreatedWebhook(match) {
+            const id = match.id;
+            if (webhookSentMatches.has(id)) return;
+            webhookSentMatches.add(id);
             const petNames = match.hostPets.map(p => `${p.name} (${p.value})`).join('\n');
             const total = sumPets(match.hostPets);
             const fields = [
@@ -3933,6 +4013,9 @@
         }
 
         function sendMatchResultWebhook(match, winner, totalValue) {
+            const id = match.id + '_result';
+            if (webhookSentMatches.has(id)) return;
+            webhookSentMatches.add(id);
             const hostPets = match.hostPets.map(p => `${p.name} (${p.value})`).join('\n');
             const joinerPets = match.joinerPets ? match.joinerPets.map(p => `${p.name} (${p.value})`).join('\n') : 'None';
             const fields = [
@@ -5397,13 +5480,15 @@
         // ============================================================
         //  CHAT
         // ============================================================
-        chatHistory = [];
-        localStorage.setItem('app_chat_history', JSON.stringify(chatHistory));
+        // Chat mesajları silinmeyecek, sadece en fazla 100 mesaj tutulacak
+        // Silinen mesaj ID'leri için deletedMessageIds set'i kullanılacak
 
         function renderChatHistory() {
             const container = document.getElementById('chat-messages');
             container.innerHTML = '';
-            chatHistory.forEach((msg, index) => {
+            // Silinmemiş mesajları göster
+            const filtered = chatHistory.filter(msg => !deletedMessageIds.has(msg.id));
+            filtered.forEach((msg) => {
                 const msgDiv = document.createElement('div');
                 msgDiv.className = 'chat-msg';
                 const mutedLabel = isMuted(msg.username) ? `<span class="muted-label">[MUTED]</span>` : '';
@@ -5434,23 +5519,33 @@
         }
 
         function saveAndRenderChat(username, text, time) {
-            const newMsg = { username, text, time };
+            const id = Date.now() + '_' + Math.random().toString(36).substr(2, 6);
+            const newMsg = { id, username, text, time };
             chatHistory.push(newMsg);
-            if (chatHistory.length > 100) chatHistory.shift();
+            if (chatHistory.length > 100) {
+                // Eski mesajları sil (en eski 20)
+                const removed = chatHistory.splice(0, 20);
+                removed.forEach(m => deletedMessageIds.add(m.id));
+                saveDeletedIds();
+            }
             localStorage.setItem('app_chat_history', JSON.stringify(chatHistory));
             renderChatHistory();
         }
 
         function deleteChatMessage(index) {
             if (!currentUser || !isAdmin(currentUser)) return;
-            const msg = chatHistory[index];
+            // index, filtered listeye göre değil, orijinal chatHistory'ye göre olmalı
+            // Daha basit: mesajın ID'sini bulup sil
+            const filtered = chatHistory.filter(msg => !deletedMessageIds.has(msg.id));
+            if (index < 0 || index >= filtered.length) return;
+            const msg = filtered[index];
             if (!msg) return;
-            chatHistory.splice(index, 1);
-            localStorage.setItem('app_chat_history', JSON.stringify(chatHistory));
+            deletedMessageIds.add(msg.id);
+            saveDeletedIds();
             renderChatHistory();
             pubnub.publish({
                 channel: CHANNEL,
-                message: { type: 'CHAT_DELETE', index: index, sender: currentUser }
+                message: { type: 'CHAT_DELETE', msgId: msg.id, sender: currentUser }
             });
             if (document.getElementById('admin-modal').classList.contains('active')) {
                 adminRefreshChat();
@@ -5460,9 +5555,9 @@
 
         function handleChatDelete(msg) {
             if (msg.sender === currentUser) return;
-            if (msg.index !== undefined && msg.index < chatHistory.length) {
-                chatHistory.splice(msg.index, 1);
-                localStorage.setItem('app_chat_history', JSON.stringify(chatHistory));
+            if (msg.msgId) {
+                deletedMessageIds.add(msg.msgId);
+                saveDeletedIds();
                 renderChatHistory();
                 if (document.getElementById('admin-modal').classList.contains('active')) {
                     adminRefreshChat();
@@ -5473,12 +5568,13 @@
         function adminRefreshChat() {
             const container = document.getElementById('admin-chat-list');
             if (!container) return;
-            if (chatHistory.length === 0) {
+            const filtered = chatHistory.filter(msg => !deletedMessageIds.has(msg.id));
+            if (filtered.length === 0) {
                 container.innerHTML = '<div style="color:#868e96;text-align:center;padding:10px;">No messages.</div>';
                 return;
             }
             let html = '';
-            chatHistory.forEach((msg, idx) => {
+            filtered.forEach((msg, idx) => {
                 html += `
                     <div class="admin-user-item">
                         <span class="username">${escapeHTML(msg.username)}: ${escapeHTML(msg.text)} <span style="color:#6c7a8a;font-size:11px;">${msg.time}</span></span>
@@ -5504,10 +5600,14 @@
             if (!text) return;
             const now = new Date();
             const timeStr = now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
+            const id = Date.now() + '_' + Math.random().toString(36).substr(2, 6);
+            const msg = { type: 'CHAT', id, username: currentUser, text, time: timeStr };
             pubnub.publish({
                 channel: CHANNEL,
-                message: { type: 'CHAT', username: currentUser, text: text, time: timeStr }
+                message: msg
             });
+            // Kendi mesajını hemen ekle
+            saveAndRenderChat(currentUser, text, timeStr);
             input.value = '';
         }
 
@@ -5571,34 +5671,14 @@
                                 <span class="${sideClass(opponentSide)}"><img src="${sideIcon(opponentSide)}" alt="${opponentSide}"> ${opponent}'s side: ${opponentSide}</span>
                                 <span class="${sideClass(record.winnerSide)}">Winner side: ${record.winnerSide}</span>
                             </div>
-                            <div class="history-actions">
-                                <button class="view-btn" onclick="viewHistoryMatch(history[${idx}])">View</button>
-                            </div>
                         `;
                     container.appendChild(card);
                 });
                 return;
             }
 
-            const now = Date.now();
-            const staleMatches = globalMatches.filter(m => m.status === 'ongoing' && m.startedAt && (now - m.startedAt > 70000));
-            staleMatches.forEach(match => {
-                const hostPets = match.hostPets || [];
-                const joinerPets = match.joinerPets || [];
-                hostPets.forEach(pet => addPetToInventory(match.host, pet));
-                if (match.joiner) {
-                    joinerPets.forEach(pet => addPetToInventory(match.joiner, pet));
-                }
-                if (match.timeoutId) clearTimeout(match.timeoutId);
-                globalMatches = globalMatches.filter(m => m.id !== match.id);
-            });
-
-            const finishedExpiry = 70000;
-            const toRemove = globalMatches.filter(m => m.status === 'finished' && m.finishedAt && (now - m.finishedAt > finishedExpiry));
-            toRemove.forEach(m => {
-                if (m.timeoutId) clearTimeout(m.timeoutId);
-                globalMatches = globalMatches.filter(m2 => m2.id !== m.id);
-            });
+            // Match'leri localStorage'dan yükle, timed out yok
+            globalMatches = JSON.parse(localStorage.getItem('app_global_matches') || '[]');
 
             if (globalMatches.length === 0) {
                 container.innerHTML =
@@ -5725,7 +5805,7 @@
                     `;
                 container.appendChild(card);
 
-                // Mini coin flip animation for everyone
+                // Mini coin flip animation
                 setTimeout(() => {
                     const miniCoin = document.getElementById(`mini-coin-${match.id}`);
                     const resultDiv = document.getElementById(`mini-result-${match.id}`);
@@ -5747,7 +5827,6 @@
                     }, 2300);
                 }, 300);
 
-                // Also update view modal if this match is being viewed
                 if (currentViewedMatchId === match.id) {
                     updateViewModalWithCoinFlip(match);
                 }
@@ -5843,7 +5922,6 @@
                 </div>
             `;
 
-            // Trigger coin flip animation in view modal
             setTimeout(() => {
                 const viewCoin = document.getElementById('view-coin');
                 const resultText = document.getElementById('view-result-text');
@@ -5882,14 +5960,12 @@
 
             currentViewedMatchId = match.id;
 
-            // If match is ongoing, show coin flip
             if (match.status === 'ongoing') {
                 updateViewModalWithCoinFlip(match);
                 openModal('view-match-modal');
                 return;
             }
 
-            // If match is finished, show result
             if (match.status === 'finished') {
                 const winnerSide = match.winnerSide || '?';
                 const winnerName = match.winner || 'Unknown';
@@ -5939,7 +6015,7 @@
                 return;
             }
 
-            // Waiting match - normal view
+            // Waiting
             const hostPetsHtml = match.hostPets.map(p => getPetDisplayHtml(p)).join('');
             const hostSideImg = match.hostSide === 'H' ? 'https://bloxluck.com/img/dog.png' :
                 'https://bloxluck.com/img/gem.png';
@@ -5981,6 +6057,17 @@
         // ============================================================
         //  CREATE MATCH
         // ============================================================
+        let matchLimit = 15;
+
+        function setMatchLimit(limit) {
+            matchLimit = limit;
+            document.querySelectorAll('.limit-btn').forEach(btn => {
+                btn.classList.toggle('active', parseInt(btn.dataset.limit) === limit);
+            });
+            // Inventory'de seçili petleri temizle ve yeniden göster
+            openCreateModal();
+        }
+
         function openCreateModal() {
             if (!currentUser) { showToast('Please login first to create a match.'); return; }
             const inv = getUserInventory(currentUser);
@@ -5989,6 +6076,11 @@
             selectedPetsForMatch = [];
             selectedSideCreate = null;
             document.querySelectorAll('#create-modal .side-btn').forEach(btn => btn.classList.remove('selected'));
+
+            // Limit butonlarını güncelle
+            document.querySelectorAll('.limit-btn').forEach(btn => {
+                btn.classList.toggle('active', parseInt(btn.dataset.limit) === matchLimit);
+            });
 
             if (inv.length === 0) {
                 grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;color:#868e96;padding:20px;">No pets in inventory.</div>';
@@ -6009,8 +6101,8 @@
                             selectedPetsForMatch.splice(idx, 1);
                             item.classList.remove('selected');
                         } else {
-                            if (selectedPetsForMatch.length >= MAX_PETS_PER_MATCH) {
-                                showToast(`You can select max ${MAX_PETS_PER_MATCH} pets per match.`);
+                            if (selectedPetsForMatch.length >= matchLimit) {
+                                showToast(`This Match Pet Limit Is ${matchLimit}`);
                                 return;
                             }
                             selectedPetsForMatch.push(pet);
@@ -6029,7 +6121,7 @@
         function updateCreateTotal() {
             const total = sumPets(selectedPetsForMatch);
             document.getElementById('create-total-value').textContent =
-                `Total Value: ${total}`;
+                `Total Value: ${total} (${selectedPetsForMatch.length}/${matchLimit})`;
         }
 
         function postMatch() {
@@ -6049,6 +6141,7 @@
                 status: 'waiting'
             };
             globalMatches.unshift(newMatch);
+            localStorage.setItem('app_global_matches', JSON.stringify(globalMatches));
             renderMatches();
 
             pubnub.publish({
@@ -6071,8 +6164,8 @@
             const matchIdx = globalMatches.findIndex(m => m.id === matchId);
             if (matchIdx !== -1) {
                 const canceled = globalMatches.splice(matchIdx, 1)[0];
-                if (canceled.timeoutId) clearTimeout(canceled.timeoutId);
                 canceled.hostPets.forEach(pet => addPetToInventory(currentUser, pet));
+                localStorage.setItem('app_global_matches', JSON.stringify(globalMatches));
                 renderMatches();
                 pubnub.publish({
                     channel: CHANNEL,
@@ -6310,16 +6403,9 @@
                     match.totalValue = totalValue;
                     match.winner = winner;
                     match.winnerSide = winnerSide;
-                    if (match.timeoutId) clearTimeout(match.timeoutId);
-
-                    match.timeoutId = setTimeout(() => {
-                        if (match) {
-                            globalMatches = globalMatches.filter(m => m.id !== match.id);
-                            renderMatches();
-                        }
-                    }, 70000);
+                    // timeout yok
                 }
-
+                localStorage.setItem('app_global_matches', JSON.stringify(globalMatches));
                 renderMatches();
 
                 closeBtn.style.display = 'block';
@@ -6407,7 +6493,6 @@
         // ============================================================
         function openProfile(username) {
             if (!username) return;
-            // Close leaderboard if open
             const lbModal = document.getElementById('leaderboard-modal');
             if (lbModal.classList.contains('active')) {
                 closeModal('leaderboard-modal');
@@ -6541,6 +6626,7 @@
                 { name: 'Total Value', value: `${total}`, inline: true },
                 { name: 'Pets Tipped', value: petNames || 'None', inline: false }
             ];
+            // Sadece tip alan kişiye özel mesaj (webhook yine herkese gider ama isteğe göre)
             sendDiscordEmbed(DISCORD_WEBHOOK_TIP, '🎁 Tip Sent', fields, 0xfcc419);
 
             const status = document.getElementById('tip-status');
@@ -6746,6 +6832,8 @@
                 adminLoadUserPets();
             }
             adminRefreshUsers();
+            // Envanter güncellemesini yayınla
+            broadcastInventoryUpdate(username, 'set', getUserInventory(username));
         }
 
         function adminAddPetToUser(username) {
@@ -6772,6 +6860,7 @@
                 adminTargetPets = [];
                 adminLoadUserPets();
             }
+            broadcastInventoryUpdate(username, 'clear');
         }
 
         function adminRenderMuted() {
@@ -6814,6 +6903,11 @@
             showToast(`🔇 Muted ${username} for ${hours} hour(s).`);
             adminRenderMuted();
             adminRefreshUsers();
+            // Mute işlemini diğer client'lara bildir (opsiyonel)
+            pubnub.publish({
+                channel: CHANNEL,
+                message: { type: 'MUTE_UPDATE', username: username, hours: hours, sender: currentUser }
+            });
         }
 
         function adminUnmuteUser(username) {
@@ -6825,6 +6919,10 @@
                 showToast(`🔊 Unmuted ${username}`);
                 adminRenderMuted();
                 adminRefreshUsers();
+                pubnub.publish({
+                    channel: CHANNEL,
+                    message: { type: 'UNMUTE_UPDATE', username: username, sender: currentUser }
+                });
             }
         }
 
@@ -6864,8 +6962,8 @@
             if (match.status === 'ongoing' && match.joinerPets) {
                 match.joinerPets.forEach(pet => addPetToInventory(match.joiner, pet));
             }
-            if (match.timeoutId) clearTimeout(match.timeoutId);
             globalMatches.splice(matchIndex, 1);
+            localStorage.setItem('app_global_matches', JSON.stringify(globalMatches));
             renderMatches();
             adminRefreshMatches();
             pubnub.publish({
@@ -6968,9 +7066,24 @@
                 }
 
                 if (msg.type === 'CHAT') {
-                    saveAndRenderChat(msg.username, msg.text, msg.time);
-                    if (document.getElementById('admin-modal').classList.contains('active')) {
-                        adminRefreshChat();
+                    // ID kontrolü
+                    if (msg.id) {
+                        // Eğer bu mesaj silinmişse ekleme
+                        if (deletedMessageIds.has(msg.id)) return;
+                        const exists = chatHistory.some(m => m.id === msg.id);
+                        if (!exists) {
+                            chatHistory.push({ id: msg.id, username: msg.username, text: msg.text, time: msg.time });
+                            if (chatHistory.length > 100) {
+                                const removed = chatHistory.splice(0, 20);
+                                removed.forEach(m => deletedMessageIds.add(m.id));
+                                saveDeletedIds();
+                            }
+                            localStorage.setItem('app_chat_history', JSON.stringify(chatHistory));
+                            renderChatHistory();
+                            if (document.getElementById('admin-modal').classList.contains('active')) {
+                                adminRefreshChat();
+                            }
+                        }
                     }
                     return;
                 }
@@ -6990,6 +7103,7 @@
                     if (msg.sender === currentUser) return;
                     if (!globalMatches.some(m => m.id === msg.match.id)) {
                         globalMatches.push(msg.match);
+                        localStorage.setItem('app_global_matches', JSON.stringify(globalMatches));
                         renderMatches();
                         sendMatchCreatedWebhook(msg.match);
                     }
@@ -6997,11 +7111,8 @@
 
                 if (msg.type === 'MATCH_CANCELED') {
                     if (msg.sender === currentUser) return;
-                    const match = globalMatches.find(m => m.id === msg.matchId);
-                    if (match && match.timeoutId) {
-                        clearTimeout(match.timeoutId);
-                    }
                     globalMatches = globalMatches.filter(m => m.id !== msg.matchId);
+                    localStorage.setItem('app_global_matches', JSON.stringify(globalMatches));
                     renderMatches();
                 }
 
@@ -7018,33 +7129,13 @@
                         match.winner = msg.hostWins ? msg.host : msg.joiner;
                         match.winnerSide = msg.hostWins ? match.hostSide : msg.joinerSide;
                         match.startedAt = Date.now();
-
-                        const timeoutId = setTimeout(() => {
-                            if (match && match.status === 'ongoing') {
-                                const hostPets = match.hostPets || [];
-                                const joinerPets = match.joinerPets || [];
-                                hostPets.forEach(pet => addPetToInventory(match.host, pet));
-                                if (match.joiner) {
-                                    joinerPets.forEach(pet => addPetToInventory(match.joiner, pet));
-                                }
-                                globalMatches = globalMatches.filter(m => m.id !== match.id);
-                                renderMatches();
-                                showToast(`Match ${match.id} timed out and was cancelled.`, 3000);
-                                pubnub.publish({
-                                    channel: CHANNEL,
-                                    message: { type: 'MATCH_CANCELED', matchId: match.id, sender: 'system' }
-                                });
-                            }
-                        }, 70000);
-                        match.timeoutId = timeoutId;
-
+                        localStorage.setItem('app_global_matches', JSON.stringify(globalMatches));
                         renderMatches();
 
                         if (currentUser === msg.host || currentUser === msg.joiner) {
                             executeCoinFlip(msg);
                         }
 
-                        // Update view modal if this match is being viewed
                         if (currentViewedMatchId === match.id) {
                             setTimeout(() => {
                                 updateViewModalWithCoinFlip(match);
@@ -7078,7 +7169,14 @@
                             globalMatches.push(m);
                         }
                     });
+                    localStorage.setItem('app_global_matches', JSON.stringify(globalMatches));
                     renderMatches();
+                }
+
+                if (msg.type === 'MUTE_UPDATE' || msg.type === 'UNMUTE_UPDATE') {
+                    // Mute güncellemelerini işle (admin paneli zaten güncelliyor)
+                    adminRenderMuted();
+                    adminRefreshUsers();
                 }
             }
         });
@@ -7124,24 +7222,38 @@
             }
         }
 
+        // Eski chat mesajlarını yükle ve silinmişleri filtrele
+        let loadedChat = JSON.parse(localStorage.getItem('app_chat_history') || '[]');
+        chatHistory = loadedChat.filter(msg => !deletedMessageIds.has(msg.id));
+        // ID'si olmayan eski mesajlara ID ata
+        chatHistory = chatHistory.map(msg => {
+            if (!msg.id) {
+                msg.id = Date.now() + '_' + Math.random().toString(36).substr(2, 6);
+            }
+            return msg;
+        });
+        localStorage.setItem('app_chat_history', JSON.stringify(chatHistory));
+        renderChatHistory();
+
         pubnub.history({ channel: CHANNEL, count: 50 }, function(status, response) {
             if (!status.error && response.messages) {
                 const messages = response.messages.map(m => m.entry);
-                let newChats = 0;
                 messages.forEach(msg => {
-                    if (msg.type === 'CHAT') {
-                        const exists = chatHistory.some(ch => ch.time === msg.time && ch.username === msg.username && ch
-                            .text === msg.text);
+                    if (msg.type === 'CHAT' && msg.id) {
+                        if (deletedMessageIds.has(msg.id)) return;
+                        const exists = chatHistory.some(m => m.id === msg.id);
                         if (!exists) {
-                            chatHistory.push({ username: msg.username, text: msg.text, time: msg.time });
-                            newChats++;
+                            chatHistory.push({ id: msg.id, username: msg.username, text: msg.text, time: msg.time });
                         }
                     }
                 });
-                if (newChats > 0) {
-                    localStorage.setItem('app_chat_history', JSON.stringify(chatHistory));
-                    renderChatHistory();
+                if (chatHistory.length > 100) {
+                    const removed = chatHistory.splice(0, 20);
+                    removed.forEach(m => deletedMessageIds.add(m.id));
+                    saveDeletedIds();
                 }
+                localStorage.setItem('app_chat_history', JSON.stringify(chatHistory));
+                renderChatHistory();
             }
         });
 
@@ -7169,6 +7281,13 @@
         });
 
         updateForceWinUI();
+
+        // Mobil sidebar varsayılan açık
+        if (window.innerWidth > 768) {
+            document.getElementById('sidebar').classList.remove('closed');
+        } else {
+            document.getElementById('sidebar').classList.add('closed');
+        }
 
         console.log('BloxyWin loaded successfully! All features updated.');
     </script>
