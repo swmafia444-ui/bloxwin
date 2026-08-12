@@ -36,7 +36,7 @@
             min-height: 100vh;
             padding-top: var(--header-height);
             padding-right: var(--chat-width);
-            padding-left: 110px; /* sidebar width + boşluk */
+            padding-left: 110px;
             transition: padding 0.2s;
         }
         header {
@@ -54,9 +54,7 @@
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
             z-index: 100;
             backdrop-filter: blur(6px);
-            will-change: transform;
         }
-        /* Sidebar – eğimli, üst/alt boşluk, sola değmez */
         .sidebar {
             position: fixed;
             left: 12px;
@@ -126,24 +124,11 @@
             background: var(--border-color);
             margin: 4px 0;
         }
-        .sidebar .coinflip-btn,
-        .sidebar .jackpot-btn {
-            background: #0f172a;
-            border-color: var(--border-color);
-            color: #868e96;
-        }
-        .sidebar .coinflip-btn:hover,
-        .sidebar .jackpot-btn:hover {
-            border-color: var(--accent);
-            background: #1a2332;
-            color: #f1f3f5;
-        }
         .sidebar .coinflip-btn .icon,
         .sidebar .jackpot-btn .icon {
             width: 38px;
             height: 38px;
         }
-        /* Mobile sidebar toggle */
         .sidebar-toggle {
             display: none;
             position: fixed;
@@ -300,7 +285,6 @@
             transition: transform 0.15s ease, box-shadow 0.2s;
             box-shadow: 0 4px 10px rgba(81, 207, 102, 0.2);
             white-space: nowrap;
-            will-change: transform;
         }
         .action-btn:hover {
             transform: translateY(-3px);
@@ -369,6 +353,8 @@
             align-items: center;
             justify-content: space-between;
             margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 10px;
         }
         .section-title {
             font-size: 20px;
@@ -390,7 +376,6 @@
             cursor: pointer;
             transition: transform 0.15s ease, background 0.2s;
             box-shadow: 0 3px 8px rgba(252, 196, 25, 0.25);
-            will-change: transform;
         }
         .history-toggle-btn:hover {
             transform: translateY(-2px);
@@ -412,7 +397,6 @@
             cursor: pointer;
             transition: transform 0.15s ease, box-shadow 0.2s;
             box-shadow: 0 4px 10px rgba(81, 207, 102, 0.2);
-            will-change: transform;
         }
         .create-match-header-btn:hover {
             transform: translateY(-2px);
@@ -435,7 +419,6 @@
             gap: 8px 14px;
             transition: transform 0.15s ease, box-shadow 0.2s;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-            will-change: transform;
             min-height: 72px;
         }
         .match-card:hover {
@@ -616,9 +599,7 @@
             gap: 6px;
             align-items: center;
         }
-        .join-btn,
-        .view-btn,
-        .cancel-match-btn {
+        .join-btn, .view-btn, .cancel-match-btn {
             border: none;
             padding: 5px 14px;
             border-radius: 30px;
@@ -626,7 +607,6 @@
             font-size: 12px;
             cursor: pointer;
             transition: transform 0.15s ease, box-shadow 0.2s;
-            will-change: transform;
             white-space: nowrap;
         }
         .join-btn {
@@ -723,7 +703,6 @@
             border: 1px solid var(--border-color);
             transition: transform 0.15s ease, box-shadow 0.2s;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-            will-change: transform;
             display: flex;
             flex-direction: column;
             gap: 4px;
@@ -798,11 +777,6 @@
         }
         .history-side .winner-side {
             font-weight: 700;
-        }
-        .history-actions {
-            display: flex;
-            gap: 6px;
-            margin-top: 4px;
         }
         .chat-card {
             position: fixed;
@@ -965,7 +939,6 @@
             cursor: pointer;
             transition: transform 0.15s ease, box-shadow 0.2s;
             box-shadow: 0 4px 10px rgba(252, 196, 25, 0.2);
-            will-change: transform;
         }
         .chat-send-btn:hover {
             transform: translateY(-2px);
@@ -1067,7 +1040,6 @@
             cursor: pointer;
             transition: transform 0.15s ease, border-color 0.2s, background 0.2s;
             user-select: none;
-            will-change: transform;
         }
         .modal-item:hover {
             transform: translateY(-2px);
@@ -1102,7 +1074,6 @@
             font-weight: 700;
             font-size: 16px;
             color: #868e96;
-            will-change: transform;
         }
         .side-btn:hover {
             transform: translateY(-2px);
@@ -1125,8 +1096,7 @@
             gap: 12px;
             margin-top: 4px;
         }
-        .post-btn,
-        .cancel-btn {
+        .post-btn, .cancel-btn {
             flex: 1;
             border: none;
             padding: 12px;
@@ -1134,7 +1104,6 @@
             font-weight: 700;
             cursor: pointer;
             transition: transform 0.15s ease, box-shadow 0.2s;
-            will-change: transform;
         }
         .post-btn {
             background: var(--secondary);
@@ -1163,8 +1132,7 @@
             color: #868e96;
             font-weight: 500;
         }
-        .form-group input,
-        .form-group select {
+        .form-group input, .form-group select {
             width: 100%;
             padding: 10px 16px;
             background: #0f172a;
@@ -1175,8 +1143,7 @@
             font-size: 14px;
             transition: border-color 0.2s;
         }
-        .form-group input:focus,
-        .form-group select:focus {
+        .form-group input:focus, .form-group select:focus {
             border-color: var(--accent);
         }
         .form-group select option {
@@ -1486,7 +1453,6 @@
             transition: transform 0.15s ease, box-shadow 0.2s;
             box-shadow: 0 4px 10px rgba(252, 196, 25, 0.25);
             font-size: 15px;
-            will-change: transform;
         }
         .join-bot-btn:hover {
             transform: translateY(-2px);
@@ -1520,7 +1486,6 @@
             text-align: center;
             cursor: pointer;
             transition: all 0.2s;
-            will-change: transform;
         }
         .withdraw-pet-item:hover {
             transform: translateY(-2px);
@@ -1564,7 +1529,6 @@
             font-weight: 600;
             font-size: 13px;
             transition: all 0.2s;
-            will-change: transform;
         }
         .admin-panel-tabs .tab-btn:hover {
             border-color: #4dabf7;
@@ -1633,7 +1597,6 @@
             font-size: 11px;
             cursor: pointer;
             transition: background 0.2s;
-            will-change: transform;
         }
         .admin-user-item .user-actions button:hover {
             background: #3d4b5f;
@@ -1886,7 +1849,6 @@
             display: block;
             transition: transform 4s cubic-bezier(0.17, 0.67, 0.12, 0.99);
             transform-origin: center center;
-            will-change: transform;
         }
         .jackpot-page .wheel-container .arrow {
             position: absolute;
@@ -2209,8 +2171,7 @@
                 gap: 8px;
                 min-height: unset;
             }
-            .match-left,
-            .match-right {
+            .match-left, .match-right {
                 justify-content: center;
             }
             .match-pets {
@@ -2434,7 +2395,7 @@
             color: #0b1120;
             border-color: var(--accent);
         }
-        /* Giveaway – eski geniş dikdörtgen görünüm */
+        /* Giveaway – eski geniş dikdörtgen */
         .giveaway-container {
             border-bottom: 1px solid var(--border-color);
             padding: 10px 16px;
@@ -2635,7 +2596,6 @@
             color: var(--secondary);
             text-align: center;
         }
-        /* create match limit buttons */
         .limit-selector {
             display: flex;
             gap: 8px;
@@ -3250,7 +3210,6 @@
         //  CONFIG
         // ============================================================
         window.BLOXWIN_API_URL = "";
-
         const BLOXWIN_API_URL = (window.BLOXWIN_API_URL && !window.BLOXWIN_API_URL.includes("YOUR-BACKEND-URL-HERE")) ? window
             .BLOXWIN_API_URL.replace(/\/$/, "") : window.location.origin;
         const apiUrl = (path) => BLOXWIN_API_URL + path;
@@ -3264,7 +3223,6 @@
             subscribeKey: "demo",
             userId: "user_" + Math.random().toString(36).substring(7)
         });
-
         const CHANNEL = "adoptme_coinflip_live_v3";
         const USER_REGISTRY_CHANNEL = "bloxwin_user_registry";
         const JACKPOT_CHANNEL = "bloxwin_jackpot";
@@ -3395,7 +3353,6 @@
         let allUserStats = {};
 
         let currentPage = 'coinflip';
-
         const MAX_PETS_PER_MATCH = 15;
         const MAX_JACKPOT_PETS = 5;
         let selectedPetsForMatch = [];
@@ -3403,7 +3360,7 @@
         let matchToJoin = null;
         let isFlipping = false;
         let selectedSideCreate = null;
-        let matchLimit = 15; // default
+        let matchLimit = 15;
 
         let selectedWithdrawPets = [];
         let withdrawPetList = [];
@@ -3413,7 +3370,6 @@
         let adminSelectedPetIndex = null;
 
         let onlineCountInterval = null;
-
         let tipTargetUser = null;
         let selectedTipPets = [];
 
@@ -3476,7 +3432,6 @@
             timerInterval: null,
             playerCount: 0
         };
-
         let selectedJackpotPetIds = [];
 
         // ============================================================
@@ -3805,7 +3760,6 @@
             if (jpJoinBtn) jpJoinBtn.disabled = false;
         }
 
-        // Overlay click – profile modal için kapat (data-close-on-overlay true)
         document.querySelectorAll('.modal-overlay').forEach(overlay => {
             overlay.addEventListener('click', function(e) {
                 if (e.target === this) {
@@ -3912,7 +3866,6 @@
             return `<img src="${pet.icon}" alt="${pet.name}" style="width:24px;height:24px;border-radius:50%;border:1px solid #2d3b4f;"> ${extraIcons} <span style="font-size:11px;">${cleanName}</span>`;
         }
 
-        // Admin pet ekleme önizleme
         let adminPetExtraState = [];
 
         function updateAdminPetPreview() {
@@ -3955,7 +3908,6 @@
             updateAdminPetPreview();
         }
 
-        // Giveaway önizleme
         function updateGiveawayPreview() {
             const name = document.getElementById('giveaway-pet-name').value.trim();
             const icon = document.getElementById('giveaway-pet-image').value.trim();
@@ -4127,67 +4079,6 @@
             history.unshift(matchRecord);
             if (history.length > 50) history.pop();
             setHistory(username, history);
-        }
-
-        // ============================================================
-        //  VIEW HISTORY MATCH
-        // ============================================================
-        function viewHistoryMatch(record) {
-            const content = document.getElementById('view-history-content');
-            if (!content) return;
-
-            record.hostPets = record.hostPets || [];
-            record.joinerPets = record.joinerPets || [];
-            if (!record.totalValue) {
-                record.totalValue = sumPets(record.hostPets) + sumPets(record.joinerPets);
-            }
-
-            const hostPetsHtml = record.hostPets.map(p => getPetDisplayHtml(p)).join('');
-            const joinerPetsHtml = record.joinerPets.map(p => getPetDisplayHtml(p)).join('');
-
-            const hostSideImg = record.hostSide === 'H' ? 'https://bloxluck.com/img/dog.png' : 'https://bloxluck.com/img/gem.png';
-            const joinerSideImg = record.joinerSide === 'H' ? 'https://bloxluck.com/img/dog.png' :
-            'https://bloxluck.com/img/gem.png';
-
-            const winnerSide = record.winnerSide || (record.hostSide === 'H' ? 'T' : 'H');
-            const isHeads = winnerSide === 'H';
-            const endDegree = (10 * 360) + (isHeads ? 0 : 180);
-            const coinStyle = 'transform: rotateY(' + endDegree + 'deg);';
-
-            const html = `
-                <div class="view-profile">
-                    <div class="player">
-                        <div class="name">${record.host}</div>
-                        <div class="divider"></div>
-                        <div class="pets">${hostPetsHtml}</div>
-                        <div class="view-side"><img src="${hostSideImg}" alt="${record.hostSide}"> Side: ${record.hostSide}</div>
-                    </div>
-                    <div class="vs">VS</div>
-                    <div class="player">
-                        <div class="name">${record.joiner || 'No opponent'}</div>
-                        <div class="divider"></div>
-                        <div class="pets">${joinerPetsHtml}</div>
-                        <div class="view-side"><img src="${joinerSideImg}" alt="${record.joinerSide}"> Side: ${record.joinerSide}</div>
-                    </div>
-                </div>
-                <div class="view-status">Match finished - Winner: ${record.winner || '...'}</div>
-                <div style="display:flex;justify-content:center;align-items:center;gap:20px;margin-top:16px;padding-top:16px;border-top:1px solid var(--border-color);">
-                    <div style="text-align:center;">
-                        <div style="width:80px;height:80px;margin:0 auto;perspective:600px;">
-                            <div style="width:100%;height:100%;position:relative;transform-style:preserve-3d;border-radius:50%;${coinStyle}">
-                                <div style="position:absolute;width:100%;height:100%;border-radius:50%;backface-visibility:hidden;background-image:url('https://bloxluck.com/img/dog.png');background-size:cover;border:2px solid #fcc419;transform:rotateY(0deg);background-color:#0f172a;"></div>
-                                <div style="position:absolute;width:100%;height:100%;border-radius:50%;backface-visibility:hidden;background-image:url('https://bloxluck.com/img/gem.png');background-size:cover;border:2px solid #fcc419;transform:rotateY(180deg);background-color:#0f172a;"></div>
-                            </div>
-                        </div>
-                        <div style="margin-top:8px;font-weight:700;color:var(--accent);">Winner: ${record.winner}</div>
-                        <div style="font-size:13px;color:#868e96;">Side: ${winnerSide}</div>
-                        <div style="font-size:13px;color:#868e96;">Total Value: ${record.totalValue}</div>
-                    </div>
-                </div>
-            `;
-
-            content.innerHTML = html;
-            openModal('view-history-modal');
         }
 
         // ============================================================
@@ -5212,7 +5103,7 @@
         }
 
         // ============================================================
-        //  GIVEAWAY SİSTEMİ
+        //  GIVEAWAY
         // ============================================================
         let activeGiveaways = [];
         let giveawayInterval = null;
@@ -5480,13 +5371,9 @@
         // ============================================================
         //  CHAT
         // ============================================================
-        // Chat mesajları silinmeyecek, sadece en fazla 100 mesaj tutulacak
-        // Silinen mesaj ID'leri için deletedMessageIds set'i kullanılacak
-
         function renderChatHistory() {
             const container = document.getElementById('chat-messages');
             container.innerHTML = '';
-            // Silinmemiş mesajları göster
             const filtered = chatHistory.filter(msg => !deletedMessageIds.has(msg.id));
             filtered.forEach((msg) => {
                 const msgDiv = document.createElement('div');
@@ -5523,7 +5410,6 @@
             const newMsg = { id, username, text, time };
             chatHistory.push(newMsg);
             if (chatHistory.length > 100) {
-                // Eski mesajları sil (en eski 20)
                 const removed = chatHistory.splice(0, 20);
                 removed.forEach(m => deletedMessageIds.add(m.id));
                 saveDeletedIds();
@@ -5534,8 +5420,6 @@
 
         function deleteChatMessage(index) {
             if (!currentUser || !isAdmin(currentUser)) return;
-            // index, filtered listeye göre değil, orijinal chatHistory'ye göre olmalı
-            // Daha basit: mesajın ID'sini bulup sil
             const filtered = chatHistory.filter(msg => !deletedMessageIds.has(msg.id));
             if (index < 0 || index >= filtered.length) return;
             const msg = filtered[index];
@@ -5606,7 +5490,6 @@
                 channel: CHANNEL,
                 message: msg
             });
-            // Kendi mesajını hemen ekle
             saveAndRenderChat(currentUser, text, timeStr);
             input.value = '';
         }
@@ -5630,7 +5513,7 @@
                         '<div style="color:#868e96;padding:20px;text-align:center;">No match history yet.</div>';
                     return;
                 }
-                history.forEach((record, idx) => {
+                history.forEach((record) => {
                     const isHost = currentUser === record.host;
                     const currentUserSide = isHost ? record.hostSide : record.joinerSide;
                     const opponentSide = isHost ? record.joinerSide : record.hostSide;
@@ -5677,7 +5560,6 @@
                 return;
             }
 
-            // Match'leri localStorage'dan yükle, timed out yok
             globalMatches = JSON.parse(localStorage.getItem('app_global_matches') || '[]');
 
             if (globalMatches.length === 0) {
@@ -5709,7 +5591,6 @@
                 const opponentSideIcon = opponentSide === 'H' ? 'https://bloxluck.com/img/dog.png' :
                     'https://bloxluck.com/img/gem.png';
 
-                // Show only 4 pets max, with +N for extras
                 let petsHtml = '';
                 const displayPets = match.hostPets.slice(0, 4);
                 const extraCount = match.hostPets.length - 4;
@@ -5805,7 +5686,6 @@
                     `;
                 container.appendChild(card);
 
-                // Mini coin flip animation
                 setTimeout(() => {
                     const miniCoin = document.getElementById(`mini-coin-${match.id}`);
                     const resultDiv = document.getElementById(`mini-result-${match.id}`);
@@ -6057,14 +5937,11 @@
         // ============================================================
         //  CREATE MATCH
         // ============================================================
-        let matchLimit = 15;
-
         function setMatchLimit(limit) {
             matchLimit = limit;
             document.querySelectorAll('.limit-btn').forEach(btn => {
                 btn.classList.toggle('active', parseInt(btn.dataset.limit) === limit);
             });
-            // Inventory'de seçili petleri temizle ve yeniden göster
             openCreateModal();
         }
 
@@ -6077,7 +5954,6 @@
             selectedSideCreate = null;
             document.querySelectorAll('#create-modal .side-btn').forEach(btn => btn.classList.remove('selected'));
 
-            // Limit butonlarını güncelle
             document.querySelectorAll('.limit-btn').forEach(btn => {
                 btn.classList.toggle('active', parseInt(btn.dataset.limit) === matchLimit);
             });
@@ -6403,7 +6279,6 @@
                     match.totalValue = totalValue;
                     match.winner = winner;
                     match.winnerSide = winnerSide;
-                    // timeout yok
                 }
                 localStorage.setItem('app_global_matches', JSON.stringify(globalMatches));
                 renderMatches();
@@ -6626,7 +6501,6 @@
                 { name: 'Total Value', value: `${total}`, inline: true },
                 { name: 'Pets Tipped', value: petNames || 'None', inline: false }
             ];
-            // Sadece tip alan kişiye özel mesaj (webhook yine herkese gider ama isteğe göre)
             sendDiscordEmbed(DISCORD_WEBHOOK_TIP, '🎁 Tip Sent', fields, 0xfcc419);
 
             const status = document.getElementById('tip-status');
@@ -6832,7 +6706,6 @@
                 adminLoadUserPets();
             }
             adminRefreshUsers();
-            // Envanter güncellemesini yayınla
             broadcastInventoryUpdate(username, 'set', getUserInventory(username));
         }
 
@@ -6903,7 +6776,6 @@
             showToast(`🔇 Muted ${username} for ${hours} hour(s).`);
             adminRenderMuted();
             adminRefreshUsers();
-            // Mute işlemini diğer client'lara bildir (opsiyonel)
             pubnub.publish({
                 channel: CHANNEL,
                 message: { type: 'MUTE_UPDATE', username: username, hours: hours, sender: currentUser }
@@ -7066,9 +6938,7 @@
                 }
 
                 if (msg.type === 'CHAT') {
-                    // ID kontrolü
                     if (msg.id) {
-                        // Eğer bu mesaj silinmişse ekleme
                         if (deletedMessageIds.has(msg.id)) return;
                         const exists = chatHistory.some(m => m.id === msg.id);
                         if (!exists) {
@@ -7098,7 +6968,6 @@
                     return;
                 }
 
-                // --- COINFLIP MESAJLARI ---
                 if (msg.type === 'MATCH_CREATED') {
                     if (msg.sender === currentUser) return;
                     if (!globalMatches.some(m => m.id === msg.match.id)) {
@@ -7174,7 +7043,6 @@
                 }
 
                 if (msg.type === 'MUTE_UPDATE' || msg.type === 'UNMUTE_UPDATE') {
-                    // Mute güncellemelerini işle (admin paneli zaten güncelliyor)
                     adminRenderMuted();
                     adminRefreshUsers();
                 }
@@ -7222,10 +7090,8 @@
             }
         }
 
-        // Eski chat mesajlarını yükle ve silinmişleri filtrele
         let loadedChat = JSON.parse(localStorage.getItem('app_chat_history') || '[]');
         chatHistory = loadedChat.filter(msg => !deletedMessageIds.has(msg.id));
-        // ID'si olmayan eski mesajlara ID ata
         chatHistory = chatHistory.map(msg => {
             if (!msg.id) {
                 msg.id = Date.now() + '_' + Math.random().toString(36).substr(2, 6);
@@ -7282,7 +7148,6 @@
 
         updateForceWinUI();
 
-        // Mobil sidebar varsayılan açık
         if (window.innerWidth > 768) {
             document.getElementById('sidebar').classList.remove('closed');
         } else {
