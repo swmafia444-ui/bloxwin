@@ -57,12 +57,13 @@
         }
         .sidebar {
             position: fixed;
-            left: 0;
-            top: 0;
-            bottom: 0;
+            left: 8px;
+            top: 76px;
+            bottom: 16px;
             width: var(--sidebar-width);
             background: var(--card-bg);
-            border-right: 1px solid var(--border-color);
+            border: 1px solid var(--border-color);
+            border-radius: 24px;
             z-index: 150;
             display: flex;
             flex-direction: column;
@@ -70,7 +71,7 @@
             padding: 18px 0;
             gap: 10px;
             overflow-y: auto;
-            box-shadow: 2px 0 30px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
             transition: transform 0.3s ease, opacity 0.3s ease;
         }
         .sidebar.closed {
@@ -2395,13 +2396,13 @@
             color: #0b1120;
             border-color: var(--accent);
         }
-        /* Giveaway – eski geniş dikdörtgen */
+        /* Giveaway – geniş dikdörtgen, yeterli alan */
         .giveaway-container {
             border-bottom: 1px solid var(--border-color);
-            padding: 10px 16px;
+            padding: 12px 16px;
             background: #0f172a;
             flex-shrink: 0;
-            min-height: 70px;
+            min-height: 80px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -2419,7 +2420,7 @@
             background: transparent;
             border: none;
             color: #4dabf7;
-            font-size: 22px;
+            font-size: 24px;
             cursor: pointer;
             transition: transform 0.2s, color 0.2s;
             flex-shrink: 0;
@@ -2437,17 +2438,17 @@
             transform: scale(1.15);
         }
         .giveaway-slider .g-arrow:disabled {
-            opacity: 0.3;
+            opacity: 0;
             cursor: default;
             pointer-events: none;
         }
         .giveaway-item {
             background: #1a2332;
             border-radius: 12px;
-            padding: 8px 18px;
+            padding: 10px 20px;
             display: flex;
             align-items: center;
-            gap: 16px;
+            gap: 18px;
             flex: 1;
             min-width: 0;
             flex-wrap: nowrap;
@@ -2456,8 +2457,8 @@
             box-shadow: none;
         }
         .giveaway-item .g-pet-img {
-            width: 44px;
-            height: 44px;
+            width: 48px;
+            height: 48px;
             object-fit: cover;
             flex-shrink: 0;
             border-radius: 50%;
@@ -2471,7 +2472,7 @@
         .giveaway-item .g-name {
             font-weight: 700;
             color: #f1f3f5;
-            font-size: 15px;
+            font-size: 16px;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -2482,9 +2483,9 @@
         }
         .giveaway-item .g-timer {
             color: #f1f3f5;
-            font-size: 15px;
+            font-size: 16px;
             font-weight: 700;
-            min-width: 48px;
+            min-width: 50px;
             font-variant-numeric: tabular-nums;
             flex-shrink: 0;
             text-align: center;
@@ -2496,10 +2497,10 @@
             background: var(--secondary);
             color: #0b1120;
             border: none;
-            padding: 4px 18px;
+            padding: 6px 20px;
             border-radius: 30px;
             font-weight: 700;
-            font-size: 13px;
+            font-size: 14px;
             cursor: pointer;
             transition: transform 0.15s;
             flex-shrink: 0;
@@ -2526,10 +2527,10 @@
             white-space: nowrap;
         }
         .giveaway-pagination {
-            font-size: 13px;
+            font-size: 14px;
             color: #868e96;
             flex-shrink: 0;
-            min-width: 36px;
+            min-width: 40px;
             text-align: center;
             font-weight: 600;
         }
@@ -2607,10 +2608,10 @@
             margin-bottom: 12px;
         }
         .create-modal .modal-header .close-btn {
-            background: rgba(255,255,255,0.08);
+            background: rgba(255,255,255,0.06);
             border: none;
             color: #ced4da;
-            font-size: 28px;
+            font-size: 22px;
             cursor: pointer;
             width: 40px;
             height: 40px;
@@ -2619,9 +2620,10 @@
             align-items: center;
             justify-content: center;
             transition: background 0.2s;
+            font-weight: 300;
         }
         .create-modal .modal-header .close-btn:hover {
-            background: rgba(255,255,255,0.15);
+            background: rgba(255,255,255,0.12);
         }
         .create-modal .search-row {
             display: flex;
@@ -2717,16 +2719,28 @@
             font-size: 14px;
             font-weight: 700;
             color: #868e96;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #e74c3c; /* kırmızı renk */
+            border-color: #e74c3c;
+        }
+        .create-modal .bottom-row .side-btn[data-side="H"] {
+            background-color: #4dabf7;
+            border-color: #4dabf7;
+        }
+        .create-modal .bottom-row .side-btn[data-side="T"] {
+            background-color: #ff6b6b;
+            border-color: #ff6b6b;
         }
         .create-modal .bottom-row .side-btn.selected {
+            box-shadow: 0 0 0 3px var(--accent);
             border-color: var(--accent);
-            background: rgba(252, 196, 25, 0.15);
-            color: var(--accent);
-            box-shadow: 0 0 0 2px rgba(252, 196, 25, 0.2);
         }
         .create-modal .bottom-row .side-btn img {
-            width: 24px;
-            height: 24px;
+            width: 0;
+            height: 0;
+            display: none;
         }
         .create-modal .bottom-row .create-btn {
             background: var(--secondary);
@@ -2748,16 +2762,22 @@
             color: #868e96;
             font-size: 14px;
             text-align: center;
-            padding: 20px 0;
+            padding: 10px 0;
         }
         .create-modal .no-pets-deposit .deposit-link {
-            color: var(--accent);
+            display: inline-block;
+            background: var(--secondary);
+            color: #0b1120;
+            padding: 4px 16px;
+            border-radius: 30px;
             font-weight: 700;
+            font-size: 13px;
             cursor: pointer;
-            text-decoration: underline;
+            margin-left: 8px;
+            transition: transform 0.2s;
         }
         .create-modal .no-pets-deposit .deposit-link:hover {
-            color: #ffd43b;
+            transform: scale(1.05);
         }
         .modal-grid {
             grid-template-columns: repeat(4, 1fr);
@@ -2969,12 +2989,8 @@
             </div>
             <div class="bottom-row">
                 <div class="side-select">
-                    <button class="side-btn" data-side="H" onclick="selectSide('H', 'create')">
-                        <img src="https://bloxluck.com/img/dog.png" alt="H">
-                    </button>
-                    <button class="side-btn" data-side="T" onclick="selectSide('T', 'create')">
-                        <img src="https://bloxluck.com/img/gem.png" alt="T">
-                    </button>
+                    <button class="side-btn" data-side="H" onclick="selectSide('H', 'create')"></button>
+                    <button class="side-btn" data-side="T" onclick="selectSide('T', 'create')"></button>
                 </div>
                 <button class="create-btn" id="create-post-btn" onclick="postMatch()">Create</button>
             </div>
@@ -4699,6 +4715,7 @@
 
             setTimeout(() => {
                 jackpotState.status = 'finished';
+                // Kazanana tüm petleri ver
                 allPets.forEach(pet => addPetToInventory(winner, pet));
 
                 const total = jackpotState.prizePool;
@@ -5470,7 +5487,6 @@
                 }
             }
             if (msg.type === 'REQUEST_GIVEAWAYS') {
-                // Mevcut giveaway'leri gönder
                 pubnub.publish({
                     channel: CHANNEL,
                     message: { type: 'SYNC_GIVEAWAYS', giveaways: activeGiveaways, sender: 'system' }
@@ -5535,6 +5551,9 @@
         // ============================================================
         //  CHAT
         // ============================================================
+        // Çift mesaj sorununu düzelt: history'den ve canlıdan gelen aynı mesajı kontrol et
+        let processedMessageIds = new Set();
+
         function renderChatHistory() {
             const container = document.getElementById('chat-messages');
             container.innerHTML = '';
@@ -5569,9 +5588,17 @@
             container.scrollTop = container.scrollHeight;
         }
 
-        function saveAndRenderChat(username, text, time) {
-            const id = Date.now() + '_' + Math.random().toString(36).substr(2, 6);
+        function saveAndRenderChat(username, text, time, msgId) {
+            const id = msgId || Date.now() + '_' + Math.random().toString(36).substr(2, 6);
+            // Eğer bu ID daha önce işlendiyse ekleme
+            if (processedMessageIds.has(id)) return;
+            processedMessageIds.add(id);
+
             const newMsg = { id, username, text, time };
+            // Aynı mesaj zaten varsa ekleme
+            const exists = chatHistory.some(m => m.id === id);
+            if (exists) return;
+
             chatHistory.push(newMsg);
             if (chatHistory.length > 100) {
                 const removed = chatHistory.splice(0, 20);
@@ -5654,7 +5681,8 @@
                 channel: CHANNEL,
                 message: msg
             });
-            saveAndRenderChat(currentUser, text, timeStr);
+            // Kendi mesajını hemen ekle (processedMessageIds kontrolü yapacak)
+            saveAndRenderChat(currentUser, text, timeStr, id);
             input.value = '';
         }
 
@@ -6101,7 +6129,7 @@
         // ============================================================
         //  CREATE MATCH (YENİ)
         // ============================================================
-        let sortDirection = 'high'; // 'high' veya 'low'
+        let sortDirection = 'high';
 
         function toggleSort() {
             sortDirection = sortDirection === 'high' ? 'low' : 'high';
@@ -6121,7 +6149,6 @@
                 item.style.display = match ? '' : 'none';
                 if (match) hasVisible = true;
             });
-            // Sıralama
             const visible = Array.from(items).filter(item => item.style.display !== 'none');
             visible.sort((a, b) => {
                 const valA = parseInt(a.dataset.value);
@@ -6129,7 +6156,6 @@
                 return sortDirection === 'high' ? valB - valA : valA - valB;
             });
             visible.forEach(item => grid.appendChild(item));
-            // No pets deposit
             const depositDiv = document.getElementById('no-pets-deposit');
             if (items.length === 0) {
                 depositDiv.style.display = 'block';
@@ -6147,7 +6173,12 @@
             selectedPetsForMatch = [];
             document.querySelectorAll('#modal-inventory .modal-item').forEach(el => el.classList.remove('selected'));
             updateCreateTotal();
-            // Limit değişince seçili petleri sıfırla
+            // 1x seçiliyken diğerleri aktif olmasın
+            if (limit === 1) {
+                document.querySelectorAll('.limit-btn').forEach(btn => {
+                    if (parseInt(btn.dataset.limit) !== 1) btn.classList.remove('active');
+                });
+            }
             openCreateModal();
         }
 
@@ -6160,12 +6191,10 @@
             selectedSideCreate = null;
             document.querySelectorAll('#create-modal .side-btn').forEach(btn => btn.classList.remove('selected'));
 
-            // Limit butonlarını güncelle
             document.querySelectorAll('.limit-btn').forEach(btn => {
                 btn.classList.toggle('active', parseInt(btn.dataset.limit) === matchLimit);
             });
 
-            // Sıralama butonu
             const sortBtn = document.getElementById('sort-btn');
             sortBtn.textContent = sortDirection === 'high' ? 'High to Low' : 'Low to High';
 
@@ -6203,7 +6232,6 @@
                     };
                     grid.appendChild(item);
                 });
-                // Sıralama uygula
                 filterPets();
             }
             updateCreateTotal();
@@ -6232,7 +6260,7 @@
                 hostPets: selectedPetsForMatch.slice(),
                 hostSide: selectedSideCreate,
                 status: 'waiting',
-                matchLimit: matchLimit // limiti de kaydet
+                matchLimit: matchLimit
             };
             globalMatches.unshift(newMatch);
             localStorage.setItem('app_global_matches', JSON.stringify(globalMatches));
@@ -6276,7 +6304,6 @@
             matchToJoin = globalMatches.find(m => m.id === matchId);
             if (!matchToJoin) return;
 
-            // Joiner limiti host'un matchLimit'ine göre
             const joinLimit = matchToJoin.matchLimit || 15;
 
             const inv = getUserInventory(currentUser);
@@ -6905,8 +6932,9 @@
             if (quantity < 1) { showToast('Quantity must be at least 1.'); return; }
             if (quantity > 100) { showToast('Maximum quantity is 100.'); return; }
 
-            let finalName = name;
+            // Extra etiketleri doğru sırada ekle: N, M, F, R
             const order = ['N', 'M', 'F', 'R'];
+            let finalName = name;
             const extraStr = order.filter(t => adminPetExtraState.includes(t)).join('');
             if (extraStr) finalName = extraStr + ' ' + name;
 
@@ -7161,6 +7189,9 @@
 
                 if (msg.type === 'CHAT') {
                     if (msg.id) {
+                        // processedMessageIds kontrolü ile çift mesaj engeli
+                        if (processedMessageIds.has(msg.id)) return;
+                        processedMessageIds.add(msg.id);
                         if (deletedMessageIds.has(msg.id)) return;
                         const exists = chatHistory.some(m => m.id === msg.id);
                         if (!exists) {
@@ -7292,7 +7323,6 @@
         loadJackpotState();
         loadGiveaways();
 
-        // Yeni giren kullanıcı mevcut giveaway'leri istesin
         setTimeout(() => {
             pubnub.publish({
                 channel: CHANNEL,
@@ -7346,6 +7376,8 @@
                 messages.forEach(msg => {
                     if (msg.type === 'CHAT' && msg.id) {
                         if (deletedMessageIds.has(msg.id)) return;
+                        if (processedMessageIds.has(msg.id)) return;
+                        processedMessageIds.add(msg.id);
                         const exists = chatHistory.some(m => m.id === msg.id);
                         if (!exists) {
                             chatHistory.push({ id: msg.id, username: msg.username, text: msg.text, time: msg.time });
