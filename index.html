@@ -46,7 +46,7 @@
             right: var(--chat-width);
             height: var(--header-height);
             background: var(--card-bg);
-            padding: 0 28px 0 110px;
+            padding: 0 28px 0 100px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -57,13 +57,12 @@
         }
         .sidebar {
             position: fixed;
-            left: 12px;
-            top: 80px;
-            bottom: 20px;
+            left: 0;
+            top: 0;
+            bottom: 0;
             width: var(--sidebar-width);
             background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 24px;
+            border-right: 1px solid var(--border-color);
             z-index: 150;
             display: flex;
             flex-direction: column;
@@ -71,7 +70,7 @@
             padding: 18px 0;
             gap: 10px;
             overflow-y: auto;
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+            box-shadow: 2px 0 30px rgba(0, 0, 0, 0.5);
             transition: transform 0.3s ease, opacity 0.3s ease;
         }
         .sidebar.closed {
@@ -498,7 +497,7 @@
             height: 52px;
             transition: border-color 0.2s, transform 0.2s;
             position: relative;
-            overflow: hidden;
+            overflow: visible;
         }
         .pet-circle:hover {
             border-color: var(--accent);
@@ -514,12 +513,13 @@
         }
         .pet-circle .pet-extra-icons {
             position: absolute;
-            bottom: -4px;
+            bottom: -8px;
             left: 50%;
             transform: translateX(-50%);
             display: flex;
             gap: 2px;
             white-space: nowrap;
+            z-index: 2;
         }
         .pet-extra-icon {
             display: inline-block;
@@ -2596,13 +2596,85 @@
             color: var(--secondary);
             text-align: center;
         }
-        .limit-selector {
+        /* CREATE MATCH ÖZEL */
+        .create-modal {
+            max-width: 700px !important;
+        }
+        .create-modal .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        .create-modal .modal-header .close-btn {
+            background: rgba(255,255,255,0.08);
+            border: none;
+            color: #ced4da;
+            font-size: 28px;
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+        .create-modal .modal-header .close-btn:hover {
+            background: rgba(255,255,255,0.15);
+        }
+        .create-modal .search-row {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+        }
+        .create-modal .search-row input {
+            flex: 1;
+            background: #0f172a;
+            border: 1px solid var(--border-color);
+            border-radius: 30px;
+            padding: 8px 16px;
+            color: white;
+            outline: none;
+            font-size: 14px;
+        }
+        .create-modal .search-row input:focus {
+            border-color: var(--accent);
+        }
+        .create-modal .search-row .sort-btn {
+            background: #0f172a;
+            border: 1px solid var(--border-color);
+            color: #868e96;
+            padding: 6px 14px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+        .create-modal .search-row .sort-btn:hover {
+            border-color: #4dabf7;
+            color: #f1f3f5;
+        }
+        .create-modal .search-row .sort-btn.active {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+        .create-modal .selected-value {
+            font-weight: 700;
+            color: var(--accent);
+            font-size: 16px;
+            margin-bottom: 8px;
+        }
+        .create-modal .limit-buttons {
             display: flex;
             gap: 8px;
-            justify-content: center;
-            margin: 12px 0;
+            margin-bottom: 12px;
         }
-        .limit-btn {
+        .create-modal .limit-buttons .limit-btn {
             background: #0f172a;
             border: 2px solid var(--border-color);
             color: #868e96;
@@ -2613,14 +2685,83 @@
             font-size: 14px;
             transition: all 0.2s;
         }
-        .limit-btn:hover {
+        .create-modal .limit-buttons .limit-btn:hover {
             border-color: #4dabf7;
             color: #f1f3f5;
         }
-        .limit-btn.active {
+        .create-modal .limit-buttons .limit-btn.active {
             background: var(--accent);
             color: #0b1120;
             border-color: var(--accent);
+        }
+        .create-modal .bottom-row {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 16px;
+            margin-top: 16px;
+        }
+        .create-modal .bottom-row .side-select {
+            display: flex;
+            gap: 10px;
+            margin: 0;
+        }
+        .create-modal .bottom-row .side-btn {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            padding: 0;
+            justify-content: center;
+            border: 2px solid var(--border-color);
+            background: #0f172a;
+            font-size: 14px;
+            font-weight: 700;
+            color: #868e96;
+        }
+        .create-modal .bottom-row .side-btn.selected {
+            border-color: var(--accent);
+            background: rgba(252, 196, 25, 0.15);
+            color: var(--accent);
+            box-shadow: 0 0 0 2px rgba(252, 196, 25, 0.2);
+        }
+        .create-modal .bottom-row .side-btn img {
+            width: 24px;
+            height: 24px;
+        }
+        .create-modal .bottom-row .create-btn {
+            background: var(--secondary);
+            color: #0b1120;
+            border: none;
+            padding: 10px 28px;
+            border-radius: 30px;
+            font-weight: 700;
+            font-size: 16px;
+            cursor: pointer;
+            transition: transform 0.15s ease, box-shadow 0.2s;
+            box-shadow: 0 4px 10px rgba(81, 207, 102, 0.2);
+        }
+        .create-modal .bottom-row .create-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(81, 207, 102, 0.3);
+        }
+        .create-modal .no-pets-deposit {
+            color: #868e96;
+            font-size: 14px;
+            text-align: center;
+            padding: 20px 0;
+        }
+        .create-modal .no-pets-deposit .deposit-link {
+            color: var(--accent);
+            font-weight: 700;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+        .create-modal .no-pets-deposit .deposit-link:hover {
+            color: #ffd43b;
+        }
+        .modal-grid {
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
         }
     </style>
 </head>
@@ -2804,29 +2945,38 @@
         </div>
     </div>
 
-    <!-- Create Match -->
+    <!-- Create Match (YENİ) -->
     <div class="modal-overlay" id="create-modal">
-        <div class="modal">
-            <h2>Create Match</h2>
-            <div class="limit-selector">
+        <div class="modal create-modal">
+            <div class="modal-header">
+                <h2>Create Match</h2>
+                <button class="close-btn" onclick="closeModal('create-modal')">✕</button>
+            </div>
+            <div class="search-row">
+                <input type="text" id="search-pet-input" placeholder="Search Item..." oninput="filterPets()">
+                <button class="sort-btn" id="sort-btn" onclick="toggleSort()">High to Low</button>
+            </div>
+            <div class="selected-value" id="create-total-value">Selected Value: 0</div>
+            <div class="limit-buttons">
                 <button class="limit-btn active" data-limit="15" onclick="setMatchLimit(15)">1x</button>
                 <button class="limit-btn" data-limit="5" onclick="setMatchLimit(5)">5x</button>
                 <button class="limit-btn" data-limit="10" onclick="setMatchLimit(10)">10x</button>
                 <button class="limit-btn" data-limit="15" onclick="setMatchLimit(15)">15x</button>
             </div>
             <div class="modal-grid" id="modal-inventory"></div>
-            <div id="create-total-value" style="text-align:center;font-weight:700;margin:10px 0;color:var(--accent);">Total Value: 0</div>
-            <div class="side-select">
-                <button class="side-btn" data-side="H" onclick="selectSide('H', 'create')">
-                    <img src="https://bloxluck.com/img/dog.png" alt="H"> H
-                </button>
-                <button class="side-btn" data-side="T" onclick="selectSide('T', 'create')">
-                    <img src="https://bloxluck.com/img/gem.png" alt="T"> T
-                </button>
+            <div id="no-pets-deposit" class="no-pets-deposit" style="display:none;">
+                No pets in inventory. <span class="deposit-link" onclick="closeModal('create-modal'); openDepositModal();">+ Deposit</span>
             </div>
-            <div class="modal-actions">
-                <button class="post-btn" id="create-post-btn" onclick="postMatch()">Create Match</button>
-                <button class="cancel-btn" onclick="closeModal('create-modal')">Cancel</button>
+            <div class="bottom-row">
+                <div class="side-select">
+                    <button class="side-btn" data-side="H" onclick="selectSide('H', 'create')">
+                        <img src="https://bloxluck.com/img/dog.png" alt="H">
+                    </button>
+                    <button class="side-btn" data-side="T" onclick="selectSide('T', 'create')">
+                        <img src="https://bloxluck.com/img/gem.png" alt="T">
+                    </button>
+                </div>
+                <button class="create-btn" id="create-post-btn" onclick="postMatch()">Create</button>
             </div>
         </div>
     </div>
@@ -5319,6 +5469,20 @@
                     renderGiveaways();
                 }
             }
+            if (msg.type === 'REQUEST_GIVEAWAYS') {
+                // Mevcut giveaway'leri gönder
+                pubnub.publish({
+                    channel: CHANNEL,
+                    message: { type: 'SYNC_GIVEAWAYS', giveaways: activeGiveaways, sender: 'system' }
+                });
+            }
+            if (msg.type === 'SYNC_GIVEAWAYS') {
+                if (msg.giveaways) {
+                    activeGiveaways = msg.giveaways;
+                    saveGiveaways();
+                    renderGiveaways();
+                }
+            }
         }
 
         function createGiveaway() {
@@ -5935,13 +6099,55 @@
         }
 
         // ============================================================
-        //  CREATE MATCH
+        //  CREATE MATCH (YENİ)
         // ============================================================
+        let sortDirection = 'high'; // 'high' veya 'low'
+
+        function toggleSort() {
+            sortDirection = sortDirection === 'high' ? 'low' : 'high';
+            const btn = document.getElementById('sort-btn');
+            btn.textContent = sortDirection === 'high' ? 'High to Low' : 'Low to High';
+            filterPets();
+        }
+
+        function filterPets() {
+            const search = document.getElementById('search-pet-input').value.toLowerCase();
+            const grid = document.getElementById('modal-inventory');
+            const items = grid.querySelectorAll('.modal-item');
+            let hasVisible = false;
+            items.forEach(item => {
+                const name = item.dataset.name.toLowerCase();
+                const match = name.includes(search);
+                item.style.display = match ? '' : 'none';
+                if (match) hasVisible = true;
+            });
+            // Sıralama
+            const visible = Array.from(items).filter(item => item.style.display !== 'none');
+            visible.sort((a, b) => {
+                const valA = parseInt(a.dataset.value);
+                const valB = parseInt(b.dataset.value);
+                return sortDirection === 'high' ? valB - valA : valA - valB;
+            });
+            visible.forEach(item => grid.appendChild(item));
+            // No pets deposit
+            const depositDiv = document.getElementById('no-pets-deposit');
+            if (items.length === 0) {
+                depositDiv.style.display = 'block';
+            } else {
+                depositDiv.style.display = 'none';
+            }
+        }
+
         function setMatchLimit(limit) {
             matchLimit = limit;
             document.querySelectorAll('.limit-btn').forEach(btn => {
                 btn.classList.toggle('active', parseInt(btn.dataset.limit) === limit);
             });
+            // Seçili petleri temizle
+            selectedPetsForMatch = [];
+            document.querySelectorAll('#modal-inventory .modal-item').forEach(el => el.classList.remove('selected'));
+            updateCreateTotal();
+            // Limit değişince seçili petleri sıfırla
             openCreateModal();
         }
 
@@ -5954,16 +6160,25 @@
             selectedSideCreate = null;
             document.querySelectorAll('#create-modal .side-btn').forEach(btn => btn.classList.remove('selected'));
 
+            // Limit butonlarını güncelle
             document.querySelectorAll('.limit-btn').forEach(btn => {
                 btn.classList.toggle('active', parseInt(btn.dataset.limit) === matchLimit);
             });
 
+            // Sıralama butonu
+            const sortBtn = document.getElementById('sort-btn');
+            sortBtn.textContent = sortDirection === 'high' ? 'High to Low' : 'Low to High';
+
             if (inv.length === 0) {
-                grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;color:#868e96;padding:20px;">No pets in inventory.</div>';
+                document.getElementById('no-pets-deposit').style.display = 'block';
+                grid.innerHTML = '';
             } else {
+                document.getElementById('no-pets-deposit').style.display = 'none';
                 inv.forEach(pet => {
                     const item = document.createElement('div');
                     item.className = 'modal-item';
+                    item.dataset.name = pet.name.toLowerCase();
+                    item.dataset.value = pet.value;
                     const extraIcons = getPetExtraIcons(pet.name);
                     const cleanName = getCleanPetName(pet.name);
                     item.innerHTML = `
@@ -5988,6 +6203,8 @@
                     };
                     grid.appendChild(item);
                 });
+                // Sıralama uygula
+                filterPets();
             }
             updateCreateTotal();
             document.getElementById('create-post-btn').disabled = false;
@@ -5997,7 +6214,7 @@
         function updateCreateTotal() {
             const total = sumPets(selectedPetsForMatch);
             document.getElementById('create-total-value').textContent =
-                `Total Value: ${total} (${selectedPetsForMatch.length}/${matchLimit})`;
+                `Selected Value: ${total} (${selectedPetsForMatch.length}/${matchLimit})`;
         }
 
         function postMatch() {
@@ -6014,7 +6231,8 @@
                 host: currentUser,
                 hostPets: selectedPetsForMatch.slice(),
                 hostSide: selectedSideCreate,
-                status: 'waiting'
+                status: 'waiting',
+                matchLimit: matchLimit // limiti de kaydet
             };
             globalMatches.unshift(newMatch);
             localStorage.setItem('app_global_matches', JSON.stringify(globalMatches));
@@ -6058,6 +6276,9 @@
             matchToJoin = globalMatches.find(m => m.id === matchId);
             if (!matchToJoin) return;
 
+            // Joiner limiti host'un matchLimit'ine göre
+            const joinLimit = matchToJoin.matchLimit || 15;
+
             const inv = getUserInventory(currentUser);
             const grid = document.getElementById('join-modal-inventory');
             grid.innerHTML = '';
@@ -6091,8 +6312,8 @@
                             selectedPetsForJoin.splice(idx, 1);
                             item.classList.remove('selected');
                         } else {
-                            if (selectedPetsForJoin.length >= MAX_PETS_PER_MATCH) {
-                                showToast(`You can select max ${MAX_PETS_PER_MATCH} pets per match.`);
+                            if (selectedPetsForJoin.length >= joinLimit) {
+                                showToast(`You can select max ${joinLimit} pets per match.`);
                                 return;
                             }
                             selectedPetsForJoin.push(pet);
@@ -6111,8 +6332,9 @@
 
         function updateJoinTotal() {
             const total = sumPets(selectedPetsForJoin);
+            const joinLimit = matchToJoin ? (matchToJoin.matchLimit || 15) : 15;
             document.getElementById('join-total-value').textContent =
-                `Total Value: ${total} (${selectedPetsForJoin.length}/${MAX_PETS_PER_MATCH})`;
+                `Total Value: ${total} (${selectedPetsForJoin.length}/${joinLimit})`;
         }
 
         function confirmJoinMatch() {
@@ -6968,6 +7190,15 @@
                     return;
                 }
 
+                if (msg.type === 'REQUEST_GIVEAWAYS') {
+                    handleGiveawayMessage(msg);
+                    return;
+                }
+                if (msg.type === 'SYNC_GIVEAWAYS') {
+                    handleGiveawayMessage(msg);
+                    return;
+                }
+
                 if (msg.type === 'MATCH_CREATED') {
                     if (msg.sender === currentUser) return;
                     if (!globalMatches.some(m => m.id === msg.match.id)) {
@@ -7060,6 +7291,14 @@
 
         loadJackpotState();
         loadGiveaways();
+
+        // Yeni giren kullanıcı mevcut giveaway'leri istesin
+        setTimeout(() => {
+            pubnub.publish({
+                channel: CHANNEL,
+                message: { type: 'REQUEST_GIVEAWAYS', sender: currentUser || 'system' }
+            });
+        }, 1500);
 
         setTimeout(() => {
             pubnub.publish({
