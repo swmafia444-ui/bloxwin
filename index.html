@@ -192,9 +192,10 @@
             gap: 10px;
         }
         .logo-wrapper img {
-            height: 40px;
+            height: 45px;
             width: auto;
             display: block;
+            border-radius: 8px;
         }
         .user-info-bar {
             display: flex;
@@ -226,6 +227,13 @@
             object-fit: contain;
             display: inline-block;
         }
+        .user-badge .avatar-small {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 1px solid var(--border-color);
+        }
         .chat-username.highroller {
             color: #ff6b6b !important;
         }
@@ -238,6 +246,15 @@
         .chat-msg .rank-icon {
             vertical-align: middle;
             display: inline-block;
+        }
+        .chat-msg .msg-avatar {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 4px;
+            border: 1px solid var(--border-color);
+            flex-shrink: 0;
         }
         .profile-rank-label.whale {
             color: #4dabf7 !important;
@@ -480,26 +497,21 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            background: #0f172a;
-            border: 2px solid #2d3b4f;
-            border-radius: 50%;
-            width: 52px;
-            height: 52px;
-            transition: border-color 0.2s, transform 0.2s;
+            width: 56px;
+            height: 56px;
             position: relative;
             overflow: visible;
         }
         .pet-circle:hover {
-            border-color: var(--accent);
             transform: scale(1.05);
         }
         .pet-circle .pet-img {
-            width: 40px;
-            height: 40px;
+            width: 50px;
+            height: 50px;
             object-fit: cover;
             border-radius: 50%;
             display: block;
-            border: none;
+            border: 2px solid #2d3b4f;
         }
         .pet-circle .pet-extra-icons {
             position: absolute;
@@ -530,10 +542,16 @@
         .pet-extra-icon.mega { background: #9b59b6; color: white; }
         .pet-circle.more-indicator {
             background: #1a2332;
-            border-color: var(--accent);
+            border: 2px solid var(--accent);
+            border-radius: 50%;
             color: var(--accent);
             font-weight: 700;
             font-size: 14px;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         .match-total-value {
             color: var(--accent);
@@ -866,6 +884,7 @@
             display: flex;
             align-items: center;
             gap: 6px;
+            flex-wrap: wrap;
         }
         .chat-msg .username {
             font-weight: 700;
@@ -1053,36 +1072,31 @@
         }
         .side-btn {
             background: transparent;
-            border: 2px solid var(--border-color);
+            border: none;
             border-radius: 50%;
             width: 48px;
             height: 48px;
             padding: 0;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.3s ease;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-weight: 700;
-            font-size: 16px;
-            color: #868e96;
+            opacity: 0.5;
         }
         .side-btn img {
-            width: 32px;
-            height: 32px;
+            width: 40px;
+            height: 40px;
             object-fit: contain;
             border-radius: 50%;
             display: block;
         }
-        .side-btn[data-side="H"] {
-            border-color: #4dabf7;
-        }
-        .side-btn[data-side="T"] {
-            border-color: #ff6b6b;
-        }
         .side-btn.selected {
-            border-color: #ffffff;
-            box-shadow: 0 0 0 2px rgba(255,255,255,0.3);
+            opacity: 1;
+            box-shadow: 0 0 15px rgba(255,255,255,0.25);
+        }
+        .side-btn:not(.selected):hover {
+            opacity: 0.8;
         }
         .modal-actions {
             display: flex;
@@ -1310,6 +1324,15 @@
         }
         .profile-rank-label.highroller {
             color: #ff6b6b !important;
+        }
+        .profile-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid var(--accent);
+            margin: 0 auto 10px;
+            display: block;
         }
         .profile-tip-btn {
             margin-top: 12px;
@@ -2296,8 +2319,8 @@
                 height: 44px;
             }
             .pet-circle .pet-img {
-                width: 30px;
-                height: 30px;
+                width: 38px;
+                height: 38px;
             }
         }
         .mobile-chat-toggle {
@@ -2388,14 +2411,14 @@
             color: #0b1120;
             border-color: var(--accent);
         }
-        /* Giveaway – gizlenebilir container */
+        /* Giveaway Container - Geliştirilmiş */
         .giveaway-container {
             border-bottom: 1px solid var(--border-color);
-            padding: 12px 16px;
+            padding: 10px 12px;
             background: #0f172a;
             flex-shrink: 0;
-            min-height: 80px;
-            display: none; /* varsayılan gizli */
+            min-height: 90px;
+            display: none;
             align-items: center;
             justify-content: center;
         }
@@ -2405,7 +2428,7 @@
         .giveaway-slider {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
             flex: 1;
             min-width: 0;
             width: 100%;
@@ -2415,22 +2438,22 @@
             background: transparent;
             border: none;
             color: #4dabf7;
-            font-size: 24px;
+            font-size: 22px;
             cursor: pointer;
             transition: transform 0.2s, color 0.2s;
             flex-shrink: 0;
             display: flex;
             align-items: center;
             justify-content: center;
-            width: 36px;
-            height: 36px;
+            width: 32px;
+            height: 32px;
             border-radius: 50%;
             font-weight: 300;
             padding: 0;
         }
         .giveaway-slider .g-arrow:hover:not(:disabled) {
             color: var(--accent);
-            transform: scale(1.15);
+            transform: scale(1.2);
         }
         .giveaway-slider .g-arrow:disabled {
             opacity: 0;
@@ -2440,16 +2463,15 @@
         .giveaway-item {
             background: #1a2332;
             border-radius: 12px;
-            padding: 10px 20px;
+            padding: 10px 14px;
             display: flex;
             align-items: center;
-            gap: 18px;
+            gap: 12px;
             flex: 1;
             min-width: 0;
             flex-wrap: nowrap;
-            overflow: hidden;
-            border: none;
-            box-shadow: none;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
         }
         .giveaway-item .g-pet-img {
             width: 48px;
@@ -2457,7 +2479,7 @@
             object-fit: cover;
             flex-shrink: 0;
             border-radius: 50%;
-            border: 1px solid #2d3b4f;
+            border: 2px solid var(--accent);
         }
         .giveaway-item .g-info {
             flex: 1;
@@ -2467,7 +2489,7 @@
         .giveaway-item .g-name {
             font-weight: 700;
             color: #f1f3f5;
-            font-size: 16px;
+            font-size: 15px;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -2477,39 +2499,43 @@
         }
         .giveaway-item .g-value {
             color: var(--accent);
-            font-size: 13px;
+            font-size: 12px;
         }
         .giveaway-item .g-timer {
             color: #f1f3f5;
-            font-size: 16px;
+            font-size: 18px;
             font-weight: 700;
-            min-width: 50px;
+            min-width: 55px;
             font-variant-numeric: tabular-nums;
             flex-shrink: 0;
             text-align: center;
         }
         .giveaway-item .g-timer.urgent {
             color: #ff6b6b;
+            animation: pulse-text 0.8s ease-in-out infinite alternate;
         }
         .giveaway-item .g-join-btn {
             background: var(--secondary);
             color: #0b1120;
             border: none;
-            padding: 6px 20px;
+            padding: 7px 22px;
             border-radius: 30px;
             font-weight: 700;
             font-size: 14px;
             cursor: pointer;
-            transition: transform 0.15s;
+            transition: transform 0.15s, box-shadow 0.2s;
             flex-shrink: 0;
+            box-shadow: 0 2px 8px rgba(81,207,102,0.2);
         }
         .giveaway-item .g-join-btn:hover {
             transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(81,207,102,0.3);
         }
         .giveaway-item .g-join-btn:disabled {
             opacity: 0.4;
             cursor: default;
             transform: none;
+            box-shadow: none;
         }
         .giveaway-item .g-participants {
             color: #868e96;
@@ -2525,10 +2551,10 @@
             white-space: nowrap;
         }
         .giveaway-pagination {
-            font-size: 14px;
+            font-size: 13px;
             color: #868e96;
             flex-shrink: 0;
-            min-width: 40px;
+            min-width: 35px;
             text-align: center;
             font-weight: 600;
         }
@@ -2538,6 +2564,7 @@
             text-align: center;
             flex: 1;
         }
+        /* profile modal - click outside close */
         #profile-modal .modal-overlay {
             pointer-events: auto;
         }
@@ -2594,6 +2621,7 @@
             color: var(--secondary);
             text-align: center;
         }
+        /* CREATE MATCH ÖZEL */
         .create-modal {
             max-width: 700px !important;
         }
@@ -2684,14 +2712,14 @@
             transition: all 0.2s;
         }
         .create-modal .limit-buttons .limit-btn:hover {
-            border-color: #4dabf7;
+            border-color: #ffffff;
             color: #f1f3f5;
         }
         .create-modal .limit-buttons .limit-btn.active {
-            background: #ffffff;
-            color: #0b1120;
             border-color: #ffffff;
-            box-shadow: 0 0 6px rgba(255,255,255,0.3);
+            background: transparent;
+            box-shadow: 0 0 10px rgba(255,255,255,0.2);
+            color: #ffffff;
         }
         .create-modal .bottom-row {
             display: flex;
@@ -2804,8 +2832,7 @@
     <header>
         <div class="logo">
             <div class="logo-wrapper">
-                <!-- Buraya kendi blob URL'nizi kopyalayın -->
-                <img src="https://bloxluck.com/img/dog.png" alt="BloxyWin Logo">
+                <img src="https://lh3.googleusercontent.com/gg/ACRwjatTYi5OsDIvYDGVo_hUxTzwnM_4g04T6n8Q6rldagPmV6YVyDMZV8jnyBNFcBedVrhKuciKwiW7U_BDXk8J2bjDFfZiOYmSE-KvJuDiB8MXjuQbJz_19et7x9lVoaSK6sGafbQ02C7ou1L9h0qcwyxjmSR30g7Rm4Z1fy8wueI6sImOGzQ8qzTvBoJTuEzHGjQ9OOaTEK0n4_SK9oOKWOxWouwImAvA-m2eleOxTInFwv2JPnGf35KcQBExV5z35qSCTD0WEE-z1JLXN5k6XkbZEzMfTzDk1gxHVaITPhn3CbGK1KnfgBFqKkc1ctWYfy4QNuCK_mhE7PMsOkzY_I5z=s1600" alt="BloxyWin Logo">
             </div>
         </div>
         <div id="user-header-area"></div>
@@ -2813,7 +2840,7 @@
 
     <!-- Main Content -->
     <div class="main-layout" id="main-layout">
-        <!-- Coinflip -->
+        <!-- Coinflip sayfası -->
         <div class="coinflip-page" id="coinflip-page">
             <div>
                 <div class="section-header">
@@ -2827,7 +2854,7 @@
             </div>
         </div>
 
-        <!-- Jackpot -->
+        <!-- Jackpot sayfası -->
         <div class="jackpot-page" id="jackpot-page">
             <div class="jackpot-header">
                 <div class="jp-title">
@@ -2928,7 +2955,7 @@
         </div>
     </div>
 
-    <!-- Create Match -->
+    <!-- Create Match (YENİ) -->
     <div class="modal-overlay" id="create-modal">
         <div class="modal create-modal">
             <div class="modal-header">
@@ -2941,10 +2968,9 @@
             </div>
             <div class="selected-value" id="create-total-value">Selected Value: 0</div>
             <div class="limit-buttons">
-                <button class="limit-btn active" data-limit="15" onclick="setMatchLimit(15)">1 Pet</button>
-                <button class="limit-btn" data-limit="5" onclick="setMatchLimit(5)">5 Pet</button>
-                <button class="limit-btn" data-limit="10" onclick="setMatchLimit(10)">10 Pet</button>
-                <button class="limit-btn" data-limit="15" onclick="setMatchLimit(15)">15 Pet</button>
+                <button class="limit-btn" data-limit="15" onclick="setMatchLimit(15)">1x</button>
+                <button class="limit-btn" data-limit="5" onclick="setMatchLimit(5)">5x</button>
+                <button class="limit-btn" data-limit="10" onclick="setMatchLimit(10)">10x</button>
             </div>
             <div class="modal-grid" id="modal-inventory"></div>
             <div id="no-pets-deposit" class="no-pets-deposit" style="display:none;">
@@ -3236,6 +3262,7 @@
     <div class="modal-overlay" id="profile-modal" data-close-on-overlay="true">
         <div class="modal" style="max-width:480px;">
             <div id="profile-content" style="text-align:center;">
+                <div id="profile-avatar-container"></div>
                 <div id="profile-username" class="profile-username"></div>
                 <div id="profile-rank-label" class="profile-rank-label"></div>
                 <div class="profile-stats" id="profile-stats"></div>
@@ -3493,7 +3520,7 @@
         let matchToJoin = null;
         let isFlipping = false;
         let selectedSideCreate = null;
-        let matchLimit = 15;
+        let matchLimit = 0; // 0 = seçilmemiş
 
         let selectedWithdrawPets = [];
         let withdrawPetList = [];
@@ -3989,7 +4016,7 @@
         function getPetDisplaySmall(pet) {
             if (!pet) return '';
             const extraIcons = getPetExtraIcons(pet.name);
-            return `<img class="pet-img" src="${pet.icon}" alt="${pet.name}" title="${getCleanPetName(pet.name)}" style="width:38px;height:38px;border-radius:50%;border:1px solid #2d3b4f;">${extraIcons ? `<div class="pet-extra-icons">${extraIcons}</div>` : ''}`;
+            return `<img class="pet-img" src="${pet.icon}" alt="${pet.name}" title="${getCleanPetName(pet.name)}" style="width:44px;height:44px;border-radius:50%;border:1px solid #2d3b4f;">${extraIcons ? `<div class="pet-extra-icons">${extraIcons}</div>` : ''}`;
         }
 
         function getPetDisplayAdmin(pet) {
@@ -4229,9 +4256,12 @@
                     `<img class="rank-icon" src="${rankIcon}" alt="${rankLabel}" title="${rankLabel}">` :
                     '';
 
+                const avatarUrl = getAvatarUrl(currentUser) || currentUserAvatar || getDefaultAvatar();
+
                 container.innerHTML = `
                         <div class="user-info-bar">
                             <span class="user-badge" onclick="openProfile('${escapeHTML(currentUser)}')">
+                                <img class="avatar-small" src="${escapeHTML(avatarUrl)}" alt="${escapeHTML(currentUser)}" onerror="this.src='${getDefaultAvatar()}'">
                                 ${escapeHTML(currentUser)}
                                 ${rankHtml}
                             </span>
@@ -5532,6 +5562,7 @@
                 msgDiv.className = 'chat-msg';
                 const mutedLabel = isMuted(msg.username) ? `<span class="muted-label">[MUTED]</span>` : '';
 
+                const avatarUrl = getAvatarUrl(msg.username) || getDefaultAvatar();
                 const rankIcon = getRankIcon(msg.username);
                 const rankLabel = getRankLabel(msg.username);
                 const rankHtml = rankIcon ?
@@ -5539,9 +5570,11 @@
                     '';
                 const rankColor = getRankColor(msg.username);
                 const colorClass = rankColor ? `chat-username ${rankColor}` : 'chat-username';
+
                 msgDiv.innerHTML = `
                     <div class="msg-content">
                         <div class="msg-top">
+                            <img class="msg-avatar" src="${avatarUrl}" alt="${escapeHTML(msg.username)}" onerror="this.src='${getDefaultAvatar()}'">
                             ${rankHtml}
                             <span class="${colorClass}" onclick="openProfile('${escapeHTML(msg.username)}')">
                                 ${escapeHTML(msg.username)}
@@ -6139,9 +6172,6 @@
             selectedPetsForMatch = [];
             document.querySelectorAll('#modal-inventory .modal-item').forEach(el => el.classList.remove('selected'));
             updateCreateTotal();
-            if (document.getElementById('create-modal').classList.contains('active')) {
-                // inventory yeniden gösterilir, ama mevcut liste kalır, sadece seçim temizlendi
-            }
         }
 
         function openCreateModal() {
@@ -6153,9 +6183,9 @@
             selectedSideCreate = null;
             document.querySelectorAll('#create-modal .side-btn').forEach(btn => btn.classList.remove('selected'));
 
-            document.querySelectorAll('.limit-btn').forEach(btn => {
-                btn.classList.toggle('active', parseInt(btn.dataset.limit) === matchLimit);
-            });
+            // Limit butonlarını sıfırla (hiçbiri seçili değil)
+            document.querySelectorAll('.limit-btn').forEach(btn => btn.classList.remove('active'));
+            matchLimit = 0; // seçilmemiş
 
             const sortBtn = document.getElementById('sort-btn');
             sortBtn.textContent = sortDirection === 'high' ? 'High to Low' : 'Low to High';
@@ -6183,8 +6213,8 @@
                             selectedPetsForMatch.splice(idx, 1);
                             item.classList.remove('selected');
                         } else {
-                            if (selectedPetsForMatch.length >= matchLimit) {
-                                showToast(`This Match Pet Limit Is ${matchLimit}`);
+                            if (selectedPetsForMatch.length >= 15) { // host max 15 pet
+                                showToast(`You can select max 15 pets.`);
                                 return;
                             }
                             selectedPetsForMatch.push(pet);
@@ -6204,13 +6234,18 @@
         function updateCreateTotal() {
             const total = sumPets(selectedPetsForMatch);
             document.getElementById('create-total-value').textContent =
-                `Selected Value: ${total} (${selectedPetsForMatch.length}/${matchLimit})`;
+                `Selected Value: ${total} (${selectedPetsForMatch.length}/15)`;
         }
 
         function postMatch() {
             const btn = document.getElementById('create-post-btn');
             btn.disabled = true;
 
+            if (matchLimit === 0) {
+                showToast('Please select a bet multiplier (1x, 5x, or 10x).');
+                btn.disabled = false;
+                return;
+            }
             if (selectedPetsForMatch.length === 0) { showToast('Select at least one pet!'); btn.disabled = false; return; }
             if (!selectedSideCreate) { showToast('Please select a side (H or T)!'); btn.disabled = false; return; }
 
@@ -6222,7 +6257,7 @@
                 hostPets: selectedPetsForMatch.slice(),
                 hostSide: selectedSideCreate,
                 status: 'waiting',
-                matchLimit: matchLimit
+                matchLimit: matchLimit // 15,5,10 değerleri
             };
             globalMatches.unshift(newMatch);
             localStorage.setItem('app_global_matches', JSON.stringify(globalMatches));
@@ -6266,7 +6301,7 @@
             matchToJoin = globalMatches.find(m => m.id === matchId);
             if (!matchToJoin) return;
 
-            const joinLimit = matchToJoin.matchLimit || 15;
+            const joinLimit = matchToJoin.matchLimit || 15; // hostun belirlediği limit
 
             const inv = getUserInventory(currentUser);
             const grid = document.getElementById('join-modal-inventory');
@@ -6585,6 +6620,7 @@
             }
 
             const stats = getUserStats(username);
+            const avatarUrl = getAvatarUrl(username) || getDefaultAvatar();
 
             const rank = getUserRank(username);
             const rankIcon = getRankIcon(username);
@@ -6597,6 +6633,8 @@
                 '';
             const rankColorClass = rank ? `profile-rank-label ${rank}` : '';
 
+            document.getElementById('profile-avatar-container').innerHTML =
+                `<img class="profile-avatar" src="${avatarUrl}" alt="${escapeHTML(username)}" onerror="this.src='${getDefaultAvatar()}'">`;
             document.getElementById('profile-username').innerHTML = `${escapeHTML(username)}`;
             const rankLabelEl = document.getElementById('profile-rank-label');
             rankLabelEl.className = `profile-rank-label ${rankColorClass}`;
