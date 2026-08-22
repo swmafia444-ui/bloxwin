@@ -4,8 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>BloxyWin Coinflip</title>
-    <script src="https://cdn.pubnub.com/sdk/javascript/pubnub.7.2.2.min.js">
-    </script>
+    <script src="https://cdn.pubnub.com/sdk/javascript/pubnub.7.2.2.min.js"></script>
     <style>
         /* === TÜM STILLER === */
         :root {
@@ -51,7 +50,7 @@
             justify-content: space-between;
             align-items: center;
             border-bottom: 1px solid var(--border-color);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
             z-index: 100;
             backdrop-filter: blur(6px);
         }
@@ -71,7 +70,7 @@
             padding: 18px 0;
             gap: 10px;
             overflow-y: auto;
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 4px 30px rgba(0,0,0,0.5);
             transition: transform 0.3s ease, opacity 0.3s ease;
         }
         .sidebar.closed {
@@ -175,13 +174,13 @@
             border-radius: 30px;
             font-weight: 700;
             font-size: 15px;
-            box-shadow: 0 6px 25px rgba(255, 107, 107, 0.35);
+            box-shadow: 0 6px 25px rgba(255,107,107,0.35);
             display: inline-block;
             opacity: 0;
             transform: translateY(-20px);
             transition: opacity 0.3s ease, transform 0.3s ease;
             pointer-events: auto;
-            border: 1px solid rgba(255, 107, 107, 0.3);
+            border: 1px solid rgba(255,107,107,0.3);
         }
         .toast.show {
             opacity: 1;
@@ -192,20 +191,10 @@
             align-items: center;
             gap: 10px;
         }
-        .logo-wrapper span {
-            font-size: 28px;
-            font-weight: 800;
-            background: linear-gradient(135deg, #fcc419, #ff922b, #fcc419, #ff922b, #fcc419);
-            background-size: 400% 400%;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            animation: shimmerGold 2s ease-in-out infinite;
-            display: inline-block;
-        }
-        @keyframes shimmerGold {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
+        .logo-wrapper img {
+            height: 40px;
+            width: auto;
+            display: block;
         }
         .user-info-bar {
             display: flex;
@@ -229,7 +218,7 @@
         }
         .user-badge:hover {
             border-color: #4dabf7;
-            box-shadow: 0 0 12px rgba(77, 171, 247, 0.15);
+            box-shadow: 0 0 12px rgba(77,171,247,0.15);
         }
         .user-badge .rank-icon {
             width: 20px;
@@ -283,50 +272,50 @@
             cursor: pointer;
             font-size: 13px;
             transition: transform 0.15s ease, box-shadow 0.2s;
-            box-shadow: 0 4px 10px rgba(81, 207, 102, 0.2);
+            box-shadow: 0 4px 10px rgba(81,207,102,0.2);
             white-space: nowrap;
         }
         .action-btn:hover {
             transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(81, 207, 102, 0.3);
+            box-shadow: 0 8px 20px rgba(81,207,102,0.3);
         }
         .action-btn.secondary-btn {
             background: linear-gradient(135deg, #4dabf7, #1971c2);
-            box-shadow: 0 4px 10px rgba(77, 171, 247, 0.2);
+            box-shadow: 0 4px 10px rgba(77,171,247,0.2);
         }
         .action-btn.secondary-btn:hover {
-            box-shadow: 0 8px 20px rgba(77, 171, 247, 0.3);
+            box-shadow: 0 8px 20px rgba(77,171,247,0.3);
         }
         .action-btn.danger-btn {
             background: linear-gradient(135deg, #ff6b6b, #c92a2a);
-            box-shadow: 0 4px 10px rgba(255, 107, 107, 0.2);
+            box-shadow: 0 4px 10px rgba(255,107,107,0.2);
         }
         .action-btn.danger-btn:hover {
-            box-shadow: 0 8px 20px rgba(255, 107, 107, 0.3);
+            box-shadow: 0 8px 20px rgba(255,107,107,0.3);
         }
         .action-btn.gold-btn {
             background: linear-gradient(135deg, var(--secondary), #2b8a3e);
             color: #0b1120;
-            box-shadow: 0 4px 10px rgba(81, 207, 102, 0.25);
+            box-shadow: 0 4px 10px rgba(81,207,102,0.25);
         }
         .action-btn.gold-btn:hover {
-            box-shadow: 0 8px 20px rgba(81, 207, 102, 0.4);
+            box-shadow: 0 8px 20px rgba(81,207,102,0.4);
         }
         .action-btn.purple-btn {
             background: linear-gradient(135deg, var(--secondary), #2b8a3e);
             color: #0b1120;
-            box-shadow: 0 4px 10px rgba(81, 207, 102, 0.25);
+            box-shadow: 0 4px 10px rgba(81,207,102,0.25);
         }
         .action-btn.purple-btn:hover {
-            box-shadow: 0 8px 20px rgba(81, 207, 102, 0.4);
+            box-shadow: 0 8px 20px rgba(81,207,102,0.4);
         }
         .action-btn.admin-btn {
             background: linear-gradient(135deg, #da77f2, #9c36b5);
             color: #fff;
-            box-shadow: 0 4px 10px rgba(218, 119, 242, 0.25);
+            box-shadow: 0 4px 10px rgba(218,119,242,0.25);
         }
         .action-btn.admin-btn:hover {
-            box-shadow: 0 8px 20px rgba(218, 119, 242, 0.4);
+            box-shadow: 0 8px 20px rgba(218,119,242,0.4);
         }
         .main-layout {
             max-width: 1200px;
@@ -375,7 +364,7 @@
             font-size: 13px;
             cursor: pointer;
             transition: transform 0.15s ease, background 0.2s;
-            box-shadow: 0 3px 8px rgba(252, 196, 25, 0.25);
+            box-shadow: 0 3px 8px rgba(252,196,25,0.25);
         }
         .history-toggle-btn:hover {
             transform: translateY(-2px);
@@ -384,7 +373,7 @@
         .history-toggle-btn.active {
             background: #4dabf7;
             color: white;
-            box-shadow: 0 3px 8px rgba(77, 171, 247, 0.3);
+            box-shadow: 0 3px 8px rgba(77,171,247,0.3);
         }
         .create-match-header-btn {
             background: var(--secondary);
@@ -396,11 +385,11 @@
             font-size: 15px;
             cursor: pointer;
             transition: transform 0.15s ease, box-shadow 0.2s;
-            box-shadow: 0 4px 10px rgba(81, 207, 102, 0.2);
+            box-shadow: 0 4px 10px rgba(81,207,102,0.2);
         }
         .create-match-header-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(81, 207, 102, 0.3);
+            box-shadow: 0 8px 20px rgba(81,207,102,0.3);
         }
         .matches-grid {
             display: flex;
@@ -418,12 +407,12 @@
             flex-wrap: wrap;
             gap: 8px 14px;
             transition: transform 0.15s ease, box-shadow 0.2s;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
             min-height: 72px;
         }
         .match-card:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.4);
         }
         .match-left {
             display: flex;
@@ -463,7 +452,7 @@
             height: 24px;
             border-radius: 50%;
             border: 2px solid var(--bg-dark);
-            box-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 0 4px rgba(0,0,0,0.5);
             object-fit: contain;
             background: #0f172a;
             padding: 1px;
@@ -533,7 +522,7 @@
             line-height: 16px;
             text-align: center;
             font-family: 'Segoe UI', sans-serif;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.3);
         }
         .pet-extra-icon.ride { background: #e74c3c; }
         .pet-extra-icon.fly { background: #3498db; }
@@ -613,31 +602,31 @@
         .join-btn {
             background: var(--accent);
             color: #0b1120;
-            box-shadow: 0 4px 10px rgba(252, 196, 25, 0.2);
+            box-shadow: 0 4px 10px rgba(252,196,25,0.2);
         }
         .join-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(252, 196, 25, 0.3);
+            box-shadow: 0 8px 20px rgba(252,196,25,0.3);
         }
         .cancel-match-btn {
             background: #ff6b6b;
             color: white;
-            box-shadow: 0 4px 10px rgba(255, 107, 107, 0.2);
+            box-shadow: 0 4px 10px rgba(255,107,107,0.2);
         }
         .cancel-match-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(255, 107, 107, 0.3);
+            box-shadow: 0 8px 20px rgba(255,107,107,0.3);
         }
         .view-btn {
             background: #4dabf7;
             color: white;
-            box-shadow: 0 4px 10px rgba(77, 171, 247, 0.2);
+            box-shadow: 0 4px 10px rgba(77,171,247,0.2);
             padding: 4px 12px;
             font-size: 11px;
         }
         .view-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(77, 171, 247, 0.3);
+            box-shadow: 0 8px 20px rgba(77,171,247,0.3);
         }
         .ongoing-match {
             background: #1a2a3a;
@@ -678,7 +667,7 @@
             border-radius: 50%;
             backface-visibility: hidden;
             -webkit-backface-visibility: hidden;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 0 10px rgba(0,0,0,0.5);
             background-size: cover;
             background-position: center;
             border: 2px solid #fcc419;
@@ -703,14 +692,14 @@
             padding: 12px 16px;
             border: 1px solid var(--border-color);
             transition: transform 0.15s ease, box-shadow 0.2s;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
             display: flex;
             flex-direction: column;
             gap: 4px;
         }
         .history-card:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.4);
         }
         .history-card .top-row {
             display: flex;
@@ -790,7 +779,7 @@
             display: flex;
             flex-direction: column;
             z-index: 50;
-            box-shadow: -6px 0 30px rgba(0, 0, 0, 0.6);
+            box-shadow: -6px 0 30px rgba(0,0,0,0.6);
         }
         .chat-header {
             padding: 16px 22px;
@@ -817,7 +806,7 @@
             background: var(--secondary);
             display: inline-block;
             animation: pulse-dot 1.8s ease-in-out infinite;
-            box-shadow: 0 0 8px rgba(81, 207, 102, 0.5);
+            box-shadow: 0 0 8px rgba(81,207,102,0.5);
         }
         .online-count {
             font-size: 13px;
@@ -841,7 +830,7 @@
             display: flex;
             flex-direction: column;
             gap: 8px;
-            background: rgba(11, 17, 32, 0.6);
+            background: rgba(11,17,32,0.6);
             scrollbar-width: thin;
             scrollbar-color: #2d3b4f transparent;
             scroll-behavior: smooth;
@@ -864,7 +853,7 @@
             padding: 8px 12px;
             border-radius: 10px;
             border: 1px solid #253141;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
             animation: fadeInUp 0.2s ease;
             position: relative;
         }
@@ -939,11 +928,11 @@
             font-weight: 700;
             cursor: pointer;
             transition: transform 0.15s ease, box-shadow 0.2s;
-            box-shadow: 0 4px 10px rgba(252, 196, 25, 0.2);
+            box-shadow: 0 4px 10px rgba(252,196,25,0.2);
         }
         .chat-send-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(252, 196, 25, 0.3);
+            box-shadow: 0 8px 20px rgba(252,196,25,0.3);
         }
         .chat-send-btn:disabled {
             opacity: 0.4;
@@ -956,7 +945,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.75);
+            background: rgba(0,0,0,0.75);
             display: none;
             justify-content: center;
             align-items: center;
@@ -976,7 +965,7 @@
             width: 100%;
             max-width: 540px;
             border: 1px solid var(--border-color);
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.7);
             position: relative;
             max-height: 90vh;
             overflow-y: auto;
@@ -1011,8 +1000,8 @@
         }
         .modal-grid {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
             margin-bottom: 20px;
             max-height: 300px;
             overflow-y: auto;
@@ -1048,8 +1037,8 @@
         }
         .modal-item.selected {
             border-color: var(--accent);
-            background: rgba(252, 196, 25, 0.12);
-            box-shadow: 0 0 0 2px rgba(252, 196, 25, 0.2);
+            background: rgba(252,196,25,0.12);
+            box-shadow: 0 0 0 2px rgba(252,196,25,0.2);
         }
         .modal-item .pet-value {
             font-size: 12px;
@@ -1063,34 +1052,37 @@
             margin: 12px 0 16px;
         }
         .side-btn {
-            background: #0f172a;
+            background: transparent;
             border: 2px solid var(--border-color);
-            border-radius: 30px;
-            padding: 8px 20px;
+            border-radius: 50%;
+            width: 48px;
+            height: 48px;
+            padding: 0;
             cursor: pointer;
             transition: all 0.2s;
             display: flex;
             align-items: center;
-            gap: 8px;
+            justify-content: center;
             font-weight: 700;
             font-size: 16px;
             color: #868e96;
         }
-        .side-btn:hover {
-            transform: translateY(-2px);
-            border-color: #4dabf7;
-        }
-        .side-btn.selected {
-            border-color: var(--accent);
-            background: rgba(252, 196, 25, 0.15);
-            color: var(--accent);
-            box-shadow: 0 0 0 2px rgba(252, 196, 25, 0.2);
-        }
         .side-btn img {
-            width: 28px;
-            height: 28px;
+            width: 32px;
+            height: 32px;
             object-fit: contain;
             border-radius: 50%;
+            display: block;
+        }
+        .side-btn[data-side="H"] {
+            border-color: #4dabf7;
+        }
+        .side-btn[data-side="T"] {
+            border-color: #ff6b6b;
+        }
+        .side-btn.selected {
+            border-color: #ffffff;
+            box-shadow: 0 0 0 2px rgba(255,255,255,0.3);
         }
         .modal-actions {
             display: flex;
@@ -1109,11 +1101,11 @@
         .post-btn {
             background: var(--secondary);
             color: #0b1120;
-            box-shadow: 0 4px 10px rgba(81, 207, 102, 0.2);
+            box-shadow: 0 4px 10px rgba(81,207,102,0.2);
         }
         .post-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(81, 207, 102, 0.3);
+            box-shadow: 0 8px 20px rgba(81,207,102,0.3);
         }
         .cancel-btn {
             background: #2d3b4f;
@@ -1173,7 +1165,7 @@
             border-radius: 50%;
             backface-visibility: hidden;
             -webkit-backface-visibility: hidden;
-            box-shadow: 0 0 30px rgba(0, 0, 0, 0.7);
+            box-shadow: 0 0 30px rgba(0,0,0,0.7);
             background-size: cover;
             background-position: center;
             border: 4px solid #fcc419;
@@ -1330,12 +1322,12 @@
             cursor: pointer;
             background: linear-gradient(135deg, #ffd43b, #f59f00);
             color: #0b1120;
-            box-shadow: 0 4px 10px rgba(255, 212, 59, 0.25);
+            box-shadow: 0 4px 10px rgba(255,212,59,0.25);
             transition: transform 0.15s ease, box-shadow 0.2s;
         }
         .profile-tip-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(255, 212, 59, 0.4);
+            box-shadow: 0 8px 20px rgba(255,212,59,0.4);
         }
         .tip-pets-grid {
             display: grid;
@@ -1372,8 +1364,8 @@
         }
         .tip-pet-item.selected {
             border-color: var(--accent);
-            background: rgba(252, 196, 25, 0.12);
-            box-shadow: 0 0 0 2px rgba(252, 196, 25, 0.2);
+            background: rgba(252,196,25,0.12);
+            box-shadow: 0 0 0 2px rgba(252,196,25,0.2);
         }
         .tip-pet-item .pet-img {
             width: 44px;
@@ -1437,7 +1429,7 @@
             background: var(--secondary);
             display: inline-block;
             animation: pulse-dot 1.8s ease-in-out infinite;
-            box-shadow: 0 0 8px rgba(81, 207, 102, 0.5);
+            box-shadow: 0 0 8px rgba(81,207,102,0.5);
         }
         .bot-status .bot-info .bot-status-text .online-label {
             color: var(--secondary);
@@ -1452,12 +1444,12 @@
             font-weight: 700;
             cursor: pointer;
             transition: transform 0.15s ease, box-shadow 0.2s;
-            box-shadow: 0 4px 10px rgba(252, 196, 25, 0.25);
+            box-shadow: 0 4px 10px rgba(252,196,25,0.25);
             font-size: 15px;
         }
         .join-bot-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(252, 196, 25, 0.4);
+            box-shadow: 0 8px 20px rgba(252,196,25,0.4);
         }
         .withdraw-pets-grid {
             display: grid;
@@ -1494,8 +1486,8 @@
         }
         .withdraw-pet-item.selected {
             border-color: var(--accent);
-            background: rgba(252, 196, 25, 0.12);
-            box-shadow: 0 0 0 2px rgba(252, 196, 25, 0.2);
+            background: rgba(252,196,25,0.12);
+            box-shadow: 0 0 0 2px rgba(252,196,25,0.2);
         }
         .withdraw-pet-item .pet-img {
             width: 48px;
@@ -1859,7 +1851,7 @@
             font-size: 32px;
             color: var(--accent);
             z-index: 10;
-            text-shadow: 0 2px 10px rgba(252, 196, 25, 0.5);
+            text-shadow: 0 2px 10px rgba(252,196,25,0.5);
             pointer-events: none;
         }
         .jackpot-page .wheel-container .center {
@@ -1873,7 +1865,7 @@
             border-radius: 50%;
             border: 3px solid #0f172a;
             z-index: 5;
-            box-shadow: 0 0 15px rgba(252, 196, 25, 0.3);
+            box-shadow: 0 0 15px rgba(252,196,25,0.3);
             pointer-events: none;
         }
         .jackpot-page .jackpot-players {
@@ -1997,13 +1989,13 @@
             font-weight: 700;
             cursor: pointer;
             transition: transform 0.15s ease, box-shadow 0.2s;
-            box-shadow: 0 4px 10px rgba(252, 196, 25, 0.25);
+            box-shadow: 0 4px 10px rgba(252,196,25,0.25);
             font-size: 13px;
             white-space: nowrap;
         }
         .jackpot-page .jackpot-prize .jp-join-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(252, 196, 25, 0.4);
+            box-shadow: 0 8px 20px rgba(252,196,25,0.4);
         }
         .jackpot-page .jackpot-prize .jp-join-btn:disabled {
             opacity: 0.4;
@@ -2123,7 +2115,7 @@
                 height: 54px;
                 cursor: pointer;
                 z-index: 150;
-                box-shadow: 0 6px 25px rgba(0, 0, 0, 0.6);
+                box-shadow: 0 6px 25px rgba(0,0,0,0.6);
                 transition: transform 0.2s;
             }
             .mobile-chat-toggle:hover {
@@ -2148,7 +2140,7 @@
                 border-radius: 8px;
                 line-height: 1;
                 z-index: 10;
-                box-shadow: 0 2px 8px rgba(255, 107, 107, 0.3);
+                box-shadow: 0 2px 8px rgba(255,107,107,0.3);
             }
             .chat-header .close-chat-btn:hover {
                 background: #ff5252;
@@ -2212,8 +2204,8 @@
             .action-btn:hover {
                 transform: none;
             }
-            .logo-wrapper span {
-                font-size: 20px;
+            .logo-wrapper img {
+                height: 30px;
             }
             .history-card {
                 scrollbar-width: thin;
@@ -2396,16 +2388,19 @@
             color: #0b1120;
             border-color: var(--accent);
         }
-        /* Giveaway – geniş dikdörtgen, yeterli alan */
+        /* Giveaway – gizlenebilir container */
         .giveaway-container {
             border-bottom: 1px solid var(--border-color);
             padding: 12px 16px;
             background: #0f172a;
             flex-shrink: 0;
             min-height: 80px;
-            display: flex;
+            display: none; /* varsayılan gizli */
             align-items: center;
             justify-content: center;
+        }
+        .giveaway-container.active {
+            display: flex;
         }
         .giveaway-slider {
             display: flex;
@@ -2477,6 +2472,9 @@
             overflow: hidden;
             text-overflow: ellipsis;
         }
+        .giveaway-item .g-name .extra-icons {
+            display: inline-block;
+        }
         .giveaway-item .g-value {
             color: var(--accent);
             font-size: 13px;
@@ -2540,7 +2538,6 @@
             text-align: center;
             flex: 1;
         }
-        /* profile modal - click outside close */
         #profile-modal .modal-overlay {
             pointer-events: auto;
         }
@@ -2570,7 +2567,7 @@
             border-radius: 50%;
             backface-visibility: hidden;
             -webkit-backface-visibility: hidden;
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 0 15px rgba(0,0,0,0.5);
             background-size: cover;
             background-position: center;
             border: 3px solid #fcc419;
@@ -2597,7 +2594,6 @@
             color: var(--secondary);
             text-align: center;
         }
-        /* CREATE MATCH ÖZEL */
         .create-modal {
             max-width: 700px !important;
         }
@@ -2692,9 +2688,10 @@
             color: #f1f3f5;
         }
         .create-modal .limit-buttons .limit-btn.active {
-            background: var(--accent);
+            background: #ffffff;
             color: #0b1120;
-            border-color: var(--accent);
+            border-color: #ffffff;
+            box-shadow: 0 0 6px rgba(255,255,255,0.3);
         }
         .create-modal .bottom-row {
             display: flex;
@@ -2708,39 +2705,8 @@
             gap: 10px;
             margin: 0;
         }
-        .create-modal .bottom-row .side-btn {
-            width: 48px;
-            height: 48px;
-            border-radius: 50%;
-            padding: 0;
-            justify-content: center;
-            border: 2px solid var(--border-color);
-            background: #0f172a;
-            font-size: 14px;
-            font-weight: 700;
-            color: #868e96;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background-color: #e74c3c; /* kırmızı renk */
-            border-color: #e74c3c;
-        }
-        .create-modal .bottom-row .side-btn[data-side="H"] {
-            background-color: #4dabf7;
-            border-color: #4dabf7;
-        }
-        .create-modal .bottom-row .side-btn[data-side="T"] {
-            background-color: #ff6b6b;
-            border-color: #ff6b6b;
-        }
-        .create-modal .bottom-row .side-btn.selected {
-            box-shadow: 0 0 0 3px var(--accent);
-            border-color: var(--accent);
-        }
         .create-modal .bottom-row .side-btn img {
-            width: 0;
-            height: 0;
-            display: none;
+            display: block;
         }
         .create-modal .bottom-row .create-btn {
             background: var(--secondary);
@@ -2752,11 +2718,11 @@
             font-size: 16px;
             cursor: pointer;
             transition: transform 0.15s ease, box-shadow 0.2s;
-            box-shadow: 0 4px 10px rgba(81, 207, 102, 0.2);
+            box-shadow: 0 4px 10px rgba(81,207,102,0.2);
         }
         .create-modal .bottom-row .create-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(81, 207, 102, 0.3);
+            box-shadow: 0 8px 20px rgba(81,207,102,0.3);
         }
         .create-modal .no-pets-deposit {
             color: #868e96;
@@ -2778,10 +2744,6 @@
         }
         .create-modal .no-pets-deposit .deposit-link:hover {
             transform: scale(1.05);
-        }
-        .modal-grid {
-            grid-template-columns: repeat(4, 1fr);
-            gap: 8px;
         }
     </style>
 </head>
@@ -2842,7 +2804,8 @@
     <header>
         <div class="logo">
             <div class="logo-wrapper">
-                <span>BloxyWin</span>
+                <!-- Buraya kendi blob URL'nizi kopyalayın -->
+                <img src="https://bloxluck.com/img/dog.png" alt="BloxyWin Logo">
             </div>
         </div>
         <div id="user-header-area"></div>
@@ -2850,7 +2813,7 @@
 
     <!-- Main Content -->
     <div class="main-layout" id="main-layout">
-        <!-- Coinflip sayfası -->
+        <!-- Coinflip -->
         <div class="coinflip-page" id="coinflip-page">
             <div>
                 <div class="section-header">
@@ -2864,7 +2827,7 @@
             </div>
         </div>
 
-        <!-- Jackpot sayfası -->
+        <!-- Jackpot -->
         <div class="jackpot-page" id="jackpot-page">
             <div class="jackpot-header">
                 <div class="jp-title">
@@ -2907,7 +2870,7 @@
             </div>
             <button class="close-chat-btn" onclick="closeMobileChat()">✕</button>
         </div>
-        <!-- Giveaway -->
+        <!-- Giveaway container -->
         <div class="giveaway-container" id="giveaway-container"></div>
         <div class="chat-messages" id="chat-messages"></div>
         <div class="chat-input-area">
@@ -2965,7 +2928,7 @@
         </div>
     </div>
 
-    <!-- Create Match (YENİ) -->
+    <!-- Create Match -->
     <div class="modal-overlay" id="create-modal">
         <div class="modal create-modal">
             <div class="modal-header">
@@ -2978,10 +2941,10 @@
             </div>
             <div class="selected-value" id="create-total-value">Selected Value: 0</div>
             <div class="limit-buttons">
-                <button class="limit-btn active" data-limit="15" onclick="setMatchLimit(15)">1x</button>
-                <button class="limit-btn" data-limit="5" onclick="setMatchLimit(5)">5x</button>
-                <button class="limit-btn" data-limit="10" onclick="setMatchLimit(10)">10x</button>
-                <button class="limit-btn" data-limit="15" onclick="setMatchLimit(15)">15x</button>
+                <button class="limit-btn active" data-limit="15" onclick="setMatchLimit(15)">1 Pet</button>
+                <button class="limit-btn" data-limit="5" onclick="setMatchLimit(5)">5 Pet</button>
+                <button class="limit-btn" data-limit="10" onclick="setMatchLimit(10)">10 Pet</button>
+                <button class="limit-btn" data-limit="15" onclick="setMatchLimit(15)">15 Pet</button>
             </div>
             <div class="modal-grid" id="modal-inventory"></div>
             <div id="no-pets-deposit" class="no-pets-deposit" style="display:none;">
@@ -2989,8 +2952,12 @@
             </div>
             <div class="bottom-row">
                 <div class="side-select">
-                    <button class="side-btn" data-side="H" onclick="selectSide('H', 'create')"></button>
-                    <button class="side-btn" data-side="T" onclick="selectSide('T', 'create')"></button>
+                    <button class="side-btn" data-side="H" onclick="selectSide('H','create')">
+                        <img src="https://bloxluck.com/img/dog.png" alt="Heads">
+                    </button>
+                    <button class="side-btn" data-side="T" onclick="selectSide('T','create')">
+                        <img src="https://bloxluck.com/img/gem.png" alt="Tails">
+                    </button>
                 </div>
                 <button class="create-btn" id="create-post-btn" onclick="postMatch()">Create</button>
             </div>
@@ -5324,8 +5291,11 @@
             saveGiveaways();
 
             if (activeGiveaways.length === 0) {
+                container.classList.remove('active');
                 container.innerHTML = '';
                 return;
+            } else {
+                container.classList.add('active');
             }
 
             if (giveawayCurrentIndex >= activeGiveaways.length) {
@@ -5366,7 +5336,7 @@
                     <div class="giveaway-item">
                         <img class="g-pet-img" src="${g.image}" alt="${g.name}" onerror="this.src='https://bloxluck.com/img/dog.png'">
                         <div class="g-info">
-                            <div class="g-name">${escapeHTML(cleanName)} ${extraIcons}</div>
+                            <div class="g-name">${escapeHTML(cleanName)} <span class="extra-icons">${extraIcons}</span></div>
                             <div class="g-value">Value: ${g.value}</div>
                         </div>
                         ${timerHtml}
@@ -5551,7 +5521,6 @@
         // ============================================================
         //  CHAT
         // ============================================================
-        // Çift mesaj sorununu düzelt: history'den ve canlıdan gelen aynı mesajı kontrol et
         let processedMessageIds = new Set();
 
         function renderChatHistory() {
@@ -5590,12 +5559,10 @@
 
         function saveAndRenderChat(username, text, time, msgId) {
             const id = msgId || Date.now() + '_' + Math.random().toString(36).substr(2, 6);
-            // Eğer bu ID daha önce işlendiyse ekleme
             if (processedMessageIds.has(id)) return;
             processedMessageIds.add(id);
 
             const newMsg = { id, username, text, time };
-            // Aynı mesaj zaten varsa ekleme
             const exists = chatHistory.some(m => m.id === id);
             if (exists) return;
 
@@ -5681,7 +5648,6 @@
                 channel: CHANNEL,
                 message: msg
             });
-            // Kendi mesajını hemen ekle (processedMessageIds kontrolü yapacak)
             saveAndRenderChat(currentUser, text, timeStr, id);
             input.value = '';
         }
@@ -6167,19 +6133,15 @@
         function setMatchLimit(limit) {
             matchLimit = limit;
             document.querySelectorAll('.limit-btn').forEach(btn => {
-                btn.classList.toggle('active', parseInt(btn.dataset.limit) === limit);
+                btn.classList.remove('active');
             });
-            // Seçili petleri temizle
+            document.querySelector(`.limit-btn[data-limit="${limit}"]`).classList.add('active');
             selectedPetsForMatch = [];
             document.querySelectorAll('#modal-inventory .modal-item').forEach(el => el.classList.remove('selected'));
             updateCreateTotal();
-            // 1x seçiliyken diğerleri aktif olmasın
-            if (limit === 1) {
-                document.querySelectorAll('.limit-btn').forEach(btn => {
-                    if (parseInt(btn.dataset.limit) !== 1) btn.classList.remove('active');
-                });
+            if (document.getElementById('create-modal').classList.contains('active')) {
+                // inventory yeniden gösterilir, ama mevcut liste kalır, sadece seçim temizlendi
             }
-            openCreateModal();
         }
 
         function openCreateModal() {
@@ -6932,7 +6894,6 @@
             if (quantity < 1) { showToast('Quantity must be at least 1.'); return; }
             if (quantity > 100) { showToast('Maximum quantity is 100.'); return; }
 
-            // Extra etiketleri doğru sırada ekle: N, M, F, R
             const order = ['N', 'M', 'F', 'R'];
             let finalName = name;
             const extraStr = order.filter(t => adminPetExtraState.includes(t)).join('');
@@ -7189,7 +7150,6 @@
 
                 if (msg.type === 'CHAT') {
                     if (msg.id) {
-                        // processedMessageIds kontrolü ile çift mesaj engeli
                         if (processedMessageIds.has(msg.id)) return;
                         processedMessageIds.add(msg.id);
                         if (deletedMessageIds.has(msg.id)) return;
